@@ -1,152 +1,81 @@
 #ifndef INST_CMN_HPP
 #define INST_CMN_HPP
+void ILLEGAL(CPU* cpu) __attribute__((noreturn));
 
-template<class T>
-T op_or_cmn(REGS* regs, T a, T b) {
-	T v = a | b;
+inline void test_trace_branch(CPU* cpu) {
+	if( cpu->T == 1 ) {
+		TraceEx e;
+		e.run(cpu, cpu->NPC);
+	}
+}
+inline uint8_t get_cr(CPU* regs) {
+	return regs->X << 4 |
+		regs->N << 3 |
+		regs->Z << 2 |
+		regs->V << 1 |
+		regs->C;
+}
+
+inline void set_cr(CPU* regs, uint8_t v) {
+	regs->X = (v >> 4) & 1;
+	regs->N = (v >> 3) & 1;
+	regs->Z = (v >> 2) & 1;
+	regs->V = (v >> 1) & 1;
+	regs->C = v & 1;
+}
+
+inline uint16_t get_sr(CPU* regs) {
+	uint16_t low = get_cr(regs);
+	low |=
+		regs->IX << 8 |
+		regs->M << 12 |
+		regs->S << 13 |
+		regs->T << 14;
+	return low;
+}
+inline void save_sp(CPU* regs) {
+	if( ! regs->S ) {
+		regs->ISP = regs->A[7];
+	} else if( regs->M ) {
+		regs->MSP = regs->A[7];
+	} else {
+		regs->ISP = regs->A[7];
+	}
+}
+inline void load_sp(CPU* regs) {
+	if( ! regs->S ) {
+		regs->A[7] = regs->ISP;
+	} else if( regs->M ) {
+		regs->A[7] = regs->MSP;
+	} else {
+		regs->A[7] = regs->ISP;
+	}
+}
+inline void set_sr(CPU* regs, uint16_t v) {
+	save_sp(regs);
+	set_cr(regs, v);
+	regs->IX =(v >> 8) & 3;
+	regs->M =(v >> 12) & 1;
+	regs->S =(v >> 13) & 1;
+	regs->T =(v >> 14) & 3;
+	load_sp(regs);
+}
+inline void set_nz(CPU* regs, int8_t v) {
 	regs->N = v < 0;
-	regs->Z = ! v;
-	regs->V = false;
-	regs->C = false;
-	return v;
+	regs->Z = !v;
 }
-
-template<class T>
-T op_and_cmn(REGS* regs, T a, T b) {
-	T v = a & b;
+inline void set_nz(CPU* regs, int16_t v) {
 	regs->N = v < 0;
-	regs->Z = ! v;
-	regs->V = false;
-	regs->C = false;
-	return v;
+	regs->Z = !v;
 }
-
-template<class T>
-T op_xor_cmn(REGS* regs, T a, T b) {
-	T v = a ^ b;
+inline void set_nz(CPU* regs, int32_t v) {
 	regs->N = v < 0;
-	regs->Z = ! v;
-	regs->V = false;
-	regs->C = false;
-	return v;
-}
-
-inline uint8_t op_subb(REGS* regs, uint8_t a, uint8_t b) {
-	int8_t c = a;
-	asm volatile("subb %3, %0\n\t"
-				 "seto %1\n\t"
-				 "setc %2\n\t"
-				 : "+g"(c), "=g"(regs->V), "=g"(regs->C)
-				 : "g"(b));
-	regs->X = regs->C;
-	regs->Z = c == 0;
-	regs->N = c < 0;
-	return c;
-}
-
-inline uint16_t op_subw(REGS* regs, uint16_t a, uint16_t b) {
-	int16_t c = a;
-	asm volatile("subw %3, %0\n\t"
-				 "seto %1\n\t"
-				 "setc %2\n\t"
-				 : "+g"(c), "=g"(regs->V), "=g"(regs->C)
-				 : "g"(b));
-	regs->X = regs->C;
-	regs->Z = c == 0;
-	regs->N = c < 0;
-	return c;
-}
-
-inline uint32_t op_subl(REGS* regs, uint32_t a, uint32_t b) {
-	int32_t c = a;
-	asm volatile("subl %3, %0\n\t"
-				 "seto %1\n\t"
-				 "setc %2\n\t"
-				 : "+g"(c), "=g"(regs->V), "=g"(regs->C)
-				 : "g"(b));
-	regs->X = regs->C;
-	regs->Z = c == 0;
-	regs->N = c < 0;
-	return c;
+	regs->Z = !v;
 }
 
 
 
-inline void btst_d_N(REGS* regs, int N, uint32_t v) {
-	int d = regs->D[N];
-	regs->Z = !((v >> d) & 1);
-}
-inline uint32_t bchg_d_N(REGS* regs, int N, uint32_t v) {
-	int d = regs->D[N];
-	regs->Z = !((v >> d) & 1);
-	return v ^ (1 << d);
-}
-inline uint32_t bclr_d_N(REGS* regs, int N, uint32_t v) {
-	int d = regs->D[N];
-	regs->Z = !((v >> d) & 1);
-	return v &~ (1 << d);
-}
-inline uint32_t bset_d_N(REGS* regs, int N, uint32_t v) {
-	int d = regs->D[N];
-	regs->Z = !((v >> d) & 1);
-	return v | (1 << d);
-}
 
-
-inline void btst_i_N(REGS* regs, int N, uint32_t v) {
-	regs->Z = !((v >> N) & 1);
-}
-inline uint32_t bchg_i_N(REGS* regs, int N, uint32_t v) {
-	regs->Z = !((v >> N) & 1);
-	return v ^ (1 << N);
-}
-inline uint32_t bclr_i_N(REGS* regs, int N, uint32_t v) {
-	regs->Z = !((v >> N) & 1);
-	return v &~ (1 << N);
-}
-inline uint32_t bset_i_N(REGS* regs, int N, uint32_t v) {
-	regs->Z = !((v >> N) & 1);
-	return v | (1 << N);
-}
-
-inline uint8_t op_addb(REGS* regs, uint8_t a, uint8_t b) {
-	int8_t c = a;
-	asm volatile("addb %3, %0\n\t"
-				 "seto %1\n\t"
-				 "setc %2\n\t"
-				 : "+g"(c), "=g"(regs->V), "=g"(regs->C)
-				 : "g"(b));
-	regs->X = regs->C;
-	regs->Z = c == 0;
-	regs->N = c < 0;
-	return c;
-}
-
-inline uint16_t op_addw(REGS* regs, uint16_t a, uint16_t b) {
-	int16_t c = a;
-	asm volatile("addw %3, %0\n\t"
-				 "seto %1\n\t"
-				 "setc %2\n\t"
-				 : "+g"(c), "=g"(regs->V), "=g"(regs->C)
-				 : "g"(b));
-	regs->X = regs->C;
-	regs->Z = c == 0;
-	regs->N = c < 0;
-	return c;
-}
-
-inline uint32_t op_addl(REGS* regs, uint32_t a, uint32_t b) {
-	int32_t c = a;
-	asm volatile("addl %3, %0\n\t"
-				 "seto %1\n\t"
-				 "setc %2\n\t"
-				 : "+g"(c), "=g"(regs->V), "=g"(regs->C)
-				 : "g"(b));
-	regs->X = regs->C;
-	regs->Z = c == 0;
-	regs->N = c < 0;
-	return c;
-}
 
 
 #endif

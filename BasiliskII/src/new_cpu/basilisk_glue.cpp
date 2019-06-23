@@ -52,7 +52,7 @@ uintptr MEMBaseDiff;
 #if USE_JIT
 bool UseJIT = false;
 #endif
-REGS regs;
+CPU regs;
 // From newcpu.cpp
 extern bool quit_program;
 
@@ -102,31 +102,32 @@ void InitFrameBufferMapping(void)
 	memory_init();
 #endif
 }
-
+void m68k_execute();
+extern CPU cpu;
 /*
  *  Reset and start 680x0 emulation (doesn't return)
  */
-
 void Start680x0(void)
 {
-//	m68k_reset();
+	cpu.init();
+	cpu.reset();
 #if USE_JIT
 //    if (UseJIT)
 //	m68k_compile_execute();
 //    else
 #endif
-//	m68k_execute();
+	m68k_execute();
 }
 
 
 /*
  *  Trigger interrupt
  */
-
+extern CPU cpu;
 void TriggerInterrupt(void)
 {
 	idle_resume();
-//	SPCFLAGS_SET( SPCFLAG_INT );
+	cpu.irq(1);
 }
 
 void TriggerNMI(void)

@@ -1,967 +1,791 @@
 #include "registers.hpp"
-#include "memory.hpp"
 #include "common.hpp"
+#include "exceptions.hpp"
 #include "inst_cmn.hpp"
-void ILLEGAL(REGS* regs) __attribute__((noreturn));
-void callm(REGS* regs, uint32_t, int) {
-	ILLEGAL(regs);
+#define OP(name_) extern "C" void op_##name_(CPU* cpu, uint16_t op __attribute__((unused)), int dn __attribute__((unused)), int mode __attribute__((unused)), int reg __attribute__((unused)))
+#include "op.h"
+void ILLEGAL(CPU* cpu) __attribute__((noreturn));
+void callm(CPU* cpu, uint32_t, int) {
+	ILLEGAL(cpu);
 }
-void rtm(REGS* regs,uint32_t) {
-	ILLEGAL(regs);
+void rtm(CPU* cpu,uint32_t) {
+	ILLEGAL(cpu);
 }
-void ill_op(REGS* regs, uint16_t d) {
-	ILLEGAL(regs);
+
+
+OP(illegal) {
+	ILLEGAL(cpu);
 }
-template<class D>
-void op_ori_b(REGS* regs, uint16_t d) {
-	uint8_t imm = FETCH16();
-	if( d & 077 == 074 ) {
-		// ORI to CCR
-		regs->X |= (imm >> 4) & 1;
-		regs->N |= (imm >> 3) & 1;
-		regs->Z |= (imm >> 2) & 1;
-		regs->V |= (imm >> 1) & 1;
-		regs->C |= imm & 1;
-		return;
-	} else {
-		D ea (regs, d&7);
-		ea.writeb(op_or_cmn<int8_t>(regs, ea.readb(), imm));
+
+
+OP(cmp2_b) {
+	int wd = cpu->fetch_w();
+	int8_t v = cpu->R[wd >> 12];
+	EA ea(cpu, mode, 1, reg, false);
+	int8_t lw = cpu->mmu->read_b(ea.addr());
+	int8_t hi = cpu->mmu->read_b(ea.addr()+1);
+	cpu->Z = ( v == lw || v == hi );
+	cpu->C = ( v < lw || v > hi );
+	if( ((wd >> 11) & 1) && cpu->C ) {
+		throw ChkTrap();
 	}
 }
 
-template<class D>
-void op_ori_w(REGS* regs, uint16_t d) {
-	uint16_t imm = FETCH16();
-	if( d & 077 == 074 ) {
-		// ORI to SR
-		if( ! regs->S ) {
-			// not supervisor
-			ILLEGAL(regs);
+
+
+
+
+OP(cmp2_w) {
+	int wd = cpu->fetch_w() >> 12;
+	int16_t v = cpu->R[wd];
+	EA ea(cpu, mode, 2, reg, false);
+	int16_t lw = cpu->mmu->read_w(ea.addr());
+	int16_t hi = cpu->mmu->read_w(ea.addr()+2);
+	cpu->Z = ( v == lw || v == hi );
+	cpu->C = ( v < lw || v > hi );
+	if( ((wd >> 11) & 1) && cpu->C ) {
+		throw ChkTrap();
+	}
+}
+
+
+
+
+OP(rtm_d) {
+	rtm(cpu, cpu->D[reg]);
+}
+OP(rtm_a) {
+	rtm(cpu, cpu->A[reg]);
+}
+
+OP(callm) {
+	int ac = cpu->fetch_w();
+	EA ea(cpu, mode, 1, reg, false);
+	callm(cpu, ea.addr(), ac);
+}
+
+
+
+
+OP(clr_b) {
+	EA ea(cpu, mode, 1, reg, true);	
+	cpu->N = cpu->V = cpu->C = false;
+	cpu->Z = true;
+	ea.write( 0 );
+}
+
+OP(clr_w) {
+	EA ea(cpu, mode, 2, reg, true);
+	cpu->N = cpu->V = cpu->C = false;
+	cpu->Z = true;
+	ea.write( 0 );
+}
+
+OP(clr_l) {
+	EA ea(cpu, mode, 4, reg, true);
+	cpu->N = cpu->V = cpu->C = false;
+	cpu->Z = true;
+	ea.write( 0 );
+}
+
+
+OP(link_l) {
+	int32_t disp = cpu->fetch_l();
+	cpu->push32(cpu->A[reg]);
+	cpu->A[reg] = cpu->A[7];
+	cpu->A[7] += disp;
+}
+
+
+
+OP(bkpt) {
+	int vc = reg;
+	throw IllegalInstruction();
+}
+
+OP(pea) {
+	EA ea(cpu, mode, 4, reg, false);
+	cpu->push32(ea.addr());
+}
+
+
+OP(trap) {
+	uint8_t v = op & 15;
+	throw TRAP_N(v);
+}
+
+OP(link_w) {
+	int16_t offset = cpu->fetch_w();
+	cpu->push32(cpu->A[reg]);
+	cpu->A[reg] = cpu->A[7];
+	cpu->A[7] += offset;	
+}
+
+OP(unlk) {
+	cpu->A[7] = cpu->A[reg];
+	uint32_t v = cpu->pop32();
+	cpu->A[reg] = v;
+}
+
+
+
+OP(jsr) {
+	cpu->push32(cpu->PC);
+	EA ea(cpu, mode, 2, reg, false);
+	cpu->PC = ea.addr();
+	test_trace_branch(cpu);
+}
+
+OP(jmp) {
+	EA ea(cpu, mode, 2, reg, false);
+	cpu->PC = ea.addr();
+	test_trace_branch(cpu);
+}
+
+OP(chk_l) {
+	EA ea(cpu, mode, 4, reg, false);
+	int32_t mx = ea.read();
+	int32_t v = cpu->D[dn];
+	if( v < 0 ) {
+		cpu->N = true;
+		throw ChkTrap();
+	} else if( v > mx ) {
+		cpu->N = false;
+		throw ChkTrap();
+	}
+}
+
+OP(chk_w) {
+	EA ea(cpu, mode, 2, reg, false);
+	int16_t mx = ea.read();
+	int16_t v = cpu->D[dn];
+	if( v < 0 ) {
+		cpu->N = true;
+		throw ChkTrap();
+	} else if( v > mx ) {
+		cpu->N = false;
+		throw ChkTrap();
+	}
+}
+
+
+OP(lea) {
+	EA ea(cpu, mode, 4, reg, false);
+	uint32_t addr = ea.addr();
+	cpu->A[ dn ] = addr;
+}
+
+bool get_cond(CPU* cpu, int cd) {
+	switch( cd ) {
+	case 0 : return true;
+	case 1 : return false;
+	case 2 : return ! ( cpu->C || cpu->Z );
+	case 3 : return ( cpu->C || cpu->Z );
+	case 4 : return ! cpu->C;
+	case 5 : return cpu->C; 
+	case 6 : return ! cpu->Z;
+	case 7 : return cpu->Z;
+	case 8 : return ! cpu->V; 
+	case 9 : return cpu->V; 
+	case 10 : return ! cpu->N;
+	case 11 : return cpu->N;
+	case 12 : return cpu->N == cpu->V;
+	case 13 : return cpu->N != cpu->V;
+	case 14 : return cpu->N == cpu->V && ! cpu->Z;
+	case 15 : return cpu->Z || cpu->N != cpu->V;		
+	}
+	return false;
+}
+
+OP(scc) {
+	EA ea(cpu, mode, 1, reg, true);
+	ea.write( get_cond(cpu, (op >> 8) & 15 ) ? 1 : 0 );
+}
+
+OP(dbcc) {
+	int16_t disp = cpu->fetch_w();
+	if( ! get_cond(cpu, (op >> 8) & 15 ) && (-- cpu->D[ reg ]) != -1 ) {
+		cpu->PC += disp;
+		test_trace_branch(cpu);
+	}
+}
+
+OP(trapcc) {
+	if( get_cond(cpu, (op>>8) & 15)) {
+		throw Trapcc();
+	}
+}
+OP(trapcc_w) {
+	if( get_cond(cpu, (op>>8) & 15)) {
+		throw Trapcc();
+	}
+	cpu->PC += 2;
+}
+OP(trapcc_l) {
+	if( get_cond(cpu, (op>>8) & 15)) {
+		throw Trapcc();
+	}
+	cpu->PC += 4;
+}
+OP(bra) {
+	int8_t disp = op & 0xff;
+	if( disp == 0 ) {
+		int16_t d16 = cpu->fetch_w();
+		cpu->PC += d16;
+	} else if( disp == -1 ) {
+		int32_t d32 = cpu->fetch_l();
+		cpu->PC += d32;
+	} else {
+		cpu->PC += disp;
+	}
+	test_trace_branch(cpu);
+}
+OP(bsr) {
+	int8_t disp = op & 0xff;
+	if( disp == 0 ) {
+		int16_t d16 = cpu->fetch_w();
+		cpu->push32(cpu->PC);
+		cpu->PC += d16;
+	} else if( disp == -1 ) {
+		int32_t d32 = cpu->fetch_l();
+		cpu->push32(cpu->PC);
+		cpu->PC += d32;
+	} else {
+		cpu->push32(cpu->PC);
+		cpu->PC += disp;
+	}
+	test_trace_branch(cpu);
+}
+OP(bcc) {
+	int8_t disp = op & 0xff;
+	if( disp == 0 ) {
+		int16_t d16 = cpu->fetch_w();
+		if( get_cond(cpu, (op >> 8) & 15 ) ) {
+			cpu->PC += d16;
+			test_trace_branch(cpu);
 		}
-		regs->X |= (imm >> 4) & 1;
-		regs->N |= (imm >> 3) & 1;
-		regs->Z |= (imm >> 2) & 1;
-		regs->V |= (imm >> 1) & 1;
-		regs->C |= imm & 1;
-
-		regs->IX |= (imm >> 8) & 3;
-		regs->M |= (imm >> 12) & 1;
-		regs->S |= (imm >> 13) & 1;
-		regs->T |= (imm >> 14) & 3;
-		return;
-	} else {
-		D ea (regs, d&7);
-		ea.writew(op_or_cmn<int16_t>(regs, ea.readw(), imm));
-	}
-}
-
-template<class D>
-void op_ori_l(REGS* regs, uint16_t d) {
-	uint32_t imm = FETCH32();
-	D ea (regs, d&7);
-	ea.writel(op_or_cmn<int32_t>(regs, ea.readl(), imm));
-}
-
-
-
-void btst_d_dn(REGS* regs, uint16_t d) {
-	uint32_t v = regs->D[d&7];
-	btst_d_N(regs, (d>>9)&7, v);
-}
-
-template<class D>
-void btst_d_b(REGS* regs, uint16_t d) {
-	D ea(regs, d&7);
-	btst_d_N(regs, (d>>9)&7, ea.readb());
-}
-
-
-void bchg_d_dn(REGS* regs, uint16_t d) {
-	uint32_t v = regs->D[d&7];
-	regs->D[d&7] = bchg_d_N(regs, (d>>9)&7, v);
-}
-template<class D>
-void bchg_d_b(REGS* regs, uint16_t d) {
-	D ea(regs, d&7);
-	ea.writeb(bchg_d_N(regs, (d>>9)&7, ea.readb()));
-}
-
-void bclr_d_dn(REGS* regs, uint16_t d) {
-	uint32_t v = regs->D[d&7];
-	regs->D[d&7] = bclr_d_N(regs, (d>>9)&7, v);
-}
-template<class D>
-void bclr_d_b(REGS* regs, uint16_t d) {
-	D ea(regs, d&7);
-	ea.writeb(bclr_d_N(regs, (d>>9)&7, ea.readb()));
-}
-
-
-void bset_d_dn(REGS* regs, uint16_t d) {
-	uint32_t v = regs->D[d&7];
-	regs->D[d&7] = bset_d_N(regs, (d>>9)&7, v);
-}
-template<class D>
-void bset_d_b(REGS* regs, uint16_t d) {
-	D ea(regs, d&7);
-	ea.writeb(bset_d_N(regs, (d>>9)&7, ea.readb()));
-}
-
-
-template<class D>
-void op_andi_b(REGS* regs, uint16_t d) {
-	uint8_t imm = FETCH16();
-	if( d & 077 == 074 ) {
-		// ANDI to CCR
-		regs->X &= (imm >> 4) & 1;
-		regs->N &= (imm >> 3) & 1;
-		regs->Z &= (imm >> 2) & 1;
-		regs->V &= (imm >> 1) & 1;
-		regs->C &= imm & 1;
-	} else {
-		D ea(regs, d&7);
-		ea.writeb(op_and_cmn<int8_t>(regs, ea.readb(), imm));
-	}
-}
-
-
-template<class D>
-void op_andi_w(REGS* regs, uint16_t d) {
-	uint16_t imm = FETCH16();
-	if( d & 077 == 074 ) {
-		// ANDI to SR
-		if( ! regs->S ) {
-			// not supervisand
-			ILLEGAL(regs);
+	} else if( disp == -1 ) {
+		int32_t d32 = cpu->fetch_l();
+		if( get_cond(cpu, (op >> 8) & 15 ) ) {
+			cpu->PC += d32;
+			test_trace_branch(cpu);
 		}
-		regs->X &= (imm >> 4) & 1;
-		regs->N &= (imm >> 3) & 1;
-		regs->Z &= (imm >> 2) & 1;
-		regs->V &= (imm >> 1) & 1;
-		regs->C &= imm & 1;
-
-		regs->IX &= (imm >> 8) & 3;
-		regs->M &= (imm >> 12) & 1;
-		regs->S &= (imm >> 13) & 1;
-		regs->T &= (imm >> 14) & 3;
 	} else {
-		D ea(regs, d&7);
-		ea.writew(op_and_cmn<int16_t>(regs, ea.readw(), imm));
-	}
-}
-
-
-template<class D>
-void op_andi_l(REGS* regs, uint16_t d) {	
-	uint32_t imm = FETCH32();
-	D ea(regs, d&7);
-	ea.writel(op_and_cmn<int32_t>(regs, ea.readl(), imm));
-}
-
-
-template<class D>
-void op_subi_b(REGS* regs, uint16_t d) {
-	uint8_t imm = FETCH16();
-	D ea(regs, d&7);
-	ea.writeb(op_subb(regs, ea.readb(), imm));
-}
-
-
-template<class D>
-void op_subi_w(REGS* regs, uint16_t d) {
-	uint16_t imm = FETCH16();
-	D ea(regs, d&7);
-	ea.writew( op_subw(regs, ea.readw(), imm));
-}
-
-
-template<class D>
-void op_subi_l(REGS* regs, uint16_t d) {
-	uint32_t imm = FETCH32();
-	D ea(regs, d&7);
-	ea.writel( op_subl(regs, ea.readl(), imm) );
-}
-
-
-template<class D>
-void op_addi_b(REGS* regs, uint16_t d) {
-	int8_t imm = FETCH16();
-	D ea(regs, d&7);
-	ea.writeb( op_addb(regs, ea.readb(), imm) );
-}
-
-
-template<class D>
-void op_addi_w(REGS* regs, uint16_t d) {
-	uint16_t imm = FETCH16();
-	D ea(regs, d&7);
-	ea.writew( op_addw(regs, ea.readw(), imm) );
-}
-
-template<class D>
-void op_addi_l(REGS* regs, uint16_t d) {
-	uint32_t imm = FETCH32();
-	D ea(regs, d&7);
-	ea.writel( op_addl(regs, ea.readl(), imm) );
-}
-
-void btst_i_d(REGS* regs, uint16_t d) {
-	uint8_t bn = FETCH16();
-	btst_i_N(regs, bn, regs->D[d&7]);
-}
-
-template<class D>
-void btst_i_b(REGS* regs, uint16_t d) {
-	uint8_t bn = FETCH16();
-	D ea(regs, d&7);
-	btst_i_N(regs, bn, ea.readb());
-}
-
-void rtm_d(REGS* regs, uint16_t d) {
-	rtm(regs, regs->D[d]);
-}
-void rtm_a(REGS* regs, uint16_t d) {
-	rtm(regs, regs->A[d]);
-}
-
-template<class D>
-void op_callm(REGS* regs, uint16_t d) {
-	int ac = FETCH16();
-	D ea(regs, d&7);
-	callm(regs, ea.addr(), ac);
-}
-
-void bchg_i_d(REGS* regs, uint16_t d) {
-	uint8_t bn = FETCH16();
-	regs->D[d] = bchg_i_N(regs, bn, regs->D[d]);
-}
-
-template<class D>
-void bchg_i_b(REGS* regs, uint16_t d) {
-	uint8_t bn = FETCH16();
-	D ea(regs, d&7);
-	ea.writeb( bchg_i_N(regs, bn, ea.readb()));
-}
-
-
-void bclr_i_d(REGS* regs, uint16_t d) {
-	uint8_t bn = FETCH16();
-	regs->D[d] = bclr_i_N(regs, bn, regs->D[d]);
-}
-
-template<class D>
-void bclr_i_b(REGS* regs, uint16_t d) {
-	uint8_t bn = FETCH16();
-	D ea(regs, d&7);
-	ea.writeb( bclr_i_N(regs, bn, ea.readb()));
-}
-
-
-void bset_i_d(REGS* regs, uint16_t d) {
-	uint8_t bn = FETCH16();
-	regs->D[d] = bset_i_N(regs, bn, regs->D[d]);
-}
-
-template<class D>
-void bset_i_b(REGS* regs, uint16_t d) {
-	uint8_t bn = FETCH16();
-	D ea(regs, d&7);
-	ea.writeb( bset_i_N(regs, bn, ea.readb()));
-}
-template<class D>
-void op_eori_b(REGS* regs, uint16_t d) {
-	uint8_t imm = FETCH16();
-	if( d & 077 == 074 ) {
-		// EORI to CCR
-		regs->X ^= (imm >> 4) & 1;
-		regs->N ^= (imm >> 3) & 1;
-		regs->Z ^= (imm >> 2) & 1;
-		regs->V ^= (imm >> 1) & 1;
-		regs->C ^= imm & 1;
-	} else {
-		D ea(regs, d&7);
-		ea.writeb( op_xor_cmn<int8_t>(regs, ea.readb(), imm));
-	}
-}
-
-
-template<class D>
-void op_eori_w(REGS* regs, uint16_t d) {
-	uint16_t imm = FETCH16();
-	if( d & 077 == 074 ) {
-		// EORI to SR
-		if( ! regs->S ) {
-			// not supervisor
-			ILLEGAL(regs);
+		if( get_cond(cpu, (op >> 8) & 15 ) ) {
+			cpu->PC += disp;
+			test_trace_branch(cpu);
 		}
-		regs->X ^= (imm >> 4) & 1;
-		regs->N ^= (imm >> 3) & 1;
-		regs->Z ^= (imm >> 2) & 1;
-		regs->V ^= (imm >> 1) & 1;
-		regs->C ^= imm & 1;
+	}
+}
+OP(moveq) {
+	int8_t v = op & 0xff;
+	set_nz(cpu, v);
+	cpu->V = cpu->C = false;
+	cpu->D[dn] = v;
+}
+bool quit_program;
+CPU cpu;
+extern uint32_t ROMBaseMac;
+using op_type = void (*)(CPU*, uint16_t op, int dn, int mode, int reg);
+op_type op_list[65536];
 
-		regs->IX ^= (imm >> 8) & 3;
-		regs->M ^= (imm >> 12) & 1;
-		regs->S ^= (imm >> 13) & 1;
-		regs->T ^= (imm >> 14) & 3;
-	} else {
-		D ea(regs, d&7);
-		ea.writew( op_xor_cmn<int16_t>(regs, ea.readw(), imm));
+
+
+void m68k_execute() {
+	while(! quit_program) {
+		cpu.NPC = cpu.PC;
+		try {
+			uint16_t op = cpu.fetch_w();		
+			op_list[op>>3](&cpu, op, (op>>9)&7, (op>>3)&7, op&7);
+			if( cpu.T == 2 ) {
+				TraceEx e;
+				e.run(&cpu, cpu.NPC);
+			}
+		} catch( exception_t& e) {
+			e.run(&cpu, cpu.NPC);
+		}
 	}
 }
 
-template<class D>
-void op_eori_l(REGS* regs, uint16_t d) {
-	uint32_t imm = FETCH32();
-	D ea(regs, d&7);
-	ea.writel( op_xor_cmn<int32_t>(regs, ea.readl(), imm));
-}
-template<class D>
-void op_cmp2_b(REGS* regs, uint16_t d) {
-	int wd = FETCH16();
-	int8_t v = regs->R[wd >> 12];
-	D ea(regs, d&7);
-	int8_t lw = read_b(ea.addr());
-	int8_t hi = read_b(ea.addr()+1);
-	regs->Z = ( v == lw || v == hi );
-	regs->C = ( v < lw || v > hi );
-	if( ((wd >> 11) & 1) && regs->C ) {
-		raise_ex(regs, 6);
+
+void CPU::init() {
+	// init run table
+	for(int i = 0; i < 65535; ++i ) {
+		op_list[i] = op_illegal;
 	}
-}
+	for(int i = 0; i < 8; ++i ) {
+		// DN
+		op_list[ 000000 | i ] = op_ori_b;    // 0 000 000 000 000 ddd
+		op_list[ 000100 | i ] = op_ori_w;    // 0 000 000 001 000 ddd
+		op_list[ 000200 | i ] = op_ori_l;    // 0 000 000 010 000 ddd
+		
+		op_list[ 001000 | i ] = op_andi_b;   // 0 000 001 000 000 ddd
+		op_list[ 001100 | i ] = op_andi_w;   // 0 000 001 001 000 ddd
+		op_list[ 001200 | i ] = op_andi_l;   // 0 000 001 010 000 ddd
 
-template<class D>
-void op_cmp2_w(REGS* regs, uint16_t d) {
-	int wd = FETCH16() >> 12;
-	int16_t v = regs->R[wd];
-	D ea(regs, d&7);
-	int16_t lw = read_w(ea.addr());
-	int16_t hi = read_w(ea.addr()+2);
-	regs->Z = ( v == lw || v == hi );
-	regs->C = ( v < lw || v > hi );
-}
+		op_list[ 002000 | i ] = op_subi_b;   // 0 000 010 000 000 ddd
+		op_list[ 002100 | i ] = op_subi_w;   // 0 000 010 001 000 ddd
+		op_list[ 002200 | i ] = op_subi_l;   // 0 000 010 010 000 ddd
+
+		op_list[ 003000 | i ] = op_addi_b;   // 0 000 011 000 000 ddd
+		op_list[ 003100 | i ] = op_addi_w;   // 0 000 011 001 000 ddd
+		op_list[ 003200 | i ] = op_addi_l;   // 0 000 011 010 000 ddd
+
+		op_list[ 003300 | i ] = op_rtm_d;    // 0 000 011 011 000 ddd 
+		op_list[ 004000 | i ] = op_btst_i_l; // 0 000 100 000 000 ddd
+		op_list[ 004100 | i ] = op_bchg_i_l; // 0 000 100 001 000 ddd
+		op_list[ 004200 | i ] = op_bclr_i_l; // 0 000 100 010 000 ddd
+		op_list[ 004300 | i ] = op_bset_i_l; // 0 000 100 011 000 ddd
+
+		op_list[ 005000 | i ] = op_eori_b;   // 0 000 101 000 000 ddd
+		op_list[ 005100 | i ] = op_eori_w;	 // 0 000 101 001 000 ddd
+		op_list[ 005200 | i ] = op_eori_l;	 // 0 000 101 010 000 ddd
+
+		op_list[ 006000 | i ] = op_cmpi_b;   // 0 000 110 000 000 ddd
+		op_list[ 006100 | i ] = op_cmpi_w;   // 0 000 110 001 000 ddd
+		op_list[ 006200 | i ] = op_cmpi_l;   // 0 000 110 010 000 ddd
+
+		for(int j = 0; j < 8; ++j ) {
+			int nm_v = j << 9 | i;
+			op_list[ 000400 | nm_v ] = op_btst_d_l; // 0 000 nnn 100 000 mmm
+			op_list[ 000500 | nm_v ] = op_bchg_d_l; // 0 000 nnn 101 000 mmm
+			op_list[ 000600 | nm_v ] = op_bclr_d_l; // 0 000 nnn 110 000 mmm
+			op_list[ 000700 | nm_v ] = op_bset_d_l; // 0 000 nnn 111 000 mmm
+			for(int k = 0; k < 8; ++k ) {
+				if( k == 1 ) continue;
+				// 0 001 nnn kkk 000 mmm
+				op_list[ 010000 | nm_v | k << 6 ] = op_move_b;
+				// 0 010 nnn kkk 000 mmm
+				op_list[ 020000 | nm_v | k << 6 ] = op_move_l;
+				// 0 011 nnn kkk 000 mmm
+				op_list[ 030000 | nm_v | k << 6 ] = op_move_w;
+			}			
+			op_list[ 020100 | nm_v ] = op_movea_l; // 0 010 nnn 001 000 mmm
+			op_list[ 030100 | nm_v ] = op_movea_w; // 0 011 nnn 001 000 mmm
+
+			op_list[ 040400 | nm_v ] = op_chk_l;   // 0 100 nnn 100 000 mmm
+			op_list[ 040600 | nm_v ] = op_chk_w;   // 0 100 nnn 110 000 mmm
+
+			op_list[ 050000 | nm_v ] = op_addq_b;  // 0 101 xxx 000 000 mmm
+			op_list[ 050100 | nm_v ] = op_addq_w;  // 0 101 xxx 001 000 mmm
+			op_list[ 050200 | nm_v ] = op_addq_l;  // 0 101 xxx 010 000 mmm
+			op_list[ 050400 | nm_v ] = op_subq_b;  // 0 101 xxx 100 000 mmm
+			op_list[ 050500 | nm_v ] = op_subq_w;  // 0 101 xxx 101 000 mmm
+			op_list[ 050600 | nm_v ] = op_subq_l;  // 0 101 xxx 110 000 mmm
+
+			op_list[ 0100000 | nm_v ] = op_or_b;   // 1 000 nnn 000 000 mmm 
+			op_list[ 0100100 | nm_v ] = op_or_w;   // 1 000 nnn 001 000 mmm 
+			op_list[ 0100200 | nm_v ] = op_or_l;   // 1 000 nnn 010 000 mmm 
+			op_list[ 0100300 | nm_v ] = op_divu_w; // 1 000 nnn 011 000 mmm 
+
+			op_list[ 0100400 | nm_v ] = op_sbcd_d; // 1 000 nnn 100 000 mmm 
+			op_list[ 0100500 | nm_v ] = op_pack_d; // 1 000 nnn 101 000 mmm 
+			op_list[ 0100600 | nm_v ] = op_unpk_d; // 1 000 nnn 110 000 mmm 
+			op_list[ 0100700 | nm_v ] = op_divs_w; // 1 000 nnn 111 000 mmm 
+
+			op_list[ 0110000 | nm_v ] = op_sub_b;  // 1 001 nnn 000 000 mmm
+			op_list[ 0110100 | nm_v ] = op_sub_w;  // 1 001 nnn 001 000 mmm
+			op_list[ 0110200 | nm_v ] = op_sub_l;  // 1 001 nnn 010 000 mmm
+			op_list[ 0110300 | nm_v ] = op_suba_w; // 1 001 nnn 011 000 mmm
+			
+			op_list[ 0110400 | nm_v ] = op_subx_b; // 1 001 nnn 100 000 mmm
+			op_list[ 0110500 | nm_v ] = op_subx_w; // 1 001 nnn 101 000 mmm
+			op_list[ 0110600 | nm_v ] = op_subx_l; // 1 001 nnn 110 000 mmm
+			op_list[ 0110700 | nm_v ] = op_suba_l; // 1 001 nnn 111 000 mmm
+			
+			op_list[ 0130000 | nm_v ] = op_cmp_b;  // 1 011 nnn 000 000 mmm
+			op_list[ 0130100 | nm_v ] = op_cmp_w;  // 1 011 nnn 001 000 mmm
+			op_list[ 0130200 | nm_v ] = op_cmp_l;  // 1 011 nnn 010 000 mmm
+			op_list[ 0130300 | nm_v ] = op_cmpa_w; // 1 011 nnn 011 000 mmm
+
+			op_list[ 0130400 | nm_v ] = op_eor_b;  // 1 011 nnn 100 000 mmm 
+			op_list[ 0130500 | nm_v ] = op_eor_w;  // 1 011 nnn 101 000 mmm 
+			op_list[ 0130600 | nm_v ] = op_eor_l;  // 1 011 nnn 110 000 mmm 
+			op_list[ 0130700 | nm_v ] = op_cmpa_l; // 1 011 nnn 111 000 mmm
+
+			op_list[ 0140000 | nm_v ] = op_and_b;  // 1 100 nnn 000 000 mmm 
+			op_list[ 0140100 | nm_v ] = op_and_w;  // 1 100 nnn 001 000 mmm 
+			op_list[ 0140200 | nm_v ] = op_and_l;  // 1 100 nnn 010 000 mmm 
+			op_list[ 0140300 | nm_v ] = op_mulu_w; // 1 100 nnn 011 000 mmm
+
+			op_list[ 0140400 | nm_v ] = op_abcd_d; // 1 100 nnn 100 000 mmm 
+			op_list[ 0140500 | nm_v ] = op_exg_d;  // 1 100 nnn 101 000 mmm 
+			op_list[ 0140700 | nm_v ] = op_muls_w; // 1 100 nnn 111 000 mmm
+
+			op_list[ 0150000 | nm_v ] = op_add_b;  // 1 101 nnn 000 000 mmm
+			op_list[ 0150100 | nm_v ] = op_add_w;  // 1 101 nnn 001 000 mmm
+			op_list[ 0150200 | nm_v ] = op_add_l;  // 1 101 nnn 010 000 mmm
+			op_list[ 0150300 | nm_v ] = op_adda_w; // 1 101 nnn 011 000 mmm
+			
+			op_list[ 0150400 | nm_v ] = op_addx_b; // 1 101 nnn 100 000 mmm
+			op_list[ 0150500 | nm_v ] = op_addx_w; // 1 101 nnn 101 000 mmm
+			op_list[ 0150600 | nm_v ] = op_addx_l; // 1 101 nnn 110 000 mmm
+			op_list[ 0150700 | nm_v ] = op_adda_l; // 1 101 nnn 111 000 mmm
+
+		}
+		op_list[ 010700 | i ] = op_move_b; // 0 001 000 111 000 mmm
+		op_list[ 011700 | i ] = op_move_b; // 0 001 001 111 000 mmm
+		op_list[ 020700 | i ] = op_move_l; // 0 010 000 111 000 mmm
+		op_list[ 021700 | i ] = op_move_l; // 0 010 001 111 000 mmm
+		op_list[ 030700 | i ] = op_move_w; // 0 011 000 111 000 mmm
+		op_list[ 031700 | i ] = op_move_w; // 0 011 001 111 000 mmm
+						
+		op_list[ 040000 | i ] = op_negx_b; // 0 100 000 000 000 ddd
+		op_list[ 040100 | i ] = op_negx_w; // 0 100 000 001 000 ddd
+		op_list[ 040200 | i ] = op_negx_l; // 0 100 000 010 000 ddd
+		op_list[ 040300 | i ] = op_move_from_sr; // 0 100 000 011 000 ddd
+		op_list[ 041000 | i ] = op_clr_b;  // 0 100 001 000 000 ddd
+		op_list[ 041100 | i ] = op_clr_w;  // 0 100 001 001 000 ddd
+		op_list[ 041200 | i ] = op_clr_l;  // 0 100 001 010 000 ddd
+		op_list[ 041300 | i ] = op_move_from_cr; // 0 100 001 011 000 ddd
+		op_list[ 042000 | i ] = op_neg_b; // 0 100 010 000 000 ddd
+		op_list[ 042100 | i ] = op_neg_w; // 0 100 010 001 000 ddd
+		op_list[ 042200 | i ] = op_neg_l; // 0 100 010 010 000 ddd
+		op_list[ 042300 | i ] = op_move_to_cr; // 0 100 010 011 000 ddd
+		op_list[ 043000 | i ] = op_not_b; // 0 100 011 000 000 ddd
+		op_list[ 043100 | i ] = op_not_w; // 0 100 011 001 000 ddd
+		op_list[ 043200 | i ] = op_not_l; // 0 100 011 010 000 ddd
+		op_list[ 043300 | i ] = op_move_to_sr; // 0 100 011 011 000 ddd
+
+		op_list[ 044000 | i ] = op_nbcd_d; // 0 100 100 000 000 nnn
+		op_list[ 044100 | i ] = op_swap;   // 0 100 100 001 000 nnn 
+		op_list[ 044200 | i ] = op_ext_w;  // 0 100 100 010 000 nnn 
+		op_list[ 044300 | i ] = op_ext_l;  // 0 100 100 011 000 nnn 
+
+		op_list[ 044700 | i ] = op_extb_l; // 0 100 100 111 000 mmm
+
+		op_list[ 045000 | i ] = op_tst_b; // 0 100 101 000 000 ddd
+		op_list[ 045100 | i ] = op_tst_w; // 0 100 101 000 001 ddd
+		op_list[ 045200 | i ] = op_tst_l; // 0 100 101 000 010 ddd
+		op_list[ 045300 | i ] = op_tas;	  // 0 100 101 011 000 ddd
+
+		op_list[ 046000 | i ] = op_mul_l; // 0 100 110 000 000 ddd
+		op_list[ 046100 | i ] = op_div_l; // 0 100 110 001 000 ddd
+
+		for( int c = 0; c < 16; ++c ) {
+			op_list[ 050300 | c << 8 | i ] = op_scc; // 0 101 CCC C11 000 ddd
+		}
+
+		// AN
+		op_list[ 003410 | i ] = op_rtm_a; // 0 000 011 100 001 nnn
+		for(int j = 0; j < 8; ++j ) {
+			int nm_v = j << 9 | i;		
+			op_list[ 0410 | nm_v ] = op_movep_m2r_w; // 0 000 nnn 100 001 mmm
+			op_list[ 0510 | nm_v ] = op_movep_m2r_l; // 0 000 nnn 101 001 mmm
+			op_list[ 0610 | nm_v ] = op_movep_r2m_w; // 0 000 nnn 110 001 mmm
+			op_list[ 0710 | nm_v ] = op_movep_r2m_l; // 0 000 nnn 111 001 mmm
+			for(int k = 0; k < 8; ++k ) {
+				if( k == 1 ) continue;
+				// 0 010 nnn kkk 001 mmm
+				op_list[ 020010 | nm_v | k << 6 ] = op_move_l;
+				// 0 011 nnn kkk 001 mmm
+				op_list[ 030010 | nm_v | k << 6 ] = op_move_w;
+			}			
+			op_list[ 020110 | nm_v ] = op_movea_l; // 0 010 nnn 001 001 mmm
+			op_list[ 030110 | nm_v ] = op_movea_w; // 0 011 nnn 001 001 mmm
+			
+			op_list[ 050110 | nm_v ] = op_addq_w;  // 0 101 xxx 001 001 mmm
+			op_list[ 050210 | nm_v ] = op_addq_l;  // 0 101 xxx 010 001 mmm
+			op_list[ 050510 | nm_v ] = op_subq_w;  // 0 101 xxx 101 001 mmm
+			op_list[ 050610 | nm_v ] = op_subq_l;  // 0 101 xxx 110 001 mmm
+
+			op_list[ 0100410 | nm_v ] = op_sbcd_m; // 1 000 nnn 100 001 mmm 
+			op_list[ 0100510 | nm_v ] = op_pack_m; // 1 000 nnn 101 001 mmm 
+			op_list[ 0100610 | nm_v ] = op_unpk_m; // 1 000 nnn 110 001 mmm 
+
+			op_list[ 0110110 | nm_v ] = op_sub_w;  // 1 001 nnn 001 001 mmm
+			op_list[ 0110210 | nm_v ] = op_sub_l;  // 1 001 nnn 010 001 mmm
+			op_list[ 0110310 | nm_v ] = op_suba_w; // 1 001 nnn 011 001 mmm
+			
+			op_list[ 0110410 | nm_v ] = op_subx_m_b; // 1 001 nnn 100 001 mmm
+			op_list[ 0110510 | nm_v ] = op_subx_m_w; // 1 001 nnn 101 001 mmm
+			op_list[ 0110610 | nm_v ] = op_subx_m_l; // 1 001 nnn 110 001 mmm
+			op_list[ 0110710 | nm_v ] = op_suba_l; // 1 001 nnn 111 001 mmm
+
+			op_list[ 0130010 | nm_v ] = op_cmp_b;  // 1 011 nnn 000 001 mmm
+			op_list[ 0130110 | nm_v ] = op_cmp_w;  // 1 011 nnn 001 001 mmm
+			op_list[ 0130210 | nm_v ] = op_cmp_l;  // 1 011 nnn 010 001 mmm
+			op_list[ 0130310 | nm_v ] = op_cmpa_w; // 1 011 nnn 011 001 mmm
+
+			op_list[ 0130410 | nm_v ] = op_cmpm_b; // 1 011 nnn 100 001 mmm
+			op_list[ 0130510 | nm_v ] = op_cmpm_w; // 1 011 nnn 101 001 mmm
+			op_list[ 0130610 | nm_v ] = op_cmpm_l; // 1 011 nnn 110 001 mmm
+			op_list[ 0130710 | nm_v ] = op_cmpa_l; // 1 011 nnn 111 001 mmm
+
+			op_list[ 0140410 | nm_v ] = op_abcd_m;// 1 100 nnn 100 001 mmm 
+			op_list[ 0140510 | nm_v ] = op_exg_a; // 1 100 nnn 101 001 mmm 
+			op_list[ 0140610 | nm_v ] = op_exg_da;// 1 100 nnn 110 001 mmm 
+
+			op_list[ 0150110 | nm_v ] = op_add_w;  // 1 101 nnn 001 001 mmm
+			op_list[ 0150210 | nm_v ] = op_add_l;  // 1 101 nnn 010 001 mmm
+			op_list[ 0150310 | nm_v ] = op_adda_w; // 1 101 nnn 011 001 mmm
+			
+			op_list[ 0150410 | nm_v ] = op_addx_m_b; // 1 101 nnn 100 001 mmm
+			op_list[ 0150510 | nm_v ] = op_addx_m_w; // 1 101 nnn 101 001 mmm
+			op_list[ 0150610 | nm_v ] = op_addx_m_l; // 1 101 nnn 110 001 mmm
+			op_list[ 0150710 | nm_v ] = op_adda_l; // 1 101 nnn 111 001 mmm
+
+		}
+		
+		op_list[ 020710 | i ] = op_move_l; // 0 010 000 111 001 mmm
+		op_list[ 021710 | i ] = op_move_l; // 0 010 001 111 001 mmm
+		op_list[ 030710 | i ] = op_move_w; // 0 011 000 111 001 mmm
+		op_list[ 031710 | i ] = op_move_w; // 0 011 001 111 001 mmm
+
+		op_list[ 044010 | i ] = op_link_l; // 0 100 100 000 001 nnn
+		op_list[ 044020 | i ] = op_bkpt;   // 0 100 100 000 010 vvv
+		op_list[ 047120 | i ] = op_link_w; // 0 100 111 001 010 mmm		
+
+		for(int c = 0; c < 16; ++c ) {
+			op_list[ 050310 | c << 8 | i ] = op_dbcc; // 0 101 ccc c11 001 nnn
+		}
 
 
-template<class D>
-void op_cmp2_l(REGS* regs, uint16_t d) {
-	int wd = FETCH16();
-	int32_t v = regs->R[wd >> 12];
-	D ea(regs, d&7);
-	int32_t lw = read_l(ea.addr());
-	int32_t hi = read_l(ea.addr()+4);
-	regs->Z = ( v == lw || v == hi );
-	regs->C = ( v < lw || v > hi );
-	if( ((wd >> 11) & 1) && regs->C ) {
-		raise_ex(regs, 6);
-	}
-}
+		// memory
+		for(int j = 2; j < 8; ++j ) {
+			uint32_t ea_v = j << 3 | i;
+			op_list[ 000000 | ea_v ] = op_ori_b;  // 0 000 000 000 <EA>
+			op_list[ 000100 | ea_v ] = op_ori_w;  // 0 000 000 001 <EA>
+			op_list[ 000200 | ea_v ] = op_ori_l;  // 0 000 000 010 <EA>
+			
+			op_list[ 001000 | ea_v ] = op_andi_b; // 0 000 001 000 <EA>
+			op_list[ 001100 | ea_v ] = op_andi_w; // 0 000 001 001 <EA>
+			op_list[ 001200 | ea_v ] = op_andi_l; // 0 000 001 010 <EA>
+			
+			op_list[ 002000 | ea_v ] = op_subi_b; // 0 000 010 000 <EA>
+			op_list[ 002100 | ea_v ] = op_subi_w; // 0 000 010 001 <EA>
+			op_list[ 002200 | ea_v ] = op_subi_l; // 0 000 010 010 <EA>
+						
+			op_list[ 004000 | ea_v ] = op_btst_i_b; // 0 000 100 000 <EA>
+			op_list[ 004100 | ea_v ] = op_bchg_i_b; // 0 000 100 001 <EA>
+			op_list[ 004200 | ea_v ] = op_bclr_i_b; // 0 000 100 010 <EA>
+			op_list[ 004300 | ea_v ] = op_bset_i_b; // 0 000 100 011 <EA>
 
-template<class D>
-void op_cmpi_b(REGS* regs, uint16_t d) {
-	uint8_t imm = FETCH16();
-	D ea(regs, d&7);
-	op_subb(regs, ea.readb(), imm);
-}
+			op_list[ 005000 | ea_v ] = op_eori_b; // 0 000 101 000 <EA>
+			op_list[ 005100 | ea_v ] = op_eori_w; // 0 000 101 001 <EA>
+			op_list[ 005200 | ea_v ] = op_eori_l; // 0 000 101 010 <EA>
+			op_list[ 005300 | ea_v ] = op_cas_b;   // 0 000 101 011 <EA>
+			
+			op_list[ 006000 | ea_v ] = op_cmpi_b; // 0 000 110 000 <EA>
+			op_list[ 006100 | ea_v ] = op_cmpi_w; // 0 000 110 001 <EA>
+			op_list[ 006200 | ea_v ] = op_cmpi_l; // 0 000 110 010 <EA>
+			op_list[ 006300 | ea_v ] = op_cas_w;   // 0 000 110 011 <EA>
 
-template<class D>
-void op_cmpi_w(REGS* regs, uint16_t d) {
-	uint16_t imm = FETCH16();
-	D ea(regs, d&7);
-	op_subw(regs, ea.readw(), imm);
-}
+			op_list[ 007000 | ea_v ] = op_moves_b; // 0 000 111 000 <EA>
+			op_list[ 007100 | ea_v ] = op_moves_w; // 0 000 111 001 <EA>
+			op_list[ 007200 | ea_v ] = op_moves_l; // 0 000 111 010 <EA>
+			op_list[ 007300 | ea_v ] = op_cas_l;   // 0 000 111 011 <EA>
 
-template<class D>
-void op_cmpi_l(REGS* regs, uint16_t d) {
-	uint16_t imm = FETCH16();
-	D ea(regs, d&7);
-	op_subw(regs, ea.readl(), imm);
-}
+			op_list[ 040000 | ea_v ] = op_negx_b; // 0 100 000 000 <EA>
+			op_list[ 040100 | ea_v ] = op_negx_w; // 0 100 000 001 <EA>
+			op_list[ 040200 | ea_v ] = op_negx_l; // 0 100 000 010 <EA>
+			op_list[ 040300 | ea_v ] = op_move_from_sr; // 0 100 000 011 <EA>
 
+			op_list[ 041000 | ea_v ] = op_clr_b;  // 0 100 001 000 <EA>
+			op_list[ 041100 | ea_v ] = op_clr_w;  // 0 100 001 001 <EA>
+			op_list[ 041200 | ea_v ] = op_clr_l;  // 0 100 001 010 <EA>
+			op_list[ 041300 | ea_v ] = op_move_from_cr; // 0 100 001 011 <EA>
 
-template<class D>
-void op_cas_b(REGS* regs, uint16_t d) {
-	uint16_t nw = FETCH16();
-	if( d & 077 == 074 ) {
-		// CAS2
-		uint16_t nw2 = FETCH16();
-		int s1 = (nw >> 12) & 15;
-		int u1 = (nw >> 6) & 7;
-		int c1 = nw & 7;
-		int s2 = (nw2 >> 12) & 15;
-		int u2 = (nw2 >> 6) & 7;
-		int c2 = nw2 & 7;
-		op_subb(regs, regs->R[s1], regs->D[c1]);
-		if( regs.Z ) {
-			op_subb(regs, regs->R[s2], regs->D[c2]);
-			if( regs.Z ) {
-				regs->R[s1] = regs->D[u1];
-				regs->R[s2] = regs->D[
-				return;
+			op_list[ 042000 | ea_v ] = op_neg_b; // 0 100 010 000 <EA>
+			op_list[ 042100 | ea_v ] = op_neg_w; // 0 100 010 001 <EA>
+			op_list[ 042200 | ea_v ] = op_neg_l; // 0 100 010 010 <EA>
+			op_list[ 042300 | ea_v ] = op_move_to_cr; // 0 100 010 011 <EA>
+
+			op_list[ 043000 | ea_v ] = op_not_b; // 0 100 011 000 <EA>
+			op_list[ 043100 | ea_v ] = op_not_w; // 0 100 011 001 <EA>
+			op_list[ 043200 | ea_v ] = op_not_l; // 0 100 011 010 <EA>
+			op_list[ 043300 | ea_v ] = op_move_to_sr; // 0 100 011 011 <EA>
+
+			op_list[ 044000 | ea_v ] = op_nbcd_m; // 0 100 100 000 <EA>
+
+			op_list[ 045000 | ea_v ] = op_tst_b; // 0 100 101 000 <EA>
+			op_list[ 045100 | ea_v ] = op_tst_w; // 0 100 101 001 <EA>
+			op_list[ 045200 | ea_v ] = op_tst_l; // 0 100 101 010 <EA>
+			op_list[ 045300 | ea_v ] = op_tas; // 0 100 101 011 <EA>
+
+			op_list[ 046000 | ea_v ] = op_mul_l; // 0 100 110 000 <EA>
+
+			if( j == 2 || j >= 5 ) {
+				op_list[ 000300 | ea_v ] = op_cmp2_b; // 0 000 000 011 <EA>
+				op_list[ 001300 | ea_v ] = op_cmp2_w; // 0 000 001 011 <EA>
+				op_list[ 002300 | ea_v ] = op_cmp2_l; // 0 000 010 011 <EA>
+				op_list[ 003300 | ea_v ] = op_callm;  // 0 000 010 011 <EA>
+				op_list[ 044100 | ea_v ] = op_pea;	   // 0 100 100 001 <EA> 
+				op_list[ 044200 | ea_v ] = op_movem_w_to; // 0 100 100 010 <EA> 
+				op_list[ 044300 | ea_v ] = op_movem_l_to; // 0 100 100 011 <EA> 
+				op_list[ 044200 | ea_v ] = op_movem_w_from; // 0 100 110 010 <EA>
+				op_list[ 044300 | ea_v ] = op_movem_l_from; // 0 100 110 011 <EA>
+				op_list[ 047200 | ea_v ] = op_jsr; // 0 100 111 010 <EA>
+				op_list[ 047300 | ea_v ] = op_jmp; // 0 100 111 010 <EA>
+				for( int k = 0; k < 8; ++k ) {
+					// 0 100 kkk 111 <ea> 
+					op_list[ 040700 | k << 9 | ea_v ] = op_lea; 
+				}
+			}
+			for( int k = 0; k < 8; ++k ) {
+				int pm = k << 9 | ea_v;
+				op_list[ 040400 | pm ] = op_chk_l;    // 0 100 kkk 100 <EA>
+				op_list[ 040600 | pm ] = op_chk_w;	  // 0 100 kkk 110 <EA>
+				op_list[ 000400 | pm ] = op_btst_d_b; // 0 000 nnn 100 <EA>
+				op_list[ 000500 | pm ] = op_bchg_d_b; // 0 000 nnn 101 <EA>
+				op_list[ 000600 | pm ] = op_bclr_d_b; // 0 000 nnn 110 <EA>
+				op_list[ 000700 | pm ] = op_bset_d_b; // 0 000 nnn 111 <EA>
+
+				op_list[ 050000 | pm ] = op_addq_b;	  // 0 101 xxx 000 <EA>
+				op_list[ 050100 | pm ] = op_addq_w;	  // 0 101 xxx 001 <EA>
+				op_list[ 050200 | pm ] = op_addq_l;	  // 0 101 xxx 010 <EA>
+
+				op_list[ 050400 | pm ] = op_subq_b;	// 0 101 xxx 100 <EA>
+				op_list[ 050500 | pm ] = op_subq_w;	// 0 101 xxx 101 <EA>
+				op_list[ 050600 | pm ] = op_subq_l;	// 0 101 xxx 110 <EA>
+
+				op_list[ 0100000 | pm ] = op_or_b;   // 1 000 nnn 000 <EA>
+				op_list[ 0100100 | pm ] = op_or_w;   // 1 000 nnn 001 <EA>
+				op_list[ 0100200 | pm ] = op_or_l;   // 1 000 nnn 010 <EA>
+				op_list[ 0100300 | pm ] = op_divu_w; // 1 000 nnn 011 <EA>
+
+				op_list[ 0100400 | pm ] = op_or_m_b; // 1 000 nnn 100 <EA>
+				op_list[ 0100500 | pm ] = op_or_m_w; // 1 000 nnn 101 <EA>
+				op_list[ 0100600 | pm ] = op_or_m_l; // 1 000 nnn 110 <EA>
+				op_list[ 0100700 | pm ] = op_divs_w; // 1 000 nnn 111 <EA>
+
+				op_list[ 0110000 | pm ] = op_sub_b;  // 1 001 nnn 000 <EA>
+				op_list[ 0110100 | pm ] = op_sub_w;  // 1 001 nnn 001 <EA>
+				op_list[ 0110200 | pm ] = op_sub_l;  // 1 001 nnn 010 <EA>
+				op_list[ 0110300 | pm ] = op_suba_w; // 1 001 nnn 011 <EA>
+
+				op_list[ 0110400 | pm ] = op_sub_m_b;// 1 001 nnn 100 <EA>
+				op_list[ 0110500 | pm ] = op_sub_m_w;// 1 001 nnn 101 <EA>
+				op_list[ 0110600 | pm ] = op_sub_m_l;// 1 001 nnn 110 <EA>
+				op_list[ 0110700 | pm ] = op_suba_w; // 1 001 nnn 111 <EA>
+
+				op_list[ 0130000 | pm ] = op_cmp_b;  // 1 011 nnn 000 <EA>
+				op_list[ 0130100 | pm ] = op_cmp_w;  // 1 011 nnn 001 <EA>
+				op_list[ 0130200 | pm ] = op_cmp_l;  // 1 011 nnn 010 <EA>
+				op_list[ 0130300 | pm ] = op_cmpa_w; // 1 011 nnn 011 <EA>
+				
+				op_list[ 0130400 | pm ] = op_eor_b;  // 1 011 nnn 100 <EA>
+				op_list[ 0130500 | pm ] = op_eor_w;  // 1 011 nnn 101 <EA>
+				op_list[ 0130600 | pm ] = op_eor_l;  // 1 011 nnn 110 <EA>
+				op_list[ 0130700 | pm ] = op_cmpa_l; // 1 011 nnn 111 <EA>
+
+				op_list[ 0140000 | pm ] = op_and_b;  // 1 100 nnn 000 <EA>
+				op_list[ 0140100 | pm ] = op_and_w;  // 1 100 nnn 001 <EA>
+				op_list[ 0140200 | pm ] = op_and_l;  // 1 100 nnn 010 <EA>
+				op_list[ 0140300 | pm ] = op_mulu_w; // 1 100 nnn 011 <EA>
+			
+				op_list[ 0140400 | pm ] = op_and_m_b;// 1 100 nnn 100 <EA>
+				op_list[ 0140500 | pm ] = op_and_m_w;// 1 100 nnn 101 <EA>
+				op_list[ 0140600 | pm ] = op_and_m_l;// 1 100 nnn 110 <EA>
+				op_list[ 0140700 | pm ] = op_muls_w; // 1 100 nnn 111 <EA>
+
+				op_list[ 0150000 | pm ] = op_add_b;  // 1 101 nnn 000 <EA>
+				op_list[ 0150100 | pm ] = op_add_w;  // 1 101 nnn 001 <EA>
+				op_list[ 0150200 | pm ] = op_add_l;  // 1 101 nnn 010 <EA>
+				op_list[ 0150300 | pm ] = op_adda_w; // 1 101 nnn 011 <EA>
+
+				op_list[ 0150400 | pm ] = op_add_m_b;// 1 101 nnn 100 <EA>
+				op_list[ 0150500 | pm ] = op_add_m_w;// 1 101 nnn 101 <EA>
+				op_list[ 0150600 | pm ] = op_add_m_l;// 1 101 nnn 110 <EA>
+				op_list[ 0150700 | pm ] = op_adda_w; // 1 101 nnn 111 <EA>
+
+				for( int l = 0; l < 8; ++l ) {
+					if( l != 1 ) {
+						uint32_t ea2 =  ea_v | (k << 9) | (l << 6);
+						op_list[ 010000 | ea2 ] = op_move_b; // 0 001 nnn lll <EA>
+						op_list[ 020000 | ea2 ] = op_move_l; // 0 010 nnn lll <EA>
+						op_list[ 030000 | ea2 ] = op_move_w; // 0 011 nnn lll <EA>
+					} else {
+						uint32_t ea2 =  ea_v | (k << 9);
+						op_list[ 020100 | ea2 ] = op_movea_l; // 0 010 nnn 001 <EA>
+						op_list[ 030100 | ea2 ] = op_movea_w; // 0 011 nnn 001 <EA>
+					}
+				}
+			}
+			for( int c = 0; c < 16; ++c ) {
+				// 0 101 CCC C11 <EA>
+				op_list[ 050300 | c << 8 | ea_v ] = op_scc;
 			}
 		}
-	} else {
-		D ea(regs, d&7);
-		int u = (nw >> 6) & 7;
-		int c = nw & 7;
-		uint8_t v = ea.readb();
-		op_subb(regs, v, regs->D[c]);
-		if( regs.Z ) {
-			ea.writeb(regs->D[u]);
-		} else {
-			refs->D[c] = v;
+
+	}
+	for(int i = 0; i <16; ++i ) {
+		op_list[ 04710 | i ] = op_trap;
+		op_list[ 050372 | i << 8 ] = op_trapcc_w;
+		op_list[ 050373 | i << 8 ] = op_trapcc_l;
+		op_list[ 050374 | i << 8 ] = op_trapcc;
+	}
+	for(int i = 0; i < 8; ++i ) {
+		op_list[ 044240 | i ] = op_movem_w_to_decr; // 0 100 100 010 100 nnn 
+		op_list[ 044340 | i ] = op_movem_l_to_decr; // 0 100 100 011 100 nnn 
+		op_list[ 044230 | i ] = op_movem_w_from_incr; // 0 100 110 010 011 nnn 
+		op_list[ 044330 | i ] = op_movem_l_from_incr; // 0 100 110 011 011 nnn
+
+		op_list[ 047130 | i ] = op_unlk; // 0 100 111 001 011 mmm
+		op_list[ 047140 | i ] = op_move_to_usp; // 0 100 111 001 100 mmm
+		op_list[ 047150 | i ] = op_move_from_usp; // 0 100 111 001 101 mmm
+
+		for(int j = 0; j < 8; ++j ) {
+			int opx = i << 9 | j;
+			op_list[ 0160000 | opx ] = op_asr_b_i; // 1 110 mmm 000 000 yyy
+			op_list[ 0160010 | opx ] = op_lsr_b_i; // 1 110 mmm 000 001 yyy
+			op_list[ 0160010 | opx ] = op_roxr_b_i;// 1 110 mmm 000 01001 yyy
+		}
+	}
+	op_list[ 000074 ] = op_ori_ccr;  // 0 000 000 000 111 011
+	op_list[ 000174 ] = op_ori_sr;   // 0 000 000 001 111 011
+	op_list[ 001074 ] = op_andi_ccr; // 0 000 001 000 111 011
+	op_list[ 001174 ] = op_andi_sr;  // 0 000 001 001 111 011
+	op_list[ 005074 ] = op_eori_ccr; // 0 000 101 000 111 011
+	op_list[ 005174 ] = op_eori_sr;  // 0 000 101 001 111 011
+
+	op_list[ 006374 ] = op_cas2_w;   // 0 000 110 011 111 011
+	op_list[ 007374 ] = op_cas2_l;   // 0 000 111 011 111 011
+
+	op_list[ 047160 ] = op_reset;
+	op_list[ 047161 ] = op_nop;
+	op_list[ 047162 ] = op_stop;
+	op_list[ 047163 ] = op_rte;
+	op_list[ 047164 ] = op_rtd;
+	op_list[ 047165 ] = op_rts;
+	op_list[ 047166 ] = op_trapv;
+	op_list[ 047167 ] = op_rtr;
+	op_list[ 047172 ] = op_movec_to;
+	op_list[ 047173 ] = op_movec_from;
+	for(int k = 0; k < 0xff; ++k ) {
+		op_list[ 060000 | k ] = op_bra;
+		op_list[ 060400 | k ] = op_bsr;
+		for( int c = 2; c < 16; ++c ) {
+			op_list[060000 |c << 8 | k ] = op_bcc;
+		}
+		for(int i = 0; i < 8; ++i ) {
+			op_list[070000 | i << 9 | k ] = op_moveq;
 		}
 	}
 }
-
-bool quit_program;
-extern REGS regs;
-extern uint32_t ROMBaseMac;
-using op_type = void (*)(REGS*, uint16_t);
-op_type op_list[8192] = {
-	// 0000 0000 00 xxx
-	op_ori_b<EA_DN>,
-	ill_op,
-	op_ori_b<EA_MEM>,
-	op_ori_b<EA_INCR<1>>,
-	op_ori_b<EA_DECR<1>>,
-	op_ori_b<EA_D16>,
-	op_ori_b<EA_EX>,
-	op_ori_b<EA_EX2_RW>,
-
-	// 0000 0000 01 xxx
-	op_ori_w<EA_DN>,
-	ill_op,
-	op_ori_w<EA_MEM>,
-	op_ori_w<EA_INCR<2>>,
-	op_ori_w<EA_DECR<2>>,
-	op_ori_w<EA_D16>,
-	op_ori_w<EA_EX>,
-	op_ori_w<EA_EX2_RW>,
-	
-	// 0000 0000 10 xxx
-	op_ori_l<EA_DN>,
-	ill_op,
-	op_ori_l<EA_MEM>,
-	op_ori_l<EA_INCR<4>>,
-	op_ori_l<EA_DECR<4>>,
-	op_ori_l<EA_D16>,
-	op_ori_l<EA_EX>,
-	op_ori_l<EA_EX2_RW>,
-
-	// 0000 0000 11 xxx
-	ill_op,
-	ill_op,	
-	op_cmp2_b<EA_MEM>,
-	ill_op,
-	ill_op,
-	op_cmp2_b<EA_D16>,
-	op_cmp2_b<EA_EX>,
-	op_cmp2_b<EA_EX2_C>,
-
-	// 0000 0001 00 xxx
-	btst_d_dn,
-	ill_op,
-	btst_d_b<EA_MEM>,
-	btst_d_b<EA_INCR<1>>,
-	btst_d_b<EA_DECR<1>>,
-	btst_d_b<EA_D16>,
-	btst_d_b<EA_EX>,
-	btst_d_b<EA_EX2_R_B>,
-
-	// 0000 0001 01 xxx
-	bchg_d_dn,
-	ill_op,
-	bchg_d_b<EA_MEM>,
-	bchg_d_b<EA_INCR<1>>,
-	bchg_d_b<EA_DECR<1>>,
-	bchg_d_b<EA_D16>,
-	bchg_d_b<EA_EX>,
-	bchg_d_b<EA_EX2_RW>,
-
-	// 0000 0001 10 xxx
-	bclr_d_dn,
-	ill_op,
-	bclr_d_b<EA_MEM>,
-	bclr_d_b<EA_INCR<1>>,
-	bclr_d_b<EA_DECR<1>>,
-	bclr_d_b<EA_D16>,
-	bclr_d_b<EA_EX>,
-	bclr_d_b<EA_EX2_RW>,
-
-	// 0000 0001 11 xxx
-	bset_d_dn,
-	ill_op,
-	bset_d_b<EA_MEM>,
-	bset_d_b<EA_INCR<1>>,
-	bset_d_b<EA_DECR<1>>,
-	bset_d_b<EA_D16>,
-	bset_d_b<EA_EX>,
-	bset_d_b<EA_EX2_RW>,
-
-	// 0000 0010 00 xxx
-	op_andi_b<EA_DN>,
-	ill_op,
-	op_andi_b<EA_MEM>,
-	op_andi_b<EA_INCR<1>>,
-	op_andi_b<EA_DECR<1>>,
-	op_andi_b<EA_D16>,
-	op_andi_b<EA_EX>,
-	op_andi_b<EA_EX2_RW>,
-
-	// 0000 0010 01 xxx
-	op_andi_w<EA_DN>,
-	ill_op,
-	op_andi_w<EA_MEM>,
-	op_andi_w<EA_INCR<2>>,
-	op_andi_w<EA_DECR<2>>,
-	op_andi_w<EA_D16>,
-	op_andi_w<EA_EX>,
-	op_andi_w<EA_EX2_RW>,
-	
-	// 0000 0010 10 xxx
-	op_andi_l<EA_DN>,
-	ill_op,
-	op_andi_l<EA_MEM>,
-	op_andi_l<EA_INCR<4>>,
-	op_andi_l<EA_DECR<4>>,
-	op_andi_l<EA_D16>,
-	op_andi_l<EA_EX>,
-	op_andi_l<EA_EX2_RW>,
-
-	// 0000 0010 11 xxx
-	ill_op,
-	ill_op,
-	op_cmp2_w<EA_MEM>,
-	ill_op,
-	ill_op,
-	op_cmp2_w<EA_D16>,
-	op_cmp2_w<EA_EX>,
-	op_cmp2_w<EA_EX2_C>,
-
-	// 0000 0011 00 xxx
-	btst_d_dn,
-	ill_op,
-	btst_d_b<EA_MEM>,
-	btst_d_b<EA_INCR<1>>,
-	btst_d_b<EA_DECR<1>>,
-	btst_d_b<EA_D16>,
-	btst_d_b<EA_EX>,
-	btst_d_b<EA_EX2_R_B>,
-
-	// 0000 0011 01 xxx
-	bchg_d_dn,
-	ill_op,
-	bchg_d_b<EA_MEM>,
-	bchg_d_b<EA_INCR<1>>,
-	bchg_d_b<EA_DECR<1>>,
-	bchg_d_b<EA_D16>,
-	bchg_d_b<EA_EX>,
-	bchg_d_b<EA_EX2_RW>,
-
-	// 0000 0011 10 xxx
-	bclr_d_dn,
-	ill_op,	
-	bclr_d_b<EA_MEM>,
-	bclr_d_b<EA_INCR<1>>,
-	bclr_d_b<EA_DECR<1>>,
-	bclr_d_b<EA_D16>,
-	bclr_d_b<EA_EX>,
-	bclr_d_b<EA_EX2_RW>,
-
-	// 0000 0011 11 xxx
-	bset_d_dn,
-	ill_op,
-	bset_d_b<EA_MEM>,
-	bset_d_b<EA_INCR<1>>,
-	bset_d_b<EA_DECR<1>>,
-	bset_d_b<EA_D16>,
-	bset_d_b<EA_EX>,
-	bset_d_b<EA_EX2_RW>,
-
-	// 0000 0100 00 xxx
-	op_subi_b<EA_DN>,
-	ill_op,
-	op_subi_b<EA_MEM>,
-	op_subi_b<EA_INCR<1>>,
-	op_subi_b<EA_DECR<1>>,
-	op_subi_b<EA_D16>,
-	op_subi_b<EA_EX>,
-	op_subi_b<EA_EX2_RW>,
-
-	// 0000 0100 01 xxx
-	op_subi_w<EA_DN>,
-	ill_op,
-	op_subi_w<EA_MEM>,
-	op_subi_w<EA_INCR<2>>,
-	op_subi_w<EA_DECR<2>>,
-	op_subi_w<EA_D16>,
-	op_subi_w<EA_EX>,
-	op_subi_w<EA_EX2_RW>,
-	
-	// 0000 0100 10 xxx
-	op_subi_l<EA_DN>,
-	ill_op,
-	op_subi_l<EA_MEM>,
-	op_subi_l<EA_INCR<1>>,
-	op_subi_l<EA_DECR<1>>,
-	op_subi_l<EA_D16>,
-	op_subi_l<EA_EX>,
-	op_subi_l<EA_EX2_RW>,
-
-	// 0000 0100 11 xxx
-	ill_op,
-	ill_op,
-	op_cmp2_l<EA_MEM>,
-	ill_op,
-	ill_op,
-	op_cmp2_l<EA_D16>,
-	op_cmp2_l<EA_EX>,
-	op_cmp2_l<EA_EX2_C>,
-	
-	// 0000 0101 00 xxx
-	btst_d_dn,
-	ill_op,
-	btst_d_b<EA_MEM>,
-	btst_d_b<EA_INCR<1>>,
-	btst_d_b<EA_DECR<1>>,
-	btst_d_b<EA_D16>,
-	btst_d_b<EA_EX>,
-	btst_d_b<EA_EX2_R_B>,
-
-	// 0000 0101 01 xxx
-	bchg_d_dn,
-	ill_op,
-	bchg_d_b<EA_MEM>,
-	bchg_d_b<EA_INCR<1>>,
-	bchg_d_b<EA_DECR<1>>,
-	bchg_d_b<EA_D16>,
-	bchg_d_b<EA_EX>,
-	bchg_d_b<EA_EX2_RW>,
-
-	// 0000 0101 10 xxx
-	bclr_d_dn,
-	ill_op,
-	bclr_d_b<EA_MEM>,
-	bclr_d_b<EA_INCR<1>>,
-	bclr_d_b<EA_DECR<1>>,
-	bclr_d_b<EA_D16>,
-	bclr_d_b<EA_EX>,
-	bclr_d_b<EA_EX2_RW>,
-
-	// 0000 0101 11 xxx
-	bset_d_dn,
-	ill_op,
-	bset_d_b<EA_MEM>,
-	bset_d_b<EA_INCR<1>>,
-	bset_d_b<EA_DECR<1>>,
-	bset_d_b<EA_D16>,
-	bset_d_b<EA_EX>,
-	bset_d_b<EA_EX2_RW>,
-
-	// 0000 0110 00 xxx
-	op_addi_b<EA_DN>,
-	ill_op,
-	op_addi_b<EA_MEM>,
-	op_addi_b<EA_INCR<1>>,
-	op_addi_b<EA_DECR<1>>,
-	op_addi_b<EA_D16>,
-	op_addi_b<EA_EX>,
-	op_addi_b<EA_EX2_RW>,
-
-	// 0000 0110 01 xxx
-	op_addi_w<EA_DN>,
-	ill_op,
-	op_addi_w<EA_MEM>,
-	op_addi_w<EA_INCR<2>>,
-	op_addi_w<EA_DECR<2>>,
-	op_addi_w<EA_D16>,
-	op_addi_w<EA_EX>,
-	op_addi_w<EA_EX2_RW>,
-	
-	// 0000 0110 10 xxx
-	op_addi_l<EA_DN>,
-	ill_op,
-	op_addi_l<EA_MEM>,
-	op_addi_l<EA_INCR<4>>,
-	op_addi_l<EA_DECR<4>>,
-	op_addi_l<EA_D16>,
-	op_addi_l<EA_EX>,
-	op_addi_l<EA_EX2_RW>,
-
-	// 0000 0110 11 xxx
-	rtm_d,
-	rtm_a,
-	op_callm<EA_MEM>,
-	ill_op,
-	ill_op,
-	op_callm<EA_D16>,
-	op_callm<EA_EX>,
-	op_callm<EA_EX2_C>,
-
-	// 0000 0111 00 xxx
-	btst_d_dn,
-	ill_op,
-	btst_d_b<EA_MEM>,
-	btst_d_b<EA_INCR<1>>,
-	btst_d_b<EA_DECR<1>>,
-	btst_d_b<EA_D16>,
-	btst_d_b<EA_EX>,
-	btst_d_b<EA_EX2_R_B>,
-
-	// 0000 0111 01 xxx
-	bchg_d_dn,
-	ill_op,
-	bchg_d_b<EA_MEM>,
-	bchg_d_b<EA_INCR<1>>,
-	bchg_d_b<EA_DECR<1>>,
-	bchg_d_b<EA_D16>,
-	bchg_d_b<EA_EX>,
-	bchg_d_b<EA_EX2_RW>,
-
-	// 0000 0111 10 xxx
-	bclr_d_dn,
-	ill_op,
-	bclr_d_b<EA_MEM>,
-	bclr_d_b<EA_INCR<1>>,
-	bclr_d_b<EA_DECR<1>>,
-	bclr_d_b<EA_D16>,
-	bclr_d_b<EA_EX>,
-	bclr_d_b<EA_EX2_RW>,
-
-	// 0000 0111 11 xxx
-	bset_d_dn,
-	ill_op,
-	bset_d_b<EA_MEM>,
-	bset_d_b<EA_INCR<1>>,
-	bset_d_b<EA_DECR<1>>,
-	bset_d_b<EA_D16>,
-	bset_d_b<EA_EX>,
-	bset_d_b<EA_EX2_RW>,
-
-	// 0000 1000 00 xxx
-	btst_i_d,
-	ill_op,
-	btst_i_b<EA_MEM>,
-	btst_i_b<EA_INCR<1>>,
-	btst_i_b<EA_DECR<1>>,
-	btst_i_b<EA_D16>,
-	btst_i_b<EA_EX>,
-	btst_i_b<EA_EX2_R_B>,
-
-	// 0000 1000 01 xxx
-	bchg_i_d,
-	ill_op,
-	bchg_i_b<EA_MEM>,
-	bchg_i_b<EA_INCR<1>>,
-	bchg_i_b<EA_DECR<1>>,
-	bchg_i_b<EA_D16>,
-	bchg_i_b<EA_EX>,
-	bchg_i_b<EA_EX2_RW>,
-
-	// 0000 1000 10 xxx
-	bclr_i_d,
-	ill_op,
-	bclr_i_b<EA_MEM>,
-	bclr_i_b<EA_INCR<1>>,
-	bclr_i_b<EA_DECR<1>>,
-	bclr_i_b<EA_D16>,
-	bclr_i_b<EA_EX>,
-	bclr_i_b<EA_EX2_RW>,
-
-	// 0000 1000 11 xxx
-	bset_i_d,
-	ill_op,
-	bset_i_b<EA_MEM>,
-	bset_i_b<EA_INCR<1>>,
-	bset_i_b<EA_DECR<1>>,
-	bset_i_b<EA_D16>,
-	bset_i_b<EA_EX>,
-	bset_i_b<EA_EX2_RW>,
-
-	// 0000 1001 00 xxx
-	btst_d_dn,
-	ill_op,
-	btst_d_b<EA_MEM>,
-	btst_d_b<EA_INCR<1>>,
-	btst_d_b<EA_DECR<1>>,
-	btst_d_b<EA_D16>,
-	btst_d_b<EA_EX>,
-	btst_d_b<EA_EX2_R_B>,
-
-	// 0000 1001 01 xxx
-	bchg_d_dn,
-	ill_op,
-	bchg_d_b<EA_MEM>,
-	bchg_d_b<EA_INCR<1>>,
-	bchg_d_b<EA_DECR<1>>,
-	bchg_d_b<EA_D16>,
-	bchg_d_b<EA_EX>,
-	bchg_d_b<EA_EX2_RW>,
-
-	// 0000 1001 10 xxx
-	bclr_d_dn,
-	ill_op,
-	bclr_d_b<EA_MEM>,
-	bclr_d_b<EA_INCR<1>>,
-	bclr_d_b<EA_DECR<1>>,
-	bclr_d_b<EA_D16>,
-	bclr_d_b<EA_EX>,
-	bclr_d_b<EA_EX2_RW>,
-
-	// 0000 1001 11 xxx
-	bset_d_dn,
-	ill_op,
-	bset_d_b<EA_MEM>,
-	bset_d_b<EA_INCR<1>>,
-	bset_d_b<EA_DECR<1>>,
-	bset_d_b<EA_D16>,
-	bset_d_b<EA_EX>,
-	bset_d_b<EA_EX2_RW>,
-
-	// 0000 1010 00 xxx
-	op_eori_b<EA_DN>,
-	ill_op,
-	op_eori_b<EA_MEM>,
-	op_eori_b<EA_INCR<1>>,
-	op_eori_b<EA_DECR<1>>,
-	op_eori_b<EA_D16>,
-	op_eori_b<EA_EX>,
-	op_eori_b<EA_EX2_RW>,
-
-	// 0000 1010 01 xxx
-	op_eori_w<EA_DN>,
-	ill_op,
-	op_eori_w<EA_MEM>,
-	op_eori_w<EA_INCR<2>>,
-	op_eori_w<EA_DECR<2>>,
-	op_eori_w<EA_D16>,
-	op_eori_w<EA_EX>,
-	op_eori_w<EA_EX2_RW>,
-	
-	// 0000 1010 10 xxx
-	op_eori_l<EA_DN>,
-	ill_op,
-	op_eori_l<EA_MEM>,
-	op_eori_l<EA_INCR<4>>,
-	op_eori_l<EA_DECR<4>>,
-	op_eori_l<EA_D16>,
-	op_eori_l<EA_EX>,
-	op_eori_l<EA_EX2_RW>,
-
-	// 0000 1010 11 xxx
-	ill_op,
-	ill_op,
-	op_cas_b<EA_MEM>,
-	op_cas_b<EA_INCR<1>>,
-	op_cas_b<EA_DECR<1>>,
-	op_cas_b<EA_D16>,
-	op_cas_b<EA_EX>,
-	op_cas_b<EA_EX2_RW>,
-
-	// 0000 1011 00 xxx
-	btst_d_dn,
-	ill_op,
-	btst_d_b<EA_MEM>,
-	btst_d_b<EA_INCR<1>>,
-	btst_d_b<EA_DECR<1>>,
-	btst_d_b<EA_D16>,
-	btst_d_b<EA_EX>,
-	btst_d_b<EA_EX2_R_B>,
-
-	// 0000 1011 01 xxx
-	bchg_d_dn,
-	ill_op,
-	bchg_d_b<EA_MEM>,
-	bchg_d_b<EA_INCR<1>>,
-	bchg_d_b<EA_DECR<1>>,
-	bchg_d_b<EA_D16>,
-	bchg_d_b<EA_EX>,
-	bchg_d_b<EA_EX2_RW>,
-
-	// 0000 1011 10 xxx
-	bclr_d_dn,
-	ill_op,
-	bclr_d_b<EA_MEM>,
-	bclr_d_b<EA_INCR<1>>,
-	bclr_d_b<EA_DECR<1>>,
-	bclr_d_b<EA_D16>,
-	bclr_d_b<EA_EX>,
-	bclr_d_b<EA_EX2_RW>,
-
-	// 0000 1011 11 xxx
-	bset_d_dn,
-	ill_op,
-	bset_d_b<EA_MEM>,
-	bset_d_b<EA_INCR<1>>,
-	bset_d_b<EA_DECR<1>>,
-	bset_d_b<EA_D16>,
-	bset_d_b<EA_EX>,
-	bset_d_b<EA_EX2_RW>,
-
-	// 0000 1100 00 xxx
-	op_cmpi_b<EA_DN>,
-	ill_op,
-	op_cmpi_b<EA_MEM>,
-	op_cmpi_b<EA_INCR<1>>,
-	op_cmpi_b<EA_DECR<1>>,
-	op_cmpi_b<EA_D16>,
-	op_cmpi_b<EA_EX>,
-	op_cmpi_b<EA_EX2_R_B>,
-
-	// 0000 1100 01 xxx
-	op_cmpi_w<EA_DN>,
-	ill_op,
-	op_cmpi_w<EA_MEM>,
-	op_cmpi_w<EA_INCR<2>>,
-	op_cmpi_w<EA_DECR<2>>,
-	op_cmpi_w<EA_D16>,
-	op_cmpi_w<EA_EX>,
-	op_cmpi_w<EA_EX2_R_W>,
-
-	// 0000 1100 10 xxx
-	op_cmpi_l<EA_DN>,
-	ill_op,
-	op_cmpi_l<EA_MEM>,
-	op_cmpi_l<EA_INCR<4>>,
-	op_cmpi_l<EA_DECR<4>>,
-	op_cmpi_l<EA_D16>,
-	op_cmpi_l<EA_EX>,
-	op_cmpi_l<EA_EX2_R_L>,
-
-	// 0000 1100 11 xxx
-	ill_op,
-	ill_op,
-	ill_op,
-	ill_op,
-	ill_op,
-	ill_op,
-	ill_op,
-	ill_op,
-
-};
-void m68k_reset (REGS* regs);
-void m68k_execute() {
-	m68k_reset(&regs);
-	while(! quit_program) {
-		uint16_t op = fetch_w(regs.PC);
-		op_list[op>>3](&regs, op);
-	}
-}
-void m68k_reset (REGS* regs)
+void CPU::reset ()
 {
-	regs->ISP = regs->A[7] = 0x2000;
-	regs->PC = ROMBaseMac + 0x2a;
-	regs->S = true;
-	regs->M = false;
-	regs->T = 0;
-	regs->Z = false;
-	regs->X = false;
-	regs->C = false;
-	regs->V = false;
-	regs->N = false;
-//	SPCFLAGS_INIT( 0 );
-//	regs.intmask = 7;
-//	regs.vbr = regs.sfc = regs.dfc = 0;
+	ISP = A[7] = 0x2000;
+	PC = ROMBaseMac + 0x2a;
+	S = true;
+	M = false;
+	T = 0;
+	Z = false;
+	X = false;
+	C = false;
+	V = false;
+	N = false;
+	IX = 7;
+	VBR = SFC = DFC = 0;
 //	fpu_reset();
 
+}
+
+void CPU::irq(int level) {
+	if( intmask > level )
+		return;
+	uint16_t sr = get_sr(this);
+	S =true;
+	T = 0;
+	IX = level;
 }

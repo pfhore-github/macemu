@@ -1,5 +1,6 @@
 #pragma once
 #include <stdint.h>
+#include "mmu.hpp"
 #include "SDL_endian.h"
 struct FPU_EX {
 	bool INEX1;
@@ -33,7 +34,7 @@ struct TTC {
 	} regs;
 };
 
-struct FPU_REGS {
+struct FPU {
 	long double FP[8];
 	struct {
 		enum { NEAREST = 0, ZERO, M_INF, P_INF } RND;
@@ -56,7 +57,8 @@ struct FPU_REGS {
 	uint32_t FPIAR;
 };
 
-struct REGS {
+struct CPU {
+	// register
 	union {
 		struct {
 			uint32_t D[8];
@@ -66,6 +68,7 @@ struct REGS {
 	};			
 	uint32_t USP;
 	uint32_t PC;
+	uint32_t NPC;
 	bool X;
 	bool N;
 	bool Z;
@@ -77,12 +80,61 @@ struct REGS {
 	bool M;
 	bool S;
 	uint8_t T;
-	uint32_t BVR;
+	uint32_t VBR;
 	uint32_t SFC;
 	uint32_t DFC;
 	uint16_t ACUSR;
 	TTC ttc;
-	FPU_REGS fpu;
+	FPU* fpu;
+	MMU* mmu;
+	uint8_t intmask;
+	void setD_B(int n, uint8_t v) {
+		D[n] = (D[n] &~ 0xff) | v;
+	}
+	void setD_W(int n, uint16_t v) {
+		D[n] = (D[n] &~ 0xffff) | v;
+	}
+	void setA_W(int n, int16_t v) {
+		A[n] = v;
+	}
+	int16_t getA_W(int n) { return (int16_t)A[n]; }
+	
+	void push16(uint16_t v) {
+		mmu->write_w(A[7] -= 2, v);
+	}
+	
+	void push32(uint32_t v) {
+		mmu->write_l(A[7] -= 4, v);
+	}
+	
+	uint16_t pop16() {
+		uint16_t v = mmu->read_w(A[7]);
+		A[7] += 2;
+		return v;
+	}
+
+	uint32_t pop32() {
+		uint32_t v = mmu->read_l(A[7]);
+		A[7] += 4;
+		return v;
+	}
+
+	uint16_t fetch_w() {
+		uint16_t op = READ16(mmu->to_real(PC, 2, false, 2 | ( S << 2 ) ));
+		PC += 2;
+		return op;
+	}
+	uint32_t fetch_l() {
+		uint32_t op = READ32(mmu->to_real(PC, 4, false, 2 | ( S << 2 ) ));
+		PC += 4;
+		return op;
+	}
+	uint32_t ea_ax(uint32_t ax);
+	void reset();
+	void init();
+	void irq(int level);
 };
 
-
+inline int MMU::mode(int c, bool intr) {
+	return intr ? 7 : c | ( cpu->S << 2 );
+}
