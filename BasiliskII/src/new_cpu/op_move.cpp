@@ -335,6 +335,7 @@ OP(reset) {
 OP( nop ) {
 	test_trace_branch(cpu);
 }
+extern bool quit_program;
 
 OP(stop) {
 	if( ! cpu->S ) {
@@ -343,7 +344,7 @@ OP(stop) {
 	uint16_t v = cpu->fetch_w();
 	set_sr(cpu, v);
 	test_trace_branch(cpu);
-	/* TODO: STOP */
+	quit_program = true;
 }
 
 OP(rte) {
@@ -426,4 +427,46 @@ OP(exg_da) {
 	uint32_t tp = cpu->A[reg];
 	cpu->A[reg] = cpu->D[dn];
 	cpu->D[dn] = tp;
+}
+OP(move16_inc_imm) {
+	uint32_t imm = cpu->fetch_l();
+	uint32_t adr = cpu->A[reg];
+	for(int i = 0; i < 16; ++i ) {
+		cpu->mmu->write_b(adr+i, cpu->mmu->read_b(imm+i));
+	}
+	cpu->A[reg] += 16;
+}
+OP(move16_imm_r) {
+	uint32_t imm = cpu->fetch_l();
+	uint32_t adr = cpu->A[reg];
+	for(int i = 0; i < 16; ++i ) {
+		cpu->mmu->write_b(imm+i, cpu->mmu->read_b(adr+i));
+	}
+}
+OP(move16_r_imm) {
+	uint32_t imm = cpu->fetch_l();
+	uint32_t adr = cpu->A[reg];
+	for(int i = 0; i < 16; ++i ) {
+		cpu->mmu->write_b(adr+i, cpu->mmu->read_b(imm+i));
+	}
+}
+OP(move16_imm_inc) {
+	uint32_t imm = cpu->fetch_l();
+	uint32_t adr = cpu->A[reg];
+	for(int i = 0; i < 16; ++i ) {
+		cpu->mmu->write_b(imm+i, cpu->mmu->read_b(adr+i));
+	}
+	cpu->A[reg] += 16;
+}
+
+OP(move16_inc_inc) {
+	uint32_t imm = cpu->fetch_l();
+	uint32_t adrr = (imm >> 12) & 7;
+	uint32_t adr = cpu->A[adr];
+	uint32_t adr2 = cpu->A[reg];
+	for(int i = 0; i < 16; ++i ) {
+		cpu->mmu->write_b(adr+i, cpu->mmu->read_b(adr2+i));
+	}
+	cpu->A[adrr] += 16;
+	cpu->A[reg] += 16;
 }

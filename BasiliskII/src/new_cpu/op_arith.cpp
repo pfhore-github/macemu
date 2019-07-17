@@ -34,7 +34,7 @@ OP(cas_b) {
 	int u = (nw >> 6) & 7;
 	int c = nw & 7;
 	uint8_t v = ea.read();
-	SUB_B(cpu, v, cpu->D[c]);
+	CMP_B(cpu, v, cpu->D[c]);
 	if( cpu->Z ) {
 		ea.write(cpu->D[u]);
 	} else {
@@ -71,14 +71,18 @@ OP(cas2_w) {
 	int s2 = (nw2 >> 12) & 15;
 	int u2 = (nw2 >> 6) & 7;
 	int c2 = nw2 & 7;
-	CMP_W(cpu, cpu->R[s1], cpu->D[c1]);
+	CMP_W(cpu, cpu->mmu->read_w(cpu->R[s1]), cpu->D[c1]);
 	if( cpu->Z ) {
-		CMP_W(cpu, cpu->R[s2], cpu->D[c2]);
+		CMP_W(cpu, cpu->mmu->read_w(cpu->R[s2]), cpu->D[c2]);
 		if( cpu->Z ) {
-			cpu->R[s1] = cpu->D[u1];
-			cpu->R[s2] = cpu->D[u2];
+			cpu->mmu->write_w(cpu->R[s1], cpu->D[u1]);
+			cpu->mmu->write_w(cpu->R[s2], cpu->D[u2]);
+			goto end;
 		}
 	}
+	cpu->D[c1] = cpu->mmu->read_w(cpu->R[s1]);
+	cpu->D[c2] = cpu->mmu->read_w(cpu->R[s2]);
+  end:
 	test_trace_branch(cpu);
 }
 OP(cas_w) {
@@ -99,21 +103,21 @@ OP(cas_w) {
 OP(addq_b) {
 	EA ea(cpu, mode, 1, reg, true);	
 	int8_t v = ea.read();
-	v = ADD_B(cpu, v, dn);
+	v = ADD_B(cpu, v, dn ? dn : 8);
 	ea.write( v );
 }
 
 OP(addq_w) {
 	EA ea(cpu, mode, 2, reg, true);	
 	int16_t v = ea.read();
-	v = ADD_W(cpu, v, dn);
+	v = ADD_W(cpu, v, dn ? dn : 8);
 	ea.write( v );
 }
 
 OP(addq_l) {
 	EA ea(cpu, mode, 4, reg, true);	
 	int32_t v = ea.read();
-	v = ADD_L(cpu, v, dn);
+	v = ADD_L(cpu, v, dn ? dn : 8);
 	ea.write( v );
 }
 
@@ -180,14 +184,18 @@ OP(cas2_l) {
 	int s2 = (nw2 >> 12) & 15;
 	int u2 = (nw2 >> 6) & 7;
 	int c2 = nw2 & 7;
-	CMP_L(cpu, cpu->R[s1], cpu->D[c1]);
+	CMP_L(cpu, cpu->mmu->read_l(cpu->R[s1]), cpu->D[c1]);
 	if( cpu->Z ) {
-		CMP_L(cpu, cpu->R[s2], cpu->D[c2]);
+		CMP_L(cpu, cpu->mmu->read_l(cpu->R[s2]), cpu->D[c2]);
 		if( cpu->Z ) {
-			cpu->R[s1] = cpu->D[u1];
-			cpu->R[s2] = cpu->D[u2];
+			cpu->mmu->write_l(cpu->R[s1], cpu->D[u1]);
+			cpu->mmu->write_l(cpu->R[s2], cpu->D[u2]);
+			goto done;
 		}
 	}
+	cpu->D[c1] = cpu->mmu->read_l(cpu->R[s1]);
+	cpu->D[c2] = cpu->mmu->read_l(cpu->R[s2]);
+  done:
 	test_trace_branch(cpu);
 }
 OP(cas_l) {
@@ -195,7 +203,7 @@ OP(cas_l) {
 	EA ea(cpu, mode, 4, reg, true);
 	int u = (nw >> 6) & 7;
 	int c = nw & 7;
-	uint16_t v = ea.read();
+	uint32_t v = ea.read();
 	CMP_L(cpu, v, cpu->D[c]);
 	if( cpu->Z ) {
 		ea.write(cpu->D[u]);
@@ -509,7 +517,7 @@ OP(add_w) {
 
 OP(adda_w) {
 	EA ea(cpu, mode, 2, reg, false);
-	cpu->setA_W(dn, ADD_W(cpu, (int16_t)cpu->A[dn], ea.read()));
+	cpu->setA_W(dn, (int16_t)cpu->A[dn] + ea.read());
 }
 
 OP(add_l) {
@@ -519,7 +527,7 @@ OP(add_l) {
 
 OP(adda_l) {
 	EA ea(cpu, mode, 4, reg, false);
-	cpu->A[dn] = ADD_L(cpu, cpu->A[dn], ea.read());
+	cpu->A[dn] += (uint32_t)ea.read();
 }
 
 OP(add_m_b) {
@@ -538,15 +546,21 @@ OP(add_m_l) {
 }
 
 OP(addx_b) {
+	bool oz = cpu->Z;
 	cpu->setD_B(dn, ADD_B(cpu, cpu->D[dn], cpu->D[reg]+cpu->X));
+	cpu->Z = cpu->Z && oz;
 }
 
 OP(addx_w) {
+	bool oz = cpu->Z;
 	cpu->setD_W(dn, ADD_W(cpu, cpu->D[dn], cpu->D[reg]+cpu->X));
+	cpu->Z = cpu->Z && oz;
 }
 
 OP(addx_l) {
+	bool oz = cpu->Z;
 	cpu->D[dn] = ADD_L(cpu, cpu->D[dn], cpu->D[reg]+cpu->X);
+	cpu->Z = cpu->Z && oz;
 }
 
 OP(addx_m_b) {

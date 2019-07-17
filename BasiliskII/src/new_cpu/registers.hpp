@@ -1,6 +1,7 @@
 #pragma once
 #include <stdint.h>
 #include "mmu.hpp"
+#include "fpu.hpp"
 #include "SDL_endian.h"
 struct FPU_EX {
 	bool INEX1;
@@ -34,28 +35,7 @@ struct TTC {
 	} regs;
 };
 
-struct FPU {
-	long double FP[8];
-	struct {
-		enum { NEAREST = 0, ZERO, M_INF, P_INF } RND;
-		enum { EXTENDED = 0, SINGLE, DOUBLE } PREC;
-		FPU_EX ex_enable;
-	} FPCR;
-	struct {
-		bool nan;
-		bool I;
-		bool Z;
-		bool N;
-		int16_t quotient;
-		FPU_EX ex;
-		bool INEX;
-		bool DZ;
-		bool UNFL;
-		bool OFVL;
-		bool IOP;
-	} FPSR;
-	uint32_t FPIAR;
-};
+
 
 struct CPU {
 	// register

@@ -1,8 +1,40 @@
 #ifndef EXCEPTIONS_HPP
 #define EXCEPTIONS_HPP
+enum class EX_VEC {
+	RESET_SP,
+	RESET_PC,
+	ACCESS_FAULT,
+	ADDRESS_ERROR,
+	ILLEGAL_INST,
+	DIV_ZERO,
+	CHK_EX,
+	TRAP_EX,
+	PRIV_VIOLATION,
+	TRACE,
+	A_EX,
+	F_EX,
+	UNUSED,
+	CO_PROC_VIOLATION,
+	FORMAT_ERROR,
+	UNINIT_INT,
+	SPOUR_INT = 24,
+	INT_BASE,
+	TRAP_VEC = 32,
+	FP_UNORDERED = 48,
+	FP_INEXACT,
+	FP_DIV_ZERO,
+	FP_UNDERFLOW,
+	FP_OPERAND_ERROR,
+	FP_OVERFLOW,
+	FP_SIG_NAN,
+	FP_UNIMPLEMENT,
+	MMU_CONF_ERROR,
+	MMU_ILLEGAL_OP,
+	MMU_ACCESS_ERROR,
+	USER_DEFINED = 64
+};
 class exception_t {
 protected:
-	const int v;
 	uint16_t sr;
 	exception_t(int v) : v(v*4) {}
 	virtual void save_stack(CPU* regs, uint32_t pc) = 0;
@@ -12,6 +44,7 @@ protected:
 	void save_stack3(CPU* regs, uint32_t addr);
 	void save_stack4(CPU* regs, uint32_t pc, uint32_t ea);
 public:
+	const int v;
 	virtual void run(CPU* regs, uint32_t pc);
 };
 

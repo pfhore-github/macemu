@@ -26,13 +26,6 @@
 #include "timer.h"
 
 #include "registers.hpp"
-#if 0
-#include "m68k.h"
-#include "memory.h"
-#include "readcpu.h"
-#include "newcpu.h"
-#include "compiler/compemu.h"
-#endif
 
 // RAM and ROM pointers
 uint32 RAMBaseMac = 0;		// RAM base (Mac address space) gb-- initializer is important
@@ -52,7 +45,7 @@ uintptr MEMBaseDiff;
 #if USE_JIT
 bool UseJIT = false;
 #endif
-CPU regs;
+extern CPU cpu;
 // From newcpu.cpp
 extern bool quit_program;
 
@@ -68,7 +61,8 @@ bool Init680x0(void)
 	RAMBaseMac = 0;
 	ROMBaseMac = Host2MacAddr(ROMBaseHost);
 
-//	init_m68k();
+	cpu.init();
+	cpu.mmu =new NonMMU(&cpu);
 #if USE_JIT
 //	UseJIT = compiler_use_jit();
 //	if (UseJIT)
@@ -103,7 +97,6 @@ void InitFrameBufferMapping(void)
 #endif
 }
 void m68k_execute();
-extern CPU cpu;
 /*
  *  Reset and start 680x0 emulation (doesn't return)
  */
@@ -240,4 +233,16 @@ void Execute68k(uint32 addr, struct M68kRegisters *r)
 		r->a[i] = m68k_areg(regs, i);
 	quit_program = false;
 #endif
+}
+#include <stdio.h>
+void m68k_dumpstate() {
+	for(int i = 0; i < 8; ++i ) {
+		printf("D%d: %08x ", i, cpu.D[i]);
+	}
+	printf("\n");
+	for(int i = 0; i < 8; ++i ) {
+		printf("A%d: %08x ", i, cpu.A[i]);
+	}
+	printf("\nFLAGS: X=%d N=%d Z=%d V=%d C=%d\n",
+		   cpu.X, cpu.N, cpu.Z, cpu.V, cpu.C);
 }

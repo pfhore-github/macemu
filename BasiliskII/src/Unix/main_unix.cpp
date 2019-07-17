@@ -283,9 +283,8 @@ static void sigsegv_dump_state(sigsegv_info_t *sip)
 		fprintf(stderr, " [IP=%p]", fault_instruction);
 	fprintf(stderr, "\n");
 #if EMULATED_68K
-	uaecptr nextpc;
-	extern void m68k_dumpstate(uaecptr *nextpc);
-	m68k_dumpstate(&nextpc);
+	extern void m68k_dumpstate();
+	m68k_dumpstate();
 #endif
 #if USE_JIT && JIT_DEBUG
 	extern void compiler_dumpstate(void);
@@ -971,8 +970,8 @@ void QuitEmulator(void)
 void FlushCodeCache(void *start, uint32 size)
 {
 #if USE_JIT
-    if (UseJIT)
-		flush_icache_range((uint8 *)start, size);
+//    if (UseJIT)
+//		flush_icache_range((uint8 *)start, size);
 #endif
 #if !EMULATED_68K && defined(__NetBSD__)
 	m68k_sync_icache(start, size);
@@ -988,9 +987,8 @@ void FlushCodeCache(void *start, uint32 size)
 static void sigint_handler(...)
 {
 #if EMULATED_68K
-	uaecptr nextpc;
-	extern void m68k_dumpstate(uaecptr *nextpc);
-	m68k_dumpstate(&nextpc);
+	extern void m68k_dumpstate();
+	m68k_dumpstate();
 #endif
 	VideoQuitFullScreen();
 	const char *arg[4] = {"mon", "-m", "-r", NULL};

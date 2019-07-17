@@ -118,7 +118,7 @@ inline uint32_t XOR_L(CPU* cpu, uint32_t a, uint32_t b) {
 }
 inline bool BTST(uint32_t v, int d) {
 	bool c;
-	asm volatile("bt %1, %2\n\t"
+	asm volatile("bt %2, %1\n\t"
 				 "setnc %0"
 				 : "=g"(c)
 				 : "r"(v), "r"(d)
@@ -126,25 +126,25 @@ inline bool BTST(uint32_t v, int d) {
 	return c;
 }
 inline uint32_t BCHG(uint32_t v, int d, bool* c) {
-	asm volatile("btc %1, %2\n\t"
+	asm volatile("btc %2, %1\n\t"
 				 "setnc %0"
-				 : "=g"(*c), "+g"(v)
+				 : "=g"(*c), "+r"(v)
 				 : "r"(d)
 				 : "cc" );
 	return v;
 }
 inline uint32_t BCLR(uint32_t v, int d, bool* c) {
-	asm volatile("btr %1, %2\n\t"
+	asm volatile("btr %2, %1\n\t"
 				 "setnc %0"
-				 : "=g"(*c), "+g"(v)
+				 : "=g"(*c), "+r"(v)
 				 : "r"(d)
 				 : "cc" );
 	return v;
 }
 inline uint32_t BSET(uint32_t v, int d, bool* c) {
-	asm volatile("bts %1, %2\n\t"
+	asm volatile("bts %2, %1\n\t"
 				 "setnc %0"
-				 : "=g"(*c), "+g"(v)
+				 : "=g"(*c), "+r"(v)
 				 : "r"(d)
 				 : "cc" );
 	return v;
@@ -262,7 +262,7 @@ inline int8_t ASR_B(CPU* cpu, int8_t v, int sc) {
 		asm volatile("movb %2, %%cl\n\t"
 					 "sarb %%cl, %0\n\t"
 					 "setc %1\n\t"
-					 : "+r"(v), "=g"(cpu->C), 
+					 : "+r"(v), "=g"(cpu->C)
 					 : "g"((uint8_t)sc)
 					 : "cc", "%cl");
 		cpu->X = cpu->C;
@@ -278,9 +278,9 @@ inline int16_t ASR_W(CPU* cpu, int16_t v, int sc) {
 		asm volatile("movb %2, %%cl\n\t"
 					 "sarw %%cl, %0\n\t"
 					 "setc %1\n\t"
-					 : "+r"(v), "=g"(cpu->C),
+					 : "+r"(v), "=g"(cpu->C)
 					 : "r"((uint8_t)sc)
-					 : "cc", "%%cl");
+					 : "cc", "%cl");
 		cpu->X = cpu->C;
 	} else {
 		cpu->C = false;
@@ -296,7 +296,7 @@ inline int32_t ASR_L(CPU* cpu, int32_t v, int sc) {
 					 "setc %1\n\t"
 					 : "+r"(v), "=g"(cpu->C)
 					 : "r"((uint8_t)sc)
-					 : "cc", "%%cl");
+					 : "cc", "%cl");
 		cpu->X = cpu->C;
 	} else {
 		cpu->C = false;
@@ -324,11 +324,27 @@ inline uint8_t LSR_B(CPU* cpu, uint8_t v, int sc) {
 inline uint16_t LSR_W(CPU* cpu, uint16_t v, int sc) {
 	if( sc ) {
 		asm volatile("movb %2, %%cl\n\t"
+					 "shrw %%cl, %0\n\t"
+					 "setc %1\n\t"
+					 : "+r"(v), "=g"(cpu->C)
+					 : "r"((uint8_t)sc)
+					 : "cc", "%cl");
+		cpu->X = cpu->C;
+	} else {
+		cpu->C = false;
+	}
+	TEST_L(cpu, 0);
+	cpu->V = false;
+	return v;
+}
+inline uint32_t LSR_L(CPU* cpu, uint32_t v, int sc) {
+	if( sc ) {
+		asm volatile("movb %2, %%cl\n\t"
 					 "shrl %%cl, %0\n\t"
 					 "setc %1\n\t"
 					 : "+r"(v), "=g"(cpu->C)
 					 : "r"((uint8_t)sc)
-					 : "cc", "%%cl");
+					 : "cc", "%cl");
 		cpu->X = cpu->C;
 	} else {
 		cpu->C = false;
@@ -352,7 +368,7 @@ inline uint8_t ROXR_B(CPU* cpu, uint8_t v, int sc) {
 	} else {
 		cpu->C = false;
 	}
-	TEST_B(L, v);
+	TEST_B(cpu, v);
 	cpu->V = false;
 	return v;
 }
@@ -368,7 +384,7 @@ inline uint16_t ROXR_W(CPU* cpu, uint16_t v, int sc) {
 					 : "g"((uint8_t)sc)
 					 : "cc", "%al", "%cl");
 	}
-	TEST_W(L, v);
+	TEST_W(cpu, v);
 	cpu->C = cpu->X;
 	cpu->V = false;
 	return v;
@@ -385,7 +401,7 @@ inline uint32_t ROXR_L(CPU* cpu, uint32_t v, int sc) {
 					 : "g"((uint8_t)sc)
 					 : "cc", "%al", "%cl");
 	}
-	TEST_W(L, v);
+	TEST_W(cpu, v);
 	cpu->C = cpu->X;
 	cpu->V = false;
 	return v;
@@ -402,7 +418,7 @@ inline uint8_t ROR_B(CPU* cpu, uint8_t v, int sc) {
 	} else {
 		cpu->C = false;
 	}
-	TEST_B(L, v);
+	TEST_B(cpu, v);
 	cpu->V = false;
 	return v;
 }
@@ -418,11 +434,10 @@ inline uint16_t ROR_W(CPU* cpu, uint16_t v, int sc) {
 	} else {
 		cpu->C = false;
 	}
-	TEST_W(L, v);
+	TEST_W(cpu, v);
 	cpu->V = false;
 	return v;
 }
-
 inline uint32_t ROR_L(CPU* cpu, uint32_t v, int sc) {
 	if( sc ) {
 		asm volatile("movb %2, %%cl\n\t"
@@ -434,10 +449,11 @@ inline uint32_t ROR_L(CPU* cpu, uint32_t v, int sc) {
 	} else {
 		cpu->C = false;
 	}
-	TEST_W(L, v);
+	TEST_L(cpu, v);
 	cpu->V = false;
 	return v;
 }
+
 
 
 inline int8_t ASL_B(CPU* cpu, int8_t v, int sc) {
@@ -447,17 +463,16 @@ inline int8_t ASL_B(CPU* cpu, int8_t v, int sc) {
 		TEST_B(cpu, v);
 		return v;
 	}
-	bool ov = false;
-	for(int i = 0; i < sc; ++i ) {
-		bool ovt;
-		asm volatile("sarb %0\n\t"
-					 "seto %1\n\t"
-					 "setc %1\n\t"
-					 : "+r"(v), "=r"(ovt), "=g"(cpu->C)
-					 : "r"(sc)
-					 : "cc");
-		ov = ov || ovt;
-	}
+	int nk = (1 << sc) - 1;
+	int lw = v >> (7-sc) & nk;
+	bool sg = (v >> 7) & 1;
+	cpu->V = sg ? lw != nk : lw ; 
+	asm volatile("movb %2, %%cl\n\t"
+				 "salb %%cl, %0\n\t"
+				 "setc %1\n\t"
+				 : "+r"(v), "=g"(cpu->C)
+				 : "r"((uint8_t)sc)
+				 : "cc", "%cl");
 	cpu->X = cpu->C;
 	TEST_B( cpu, v);
 	return v;
@@ -466,50 +481,193 @@ inline int16_t ASL_W(CPU* cpu, int16_t v, int sc) {
 	if( sc == 0 ) {
 		cpu->V = false;
 		cpu->C = false;
-		cpu->Z = ! v;
-		cpu->N = (v >> 15) & 1;
+		TEST_W( cpu, v);
 		return v;
 	}
-	bool ov = false;
-	for(int i = 0; i < sc; ++i ) {
-		bool ovt;
-		asm volatile("sarw %0\n\t"
-					 "seto %1\n\t"
-					 "setc %1\n\t"
-					 : "+r"(v), "=r"(ovt), "=g"(cpu->C)
-					 : "r"(sc)
-					 : "cc");
-		ov = ov || ovt;
-	}
-	cpu->N = v >> 15;
-	cpu->N = ! v;
+	int nk = (1 << sc) - 1;
+	int lw = v >> (15-sc) & nk;
+	bool sg = (v >> 15) & 1;
+	cpu->V = sg ? lw != nk : lw ; 
+	asm volatile("movb %2, %%cl\n\t"
+				 "salw %%cl, %0\n\t"
+				 "setc %1\n\t"
+				 : "+r"(v), "=g"(cpu->C)
+				 : "r"((uint8_t)sc)
+				 : "cc", "%cl");
+	TEST_W( cpu, v);
 	cpu->X = cpu->C;
 	return v;
 }
-inline int16_t ASL_L(CPU* cpu, int16_t v, int sc) {
+inline int32_t ASL_L(CPU* cpu, int32_t v, int sc) {
 	if( sc == 0 ) {
 		cpu->V = false;
 		cpu->C = false;
-		cpu->Z = ! v;
-		cpu->N = (v >> 31) & 1;
+		TEST_L( cpu, v);
 		return v;
 	}
-	bool ov = false;
-	for(int i = 0; i < sc; ++i ) {
-		bool ovt;
-		asm volatile("sarw %0\n\t"
-					 "seto %1\n\t"
-					 "setc %1\n\t"
-					 : "+r"(v), "=r"(ovt), "=g"(cpu->C)
-					 : "r"(sc)
-					 : "cc");
-		ov = ov || ovt;
-	}
-	cpu->N = v >> 31;
-	cpu->N = ! v;
+	int nk = (1 << sc) - 1;
+	int lw = v >> (31-sc) & nk;
+	bool sg = (v >> 31) & 1;
+	cpu->V = sg ? lw != nk : lw ; 
+	asm volatile("movb %2, %%cl\n\t"
+				 "sall %%cl, %0\n\t"
+				 "setc %1\n\t"
+				 : "+r"(v), "=g"(cpu->C)
+				 : "r"((uint8_t)sc)
+				 : "cc", "%cl");
+	TEST_L( cpu, v);
 	cpu->X = cpu->C;
 	return v;
 }
+inline uint8_t LSL_B(CPU* cpu, uint8_t v, int sc) {
+	if( sc ) {
+		asm volatile("movb %2, %%cl\n\t"
+					 "shlb %%cl, %0\n\t"
+					 "setc %1\n\t"
+					 : "+r"(v), "=g"(cpu->C)
+					 : "g"((uint8_t)sc)
+					 : "cc", "%cl");
+		cpu->X = cpu->C;
+	} else {
+		cpu->C = false;
+	}
+	TEST_B(cpu, v);
+	cpu->V = false;
+	return v;
+}
+inline uint16_t LSL_W(CPU* cpu, uint16_t v, int sc) {
+	if( sc ) {
+		asm volatile("movb %2, %%cl\n\t"
+					 "shlw %%cl, %0\n\t"
+					 "setc %1\n\t"
+					 : "+r"(v), "=g"(cpu->C)
+					 : "g"((uint8_t)sc)
+					 : "cc", "%cl");
+		cpu->X = cpu->C;
+	} else {
+		cpu->C = false;
+	}
+	TEST_W(cpu, v);
+	cpu->V = false;
+	return v;
+}
+inline uint32_t LSL_L(CPU* cpu, uint32_t v, int sc) {
+	if( sc ) {
+		asm volatile("movb %2, %%cl\n\t"
+					 "shll %%cl, %0\n\t"
+					 "setc %1\n\t"
+					 : "+r"(v), "=g"(cpu->C)
+					 : "g"((uint8_t)sc)
+					 : "cc", "%cl");
+		cpu->X = cpu->C;
+	} else {
+		cpu->C = false;
+	}
+	TEST_W(cpu, v);
+	cpu->V = false;
+	return v;
+}
+
+inline uint8_t ROXL_B(CPU* cpu, uint8_t v, int sc) {
+	if( sc ) {
+		asm volatile("movb %1, %%al\n\t"
+					 "shrb %%al\n\t"
+					 "movb %2, %%cl\n\t"
+					 "rclb %%cl, %0\n\t"
+					 "setc %1\n\t"
+					 : "+r"(v), "+g"(cpu->X)
+					 : "g"((uint8_t)sc)
+					 : "cc", "%al", "%cl");
+		cpu->C = cpu->X;
+	} else {
+		cpu->C = false;
+	}
+	TEST_B(cpu, v);
+	cpu->V = false;
+	return v;
+}
+
+inline uint16_t ROXL_W(CPU* cpu, uint16_t v, int sc) {
+	if( sc ) {
+		asm volatile("movb %1, %%al\n\t"
+					 "shrb %%al\n\t"
+					 "movb %2, %%cl\n\t"
+					 "rclw %%cl, %0\n\t"
+					 "setc %1\n\t"
+					 : "+r"(v), "+g"(cpu->X)
+					 : "g"((uint8_t)sc)
+					 : "cc", "%al", "%cl");
+	}
+	TEST_W(cpu, v);
+	cpu->C = cpu->X;
+	cpu->V = false;
+	return v;
+}
+
+inline uint32_t ROXL_L(CPU* cpu, uint32_t v, int sc) {
+	if( sc ) {
+		asm volatile("movb %1, %%al\n\t"
+					 "shrb %%al\n\t"
+					 "movb %2, %%cl\n\t"
+					 "rcll %%cl, %0\n\t"
+					 "setc %1\n\t"
+					 : "+r"(v), "+g"(cpu->X)
+					 : "g"((uint8_t)sc)
+					 : "cc", "%al", "%cl");
+	}
+	TEST_L(cpu, v);
+	cpu->C = cpu->X;
+	cpu->V = false;
+	return v;
+}
+
+inline uint8_t ROL_B(CPU* cpu, uint8_t v, int sc) {
+	if( sc ) {
+		asm volatile("movb %2, %%cl\n\t"
+					 "rolb %%cl, %0\n\t"
+					 "setc %1\n\t"
+					 : "+r"(v), "+g"(cpu->C)
+					 : "g"((uint8_t)sc)
+					 : "cc", "%cl");
+	} else {
+		cpu->C = false;
+	}
+	TEST_B(cpu, v);
+	cpu->V = false;
+	return v;
+}
+
+inline uint16_t ROL_W(CPU* cpu, uint16_t v, int sc) {
+	if( sc ) {
+		asm volatile("movb %2, %%cl\n\t"
+					 "rolw %%cl, %0\n\t"
+					 "setc %1\n\t"
+					 : "+r"(v), "+g"(cpu->C)
+					 : "g"((uint8_t)sc)
+					 : "cc", "%cl");
+	} else {
+		cpu->C = false;
+	}
+	TEST_W(cpu, v);
+	cpu->V = false;
+	return v;
+}
+inline uint32_t ROL_L(CPU* cpu, uint32_t v, int sc) {
+	if( sc ) {
+		asm volatile("movb %2, %%cl\n\t"
+					 "roll %%cl, %0\n\t"
+					 "setc %1\n\t"
+					 : "+r"(v), "+g"(cpu->C)
+					 : "g"((uint8_t)sc)
+					 : "cc", "%cl");
+	} else {
+		cpu->C = false;
+	}
+	TEST_L(cpu, v);
+	cpu->V = false;
+	return v;
+}
+
 #else
 inline void TEST_B(CPU* cpu, uint8_t a) {
 	cpu->N = (a >> 7) & 1;
@@ -689,47 +847,260 @@ inline uint8_t LSR_B(CPU* cpu, uint8_t v, int sc) {
 	cpu->V = false;
 	if( sc == 0 ) {
 		cpu->C = false;
-		cpu->Z = ! v;
-		cpu->N = (v >> 7) & 1;
-		return v;
+	} else {
+		cpu->X = cpu->C = (v >> (sc-1)) & 1;
+		v >>= sc;
 	}
-	cpu->X = cpu->C = (v >> (sc-1)) & 1;
-	v >>= sc;
-	cpu->N = (v >> 7) & 1;
-	cpu->Z = ! v;
+	TEST_B(cpu, v);
 	return v;
 }
 inline uint16_t LSR_W(CPU* cpu, uint16_t v, int sc) {
 	cpu->V = false;
 	if( sc == 0 ) {
 		cpu->C = false;
-		cpu->Z = ! v;
-		cpu->N = (v >> 15) & 1;
-		return v;
-	} 
-	cpu->X = cpu->C = (v >> (sc-1)) & 1;
-	v >>= sc;
-	cpu->N = (v >> 15) & 1;
-	cpu->Z = ! v;
+	} else {		
+		cpu->X = cpu->C = (v >> (sc-1)) & 1;
+		v >>= sc;
+	}
+	TEST_W(cpu, v);
 	return v;
 }
 inline uint32_t LSR_L(CPU* cpu, uint32_t v, int sc) {
 	cpu->V = false;
 	if( sc == 0 ) {
 		cpu->C = false;
-		cpu->Z = ! v;
-		cpu->N = (v >> 31) & 1;
-		return v;
-	} 
-	cpu->X = cpu->C = (v >> (sc-1)) & 1;
-	v >>= sc;
-	cpu->N = (v >> 31) & 1;
-	cpu->Z = ! v;
+	} else {
+		cpu->X = cpu->C = (v >> (sc-1)) & 1;
+		v >>= sc;
+	}
+	TEST_L(cpu, v);
 	return v;
 }
+
 inline uint8_t ROXR_B(CPU* cpu, uint8_t v, int sc) {
-	
+	cpu->V = false;
+	if( sc == 0 ) {
+		cpu->C = cpu->X;
+	} else {
+		int c = cpu->X;
+		cpu->X = cpu->C = (v >> (sc-1)) & 1;
+		v = (v >> sc) | c << (8-c) | ((v << (9-c)) & 0xff);
+	}
+	TEST_B(cpu, v);
+	return v;	
 }
+inline uint16_t ROXR_W(CPU* cpu, uint16_t v, int sc) {
+	cpu->V = false;
+	if( sc == 0 ) {
+		cpu->C = cpu->X;
+	} else {
+		int c = cpu->X;
+		cpu->X = cpu->C = (v >> (sc-1)) & 1;
+		v = (v >> sc) | c << (16-c) | ((v << (17-c)) & 0xffff);
+	}
+	TEST_W(cpu, v);
+	return v;	
+}
+inline uint32_t ROXR_L(CPU* cpu, uint32_t v, int sc) {
+	cpu->V = false;
+	if( sc == 0 ) {
+		cpu->C = cpu->X;
+	} else {
+		int c = cpu->X;
+		cpu->X = cpu->C = (v >> (sc-1)) & 1;
+		v = (v >> sc) | c << (32-c) | (v << (33-c));
+	}
+	TEST_L(cpu, v);
+	return v;	
+}
+
+inline uint8_t ROR_B(CPU* cpu, uint8_t v, int sc) {
+	cpu->V = false;
+	if( sc == 0 ) {
+		cpu->C = cpu->X;
+	} else {
+		cpu->X = cpu->C = (v >> (sc-1)) & 1;
+		v = (v >> sc) | ((v << (8-c)) & 0xff);
+	}
+	TEST_B(cpu, v);
+	return v;	
+}
+inline uint16_t ROR_W(CPU* cpu, uint16_t v, int sc) {
+	cpu->V = false;
+	if( sc == 0 ) {
+		cpu->C = cpu->X;
+	} else {
+		cpu->X = cpu->C = (v >> (sc-1)) & 1;
+		v = (v >> sc) | ((v << (16-c)) & 0xffff);
+	}
+	TEST_W(cpu, v);
+	return v;	
+}
+inline uint32_t ROR_L(CPU* cpu, uint32_t v, int sc) {
+	cpu->V = false;
+	if( sc == 0 ) {
+		cpu->C = cpu->X;
+	} else {
+		cpu->X = cpu->C = (v >> (sc-1)) & 1;
+		v = (v >> sc) | ((v << (32-c));
+	}
+	TEST_L(cpu, v);
+	return v;	
+}
+
+inline int8_t ASL_B(CPU* cpu, int8_t v, int sc) {
+	if( sc == 0 ) {
+		cpu->V = false;
+		cpu->C = false;
+		TEST_B(cpu, v);
+		return v;
+	}
+	int nk = (1 << sc) - 1;
+	int lw = v >> (8-sc) & nk;
+	bool sg = (v >> 7) & 1;
+	cpu->V = sg ? lw != nk : lw ;
+	cpu->X = cpu->C = (v >> (8-sc)) & 1;
+	v >>= sc;
+	TEST_B( cpu, v);
+	return v;
+}
+inline int16_t ASL_W(CPU* cpu, int16_t v, int sc) {
+	if( sc == 0 ) {
+		cpu->V = false;
+		cpu->C = false;
+		TEST_W( cpu, v);
+		return v;
+	}
+	int nk = (1 << sc) - 1;
+	int lw = v >> (16-sc) & nk;
+	bool sg = (v >> 15) & 1;
+	cpu->V = sg ? lw != nk : lw ; 
+	cpu->X = cpu->C = (v >> (16-sc)) & 1;
+	v >>= sc;
+	TEST_W( cpu, v);
+	return v;
+}
+inline int16_t ASL_L(CPU* cpu, int16_t v, int sc) {
+	if( sc == 0 ) {
+		cpu->V = false;
+		cpu->C = false;
+		TEST_L( cpu, v);
+		return v;
+	}
+	int nk = (1 << sc) - 1;
+	int lw = v >> (32-sc) & nk;
+	bool sg = (v >> 31) & 1;
+	cpu->V = sg ? lw != nk : lw ; 
+	cpu->X = cpu->C = (v >> (32-sc)) & 1;
+	v >>= sc;
+	TEST_L( cpu, v);
+	return v;
+}
+
+inline uint8_t LSL_B(CPU* cpu, uint8_t v, int sc) {
+	cpu->V = false;
+	if( sc == 0 ) {
+		cpu->C = false;
+	} else {
+		cpu->X = cpu->C = (v >> (8-sc)) & 1;
+		v <<= sc;
+	} 
+	TEST_B(cpu, v);
+	return v;
+}
+inline uint16_t LSL_W(CPU* cpu, uint16_t v, int sc) {
+	cpu->V = false;
+	if( sc == 0 ) {
+		cpu->C = false;
+	} else {
+		cpu->X = cpu->C = (v >> (16-sc)) & 1;
+		v <<= sc;
+	} 
+	TEST_W(cpu, v);
+	return v;
+}
+inline uint32_t LSL_W(CPU* cpu, uint32_t v, int sc) {
+	cpu->V = false;
+	if( sc == 0 ) {
+		cpu->C = false;
+	} else {
+		cpu->X = cpu->C = (v >> (32-sc)) & 1;
+		v <<= sc;
+	} 
+	TEST_W(cpu, v);
+	return v;
+}
+inline uint8_t ROXL_B(CPU* cpu, uint8_t v, int sc) {
+	cpu->V = false;
+	if( sc == 0 ) {
+		cpu->C = cpu->X;
+	} else {
+		int c = cpu->X;
+		cpu->X = cpu->C = (v >> (8-sc)) & 1;
+		v = (uint8_t)(v << (sc+1)) | c << sc | ((v >> (9-c));
+	}
+	TEST_B(cpu, v);
+	return v;	
+}
+inline uint16_t ROXL_W(CPU* cpu, uint16_t v, int sc) {
+	cpu->V = false;
+	if( sc == 0 ) {
+		cpu->C = cpu->X;
+	} else {
+		int c = cpu->X;
+		cpu->X = cpu->C = (v >> (16-sc)) & 1;
+		v = (uint8_t)(v << (sc+1)) | c << sc | ((v >> (17-c));
+	}
+	TEST_W(cpu, v);
+	return v;	
+}
+inline uint32_t ROXL_L(CPU* cpu, uint32_t v, int sc) {
+	cpu->V = false;
+	if( sc == 0 ) {
+		cpu->C = cpu->X;
+	} else {
+		int c = cpu->X;
+		cpu->X = cpu->C = (v >> (32-sc)) & 1;
+		v = (uint8_t)(v << (sc+1)) | c << sc | (v >> (33-c));
+	}
+	TEST_L(cpu, v);
+	return v;	
+}
+
+inline uint8_t ROL_B(CPU* cpu, uint8_t v, int sc) {
+	cpu->V = false;
+	if( sc == 0 ) {
+		cpu->C = cpu->X;
+	} else {
+		cpu->X = cpu->C = (v >> (8-sc)) & 1;
+		v = (uint8_t)(v << sc) | (v >> (8-c));
+	}
+	TEST_B(cpu, v);
+	return v;	
+}
+inline uint16_t ROL_W(CPU* cpu, uint16_t v, int sc) {
+	cpu->V = false;
+	if( sc == 0 ) {
+		cpu->C = cpu->X;
+	} else {
+		cpu->X = cpu->C = (v >> (16-sc)) & 1;
+		v = (uint16_t)(v << sc) | (v << (16-c));
+	}
+	TEST_W(cpu, v);
+	return v;	
+}
+inline uint32_t ROL_L(CPU* cpu, uint32_t v, int sc) {
+	cpu->V = false;
+	if( sc == 0 ) {
+		cpu->C = cpu->X;
+	} else {
+		cpu->X = cpu->C = (v >> (32-sc)) & 1;
+		v = (v << sc) | ((v >> (32-c));
+	}
+	TEST_L(cpu, v);
+	return v;	
+}
+
 #endif
 inline void MUL_U(CPU* cpu, uint32_t a, uint32_t b, uint32_t *h, uint32_t *l) {
 	uint64_t v = a;
@@ -775,5 +1146,11 @@ inline void DIV_S(CPU* cpu, int64_t a, int32_t b, uint32_t *q, uint32_t *r) {
 	cpu->C = false;
 }
 
+inline uint32_t ROR(uint32_t x, int sc) {
+	return x >> sc | ( x << (32-sc)); 
+}
+inline uint32_t ROL(uint32_t x, int sc) {
+	return x << sc | ( x >> (32-sc)); 
+}
 
 #endif

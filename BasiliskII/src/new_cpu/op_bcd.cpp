@@ -54,13 +54,13 @@ OP(nbcd_m) {
 }
 
 OP(sbcd_d) {
-	cpu->D[reg] = sbcd(cpu, cpu->D[dn], cpu->D[reg], cpu->X);
+	cpu->D[dn] = sbcd(cpu, cpu->D[dn], cpu->D[reg], cpu->X);
 }
 
 OP(sbcd_m) {
 	uint8_t a = cpu->mmu->read_b(--cpu->A[dn]);
 	uint8_t b = cpu->mmu->read_b(--cpu->A[reg]);
-	cpu->mmu->write_b(cpu->A[reg], sbcd(cpu, a, b, cpu->X));
+	cpu->mmu->write_b(cpu->A[dn], sbcd(cpu, a, b, cpu->X));
 }
 
 OP(pack_d) {
@@ -86,11 +86,11 @@ OP(unpk_m) {
 }
 
 OP(abcd_d) {
-	cpu->D[reg] = abcd(cpu, cpu->D[dn], cpu->D[reg], cpu->X);
+	cpu->D[dn] = abcd(cpu, cpu->D[dn], cpu->D[reg], cpu->X);
 }
 
 OP(abcd_m) {
 	uint8_t a = cpu->mmu->read_b(--cpu->A[dn]);
 	uint8_t b = cpu->mmu->read_b(--cpu->A[reg]);
-	cpu->mmu->write_b(cpu->A[reg], abcd(cpu, a, b, cpu->X));
+	cpu->mmu->write_b(cpu->A[dn], abcd(cpu, a, b, cpu->X));
 }

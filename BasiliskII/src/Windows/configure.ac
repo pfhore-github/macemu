@@ -520,8 +520,8 @@ AC_CHECK_FUNCS(atanh)
 AC_CHECK_FUNCS(isnan isinf finite isnormal signbit)
 
 dnl UAE CPU sources for all non-m68k-native architectures.
-CPUINCLUDES="-I../uae_cpu"
-CPUSRCS="../uae_cpu/basilisk_glue.cpp ../uae_cpu/memory.cpp ../uae_cpu/newcpu.cpp ../uae_cpu/readcpu.cpp $FPUSRCS cpustbl.cpp cpudefs.cpp $CPUSRCS $JITSRCS"
+CPUINCLUDES="-I../new_cpu -I../uae_cpu"
+CPUSRCS="../new_cpu/basilisk_glue.cpp ../new_cpu/memory.cpp ../new_cpu/inst.cpp  ../uae_cpu/memory.cpp ../uae_cpu/newcpu.cpp ../uae_cpu/readcpu.cpp $FPUSRCS cpustbl.cpp cpudefs.cpp $CPUSRCS $JITSRCS"
 
 dnl We really want SDL for now
 AC_CHECK_TOOL(sdl_config, sdl2-config, [AC_MSG_ERROR([Sorry, you currently need SDL for this port])])

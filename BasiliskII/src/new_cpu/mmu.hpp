@@ -8,7 +8,7 @@ inline void WRITE16(void* p, uint16_t v) {
 	*(uint16_t*)p = SDL_SwapBE16(v);
 }
 inline void WRITE32(void* p, uint32_t v) {
-	*(uint32_t*)p = SDL_SwapBE16(v);
+	*(uint32_t*)p = SDL_SwapBE32(v);
 }
 inline uint8_t READ8(const void* p) {
 	return *(uint8_t*)p;
@@ -21,13 +21,14 @@ inline uint32_t READ32(const void* p) {
 }
 
 class MMU {
-	class CPU* cpu;
 	int mode(int c, bool intr);
 protected:
+	class CPU* cpu;
 	MMU(CPU* cpu) :cpu(cpu) {}
 public:
 	virtual void movec_to(int v, uint32_t value) = 0;
 	virtual uint32_t movec_from(int v) = 0;
+	virtual void exec(uint16_t op, int mode, int reg) = 0;
 	virtual void* to_real(uint32_t va, int sz, bool write, int mode = 1) = 0;
 	void write_b(uint32_t va, uint8_t b) {
 		WRITE8(to_real(va, 1, true, mode(1, false)), b);
@@ -48,11 +49,12 @@ public:
 		return READ32(to_real(va, 4, false, mode(1, intr)));
 	}
 };
-class NonMMU : MMU {
+class NonMMU : public MMU {
 public:
 	NonMMU(CPU* cpu) :MMU(cpu) {}
 	void* to_real(uint32_t va, int sz, bool write, int mode = 1) override;
-	void movec_to(int v, uint32_t value) override {}
-	uint32_t movec_from(int v) override { return 0; }
+	void movec_to(int v, uint32_t value) override; 
+	uint32_t movec_from(int v) override;
+	void exec(uint16_t op, int mode, int reg) override {}
 };
 #endif

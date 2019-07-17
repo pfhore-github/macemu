@@ -1852,8 +1852,8 @@ AC_CHECK_FUNCS(isnan isinf finite isnormal signbit)
 
 dnl UAE CPU sources for all non-m68k-native architectures.
 if [[ "x$WANT_NATIVE_M68K" = "xno" ]]; then
-  CPUINCLUDES="-I../uae_cpu"
-  CPUSRCS="../uae_cpu/basilisk_glue.cpp ../uae_cpu/memory.cpp ../uae_cpu/newcpu.cpp ../uae_cpu/readcpu.cpp $FPUSRCS cpustbl.cpp cpudefs.cpp $CPUSRCS $JITSRCS"
+  CPUINCLUDES="-I../new_cpu -I../uae_cpu"
+  CPUSRCS="../new_cpu/basilisk_glue.cpp ../new_cpu/mem.cpp ../new_cpu/common.cpp  ../new_cpu/inst.cpp ../new_cpu/op_bits.cpp ../new_cpu/op_bcd.cpp ../new_cpu/op_arith.cpp ../new_cpu/op_move.cpp ../new_cpu/exceptions.cpp  ../new_cpu/mmu.cpp"
 fi
 
 dnl Or if we have -IPA (MIPSPro compilers)
