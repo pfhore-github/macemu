@@ -160,8 +160,8 @@ private:
 void SerialInit(void)
 {
 	// Read serial preferences and create structs for both ports
-	the_serd_port[0] = new XSERDPort(PrefsFindString("seriala"));
-	the_serd_port[1] = new XSERDPort(PrefsFindString("serialb"));
+	the_serd_port[0] = new XSERDPort(PrefsFindString("seriala").c_str());
+	the_serd_port[1] = new XSERDPort(PrefsFindString("serialb").c_str());
 }
 
 

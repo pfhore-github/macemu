@@ -109,8 +109,8 @@ static bool thread_active = false;			// Flag: Packet reception thread installed
 static sem_t int_ack;						// Interrupt acknowledge semaphore
 static bool udp_tunnel;						// Flag: UDP tunnelling active, fd is the socket descriptor
 static int net_if_type = -1;				// Ethernet device type
-static char *net_if_name = NULL;			// TUN/TAP device name
-static const char *net_if_script = NULL;	// Network config script
+static std::string net_if_name;			// TUN/TAP device name
+static std::string net_if_script;	// Network config script
 static pthread_t slirp_thread;				// Slirp reception thread
 static bool slirp_thread_active = false;	// Flag: Slirp reception threadinstalled
 static int slirp_output_fd = -1;			// fd of slirp output pipe
@@ -201,18 +201,18 @@ static void stop_thread(void)
 
 static bool execute_network_script(const char *action)
 {
-	if (net_if_script == NULL || net_if_name == NULL)
+	if (net_if_script.empty() || net_if_name.empty())
 		return false;
 
 	int pid = fork();
 	if (pid >= 0) {
 		if (pid == 0) {
 			char *args[4];
-			args[0] = (char *)net_if_script;
-			args[1] = net_if_name;
+			args[0] = (char *)net_if_script.c_str();
+			args[1] = (char *)net_if_name.c_str();
 			args[2] = (char *)action;
 			args[3] = NULL;
-			execv(net_if_script, args);
+			execv(net_if_script.c_str(), args);
 			exit(1);
 		}
 		int status;
@@ -234,20 +234,20 @@ bool ether_init(void)
 	char str[256];
 
 	// Do nothing if no Ethernet device specified
-	const char *name = PrefsFindString("ether");
-	if (name == NULL)
+	std::string name = PrefsFindString("ether");
+	if (name.empty())
 		return false;
 
 	// Determine Ethernet device type
 	net_if_type = -1;
-	if (strncmp(name, "tap", 3) == 0)
+	if (strncmp(name.c_str(), "tap", 3) == 0)
 		net_if_type = NET_IF_ETHERTAP;
 #if ENABLE_TUNTAP
-	else if (strcmp(name, "tun") == 0)
+	else if (strcmp(name.c_str(), "tun") == 0)
 		net_if_type = NET_IF_TUNTAP;
 #endif
 #ifdef HAVE_SLIRP
-	else if (strcmp(name, "slirp") == 0)
+	else if (strcmp(name.c_str(), "slirp") == 0)
 		net_if_type = NET_IF_SLIRP;
 #endif
 	else
@@ -292,7 +292,7 @@ bool ether_init(void)
 	char dev_name[16];
 	switch (net_if_type) {
 	case NET_IF_ETHERTAP:
-		sprintf(dev_name, "/dev/%s", name);
+		sprintf(dev_name, "/dev/%s", name.c_str());
 		break;
 	case NET_IF_TUNTAP:
 		strcpy(dev_name, "/dev/net/tun");
@@ -325,16 +325,16 @@ bool ether_init(void)
 
 		// Get network config script file path
 		net_if_script = PrefsFindString("etherconfig");
-		if (net_if_script == NULL)
+		if (net_if_script.empty())
 			net_if_script = ETHERCONFIG_FILE_NAME;
 
 		// Start network script up
-		if (net_if_script == NULL) {
+		if (net_if_script.empty()) {
 			sprintf(str, GetString(STR_TUN_TAP_CONFIG_WARN), "script not found");
 			WarningAlert(str);
 			goto open_error;
 		}
-		net_if_name = strdup(ifr.ifr_name);
+		net_if_name = ifr.ifr_name;
 		if (!execute_network_script("up")) {
 			sprintf(str, GetString(STR_TUN_TAP_CONFIG_WARN), "script execute error");
 			WarningAlert(str);
@@ -436,8 +436,7 @@ void ether_exit(void)
 		execute_network_script("down");
 
 	// Free TUN/TAP device name
-	if (net_if_name)
-		free(net_if_name);
+	net_if_name.clear();
 
 	// Close sheep_net device
 	if (fd > 0)
@@ -982,10 +981,8 @@ static int get_str_sep(char *buf, int buf_size, const char **pp, int sep)
 // Set up port forwarding for slirp
 static void slirp_add_redirs()
 {
-	int index = 0;
-	const char *str;
-	while ((str = PrefsFindString("redir", index++)) != NULL) {
-		slirp_add_redir(str);
+	for( const auto& str : PrefsFindStrings("redir") ) {
+		slirp_add_redir(str.c_str());
 	}
 }
 

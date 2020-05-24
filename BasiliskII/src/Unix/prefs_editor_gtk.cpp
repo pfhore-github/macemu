@@ -234,16 +234,14 @@ static GtkWidget *table_make_file_entry(GtkWidget *table, int row, int label_id,
 	gtk_widget_show(label);
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, row, row + 1, (GtkAttachOptions)0, (GtkAttachOptions)0, 4, 4);
 
-	const char *str = PrefsFindString(prefs_item);
-	if (str == NULL)
-		str = "";
+	std::string str = PrefsFindString(prefs_item);
 
 	box = gtk_hbox_new(FALSE, 4);
 	gtk_widget_show(box);
 	gtk_table_attach(GTK_TABLE(table), box, 1, 2, row, row + 1, (GtkAttachOptions)(GTK_FILL | GTK_EXPAND), (GtkAttachOptions)0, 4, 4);
 
 	entry = gtk_entry_new();
-	gtk_entry_set_text(GTK_ENTRY(entry), str); 
+	gtk_entry_set_text(GTK_ENTRY(entry), str.c_str()); 
 	gtk_widget_show(entry);
 	gtk_box_pack_start(GTK_BOX(box), entry, TRUE, TRUE, 0);
 
@@ -292,8 +290,8 @@ static GtkWidget *make_file_entry(GtkWidget *top, int label_id, const char *pref
 	gtk_widget_show(label);
 	gtk_box_pack_start(GTK_BOX(box), label, FALSE, FALSE, 0);
 
-	const char *str = PrefsFindString(prefs_item);
-	if (str == NULL)
+	std::string str = PrefsFindString(prefs_item);
+	if (str.empty())
 		str = "";
 
 #ifdef HAVE_GNOMEUI
@@ -303,7 +301,7 @@ static GtkWidget *make_file_entry(GtkWidget *top, int label_id, const char *pref
 	gtk_entry_set_text(GTK_ENTRY(gnome_file_entry_gtk_entry(GNOME_FILE_ENTRY(entry))), str);
 #else
 	entry = gtk_entry_new();
-	gtk_entry_set_text(GTK_ENTRY(entry), str); 
+	gtk_entry_set_text(GTK_ENTRY(entry), str.c_str()); 
 #endif
 	gtk_widget_show(entry);
 	gtk_box_pack_start(GTK_BOX(box), entry, TRUE, TRUE, 0);
@@ -638,16 +636,16 @@ static void tb_nocdrom(GtkWidget *widget)
 // Read settings from widgets and set preferences
 static void read_volumes_settings(void)
 {
-	while (PrefsFindString("disk"))
-		PrefsRemoveItem("disk");
-
+	PrefsRemoveItem("disk");
+	std::vector<std::string> disk;
 	for (int i=0; i<GTK_CLIST(volume_list)->rows; i++) {
 		char *str;
 		gtk_clist_get_text(GTK_CLIST(volume_list), i, 0, &str);
-		PrefsAddString("disk", str);
+		disk.push_back(str);
 	}
 
-	PrefsReplaceString("extfs", get_file_entry_path(w_extfs));
+	PrefsReplaceString("disk", disk);
+	PrefsReplaceString("extfs", { get_file_entry_path(w_extfs) });
 }
 
 // Create "Volumes" pane
@@ -666,10 +664,10 @@ static void create_volumes_pane(GtkWidget *top)
 	gtk_clist_set_shadow_type(GTK_CLIST(volume_list), GTK_SHADOW_NONE);
 	gtk_clist_set_reorderable(GTK_CLIST(volume_list), true);
 	gtk_signal_connect(GTK_OBJECT(volume_list), "select_row", GTK_SIGNAL_FUNC(cl_selected), NULL);
-	char *str;
-	int32 index = 0;
-	while ((str = const_cast<char *>(PrefsFindString("disk", index++))) != NULL)
-		gtk_clist_append(GTK_CLIST(volume_list), &str);
+	for( auto str : PrefsFindStrings("disk") ) {
+		gchar* a [] = { (gchar*)str.c_str() };
+		gtk_clist_append(GTK_CLIST(volume_list), a);
+	}
 	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scroll), volume_list);
 	gtk_box_pack_start(GTK_BOX(box), scroll, TRUE, TRUE, 0);
 	selected_volume = 0;
@@ -822,7 +820,7 @@ static void read_scsi_settings(void)
 		sprintf(prefs_name, "scsi%d", id);
 		const char *str = get_file_entry_path(w_scsi[id]);
 		if (str && strlen(str))
-			PrefsReplaceString(prefs_name, str);
+			PrefsReplaceString(prefs_name, { str });
 		else
 			PrefsRemoveItem(prefs_name);
 	}
@@ -937,14 +935,14 @@ static void parse_graphics_prefs(void)
 	fbdev_name[0] = 0;
 #endif
 
-	const char *str = PrefsFindString("screen");
-	if (str) {
-		if (sscanf(str, "win/%d/%d", &dis_width, &dis_height) == 2)
+	std::string str = PrefsFindString("screen");
+	if (!str.empty()) {
+		if (sscanf(str.c_str(), "win/%d/%d", &dis_width, &dis_height) == 2)
 			display_type = DISPLAY_WINDOW;
 #ifdef ENABLE_FBDEV_DGA
-		else if (sscanf(str, "dga/%255s", fbdev_name) == 1)
+		else if (sscanf(str.c_str(), "dga/%255s", fbdev_name) == 1)
 #else
-		else if (sscanf(str, "dga/%d/%d", &dis_width, &dis_height) == 2)
+		else if (sscanf(str.c_str(), "dga/%d/%d", &dis_width, &dis_height) == 2)
 #endif
 			display_type = DISPLAY_SCREEN;
 	}
@@ -978,17 +976,17 @@ static void read_graphics_settings(void)
 			PrefsRemoveItem("screen");
 			return;
 	}
-	PrefsReplaceString("screen", pref);
+	PrefsReplaceString("screen", { pref });
 
 #ifdef ENABLE_FBDEV_DGA
 	str = get_file_entry_path(w_fbdevice_file);
 	if (str && strlen(str))
-		PrefsReplaceString("fbdevicefile", str);
+		PrefsReplaceString("fbdevicefile", { str });
 	else
 		PrefsRemoveItem("fbdevicefile");
 #endif
-	PrefsReplaceString("dsp", get_file_entry_path(w_dspdevice_file));
-	PrefsReplaceString("mixer", get_file_entry_path(w_mixerdevice_file));
+	PrefsReplaceString("dsp", { get_file_entry_path(w_dspdevice_file) });
+	PrefsReplaceString("mixer", { get_file_entry_path(w_mixerdevice_file) });
 }
 
 // Create "Graphics/Sound" pane
@@ -1150,7 +1148,7 @@ static void read_input_settings(void)
 {
 	const char *str = get_file_entry_path(w_keycode_file);
 	if (str && strlen(str))
-		PrefsReplaceString("keycodefile", str);
+		PrefsReplaceString("keycodefile", { str });
 	else
 		PrefsRemoveItem("keycodefile");
 
@@ -1175,12 +1173,10 @@ static void create_input_pane(GtkWidget *top)
 	gtk_widget_show(label);
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 
-	const char *str = PrefsFindString("keycodefile");
-	if (str == NULL)
-		str = "";
+	std::string str = PrefsFindString("keycodefile");
 
 	w_keycode_file = gtk_entry_new();
-	gtk_entry_set_text(GTK_ENTRY(w_keycode_file), str); 
+	gtk_entry_set_text(GTK_ENTRY(w_keycode_file), str.c_str()); 
 	gtk_widget_show(w_keycode_file);
 	gtk_box_pack_start(GTK_BOX(hbox), w_keycode_file, TRUE, TRUE, 0);
 
@@ -1247,14 +1243,14 @@ static void read_serial_settings(void)
 	const char *str;
 
 	str = gtk_entry_get_text(GTK_ENTRY(w_seriala));
-	PrefsReplaceString("seriala", str);
+	PrefsReplaceString("seriala", { str });
 
 	str = gtk_entry_get_text(GTK_ENTRY(w_serialb));
-	PrefsReplaceString("serialb", str);
+	PrefsReplaceString("serialb", { str });
 
 	str = gtk_entry_get_text(GTK_ENTRY(w_ether));
 	if (str && strlen(str))
-		PrefsReplaceString("ether", str);
+		PrefsReplaceString("ether", { str });
 	else
 		PrefsRemoveItem("ether");
 
@@ -1362,10 +1358,8 @@ static void create_serial_pane(GtkWidget *top)
 	combo = gtk_combo_new();
 	gtk_widget_show(combo);
 	gtk_combo_set_popdown_strings(GTK_COMBO(combo), glist);
-	const char *str = PrefsFindString("seriala");
-	if (str == NULL)
-		str = "";
-	gtk_entry_set_text(GTK_ENTRY(GTK_COMBO(combo)->entry), str); 
+	std::string str = PrefsFindString("seriala");
+	gtk_entry_set_text(GTK_ENTRY(GTK_COMBO(combo)->entry), str.c_str()); 
 	gtk_table_attach(GTK_TABLE(table), combo, 1, 2, 0, 1, (GtkAttachOptions)(GTK_FILL | GTK_EXPAND), (GtkAttachOptions)0, 4, 4);
 	w_seriala = GTK_COMBO(combo)->entry;
 
@@ -1377,9 +1371,7 @@ static void create_serial_pane(GtkWidget *top)
 	gtk_widget_show(combo);
 	gtk_combo_set_popdown_strings(GTK_COMBO(combo), glist);
 	str = PrefsFindString("serialb");
-	if (str == NULL)
-		str = "";
-	gtk_entry_set_text(GTK_ENTRY(GTK_COMBO(combo)->entry), str); 
+	gtk_entry_set_text(GTK_ENTRY(GTK_COMBO(combo)->entry), str.c_str()); 
 	gtk_table_attach(GTK_TABLE(table), combo, 1, 2, 1, 2, (GtkAttachOptions)(GTK_FILL | GTK_EXPAND), (GtkAttachOptions)0, 4, 4);
 	w_serialb = GTK_COMBO(combo)->entry;
 
@@ -1396,9 +1388,7 @@ static void create_serial_pane(GtkWidget *top)
 	gtk_widget_show(combo);
 	gtk_combo_set_popdown_strings(GTK_COMBO(combo), glist);
 	str = PrefsFindString("ether");
-	if (str == NULL)
-		str = "";
-	gtk_entry_set_text(GTK_ENTRY(GTK_COMBO(combo)->entry), str); 
+	gtk_entry_set_text(GTK_ENTRY(GTK_COMBO(combo)->entry), str.c_str()); 
 	gtk_table_attach(GTK_TABLE(table), combo, 1, 2, 3, 4, (GtkAttachOptions)(GTK_FILL | GTK_EXPAND), (GtkAttachOptions)0, 4, 4);
 	w_ether = GTK_COMBO(combo)->entry;
 
@@ -1446,7 +1436,7 @@ static void tb_ignoresegv(GtkWidget *widget)
 
 // Model ID selected
 static void mn_modelid_5(...) {PrefsReplaceInt32("modelid", 5);}
-static void mn_modelid_14(...) {PrefsReplaceInt32("modelid", 14);}
+static void mn_modelid_14(...) {PrefsReplaceInt32("modelid", 26);}
 
 // CPU/FPU type
 static void mn_cpu_68020(...) {PrefsReplaceInt32("cpu", 2); PrefsReplaceBool("fpu", false);}
@@ -1463,7 +1453,7 @@ static void read_memory_settings(void)
 
 	str = get_file_entry_path(w_rom_file);
 	if (str && strlen(str))
-		PrefsReplaceString("rom", str);
+		PrefsReplaceString("rom", { str });
 	else
 		PrefsRemoveItem("rom");
 
@@ -1502,7 +1492,7 @@ static void create_memory_pane(GtkWidget *top)
 	int modelid = PrefsFindInt32("modelid"), active = 0;
 	switch (modelid) {
 		case 5: active = 0; break;
-		case 14: active = 1; break;
+		case 26: active = 1; break;
 	}
 	table_make_option_menu(table, 2, STR_MODELID_CTRL, model_options, active);
 

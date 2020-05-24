@@ -22,7 +22,8 @@
 #define PREFS_H
 
 #include <stdio.h>
-
+#include <string>
+#include <vector>
 extern void PrefsInit(const char *vmdir, int &argc, char **&argv);
 extern void PrefsExit(void);
 
@@ -39,19 +40,21 @@ extern void LoadPrefsFromStream(FILE *f);
 extern void SavePrefsToStream(FILE *f);
 
 // Public preferences access functions
-extern void PrefsAddString(const char *name, const char *s);
-extern void PrefsAddBool(const char *name, bool b);
-extern void PrefsAddInt32(const char *name, int32 val);
+extern void PrefsAddString(const std::string& name, const char *s);
+extern void PrefsAddBool(const std::string& name, bool b);
+extern void PrefsAddInt32(const std::string& name, int32_t val);
 
-extern void PrefsReplaceString(const char *name, const char *s, int index = 0);
-extern void PrefsReplaceBool(const char *name, bool b);
-extern void PrefsReplaceInt32(const char *name, int32 val);
+extern void PrefsReplaceString(const std::string&name,
+							   const std::vector<std::string>&ss);
+extern void PrefsReplaceBool(const std::string&name, bool b);
+extern void PrefsReplaceInt32(const std::string&name, int32_t val);
 
-extern const char *PrefsFindString(const char *name, int index = 0);
-extern bool PrefsFindBool(const char *name);
-extern int32 PrefsFindInt32(const char *name);
+extern std::vector<std::string> PrefsFindStrings(const std::string& name);
+extern std::string PrefsFindString(const std::string& name);
+extern bool PrefsFindBool(const std::string& name);
+extern int32_t PrefsFindInt32(const std::string& name);
 
-extern void PrefsRemoveItem(const char *name, int index = 0);
+extern void PrefsRemoveItem(const std::string& name, int index = 0);
 
 #ifdef SHEEPSHAVER
 // Platform specific functions:
@@ -62,28 +65,23 @@ extern void prefs_exit();
 /*
  *  Definition of preferences items
  */
-
-// Item types
 enum prefs_type {
-	TYPE_STRING,		// char[]
-	TYPE_BOOLEAN,		// bool
-	TYPE_INT32,			// int32
-	TYPE_ANY,			// Wildcard for find_node
-	TYPE_END = TYPE_ANY	// Terminator for prefs_desc list
+	TYPE_STRING,
+	TYPE_BOOLEAN,
+	TYPE_INT32,
 };
-
+#include <unordered_map>
 // Item descriptor
 struct prefs_desc {
-	const char *name;	// Name of keyword
 	prefs_type type;	// Type (see above)
 	bool multiple;		// Can this item occur multiple times (only for TYPE_STRING)?
 	const char *help;	// Help/descriptive text about this item
 };
 
 // List of common preferences items (those which exist on all platforms)
-extern prefs_desc common_prefs_items[];
+extern std::unordered_map<std::string, prefs_desc> common_prefs_items;
 
 // List of platform-specific preferences items
-extern prefs_desc platform_prefs_items[];
+extern std::unordered_map<std::string, prefs_desc> platform_prefs_items;
 
 #endif

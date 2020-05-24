@@ -1,120 +1,89 @@
 #pragma once
 #include <stdint.h>
-#include "mmu.hpp"
-#include "fpu.hpp"
+#include "mem.hpp"
+#include "mmu/mmu.hpp"
+#include "fpu/fpu.hpp"
 #include "SDL_endian.h"
-struct FPU_EX {
-	bool INEX1;
-	bool INEX2;
-	bool DZ;
-	bool UNFL;
-	bool OVFL;
-	bool OPERR;
-	bool snan;
-	bool bsun;
-};
+#include "exceptions.hpp"
+#include <atomic>
+struct  CPU {
 
-struct TTC {
-	enum CPU { X030, X040 } cpu;
-	union {
-		struct MC68030 {
-			uint8_t FC_MASK;
-			uint8_t FC_BASE;
-			bool RWM;
-			bool RW;
-			bool CI;
-			bool E;
-		} mc68030;
-		struct MC68040 {
-			bool W;
-			uint8_t CM;
-			uint8_t U;
-			uint8_t S;
-			bool E;
-		} mc68040;
-	} regs;
-};
-
-
-
-struct CPU {
 	// register
-	union {
-		struct {
-			uint32_t D[8];
-			uint32_t A[8];
-		};
-		uint32_t R[16];
-	};			
+	uint32_t R[16];
 	uint32_t USP;
 	uint32_t PC;
 	uint32_t NPC;
-	bool X;
-	bool N;
-	bool Z;
-	bool V;
-	bool C;
+	bool X, N, Z, V, C;
+	bool M, S;
+	std::atomic<uint8_t> IX;
+	uint8_t T;
 	uint32_t ISP;
 	uint32_t MSP;
-	uint8_t IX;
-	bool M;
-	bool S;
-	uint8_t T;
 	uint32_t VBR;
 	uint32_t SFC;
 	uint32_t DFC;
+	uint32_t CACR;
 	uint16_t ACUSR;
-	TTC ttc;
-	FPU* fpu;
-	MMU* mmu;
+
+	uint32_t ea_v;
+	bool trace;
+	bool run;
+	bool misaligned;
+	// INTERNAL
+	enum EA_MODE { REG_D, REG_A, ADDR, IMM } ea_mode;
+	uint8_t ea_sz;	
 	uint8_t intmask;
-	void setD_B(int n, uint8_t v) {
-		D[n] = (D[n] &~ 0xff) | v;
-	}
-	void setD_W(int n, uint16_t v) {
-		D[n] = (D[n] &~ 0xffff) | v;
-	}
-	void setA_W(int n, int16_t v) {
-		A[n] = v;
-	}
-	int16_t getA_W(int n) { return (int16_t)A[n]; }
-	
-	void push16(uint16_t v) {
-		mmu->write_w(A[7] -= 2, v);
-	}
-	
-	void push32(uint32_t v) {
-		mmu->write_l(A[7] -= 4, v);
-	}
-	
-	uint16_t pop16() {
-		uint16_t v = mmu->read_w(A[7]);
-		A[7] += 2;
-		return v;
-	}
+	bool restart;
+	bool in_ex;
+	void parse_EA(int mode, int sz, int n, bool w);
+	uint32_t ea_read();
+	void ea_write(uint32_t v);
 
-	uint32_t pop32() {
-		uint32_t v = mmu->read_l(A[7]);
-		A[7] += 4;
-		return v;
-	}
-
-	uint16_t fetch_w() {
-		uint16_t op = READ16(mmu->to_real(PC, 2, false, 2 | ( S << 2 ) ));
-		PC += 2;
-		return op;
-	}
-	uint32_t fetch_l() {
-		uint32_t op = READ32(mmu->to_real(PC, 4, false, 2 | ( S << 2 ) ));
-		PC += 4;
-		return op;
-	}
-	uint32_t ea_ax(uint32_t ax);
+	void setD_B(int n, uint8_t v) {	R[n] = (R[n] &~ 0xff) | v; }
+	void setD_W(int n, uint16_t v) { R[n] = (R[n] &~ 0xffff) | v; }
+	void setA_W(int n, int16_t v) {	R[8+n] = v; }
+	int16_t getA_W(int n) { return (int16_t)R[8+n]; }
+	
 	void reset();
 	void init();
 	void irq(int level);
-};
+	void do_irq();
+	void do_op();
+	void dump();
 
-inline int MMU::mode(int c, bool intr) {
-	return intr ? 7 : c | ( cpu->S << 2 );
+	void return_from_exception();
+	void change_PC(uint32_t new_pc);
+};
+// we don't support multi CPU/FPU/MMU(has any?)
+extern CPU cpu;
+extern FPU* fpu;
+extern MMU* mmu;
+inline void push16(uint16_t v) { write_w(cpu.R[15] -= 2, v); }
+inline void push32(uint32_t v) { write_l(cpu.R[15] -= 4, v); }
+inline uint16_t pop16() {
+	uint16_t v = read_w(cpu.R[15]);
+	cpu.R[15] += 2;
+	return v;
 }
+
+inline uint32_t pop32() {
+	uint32_t v = read_l(cpu.R[15]);
+	cpu.R[15] += 4;
+	return v;
+}
+
+inline uint16_t fetch_w() {
+	uint16_t op;
+	int attr = ATTR(cpu.S, true)|ATTR_SZ_W;
+	bus_read(mmu->to_real(cpu.PC, attr), attr, &op);
+	cpu.PC += 2;
+	return op;
+}
+inline uint32_t fetch_l() {
+	uint32_t op;
+	int attr = ATTR(cpu.S, true)|ATTR_SZ_L;
+	bus_read(mmu->to_real(cpu.PC, attr), attr, &op);
+	cpu.PC += 4;
+	return op;
+}
+

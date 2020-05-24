@@ -152,19 +152,19 @@ static drive_vec::iterator get_drive_info(int num)
 void SonyInit(void)
 {
 	// No drives specified in prefs? Then add defaults
-	if (PrefsFindString("floppy", 0) == NULL)
+	auto floppys = PrefsFindStrings("floppy");
+	if ( floppys.empty() ) {
 		SysAddFloppyPrefs();
-
+		floppys = PrefsFindStrings("floppy");
+	}
 	// Add drives specified in preferences
-	int index = 0;
-	const char *str;
-	while ((str = PrefsFindString("floppy", index++)) != NULL) {
+	for( auto str : floppys ) {
 		bool read_only = false;
 		if (str[0] == '*') {
 			read_only = true;
-			str++;
+			str.erase(0, 1);
 		}
-		void *fh = Sys_open(str, read_only);
+		void *fh = Sys_open(str.c_str(), read_only);
 		if (fh)
 			drives.push_back(sony_drive_info(fh, SysIsReadOnly(fh)));
 	}
@@ -557,4 +557,8 @@ void SonyInterrupt(void)
 		return;
 
 	mount_mountable_volumes();
+}
+
+void head_select(bool head) {
+	printf("TODO:head_select:%d\n", head);
 }

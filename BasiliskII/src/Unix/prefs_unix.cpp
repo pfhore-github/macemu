@@ -30,22 +30,21 @@ using std::string;
 
 
 // Platform-specific preferences items
-prefs_desc platform_prefs_items[] = {
-	{"keycodes", TYPE_BOOLEAN, false,      "use keycodes rather than keysyms to decode keyboard"},
-	{"keycodefile", TYPE_STRING, false,    "path of keycode translation file"},
-	{"fbdevicefile", TYPE_STRING, false,   "path of frame buffer device specification file"},
-	{"mousewheelmode", TYPE_INT32, false,  "mouse wheel support mode (0=page up/down, 1=cursor up/down)"},
-	{"mousewheellines", TYPE_INT32, false, "number of lines to scroll in mouse wheel mode 1"},
-	{"dsp", TYPE_STRING, false,            "audio output (dsp) device name"},
-	{"mixer", TYPE_STRING, false,          "audio mixer device name"},
+std::unordered_map<std::string, prefs_desc> platform_prefs_items = {
+	{"keycodes", { TYPE_BOOLEAN, false,      "use keycodes rather than keysyms to decode keyboard"}},
+	{"keycodefile", { TYPE_STRING, false,    "path of keycode translation file"}},
+	{"fbdevicefile", { TYPE_STRING, false,   "path of frame buffer device specification file"}},
+	{"mousewheelmode", { TYPE_INT32, false,  "mouse wheel support mode (0=page up/down, 1=cursor up/down)"}},
+	{"mousewheellines", { TYPE_INT32, false, "number of lines to scroll in mouse wheel mode 1"}},
+	{"dsp", { TYPE_STRING, false,            "audio output (dsp) device name"}},
+	{"mixer", { TYPE_STRING, false,          "audio mixer device name"}},
 #ifdef HAVE_SIGSEGV_SKIP_INSTRUCTION
-	{"ignoresegv", TYPE_BOOLEAN, false,    "ignore illegal memory accesses"},
+	{"ignoresegv", { TYPE_BOOLEAN, false,    "ignore illegal memory accesses"}},
 #endif
-	{"idlewait", TYPE_BOOLEAN, false,      "sleep when idle"},
+	{"idlewait", { TYPE_BOOLEAN, false,      "sleep when idle"}},
 #ifdef USE_SDL_VIDEO
-	{"sdlrender", TYPE_STRING, false,      "SDL_Renderer driver (\"auto\", \"software\" (may be faster), etc.)"},
+	{"sdlrender", { TYPE_STRING, false,      "SDL_Renderer driver (\"auto\", \"software\" (may be faster), etc.)"}},
 #endif
-	{NULL, TYPE_END, false, NULL} // End of list
 };
 
 
@@ -119,27 +118,27 @@ void SavePrefs(void)
 
 void AddPlatformPrefsDefaults(void)
 {
-	PrefsAddBool("keycodes", false);
-	PrefsReplaceString("extfs", "/");
+	PrefsReplaceBool("keycodes", false);
+	PrefsReplaceString("extfs", { "/" });
 	PrefsReplaceInt32("mousewheelmode", 1);
 	PrefsReplaceInt32("mousewheellines", 3);
 #ifdef __linux__
 	if (access("/dev/sound/dsp", F_OK) == 0) {
-		PrefsReplaceString("dsp", "/dev/sound/dsp");
+		PrefsReplaceString("dsp", { "/dev/sound/dsp" });
 	} else {
-		PrefsReplaceString("dsp", "/dev/dsp");
+		PrefsReplaceString("dsp", { "/dev/dsp" });
 	}
 	if (access("/dev/sound/mixer", F_OK) == 0) {
-		PrefsReplaceString("mixer", "/dev/sound/mixer");
+		PrefsReplaceString("mixer", { "/dev/sound/mixer" });
 	} else {
-		PrefsReplaceString("mixer", "/dev/mixer");
+		PrefsReplaceString("mixer", { "/dev/mixer" });
 	}
 #else
-	PrefsReplaceString("dsp", "/dev/dsp");
-	PrefsReplaceString("mixer", "/dev/mixer");
+	PrefsReplaceString("dsp", { "/dev/dsp" });
+	PrefsReplaceString("mixer", { "/dev/mixer" });
 #endif
 #ifdef HAVE_SIGSEGV_SKIP_INSTRUCTION
-	PrefsAddBool("ignoresegv", false);
+	PrefsReplaceBool("ignoresegv", false);
 #endif
-	PrefsAddBool("idlewait", true);
+	PrefsReplaceBool("idlewait", true);
 }

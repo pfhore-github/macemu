@@ -27,21 +27,24 @@
 #include "sys.h"
 #include "prefs.h"
 
+#include <vector>
+#include <unordered_map>
+#include <variant>
+#include <string>
+typedef std::unordered_map<std::string,
+						   std::variant<std::vector<std::string>,
+										int,
+										bool>
+						   > pref_t;
+static pref_t the_prefs;
 
-// Prefs items are stored in a linked list of these nodes
-struct prefs_node {
-	prefs_node *next;
-	const char *name;
-	prefs_type type;
-	void *data;
-};
-
-// List of prefs nodes
-static prefs_node *the_prefs = NULL;
-
-// Prototypes
-static const prefs_desc *find_prefs_desc(const char *name);
-
+static auto find_prefs_desc(const std::string& keyword) {
+	auto d = common_prefs_items.find(keyword);
+	if (d != common_prefs_items.end()) {
+		return d;
+	}
+	return platform_prefs_items.find(keyword);
+}
 
 /*
  *  Initialize preferences
@@ -66,9 +69,11 @@ void PrefsInit(const char *vmdir, int &argc, char **&argv)
 		const char *keyword = option + 2;
 
 		// Find descriptor for keyword
-		const prefs_desc *d = find_prefs_desc(keyword);
-		if (d == NULL)
+		auto d = find_prefs_desc(keyword);
+		if( d == platform_prefs_items.end() ) {
 			continue;
+		}
+		
 		argv[i] = NULL;
 
 		// Get value
@@ -81,33 +86,30 @@ void PrefsInit(const char *vmdir, int &argc, char **&argv)
 		argv[i] = NULL;
 
 		// Add/replace prefs item
-		switch (d->type) {
-			case TYPE_STRING:
-				if (d->multiple)
-					PrefsAddString(keyword, value);
-				else
-					PrefsReplaceString(keyword, value);
-				break;
-
-			case TYPE_BOOLEAN: {
-				if (!strcmp(value, "true") || !strcmp(value, "on") || !strcmp(value, "yes"))
-					PrefsReplaceBool(keyword, true);
-				else if (!strcmp(value, "false") || !strcmp(value, "off") || !strcmp(value, "no"))
-					PrefsReplaceBool(keyword, false);
-				else
-					fprintf(stderr, "Value for option '%s' must be 'true' or 'false'\n", option);
-				break;
+		switch (d->second.type) {
+		case TYPE_STRING:
+			if( d->second.multiple ) {
+				std::get<0>(the_prefs[keyword]).push_back(value);
+			} else {
+				the_prefs[keyword] = { value };
 			}
-
-			case TYPE_INT32:
-				PrefsReplaceInt32(keyword, atoi(value));
-				break;
-
-			default:
-				break;
+			break;
+		case TYPE_INT32:
+			the_prefs[keyword] = atoi(value);
+			break;
+		case TYPE_BOOLEAN: 
+			if (!strcmp(value, "true") || !strcmp(value, "on") || !strcmp(value, "yes")) {
+				the_prefs[keyword] = true;
+			} else if (!strcmp(value, "false") || !strcmp(value, "off") || !strcmp(value, "no")) {
+				the_prefs[keyword] = false;
+			} else
+				fprintf(stderr, "Value for option '%s' must be 'true' or 'false'\n", option);
+			break;
+		default:
+			break;
 		}
 	}
-
+	
 	// Remove processed arguments
 	for (int i=1; i<argc; i++) {
 		int k;
@@ -141,15 +143,7 @@ void PrefsExit(void)
 #endif
 
 	// Free prefs list
-	prefs_node *p = the_prefs, *next;
-	while (p) {
-		next = p->next;
-		free((void *)p->name);
-		free(p->data);
-		delete p;
-		p = next;
-	}
-	the_prefs = NULL;
+	the_prefs.clear();
 }
 
 
@@ -157,29 +151,32 @@ void PrefsExit(void)
  *  Print preferences options help
  */
 
-static void print_options(const prefs_desc *list)
+static void print_options(const std::unordered_map<std::string, prefs_desc>& list) 
 {
-	while (list->type != TYPE_END) {
-		if (list->help) {
-			const char *typestr, *defstr;
+	for( auto & i : list ) {
+		if (i.second.help) {
+			std::string typestr, defstr;
 			char numstr[32];
-			switch (list->type) {
-				case TYPE_STRING:
+			switch (i.second.type) {
+			case TYPE_STRING: {
 					typestr = "STRING";
-					defstr = PrefsFindString(list->name);
-					if (defstr == NULL)
+					auto v = PrefsFindString(i.first);
+					if (v.empty())
 						defstr = "none";
+					else
+						defstr = v[0];
 					break;
+			}
 				case TYPE_BOOLEAN:
 					typestr = "BOOL";
-					if (PrefsFindBool(list->name))
+					if (PrefsFindBool(i.first))
 						defstr = "true";
 					else
 						defstr = "false";
 					break;
 				case TYPE_INT32:
 					typestr = "NUMBER";
-					sprintf(numstr, "%d", PrefsFindInt32(list->name));
+					sprintf(numstr, "%d", PrefsFindInt32(i.first));
 					defstr = numstr;
 					break;
 				default:
@@ -187,9 +184,9 @@ static void print_options(const prefs_desc *list)
 					defstr = "none";
 					break;
 			}
-			printf("  --%s %s\n    %s [default=%s]\n", list->name, typestr, list->help, defstr);
+			printf("  --%s %s\n    %s [default=%s]\n",
+				   i.first.c_str(), typestr.c_str(), i.second.help, defstr.c_str());
 		}
-		list++;
 	}
 }
 
@@ -203,115 +200,21 @@ void PrefsPrintUsage(void)
 }
 
 
-/*
- *  Find preferences descriptor by keyword
- */
-
-static const prefs_desc *find_prefs_desc(const char *name, const prefs_desc *list)
+void PrefsReplaceString(const std::string& name,
+						const std::vector<std::string>& ss)
 {
-	while (list->type != TYPE_ANY) {
-		if (strcmp(list->name, name) == 0)
-			return list;
-		list++;
-	}
-	return NULL;
+	the_prefs[name] = ss;
+	return;
 }
 
-static const prefs_desc *find_prefs_desc(const char *name)
+void PrefsReplaceBool(const std::string& name, bool b)
 {
-	const prefs_desc *d = find_prefs_desc(name, common_prefs_items);
-	if (d == NULL)
-		d = find_prefs_desc(name, platform_prefs_items);
-	return d;
+	the_prefs[name] = b;
 }
 
-
-/*
- *  Set prefs items
- */
-
-static void add_data(const char *name, prefs_type type, void *data, int size)
+void PrefsReplaceInt32(const std::string& name, int32 val)
 {
-	void *d = malloc(size);
-	if (d == NULL)
-		return;
-	memcpy(d, data, size);
-	prefs_node *p = new prefs_node;
-	p->next = 0;
-	p->name = strdup(name);
-	p->type = type;
-	p->data = d;
-	if (the_prefs) {
-		prefs_node *prev = the_prefs;
-		while (prev->next)
-			prev = prev->next;
-		prev->next = p;
-	} else
-		the_prefs = p;
-}
-
-void PrefsAddString(const char *name, const char *s)
-{
-	add_data(name, TYPE_STRING, (void *)s, strlen(s) + 1);
-}
-
-void PrefsAddBool(const char *name, bool b)
-{
-	add_data(name, TYPE_BOOLEAN, &b, sizeof(bool));
-}
-
-void PrefsAddInt32(const char *name, int32 val)
-{
-	add_data(name, TYPE_INT32, &val, sizeof(int32));
-}
-
-
-/*
- *  Replace prefs items
- */
-
-static prefs_node *find_node(const char *name, prefs_type type, int index = 0)
-{
-	prefs_node *p = the_prefs;
-	int i = 0;
-	while (p) {
-		if ((type == TYPE_ANY || p->type == type) && !strcmp(p->name, name)) {
-			if (i == index)
-				return p;
-			else
-				i++;
-		}
-		p = p->next;
-	}
-	return NULL;
-}
-
-void PrefsReplaceString(const char *name, const char *s, int index)
-{
-	prefs_node *p = find_node(name, TYPE_STRING, index);
-	if (p) {
-		free(p->data);
-		p->data = strdup(s);
-	} else
-		add_data(name, TYPE_STRING, (void *)s, strlen(s) + 1);
-}
-
-void PrefsReplaceBool(const char *name, bool b)
-{
-	prefs_node *p = find_node(name, TYPE_BOOLEAN);
-	if (p)
-		*(bool *)(p->data) = b;
-	else
-		add_data(name, TYPE_BOOLEAN, &b, sizeof(bool));
-}
-
-void PrefsReplaceInt32(const char *name, int32 val)
-{
-	prefs_node *p = find_node(name, TYPE_INT32);
-	if (p)
-		*(int32 *)(p->data) = val;
-	else
-		add_data(name, TYPE_INT32, &val, sizeof(int32));
+	the_prefs[name] = val;
 }
 
 
@@ -319,31 +222,50 @@ void PrefsReplaceInt32(const char *name, int32 val)
  *  Get prefs items
  */
 
-const char *PrefsFindString(const char *name, int index)
+std::vector<std::string> PrefsFindStrings(const std::string& name)
 {
-	prefs_node *p = find_node(name, TYPE_STRING, index);
-	if (p)
-		return (char *)(p->data);
-	else
-		return NULL;
+	auto d = the_prefs.find(name);
+	if( d != the_prefs.end() ) {
+		if( auto d2 = std::get_if<0>( &d->second) ) {
+			return (*d2);
+		}
+	}
+	return {};
 }
 
-bool PrefsFindBool(const char *name)
+std::string PrefsFindString(const std::string& name)
 {
-	prefs_node *p = find_node(name, TYPE_BOOLEAN, 0);
-	if (p)
-		return *(bool *)(p->data);
-	else
-		return false;
+	auto d = the_prefs.find(name);
+	if( d != the_prefs.end() ) {
+		if( auto d2 = std::get_if<0>( &d->second) ) {
+			if( d2->size() == 1 ) {
+				return (*d2)[0];
+			}
+		}
+	}
+	return std::string();
 }
 
-int32 PrefsFindInt32(const char *name)
+bool PrefsFindBool(const std::string& name)
 {
-	prefs_node *p = find_node(name, TYPE_INT32, 0);
-	if (p)
-		return *(int32 *)(p->data);
-	else
-		return 0;
+	auto d = the_prefs.find(name);
+	if( d != the_prefs.end() ) {
+		if( auto d2 = std::get_if<2>( &d->second) ) {
+			return *d2;
+		}
+	}
+	return false;
+}
+
+int32 PrefsFindInt32(const std::string& name)
+{
+	auto d = the_prefs.find(name);
+	if( d != the_prefs.end() ) {
+		if( auto d2 = std::get_if<1>( &d->second) ) {
+			return *d2;
+		}
+	}
+	return 0;
 }
 
 
@@ -351,25 +273,18 @@ int32 PrefsFindInt32(const char *name)
  *  Remove prefs items
  */
 
-void PrefsRemoveItem(const char *name, int index)
+void PrefsRemoveItem(const std::string& name, int index)
 {
-	prefs_node *p = find_node(name, TYPE_ANY, index);
-	if (p) {
-		free((void *)p->name);
-		free(p->data);
-		prefs_node *q = the_prefs;
-		if (q == p) {
-			the_prefs = NULL;
-			delete p;
-			return;
-		}
-		while (q) {
-			if (q->next == p) {
-				q->next = p->next;
-				delete p;
-				return;
+	auto d = the_prefs.find(name);
+	if( d != the_prefs.end() ) {
+		if( auto d2 = std::get_if<0>( &d->second) ) {
+			if( d2->size() == 1 ) {
+				the_prefs.erase(d);				
+			} else if( (uint32_t)index < d2->size() ) {
+				d2->erase(d2->begin() + index);
 			}
-			q = q->next;
+		} else {
+			the_prefs.erase(d);
 		}
 	}
 }
@@ -406,28 +321,27 @@ void LoadPrefsFromStream(FILE *f)
 		while (*p && isspace(*p)) p++;
 		char *keyword = line;
 		char *value = p;
-		int32 i = atol(value);
 
 		// Look for keyword first in prefs item list
-		const prefs_desc *desc = find_prefs_desc(keyword);
-		if (desc == NULL) {
+		auto desc = find_prefs_desc(keyword);
+		if (desc == platform_prefs_items.end()) {
 			printf("WARNING: Unknown preferences keyword '%s'\n", keyword);
 			continue;
 		}
 
 		// Add item to prefs
-		switch (desc->type) {
+		switch (desc->second.type) {
 			case TYPE_STRING:
-				if (desc->multiple)
-					PrefsAddString(keyword, value);
+				if (desc->second.multiple)
+					std::get<0>(the_prefs[keyword]).push_back(value);
 				else
-					PrefsReplaceString(keyword, value);
+					the_prefs[keyword] = std::vector<std::string>({ value });
 				break;
 			case TYPE_BOOLEAN:
-				PrefsReplaceBool(keyword, !strcmp(value, "true"));
+				the_prefs[keyword] = !strcmp(value, "true");
 				break;
 			case TYPE_INT32:
-				PrefsReplaceInt32(keyword, i);
+				the_prefs[keyword] = atoi(value);
 				break;
 			default:
 				break;
@@ -440,27 +354,27 @@ void LoadPrefsFromStream(FILE *f)
  *  Save settings to stream (utility function for SavePrefs() implementation)
  */
 
-static void write_prefs(FILE *f, const prefs_desc *list)
+static void write_prefs(FILE *f,
+						const std::unordered_map<std::string, prefs_desc>&list)
 {
-	while (list->type != TYPE_ANY) {
-		switch (list->type) {
+	for( auto i : list ) {
+		const char* key = i.first.c_str();
+		switch (i.second.type) {
 			case TYPE_STRING: {
-				int index = 0;
-				const char *str;
-				while ((str = PrefsFindString(list->name, index++)) != NULL)
-					fprintf(f, "%s %s\n", list->name, str);
+				for( const auto & str : PrefsFindStrings(i.first) ) {
+					fprintf(f, "%s %s\n", key, str.c_str());
+				}
 				break;
 			}
 			case TYPE_BOOLEAN:
-				fprintf(f, "%s %s\n", list->name, PrefsFindBool(list->name) ? "true" : "false");
+				fprintf(f, "%s %s\n", key, PrefsFindBool(i.first) ? "true" : "false");
 				break;
 			case TYPE_INT32:
-				fprintf(f, "%s %d\n", list->name, PrefsFindInt32(list->name));
+				fprintf(f, "%s %d\n", key, PrefsFindInt32(i.first));
 				break;
 			default:
 				break;
 		}
-		list++;
 	}
 }
 

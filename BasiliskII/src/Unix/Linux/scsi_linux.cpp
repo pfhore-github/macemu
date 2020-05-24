@@ -63,9 +63,9 @@ void SCSIInit(void)
     for (id=0; id<8; id++) {
 		char prefs_name[16];
 		sprintf(prefs_name, "scsi%d", id);
-		const char *str = PrefsFindString(prefs_name);
-		if (str) {
-			int fd = fds[id] = open(str, O_RDWR | O_EXCL);
+		std::string str = PrefsFindString(prefs_name);
+		if (!str.empty()) {
+			int fd = fds[id] = open(str.c_str(), O_RDWR | O_EXCL);
 			if (fd > 0) {
 				// Is it really a Generic SCSI device?
 				int timeout = ioctl(fd, SG_GET_TIMEOUT);

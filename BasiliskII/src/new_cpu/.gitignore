@@ -1,0 +1,4 @@
+obj/*
+test_fpu
+test_mmu
+cov/*

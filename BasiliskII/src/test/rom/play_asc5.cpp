@@ -1,0 +1,27 @@
+#define BOOST_TEST_DYN_LINK
+#include "test_common.hpp"
+#include "prototype.hpp"
+#include "asc.hpp"
+#include "via.hpp"
+
+using namespace ROM;
+namespace ROM {
+void play_asc( const ASC_param& p) {
+	BOOST_TEST( p.volume == 0x0607 );
+	BOOST_TEST( p.wait == 43 );
+	BOOST_TEST( p.delay == 3000 );
+	BOOST_TEST( p.repeat == 25000 );
+	BOOST_TEST( p.chs == 4 );
+	BOOST_TEST( p.freq[0] == 82927 );
+	BOOST_TEST( p.freq[1] == 103659 );
+	BOOST_TEST( p.freq[2] == 124391 );
+	BOOST_TEST( p.freq[3] == 166231 );
+}
+}
+BOOST_AUTO_TEST_CASE( ring ) {
+	fixture f;
+	AR(5) = 0x50f00000;
+	AR(3) = 0x50F14000;
+	DEFINE_ROM( 0706E );
+	TEST_ROM( 0706A );
+}

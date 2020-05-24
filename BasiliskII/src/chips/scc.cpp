@@ -1,0 +1,146 @@
+#include "scc.hpp"
+#include "devices/serial.hpp"
+#include "scc_impl.hpp"
+#include "registers.hpp"
+TransMode get_trans_mode(uint8_t rr) {
+	
+class NullSerial : public SerialDevice {
+	void hsk_o(bool) override {}
+	void t_xd(uint8_t) override {}
+	void abort() override {}
+};
+SCC_impl::SCC_impl(bool is_modem)
+	:is_modem(is_modem),
+	 reg_ptr(0),
+	 device(std::make_shared<NullSerial>()) {}
+void SCC::reset() {
+	modem->reset();
+	printer->reset();
+}
+void SCC::connect_modem(const std::shared_ptr<SerialDevice>& t) {
+	modem->device->connected_to.reset();
+	modem->device = t;
+	t->connected_to = modem;
+}
+void SCC::connect_printer(const std::shared_ptr<SerialDevice>& t) {
+	printer->device->connected_to.reset();
+	printer->device = t;
+	t->connected_to = printer;
+}
+SCC::SCC(const std::shared_ptr<SCC_impl>& o) {
+	modem = o->clone(true);
+	printer = o->clone(false);
+}
+void SCC_impl::reset() {
+	reg_ptr = 0;
+}
+void SCC::irq() {
+	cpu.irq( 4 ); 
+}
+
+bool SCC::wait_request() {
+	return false;
+//	return modem->wait_request | printer->wait_request;
+}
+// Data Recieve
+void SCC::r_xd(SerialDevice& dev, uint8_t v) {
+	if( auto i = which(dev) ) {
+		if( i->data_buffers.push( v ) ) {
+			i->rr[0] |= 1;
+			if( i->rr[9] & 8 ) {
+				if( i->is_modem ) {
+					if( i->rr[9] & 0x10 ) {
+						i->rr[2] = (i->rr[2] &~ 0x70) | 0x30;
+					} else {
+						i->rr[2] = (i->rr[2] &~ 0xE) | 0xC;
+					}
+				} else {
+					if( i->rr[9] & 0x10 ) {
+						i->rr[2] = (i->rr[2] &~ 0x70) | 0x20;
+					} else {
+						i->rr[2] = (i->rr[2] &~ 0xE) | 0x4;
+					}
+				}
+				irq();
+			}
+		} else {
+			if( i->rr[9] & 8 ) {
+				if( i->is_modem ) {
+					if( i->rr[9] & 0x10 ) {
+						i->rr[2] |= 0x70;
+					} else {
+						i->rr[2] |= 0xE;
+					}
+				} else {
+					if( i->rr[9] & 0x10 ) {
+						i->rr[2] = (i->rr[2] &~ 0x70) | 0x30;
+					} else {
+						i->rr[2] = (i->rr[2] &~ 0xE) | 0x3;
+					}
+				}
+				i->rr[1] |= 0x20;
+				irq();
+			}
+		}
+	}	
+}
+void SCC::hsk_i(SerialDevice& dev) {
+	if( auto i = which(dev) ) {
+	}	
+}
+
+void SCC::gp_i(SerialDevice& dev, bool b) {
+	if( auto i = which(dev) ) {
+	}
+}
+uint8_t SCC_impl::read_data() {
+	data_buffers.pop(rr[8]);
+	if( data_buffers.empty() && (rr[1] & 1) ) {
+		rr[0] &= ~1;
+	}
+	return rr[8];
+}
+// transmit data
+void SCC_impl::write_data(uint8_t v) {
+	int mode = (wr[4] >> 2) & 3;
+	if( mode == 0 ) {
+		// sync mode
+		device->t_xd(v);
+	} else {
+		// async mode
+	}
+	rr[1] |= 1;
+}
+uint8_t SCC::read(int addr) {
+	switch(addr) {
+	case SCC_REG::B_CMD : return printer->read_reg();
+	case SCC_REG::A_CMD : return modem->read_reg();
+	case SCC_REG::B_DATA : return printer->read_data();
+	case SCC_REG::A_DATA : return modem->read_data();
+	default : return 0;
+	}
+}
+void SCC::write(int addr, uint8_t v) {
+	switch(addr) {
+	case SCC_REG::B_CMD : printer->write_reg(v); break;
+	case SCC_REG::A_CMD : modem->write_reg(v); break;
+	case SCC_REG::B_DATA : printer->write_data(v); break;
+	case SCC_REG::A_DATA : modem->write_data(v); break;
+	}
+}
+uint8_t SCC_impl::read_reg() {
+	int reg = reg_ptr;
+	reg_ptr = 0;
+	return read_reg_impl(reg);
+}
+
+
+void SCC_impl::write_reg(uint8_t v) {
+	if( reg_ptr == 0 ) {
+		write_reg_impl(0, v);
+	} else {
+		write_reg_impl(reg_ptr, v);
+		reg_ptr = 0;
+	}
+}
+

@@ -20,6 +20,7 @@
 
 #include <string.h>
 #include <stdio.h>
+extern bool quit_program;
 
 #include "sysdeps.h"
 #include "cpu_emulation.h"
@@ -41,15 +42,38 @@
 #include "ether.h"
 #include "extfs.h"
 #include "emul_op.h"
-
-#ifdef ENABLE_MON
-#include "mon.h"
-#endif
+#include "new_cpu/registers.hpp"
 
 #define DEBUG 0
 #include "debug.h"
 
-
+void emul_reset(uint32_t* d, uint32_t* a) {
+	TimerReset();
+	EtherReset();
+	AudioReset();
+#if 0	
+	// Create BootGlobs at top of memory
+	Mac_memset(RAMBaseMac + RAMSize - 4096, 0, 4096);
+	uint32 boot_globs = RAMBaseMac + RAMSize - 0x1c;
+	WriteMacInt32(boot_globs + 0x00, RAMBaseMac);	// First RAM bank
+	WriteMacInt32(boot_globs + 0x04, RAMSize);
+	WriteMacInt32(boot_globs + 0x08, 0xffffffff);	// End of bank table
+	WriteMacInt32(boot_globs + 0x0c, 0);
+	
+	// Setup registers for boot routine
+	d[0] = ReadMacInt32(ROMBaseMac + UniversalInfo + 0x18);	// AddrMapFlags
+	d[1] = ReadMacInt32(ROMBaseMac + UniversalInfo + 0x1c);	// UnivROMFlags
+	d[2] = ReadMacInt32(ROMBaseMac + UniversalInfo + 0x10);	// HWCfgFlags/IDs
+	if (FPUType)
+		d[2] |= 0x10000000;									// Set FPU flag if FPU present
+	else
+		d[2] &= 0xefffffff;									// Clear FPU flag if no FPU present
+	a[0] = ROMBaseMac + UniversalInfo + ReadMacInt32(ROMBaseMac + UniversalInfo);// AddrMap
+	a[1] = ROMBaseMac + UniversalInfo;						// UniversalInfo
+	a[6] = boot_globs;										// BootGlobs
+	a[7] = RAMBaseMac + 0x10000;								// Boot stack
+#endif
+}
 /*
  *  Execute EMUL_OP opcode (called by 68k emulator or Illegal Instruction trap handler)
  */
@@ -58,6 +82,9 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 {
 	D(bug("EmulOp %04x\n", opcode));
 	switch (opcode) {
+		case M68K_EXEC_RETURN:
+			quit_program = true;
+			break;
 		case M68K_EMUL_BREAK: {				// Breakpoint
 			printf("*** Breakpoint\n");
 			printf("d0 %08x d1 %08x d2 %08x d3 %08x\n"
@@ -69,10 +96,6 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 				   r->a[0], r->a[1], r->a[2], r->a[3], r->a[4], r->a[5], r->a[6], r->a[7],
 				   r->sr);
 			VideoQuitFullScreen();
-#ifdef ENABLE_MON
-			const char *arg[4] = {"mon", "-m", "-r", NULL};
-			mon(3, arg);
-#endif
 			QuitEmulator();
 			break;
 		}
@@ -83,30 +106,7 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 
 		case M68K_EMUL_OP_RESET: {			// MacOS reset
 			D(bug("*** RESET ***\n"));
-			TimerReset();
-			EtherReset();
-			AudioReset();
-
-			// Create BootGlobs at top of memory
-			Mac_memset(RAMBaseMac + RAMSize - 4096, 0, 4096);
-			uint32 boot_globs = RAMBaseMac + RAMSize - 0x1c;
-			WriteMacInt32(boot_globs + 0x00, RAMBaseMac);	// First RAM bank
-			WriteMacInt32(boot_globs + 0x04, RAMSize);
-			WriteMacInt32(boot_globs + 0x08, 0xffffffff);	// End of bank table
-			WriteMacInt32(boot_globs + 0x0c, 0);
-
-			// Setup registers for boot routine
-			r->d[0] = ReadMacInt32(ROMBaseMac + UniversalInfo + 0x18);	// AddrMapFlags
-			r->d[1] = ReadMacInt32(ROMBaseMac + UniversalInfo + 0x1c);	// UnivROMFlags
-			r->d[2] = ReadMacInt32(ROMBaseMac + UniversalInfo + 0x10);	// HWCfgFlags/IDs
-			if (FPUType)
-				r->d[2] |= 0x10000000;									// Set FPU flag if FPU present
-			else
-				r->d[2] &= 0xefffffff;									// Clear FPU flag if no FPU present
-			r->a[0] = ROMBaseMac + UniversalInfo + ReadMacInt32(ROMBaseMac + UniversalInfo);// AddrMap
-			r->a[1] = ROMBaseMac + UniversalInfo;						// UniversalInfo
-			r->a[6] = boot_globs;										// BootGlobs
-			r->a[7] = RAMBaseMac + 0x10000;								// Boot stack
+			emul_reset(r->d, r->a);
 			break;
 		}
 
@@ -114,7 +114,7 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 			bool is_read = (r->d[1] & 0x80) != 0;
 			if ((r->d[1] & 0x78) == 0x38) {
 				// XPRAM
-				uint8 reg = (r->d[1] << 5) & 0xe0 | (r->d[1] >> 10) & 0x1f;
+				uint8 reg = ((r->d[1] << 5) & 0xe0) | ((r->d[1] >> 10) & 0x1f);
 				if (is_read) {
 					r->d[2] = XPRAM[reg];
 					bool localtalk = !(XPRAM[0xe0] || XPRAM[0xe1]);	// LocalTalk enabled?
@@ -143,9 +143,9 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 								r->d[2] = 0x0a;
 							break;
 					}
-					D(bug("Read XPRAM %02x->%02lx\n", reg, r->d[2]));
+					printf("Read XPRAM %02x->%02x\n", reg, r->d[2]);
 				} else {
-					D(bug("Write XPRAM %02x<-%02lx\n", reg, r->d[2] & 0xff));
+					printf("Write XPRAM %02x<-%02x\n", reg, r->d[2] & 0xff);
 					if (reg == 0x8a && !TwentyFourBitAddressing)
 						r->d[2] |= 0x05;	// 32bit mode is always enabled if possible
 					XPRAM[reg] = r->d[2];
@@ -156,9 +156,9 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 				if (reg >= 0x10 || (reg >= 0x08 && reg < 0x0c)) {
 					if (is_read) {
 						r->d[2] = XPRAM[reg];
-						D(bug("Read XPRAM %02x->%02x\n", reg, XPRAM[reg]));
+						printf("Read XPRAM %02x->%02x\n", reg, XPRAM[reg]);
 					} else {
-						D(bug("Write PRAM %02x<-%02lx\n", reg, r->d[2]));
+						printf("Write PRAM %02x<-%02x\n", reg, r->d[2]);
 						XPRAM[reg] = r->d[2];
 					}
 				} else if (reg < 0x08 && is_read) {
@@ -171,7 +171,7 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 					}
 					r->d[2] = b;
 				} else
-					D(bug("RTC %s op %d, d1 %08lx d2 %08lx\n", is_read ? "read" : "write", reg, r->d[1], r->d[2]));
+					printf("RTC %s op %d, d1 %08x d2 %08x\n", is_read ? "read" : "write", reg, r->d[1], r->d[2]);
 			}
 			r->d[0] = 0;
 			r->d[1] = r->d[2];
@@ -179,12 +179,12 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 		}
 
 		case M68K_EMUL_OP_READ_XPRAM:		// Read from XPRAM (ROM10/11)
-			D(bug("Read XPRAM %02lx\n", r->d[1]));
+			D(bug("Read XPRAM %02x\n", r->d[1]));
 			r->d[1] = XPRAM[r->d[1] & 0xff];
 			break;
 
 		case M68K_EMUL_OP_READ_XPRAM2:		// Read from XPRAM (ROM15)
-			D(bug("Read XPRAM %02lx\n", r->d[0]));
+			D(bug("Read XPRAM %02x\n", r->d[0]));
 			r->d[0] = XPRAM[r->d[0] & 0xff];
 			break;
 
@@ -565,19 +565,9 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 			break;
 
 		case M68K_EMUL_OP_SUSPEND: {
-			printf("*** Suspend\n");
-			printf("d0 %08x d1 %08x d2 %08x d3 %08x\n"
-				   "d4 %08x d5 %08x d6 %08x d7 %08x\n"
-				   "a0 %08x a1 %08x a2 %08x a3 %08x\n"
-				   "a4 %08x a5 %08x a6 %08x a7 %08x\n"
-				   "sr %04x\n",
-				   r->d[0], r->d[1], r->d[2], r->d[3], r->d[4], r->d[5], r->d[6], r->d[7],
-				   r->a[0], r->a[1], r->a[2], r->a[3], r->a[4], r->a[5], r->a[6], r->a[7],
-				   r->sr);
-#ifdef ENABLE_MON
-			const char *arg[4] = {"mon", "-m", "-r", NULL};
-			mon(3, arg);
-#endif
+			fprintf(stderr,"sleep...\n@%08x", cpu.PC);
+			cpu.intmask = 0;
+			cpu.run = false;
 			break;
 		}
 
@@ -591,10 +581,6 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 				   r->d[0], r->d[1], r->d[2], r->d[3], r->d[4], r->d[5], r->d[6], r->d[7],
 				   r->a[0], r->a[1], r->a[2], r->a[3], r->a[4], r->a[5], r->a[6], r->a[7],
 				   r->sr);
-#ifdef ENABLE_MON
-			const char *arg[4] = {"mon", "-m", "-r", NULL};
-			mon(3, arg);
-#endif
 			QuitEmulator();
 			break;
 	}

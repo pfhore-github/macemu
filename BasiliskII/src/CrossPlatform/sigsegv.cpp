@@ -244,36 +244,6 @@ static void powerpc_decode_instruction(instruction_t *instruction, unsigned int 
 
 #if HAVE_SIGINFO_T
 // Generic extended signal handler
-#if defined(__hpux)
-#define SIGSEGV_ALL_SIGNALS				FAULT_HANDLER(SIGSEGV) FAULT_HANDLER(SIGBUS)
-#else
-#define SIGSEGV_ALL_SIGNALS				FAULT_HANDLER(SIGSEGV)
-#endif
-#define SIGSEGV_FAULT_HANDLER_ARGLIST	int sig, siginfo_t *sip, void *scp
-#define SIGSEGV_FAULT_HANDLER_ARGLIST_1	siginfo_t *sip, void *scp
-#define SIGSEGV_FAULT_HANDLER_ARGS		sip, scp
-#define SIGSEGV_FAULT_ADDRESS			sip->si_addr
-#if (defined(sgi) || defined(__sgi))
-#include <ucontext.h>
-#define SIGSEGV_CONTEXT_REGS			(((ucontext_t *)scp)->uc_mcontext.gregs)
-#define SIGSEGV_FAULT_INSTRUCTION		(unsigned long)SIGSEGV_CONTEXT_REGS[CTX_EPC]
-#if (defined(mips) || defined(__mips))
-#define SIGSEGV_REGISTER_FILE			&SIGSEGV_CONTEXT_REGS[CTX_EPC], &SIGSEGV_CONTEXT_REGS[CTX_R0]
-#define SIGSEGV_SKIP_INSTRUCTION		mips_skip_instruction
-#endif
-#endif
-#if defined(__sun__)
-#if (defined(sparc) || defined(__sparc__))
-#include <sys/stack.h>
-#include <sys/regset.h>
-#include <sys/ucontext.h>
-#define SIGSEGV_CONTEXT_REGS			(((ucontext_t *)scp)->uc_mcontext.gregs)
-#define SIGSEGV_FAULT_INSTRUCTION		SIGSEGV_CONTEXT_REGS[REG_PC]
-#define SIGSEGV_SPARC_GWINDOWS			(((ucontext_t *)scp)->uc_mcontext.gwins)
-#define SIGSEGV_SPARC_RWINDOW			(struct rwindow *)((char *)SIGSEGV_CONTEXT_REGS[REG_SP] + STACK_BIAS)
-#define SIGSEGV_REGISTER_FILE			((unsigned long *)SIGSEGV_CONTEXT_REGS), SIGSEGV_SPARC_GWINDOWS, SIGSEGV_SPARC_RWINDOW
-#define SIGSEGV_SKIP_INSTRUCTION		sparc_skip_instruction
-#endif
 #if defined(__i386__)
 #include <sys/regset.h>
 #define SIGSEGV_CONTEXT_REGS			(((ucontext_t *)scp)->uc_mcontext.gregs)
@@ -317,10 +287,6 @@ static void powerpc_decode_instruction(instruction_t *instruction, unsigned int 
 #else
 #include <sys/ucontext.h>
 #endif
-#if (defined(hppa) || defined(__hppa__))
-#undef  SIGSEGV_FAULT_ADDRESS
-#define SIGSEGV_FAULT_ADDRESS			sip->si_ptr
-#endif
 #if (defined(i386) || defined(__i386__))
 #define SIGSEGV_CONTEXT_REGS			(((ucontext_t *)scp)->uc_mcontext.gregs)
 #define SIGSEGV_FAULT_INSTRUCTION		SIGSEGV_CONTEXT_REGS[14] /* should use REG_EIP instead */
@@ -331,11 +297,6 @@ static void powerpc_decode_instruction(instruction_t *instruction, unsigned int 
 #define SIGSEGV_FAULT_INSTRUCTION		SIGSEGV_CONTEXT_REGS[16] /* should use REG_RIP instead */
 #define SIGSEGV_REGISTER_FILE			(SIGSEGV_REGISTER_TYPE *)SIGSEGV_CONTEXT_REGS
 #define SIGSEGV_SKIP_INSTRUCTION		ix86_skip_instruction
-#elif (defined(ia64) || defined(__ia64__))
-#define SIGSEGV_CONTEXT_REGS			((struct sigcontext *)scp)
-#define SIGSEGV_FAULT_INSTRUCTION		(SIGSEGV_CONTEXT_REGS->sc_ip & ~0x3ULL) /* slot number is in bits 0 and 1 */
-#define SIGSEGV_REGISTER_FILE			SIGSEGV_CONTEXT_REGS
-#define SIGSEGV_SKIP_INSTRUCTION		ia64_skip_instruction
 #elif (defined(powerpc) || defined(__powerpc__))
 #define SIGSEGV_CONTEXT_REGS			(((ucontext_t *)scp)->uc_mcontext.regs)
 #define SIGSEGV_FAULT_INSTRUCTION		(SIGSEGV_CONTEXT_REGS->nip)
@@ -346,42 +307,7 @@ static void powerpc_decode_instruction(instruction_t *instruction, unsigned int 
 #define SIGSEGV_FAULT_INSTRUCTION		(SIGSEGV_CONTEXT_REGS.arm_pc)
 #define SIGSEGV_REGISTER_FILE			(&SIGSEGV_CONTEXT_REGS.arm_r0)
 #define SIGSEGV_SKIP_INSTRUCTION		arm_skip_instruction
-#elif (defined(mips) || defined(__mips__))
-#define SIGSEGV_CONTEXT_REGS			(((ucontext_t *)scp)->uc_mcontext)
-#define SIGSEGV_FAULT_INSTRUCTION		(SIGSEGV_CONTEXT_REGS.pc)
-#define SIGSEGV_REGISTER_FILE			&SIGSEGV_CONTEXT_REGS.pc, &SIGSEGV_CONTEXT_REGS.gregs[0]
-#define SIGSEGV_SKIP_INSTRUCTION		mips_skip_instruction
-#endif
 #endif  // defined(__linux__)
-#if (defined(__hpux) || defined(__hpux__))
-#if (defined(__hppa) || defined(__hppa__))
-#define SIGSEGV_CONTEXT_REGS			(&((ucontext_t *)scp)->uc_mcontext)
-#define SIGSEGV_FAULT_INSTRUCTION_32	(SIGSEGV_CONTEXT_REGS->ss_narrow.ss_pcoq_head & ~3ul)
-#define SIGSEGV_FAULT_INSTRUCTION_64	(SIGSEGV_CONTEXT_REGS->ss_wide.ss_64.ss_pcoq_head & ~3ull)
-#if defined(__LP64__)
-#define SIGSEGV_FAULT_INSTRUCTION		SIGSEGV_FAULT_INSTRUCTION_64
-#else
-#define SIGSEGV_FAULT_INSTRUCTION		((SIGSEGV_CONTEXT_REGS->ss_flags & SS_WIDEREGS) ? \
-										 (uint32_t)SIGSEGV_FAULT_INSTRUCTION_64 : \
-										 SIGSEGV_FAULT_INSTRUCTION_32)
-#endif
-#endif
-#if (defined(__ia64) || defined(__ia64__))
-#include <sys/ucontext.h>
-#define SIGSEGV_CONTEXT_REGS			((ucontext_t *)scp)
-#define SIGSEGV_FAULT_INSTRUCTION		get_fault_instruction(SIGSEGV_CONTEXT_REGS)
-#define SIGSEGV_REGISTER_FILE			SIGSEGV_CONTEXT_REGS
-#define SIGSEGV_SKIP_INSTRUCTION		ia64_skip_instruction
-
-#include <sys/uc_access.h>
-static inline sigsegv_address_t get_fault_instruction(const ucontext_t *ucp)
-{
-  uint64_t ip;
-  if (__uc_get_ip(ucp, &ip) != 0)
-	return SIGSEGV_INVALID_ADDRESS;
-  return (sigsegv_address_t)(ip & ~3ULL);
-}
-#endif
 #endif
 #endif
 

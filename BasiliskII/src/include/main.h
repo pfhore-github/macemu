@@ -33,9 +33,9 @@ extern bool TwentyFourBitAddressing;
 
 // 68k register structure (for Execute68k())
 struct M68kRegisters {
-	uint32 d[8];
-	uint32 a[8];
-	uint16 sr;
+	uint32_t d[8];
+	uint32_t a[8];
+	uint16_t sr;
 };
 
 // General functions
@@ -43,7 +43,7 @@ extern bool InitAll(const char *vmdir);
 extern void ExitAll(void);
 
 // Platform-specific functions
-extern void FlushCodeCache(void *start, uint32 size);	// Code was patched, flush caches if neccessary
+extern void FlushCodeCache(void *start, uint32_t size);	// Code was patched, flush caches if neccessary
 extern void QuitEmulator(void);							// Quit emulator
 extern void ErrorAlert(const char *text);				// Display error alert
 extern void ErrorAlert(int string_id);
@@ -70,9 +70,9 @@ enum {
 	INTFLAG_NMI = 128	// NMI
 };
 
-extern uint32 InterruptFlags;									// Currently pending interrupts
-extern void SetInterruptFlag(uint32 flag);						// Set/clear interrupt flags
-extern void ClearInterruptFlag(uint32 flag);
+extern uint32_t InterruptFlags;									// Currently pending interrupts
+extern void SetInterruptFlag(uint32_t flag);						// Set/clear interrupt flags
+extern void ClearInterruptFlag(uint32_t flag);
 
 // Array length
 #if __cplusplus >= 201103L || (_MSC_VER >= 1900 && defined __cplusplus)

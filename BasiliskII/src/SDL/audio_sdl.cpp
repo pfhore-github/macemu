@@ -29,7 +29,8 @@
 #include <SDL_mutex.h>
 #include <SDL_audio.h>
 #include <SDL_version.h>
-
+#include "asc.hpp"
+#include "machine.hpp"
 #define DEBUG 0
 #include "debug.h"
 
@@ -67,7 +68,6 @@ static void set_audio_status_format(void)
 	AudioStatus.sample_size = audio_sample_sizes[audio_sample_size_index];
 	AudioStatus.channels = audio_channel_counts[audio_channel_count_index];
 }
-
 // Init SDL audio system
 static bool open_sdl_audio(void)
 {
@@ -86,48 +86,10 @@ static bool open_sdl_audio(void)
 		audio_sample_size_index = audio_sample_sizes.size() - 1;
 		audio_channel_count_index = audio_channel_counts.size() - 1;
 	}
-
-	SDL_AudioSpec audio_spec;
-	memset(&audio_spec, 0, sizeof(audio_spec));
-	audio_spec.freq = audio_sample_rates[audio_sample_rate_index] >> 16;
-	audio_spec.format = (audio_sample_sizes[audio_sample_size_index] == 8) ? AUDIO_U8 : AUDIO_S16MSB;
-	audio_spec.channels = audio_channel_counts[audio_channel_count_index];
-	audio_spec.samples = 4096;
-	audio_spec.callback = stream_func;
-	audio_spec.userdata = NULL;
-
-	// Open the audio device, forcing the desired format
-	if (SDL_OpenAudio(&audio_spec, NULL) < 0) {
-		fprintf(stderr, "WARNING: Cannot open audio: %s\n", SDL_GetError());
-		return false;
+	if( machine->asc ) {
+		delete machine->asc;
 	}
-	
-#if SDL_VERSION_ATLEAST(2,0,0)
-	// HACK: workaround a bug in SDL pre-2.0.6 (reported via https://bugzilla.libsdl.org/show_bug.cgi?id=3710 )
-	// whereby SDL does not update audio_spec.size
-	if (audio_spec.size == 0) {
-		audio_spec.size = (SDL_AUDIO_BITSIZE(audio_spec.format) / 8) * audio_spec.channels * audio_spec.samples;
-	}
-#endif
-
-#if defined(BINCUE)
-	OpenAudio_bincue(audio_spec.freq, audio_spec.format, audio_spec.channels,
-	audio_spec.silence);
-#endif
-
-#if SDL_VERSION_ATLEAST(2,0,0)
-	const char * driver_name = SDL_GetCurrentAudioDriver();
-#else
-	char driver_name[32];
-	SDL_AudioDriverName(driver_name, sizeof(driver_name) - 1);
-#endif
-	printf("Using SDL/%s audio output\n", driver_name ? driver_name : "");
-	silence_byte = audio_spec.silence;
-	SDL_PauseAudio(0);
-
-	// Sound buffer size = 4096 frames
-	audio_frames_per_block = audio_spec.samples;
-	audio_mix_buf = (uint8*)malloc(audio_spec.size);
+	machine->asc = new PlaneASC();
 	return true;
 }
 
@@ -175,11 +137,7 @@ void AudioInit(void)
 
 static void close_audio(void)
 {
-	// Close audio device
-	SDL_CloseAudio();
-	free(audio_mix_buf);
-	audio_mix_buf = NULL;
-	audio_open = false;
+	delete machine->asc;
 }
 
 void AudioExit(void)
@@ -208,6 +166,9 @@ void audio_enter_stream()
 
 void audio_exit_stream()
 {
+}
+void do_play(const uint8_t* src, int size) {
+	SDL_QueueAudio(0, src, size);
 }
 
 

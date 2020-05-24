@@ -22,9 +22,7 @@
 #include "video.h"
 #include "video_blit.h"
 
-#if USE_SDL_VIDEO
 #include <SDL.h>
-#endif
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -518,11 +516,7 @@ static Screen_blit_func_info Screen_blitters[] = {
 // --> In that case, VOSF is not necessary
 bool Screen_blitter_init(VisualFormat const & visual_format, bool native_byte_order, int mac_depth)
 {
-#if USE_SDL_VIDEO
 	const bool use_sdl_video = true;
-#else
-	const bool use_sdl_video = false;
-#endif
 #if REAL_ADDRESSING || DIRECT_ADDRESSING || USE_SDL_VIDEO
 	if (mac_depth == 1 && !use_sdl_video && !visual_format.fullscreen) {
 

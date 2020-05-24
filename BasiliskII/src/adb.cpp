@@ -25,7 +25,7 @@
  */
 
 #include <stdlib.h>
-
+#include <atomic>
 #include "sysdeps.h"
 #include "cpu_emulation.h"
 #include "emul_op.h"
@@ -33,50 +33,393 @@
 #include "prefs.h"
 #include "video.h"
 #include "adb.h"
-
+#include <SDL_events.h>
+#include <SDL_thread.h>
+#include <SDL_timer.h>
+#include <SDL_mouse.h>
+#include <SDL_keyboard.h>
+#include <unordered_map>
+#include <deque>
+#include "via.hpp"
 #ifdef POWERPC_ROM
 #include "thunks.h"
 #endif
-
+#include "machine.hpp"
 #define DEBUG 0
 #include "debug.h"
+#include <queue>
+void ADB_Bus::send_to(uint8_t c) {
+	switch( listen_state ) {
+	case WAIT :
+		// do nothing
+		break;
+	case DATA_SIZE:
+		listen_data.push_back(c);
+		listen_left = c;
+		listen_state = DATA;
+		break;
+	case DATA:
+		listen_data.push_back(c);
+		if( --listen_left == 0 ) {
+			listen_state = WAIT;
+			devices[listen_dev]->listen(listen_cmd & 3, listen_data );
+			listen_data.clear();
+			listen_cmd = 0;
+		}
+		break;
+	}
+}
+			
+void ADB_Bus::cmd(uint8_t c) {
+	int target = c >> 4;
+	switch( c & 0xf ) {
+	case 0 :
+		for( auto& dev : devices ) {
+			if( dev )
+				dev->reset();
+		}
+		break;
+	case 1 :
+		if( devices[target] ) {
+			devices[target]->flush();
+		}
+		break;
+	case 8 :
+	case 9 :
+	case 10 :
+	case 11 :  		
+		// LISTEN 
+		if( devices[target] ) {
+			listen_cmd = c & 3;
+			listen_dev = target;
+			state = DATA_SIZE;
+		}
+		break;
+	case 12 :
+	case 13 :
+	case 14 :
+	case 15 : 
+		// TALK
+		adb_talk(c);
+		break;
+	}
+}
+void ADB_device::talk(int r) {
+	lock();
+	std::vector<uint8_t> data;
+	switch(r) {
+	case 0:
+		data = talk0();
+		break;
+	case 1:
+		data = talk1();
+		break;
+	case 2:
+		data = talk2();
+		break;
+	case 3 :
+		data = { 2, uint8_t( (reg[3] >> 8 & 0xf0) | (rand() & 0xf) ),
+				 uint8_t( reg[3] ) };
+		break;
+	}
+	unlock();
+	for( uint8_t d : data ) {
+		bus->talk_data.push( d );
+	}
+}
 
 
-// Global variables
-static int mouse_x = 0, mouse_y = 0;							// Mouse position
-static int old_mouse_x = 0, old_mouse_y = 0;
-static bool mouse_button[3] = {false, false, false};			// Mouse button states
-static bool old_mouse_button[3] = {false, false, false};
-static bool relative_mouse = false;
+void ADB_device::listen(int r, const std::vector<uint8_t>& data) {
+	lock();
+	switch(r) {
+	case 0 :
+		listen0(data);
+		break;
+	case 1 :
+		listen1(data);
+		break;
+	case 2 :
+		listen2(data);
+		break;		
+	case 3: {
+		uint8_t high = data[0];
+		uint8_t low = data[1];
+		if( low == 0xfe ) {
+			int i = high & 0x0f;
+			reg[3] = (reg[3] & 0xf0ff) | (i << 8);
+			change(i);
+		} else if( low == 1 || low == 2 || low == 4 ) {
+			reg[3] = (reg[3] & 0xff00) | low;
+		} else if( low == 0 ) {
+			reg[3] = (reg[3] & 0xd0ff) | ((high & 0x2f) << 8);
+			change(high & 0x0f);
+		}
+	}
+	}
+	unlock();
+}
+void ADB_device::change(int i) {
+	bus->devices[i] = this;
+	bus->devices[c] = nullptr;
+	c = i;
+}
+class ADB_Mouse : public ADB_device {
+	union reg0_t {
+		uint16_t v;
+		struct {
+			int8_t xv: 7;
+			bool : 1;
+			int8_t yv: 7;
+			bool btn : 1;
+		};
+	};
+public:	
+	ADB_Mouse() { c = 3; }
+	void handle_event(SDL_Event* e) {
+		lock();
+		switch(e->type) {
+		case SDL_MOUSEMOTION : {
+			reg0_t t = { reg[0] };
+			t.xv = t.xv + e->motion.xrel;
+			t.yv = t.yv + e->motion.yrel;
+			reg[0] = t.v;
+			break;
+		}
+		case SDL_MOUSEBUTTONDOWN :
+			// STUB multi button support
+			reg[0] &= 0x7fff;
+			break;
+		case SDL_MOUSEBUTTONUP :
+			// STUB multi button support
+			reg[0] |= 0x8000;
+			break;
+		}
+		unlock();
+	}
+	void reset() {
+		lock();
+		reg[0] = 0x8080;
+		reg[3] = 0x6301;
+		unlock();
+	}
+	// 300dpi
+	std::vector<uint8_t> talk1() override {
+		return { 9,
+				 // Identifier				 
+				 'a', 'p', 'p', 'l',
+				 // Resolution(dpi)
+				 uint8_t(300 >> 8), uint8_t(300 & 0xff),
+				 1, 3
+		};
+	}
+};
 
-static uint8 key_states[16];				// Key states (Mac keycodes)
-#define MATRIX(code) (key_states[code >> 3] & (1 << (~code & 7)))
-
-// Keyboard event buffer (Mac keycodes with up/down flag)
-const int KEY_BUFFER_SIZE = 16;
-static uint8 key_buffer[KEY_BUFFER_SIZE];
-static unsigned int key_read_ptr = 0, key_write_ptr = 0;
-
-static uint8 mouse_reg_3[2] = {0x63, 0x01};	// Mouse ADB register 3
-
-static uint8 key_reg_2[2] = {0xff, 0xff};	// Keyboard ADB register 2
-static uint8 key_reg_3[2] = {0x62, 0x05};	// Keyboard ADB register 3
-
-static uint8 m_keyboard_type = 0x05;
-
-// ADB mouse motion lock (for platforms that use separate input thread)
-static B2_mutex *mouse_lock;
-
-
+class ADB_keyboard : public ADB_device {
+	std::deque<uint8_t> keys;
+public:
+	static std::unordered_map<SDL_Scancode, uint8_t> keymaps;
+	ADB_keyboard() { c = 2; }
+	void reset() {
+		lock();
+		keys.clear();
+		reg[0] = 0xffff;
+		reg[2] = 0xffff;
+		reg[3] = 0x62 << 8 | 
+			(uint8)PrefsFindInt32("keyboardtype");
+		unlock();
+	}
+	void handle_event(SDL_Event* e) {
+		lock();
+		switch(e->type) {
+		case SDL_QUIT:
+			// power key alternative
+			reg[0] = 0x7f7f;
+			break;
+		case SDL_KEYDOWN:
+		case SDL_KEYUP: {
+			uint8_t v = (e->key.state == SDL_KEYUP) << 7;
+			auto key = keymaps.find( e->key.keysym.scancode );
+			if( key != keymaps.end() ) {
+				v |= key->second;
+			}
+			reg[2] = 0xff;
+			if( (v & 0x7f) == 0x75 ) {
+				// Delete
+				v &= ~ 0x4000;
+			}
+			if( e->key.keysym.mod & KMOD_CAPS ) {
+				v &= ~ 0x2000;
+			}
+			if( e->key.keysym.mod & KMOD_CTRL ) {
+				v &= ~ 0x800;
+			}
+			if( e->key.keysym.mod & KMOD_SHIFT ) {
+				v &= ~ 0x400;
+			}
+			if( e->key.keysym.mod & KMOD_ALT ) {
+				v &= ~ 0x200;
+			}
+			if( e->key.keysym.mod & KMOD_GUI ) {
+				v &= ~ 0x100;
+			}
+			if( e->key.keysym.mod & KMOD_NUM ) {
+				v &= ~ 0x80;
+			}
+			if( (v & 0x7f) == 0x6b ) {
+				// Scroll lock
+				v &= ~ 0x4000;
+			}
+			keys.push_back(v);
+			break;
+		}
+		}
+		unlock();
+	}
+	std::vector<uint8_t> talk0() {
+		uint8_t ks[2];
+		for(int i = 0; i < 2; ++i ) {
+			if( ! keys.empty() ) {
+				ks[i] = keys.front();
+				keys.pop_front();
+			} else {
+				ks[i] = 0xff;
+			}
+		}
+		return { ks[0], ks[1] };
+	}
+};
+std::unordered_map<SDL_Scancode, uint8_t> ADB_keyboard::keymaps;
 /*
  *  Initialize ADB emulation
  */
-
+ADB_keyboard* kbd;
+ADB_Mouse* mouse;
 void ADBInit(void)
 {
-	mouse_lock = B2_create_mutex();
-	m_keyboard_type = (uint8)PrefsFindInt32("keyboardtype");
-	key_reg_3[1] = m_keyboard_type;
+
+	machine->adb_bus->devices[2] = kbd = new ADB_keyboard();	 
+	machine->adb_bus->devices[3] = mouse = new ADB_Mouse();
+
+	ADB_keyboard::keymaps = {
+		{ SDL_SCANCODE_ESCAPE,           0x35 },
+		{ SDL_SCANCODE_F1,               0x7A },
+		{ SDL_SCANCODE_F2,               0x78 },
+		{ SDL_SCANCODE_F3,               0x63 },
+		{ SDL_SCANCODE_F4,               0x76 },
+		{ SDL_SCANCODE_F5,               0x60 },
+		{ SDL_SCANCODE_F6,               0x61 },
+		{ SDL_SCANCODE_F7,               0x62 },
+		{ SDL_SCANCODE_F8,               0x64 },
+		{ SDL_SCANCODE_F9,               0x65 },
+		{ SDL_SCANCODE_F10,              0x6D },
+		{ SDL_SCANCODE_F11,              0x67 },
+		{ SDL_SCANCODE_F12,              0x6F },
+		{ SDL_SCANCODE_PRINTSCREEN,      0x69 },
+		{ SDL_SCANCODE_SCROLLLOCK,       0x6B },
+		{ SDL_SCANCODE_PAUSE,            0x71 },
+		{ SDL_SCANCODE_GRAVE,            0x32 },
+		{ SDL_SCANCODE_1,                0x12 },
+		{ SDL_SCANCODE_2,                0x13 },
+		{ SDL_SCANCODE_3,                0x14 },
+		{ SDL_SCANCODE_4,                0x15 },
+		{ SDL_SCANCODE_5,                0x17 },
+		{ SDL_SCANCODE_6,                0x16 },
+		{ SDL_SCANCODE_7,                0x1A },
+		{ SDL_SCANCODE_8,                0x1C },
+		{ SDL_SCANCODE_9,                0x19 },
+		{ SDL_SCANCODE_0,                0x1D },
+		{ SDL_SCANCODE_MINUS,            0x1B },
+		{ SDL_SCANCODE_EQUALS,           0x18 },
+		{ SDL_SCANCODE_BACKSPACE,        0x33 },
+		{ SDL_SCANCODE_INSERT,           0x72 },
+		{ SDL_SCANCODE_INSERT,           0x72 },
+		{ SDL_SCANCODE_HOME,             0x73 },
+		{ SDL_SCANCODE_PAGEUP,           0x74 },
+		{ SDL_SCANCODE_NUMLOCKCLEAR,     0x47 },
+		// No KP = key for PC keyboard...		
+		{ SDL_SCANCODE_KP_DIVIDE,        0x4B },
+		{ SDL_SCANCODE_KP_MULTIPLY,      0x43 },
+		{ SDL_SCANCODE_TAB,              0x30 }, 
+		{ SDL_SCANCODE_Q,                0x0C }, 
+		{ SDL_SCANCODE_W,                0x0D }, 
+		{ SDL_SCANCODE_E,                0x0E }, 
+		{ SDL_SCANCODE_R,                0x0F }, 
+		{ SDL_SCANCODE_T,                0x11 }, 
+		{ SDL_SCANCODE_Y,                0x10 }, 
+		{ SDL_SCANCODE_U,                0x20 }, 
+		{ SDL_SCANCODE_I,                0x22 }, 
+		{ SDL_SCANCODE_O,                0x1F }, 
+		{ SDL_SCANCODE_P,                0x23 }, 
+		{ SDL_SCANCODE_LEFTBRACKET,      0x21 }, 
+		{ SDL_SCANCODE_RIGHTBRACKET,     0x1E }, 
+		{ SDL_SCANCODE_BACKSLASH,        0x2A },
+		{ SDL_SCANCODE_DELETE,           0x75 },
+		{ SDL_SCANCODE_END,              0x77 },
+		{ SDL_SCANCODE_PAGEDOWN,         0x79 },
+		{ SDL_SCANCODE_KP_7,             0x59 },
+		{ SDL_SCANCODE_KP_8,             0x5B },
+		{ SDL_SCANCODE_KP_9,             0x5C },
+		{ SDL_SCANCODE_KP_MINUS,         0x4E },
+		{ SDL_SCANCODE_CAPSLOCK,         0x39 },
+		{ SDL_SCANCODE_A,                0x00 },
+		{ SDL_SCANCODE_S,                0x01 },
+		{ SDL_SCANCODE_D,                0x02 },
+		{ SDL_SCANCODE_F,                0x03 },
+		{ SDL_SCANCODE_G,                0x05 },
+		{ SDL_SCANCODE_H,                0x04 },
+		{ SDL_SCANCODE_J,                0x26 },
+		{ SDL_SCANCODE_K,                0x28 },
+		{ SDL_SCANCODE_L,                0x25 },
+		{ SDL_SCANCODE_SEMICOLON,        0x29 },
+		{ SDL_SCANCODE_APOSTROPHE,       0x27 },
+		{ SDL_SCANCODE_RETURN,           0x24 }, // MAC RETURN
+		{ SDL_SCANCODE_KP_4,             0x56 },
+		{ SDL_SCANCODE_KP_5,             0x57 },
+		{ SDL_SCANCODE_KP_6,             0x58 },
+		{ SDL_SCANCODE_KP_PLUS,          0x45 },
+		{ SDL_SCANCODE_LSHIFT,           0x38 },
+		{ SDL_SCANCODE_Z,                0x06 },
+		{ SDL_SCANCODE_X,                0x07 },
+		{ SDL_SCANCODE_C,                0x08 },
+		{ SDL_SCANCODE_V,                0x09 },
+		{ SDL_SCANCODE_B,                0x0B },
+		{ SDL_SCANCODE_N,                0x2D },
+		{ SDL_SCANCODE_M,                0x2E },
+		{ SDL_SCANCODE_COMMA,            0x2B },
+		{ SDL_SCANCODE_PERIOD,           0x2F },
+		{ SDL_SCANCODE_SLASH,            0x2C },
+		{ SDL_SCANCODE_RSHIFT,           0x7B },
+		{ SDL_SCANCODE_UP,               0x3E }, // MAC RETURN
+		{ SDL_SCANCODE_KP_1,             0x53 },
+		{ SDL_SCANCODE_KP_2,             0x54 },
+		{ SDL_SCANCODE_KP_3,             0x55 },
+		{ SDL_SCANCODE_KP_ENTER,         0x4C },
+		{ SDL_SCANCODE_LCTRL,            0x36 },
+		{ SDL_SCANCODE_LALT,             0x3A },
+		{ SDL_SCANCODE_LGUI,             0x37 },
+		{ SDL_SCANCODE_SPACE,            0x31 },
+		{ SDL_SCANCODE_RALT,             0x7C },
+		{ SDL_SCANCODE_RCTRL,            0x7D },
+		{ SDL_SCANCODE_LEFT,             0x3B }, 
+		{ SDL_SCANCODE_DOWN,             0x3D }, 
+		{ SDL_SCANCODE_RIGHT,            0x3C }, 
+		{ SDL_SCANCODE_KP_0,             0x52 },
+		{ SDL_SCANCODE_KP_PERIOD,        0x41 },
+	};
+}
+
+void handle_adb(SDL_Event* e) {
+	switch(e->type) {
+	case SDL_MOUSEMOTION :
+	case SDL_MOUSEBUTTONDOWN :
+	case SDL_MOUSEBUTTONUP :
+		mouse->handle_event(e);
+		break;
+	case SDL_KEYDOWN:
+	case SDL_KEYUP:
+		kbd->handle_event(e);
+		break;
+	}
 }
 
 
@@ -86,10 +429,11 @@ void ADBInit(void)
 
 void ADBExit(void)
 {
-	if (mouse_lock) {
-		B2_delete_mutex(mouse_lock);
-		mouse_lock = NULL;
-	}
+	delete machine->adb_bus->devices[2];
+	delete machine->adb_bus->devices[3];
+	machine->adb_bus->devices[2] = kbd = nullptr;
+	machine->adb_bus->devices[3] = mouse = nullptr;
+	
 }
 
 
@@ -99,6 +443,7 @@ void ADBExit(void)
 
 void ADBOp(uint8 op, uint8 *data)
 {
+#if 0
 	D(bug("ADBOp op %02x, data %02x %02x %02x\n", op, data[0], data[1], data[2]));
 
 	// ADB reset?
@@ -224,6 +569,7 @@ void ADBOp(uint8 op, uint8 *data)
 	} else												// Unknown address
 		if (cmd == 3)
 			data[0] = 0;								// Talk: 0 bytes of data
+#endif
 }
 
 
@@ -233,15 +579,6 @@ void ADBOp(uint8 op, uint8 *data)
 
 void ADBMouseMoved(int x, int y)
 {
-	B2_lock_mutex(mouse_lock);
-	if (relative_mouse) {
-		mouse_x += x; mouse_y += y;
-	} else {
-		mouse_x = x; mouse_y = y;
-	}
-	B2_unlock_mutex(mouse_lock);
-	SetInterruptFlag(INTFLAG_ADB);
-	TriggerInterrupt();
 }
 
 
@@ -251,9 +588,6 @@ void ADBMouseMoved(int x, int y)
 
 void ADBMouseDown(int button)
 {
-	mouse_button[button] = true;
-	SetInterruptFlag(INTFLAG_ADB);
-	TriggerInterrupt();
 }
 
 
@@ -263,9 +597,6 @@ void ADBMouseDown(int button)
 
 void ADBMouseUp(int button)
 {
-	mouse_button[button] = false;
-	SetInterruptFlag(INTFLAG_ADB);
-	TriggerInterrupt();
 }
 
 
@@ -275,10 +606,6 @@ void ADBMouseUp(int button)
 
 void ADBSetRelMouseMode(bool relative)
 {
-	if (relative_mouse != relative) {
-		relative_mouse = relative;
-		mouse_x = mouse_y = 0;
-	}
 }
 
 
@@ -288,16 +615,6 @@ void ADBSetRelMouseMode(bool relative)
 
 void ADBKeyDown(int code)
 {
-	// Add keycode to buffer
-	key_buffer[key_write_ptr] = code;
-	key_write_ptr = (key_write_ptr + 1) % KEY_BUFFER_SIZE;
-
-	// Set key in matrix
-	key_states[code >> 3] |= (1 << (~code & 7));
-
-	// Trigger interrupt
-	SetInterruptFlag(INTFLAG_ADB);
-	TriggerInterrupt();
 }
 
 
@@ -307,16 +624,6 @@ void ADBKeyDown(int code)
 
 void ADBKeyUp(int code)
 {
-	// Add keycode to buffer
-	key_buffer[key_write_ptr] = code | 0x80;	// Key-up flag
-	key_write_ptr = (key_write_ptr + 1) % KEY_BUFFER_SIZE;
-
-	// Clear key in matrix
-	key_states[code >> 3] &= ~(1 << (~code & 7));
-
-	// Trigger interrupt
-	SetInterruptFlag(INTFLAG_ADB);
-	TriggerInterrupt();
 }
 
 
@@ -326,25 +633,7 @@ void ADBKeyUp(int code)
 
 void ADBInterrupt(void)
 {
-	M68kRegisters r;
-
-	// Return if ADB is not initialized
-	uint32 adb_base = ReadMacInt32(0xcf8);
-	if (!adb_base || adb_base == 0xffffffff)
-		return;
-	uint32 tmp_data = adb_base + 0x163;	// Temporary storage for faked ADB data
-
-	// Get mouse state
-	B2_lock_mutex(mouse_lock);
-	int mx = mouse_x;
-	int my = mouse_y;
-	if (relative_mouse)
-		mouse_x = mouse_y = 0;
-	bool mb[3] = {mouse_button[0], mouse_button[1], mouse_button[2]};
-	B2_unlock_mutex(mouse_lock);
-
-	uint32 key_base = adb_base + 4;
-	uint32 mouse_base = adb_base + 16;
+#if 0
 
 	if (relative_mouse) {
 
@@ -457,4 +746,26 @@ void ADBInterrupt(void)
 	// Clear temporary data
 	WriteMacInt32(tmp_data, 0);
 	WriteMacInt32(tmp_data + 4, 0);
+#endif
 }
+std::atomic<uint8_t> state = 0;
+std::atomic<bool> adb_interrupt = false;
+
+
+void adb_talk(uint8_t v) {
+	int target = v >> 4;
+	if( machine->adb_bus->devices[target] ) {
+		machine->adb_bus->devices[target]->talk(v & 3);
+	}
+}
+
+uint8_t adb_read() {
+	return machine->adb_bus->get_from();
+}
+
+void adb_write(uint8_t v) {
+	machine->adb_bus->send_to(v);
+}
+
+	
+ADB_device* adb_devices[16];

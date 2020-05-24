@@ -152,19 +152,19 @@ static void find_hfs_partition(disk_drive_info &info)
 void DiskInit(void)
 {
 	// No drives specified in prefs? Then add defaults
-	if (PrefsFindString("disk", 0) == NULL)
+	auto disks = PrefsFindStrings("disk");
+	if (disks.empty()) {
 		SysAddDiskPrefs();
-
+		disks = PrefsFindStrings("disk");
+	}
 	// Add drives specified in preferences
-	int index = 0;
-	const char *str;
-	while ((str = PrefsFindString("disk", index++)) != NULL) {
+	for( auto str : disks ) {
 		bool read_only = false;
 		if (str[0] == '*') {
 			read_only = true;
-			str++;
+			str.erase(0, 1);
 		}
-		void *fh = Sys_open(str, read_only);
+		void *fh = Sys_open(str.c_str(), read_only);
 		if (fh)
 			drives.push_back(disk_drive_info(fh, SysIsReadOnly(fh)));
 	}

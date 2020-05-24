@@ -41,26 +41,14 @@
 
 #define DEBUG 0
 #include "debug.h"
-
-#if ENABLE_MON
-#include "mon.h"
-
-static uint32 mon_read_byte_b2(uintptr adr)
-{
-	return ReadMacInt8(adr);
-}
-
-static void mon_write_byte_b2(uintptr adr, uint32 b)
-{
-	WriteMacInt8(adr, b);
-}
-#endif
+#include <string>
+#include "machine.hpp"
 
 
 /*
  *  Initialize everything, returns false on error
  */
-
+void set_machine(const std::string& s);
 bool InitAll(const char *vmdir)
 {
 	// Check ROM version
@@ -68,8 +56,9 @@ bool InitAll(const char *vmdir)
 		ErrorAlert(STR_UNSUPPORTED_ROM_TYPE_ERR);
 		return false;
 	}
-
-#if EMULATED_68K
+	init_machine(MB_TYPE::GLU);
+	set_machine("Quadra 950");
+	
 	// Set CPU and FPU type (UAE emulation)
 	switch (ROMVersion) {
 		case ROM_VERSION_64K:
@@ -96,8 +85,8 @@ bool InitAll(const char *vmdir)
 			TwentyFourBitAddressing = false;
 			break;
 	}
+	
 	CPUIs68060 = false;
-#endif
 
 	// Load XPRAM
 	XPRAMInit(vmdir);
@@ -180,11 +169,9 @@ bool InitAll(const char *vmdir)
 	XPRAM[0x58] = uint8(main_monitor.depth_to_apple_mode(main_monitor.get_current_mode().depth));
 	XPRAM[0x59] = 0;
 
-#if EMULATED_68K
 	// Init 680x0 emulation (this also activates the memory system which is needed for PatchROM())
 	if (!Init680x0())
 		return false;
-#endif
 
 	// Install ROM patches
 	if (!PatchROM()) {
@@ -192,12 +179,6 @@ bool InitAll(const char *vmdir)
 		return false;
 	}
 
-#if ENABLE_MON
-	// Initialize mon
-	mon_init();
-	mon_read_byte = mon_read_byte_b2;
-	mon_write_byte = mon_write_byte_b2;
-#endif
 
 	return true;
 }
@@ -209,10 +190,6 @@ bool InitAll(const char *vmdir)
 
 void ExitAll(void)
 {
-#if ENABLE_MON
-	// Deinitialize mon
-	mon_exit();
-#endif
 
 	// Save XPRAM
 	XPRAMExit();

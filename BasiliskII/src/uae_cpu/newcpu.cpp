@@ -665,17 +665,6 @@ uae_u32 get_disp_ea_000 (uae_u32 base, uae_u32 dp)
 
 void MakeSR (void)
 {
-#if 0
-	assert((regs.t1 & 1) == regs.t1);
-	assert((regs.t0 & 1) == regs.t0);
-	assert((regs.s & 1) == regs.s);
-	assert((regs.m & 1) == regs.m);
-	assert((XFLG & 1) == XFLG);
-	assert((NFLG & 1) == NFLG);
-	assert((ZFLG & 1) == ZFLG);
-	assert((VFLG & 1) == VFLG);
-	assert((CFLG & 1) == CFLG);
-#endif
 	regs.sr = ((regs.t1 << 15) | (regs.t0 << 14)
 			   | (regs.s << 13) | (regs.m << 12) | (regs.intmask << 8)
 			   | (GET_XFLG << 4) | (GET_NFLG << 3) | (GET_ZFLG << 2) | (GET_VFLG << 1)

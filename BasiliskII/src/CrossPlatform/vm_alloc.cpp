@@ -19,9 +19,6 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
 
 #ifdef HAVE_FCNTL_H
 #include <fcntl.h>
@@ -30,6 +27,8 @@
 #ifdef HAVE_WIN32_VM
 #define WIN32_LEAN_AND_MEAN /* avoid including junk */
 #include <windows.h>
+#else
+#include <unistd.h>
 #endif
 
 #include <errno.h>
@@ -450,7 +449,7 @@ int vm_get_page_size(void)
 	}
 	return page_size;
 #else
-	return getpagesize();
+	return sysconf(_SC_PAGESIZE);
 #endif
 }
 

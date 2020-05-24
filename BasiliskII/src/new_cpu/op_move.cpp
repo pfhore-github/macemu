@@ -1,472 +1,473 @@
 #include <stdint.h>
 #include "registers.hpp"
 #include "common.hpp"
-#include "exceptions.hpp"
 #include "inst_cmn.hpp"
-#define OP(name_) extern "C" void op_##name_(CPU* cpu, uint16_t op __attribute__((unused)), int dn __attribute__((unused)), int mode __attribute__((unused)), int reg __attribute__((unused)))
+#define OP(name_) extern "C" void op_##name_(uint16_t op , int dn , int mode , int reg )
 #include "op.h"
 #include "intel.h"
 
 OP(moves_b) {
-	if( ! cpu->S ) {
-		PRIV_VIOLATION(cpu);
+	if( ! cpu.S ) {
+		throw Exception::PrivilegeViolation();
 	}
-	uint16_t nw = cpu->fetch_w();
-	EA ea(cpu, mode, 1, reg, true);
-	uint32_t addr = ea.addr();
+	uint16_t nw = fetch_w();
+	cpu.parse_EA( mode, 1, reg, true);
+	uint32_t addr = cpu.ea_v;
 	if( (nw >> 11) & 1 ) {
-		// to EA
-		uint8_t v = cpu->R[(nw>>12)];
-		WRITE8( cpu->mmu->to_real(addr, 1, true, cpu->DFC), v);
+		// to EA		
+		uint8_t v = cpu.R[(nw>>12)];
+		int attr = ATTR_FC(cpu.DFC)|ATTR_SZ_B;
+		bus_write(mmu->to_real(addr, attr), attr, &v);
 	} else {
 		// from EA
-		cpu->R[(nw>>12)] = READ8( cpu->mmu->to_real(addr, 1, false, cpu->SFC) );
+		uint8_t v;
+		int attr = ATTR_FC(cpu.SFC)|ATTR_SZ_B;
+		bus_read(mmu->to_real(addr, attr), attr, &v);
+		cpu.R[(nw>>12)] = v;
 	}
-	test_trace_branch(cpu);
+	test_trace_branch();
 }
 
 OP(moves_w) {
-	if( ! cpu->S ) {
-		PRIV_VIOLATION(cpu);
+	if( ! cpu.S ) {
+		throw Exception::PrivilegeViolation();
 	}
-	uint16_t nw = cpu->fetch_w();
-	EA ea(cpu, mode, 2, reg, true);
-	uint32_t addr = ea.addr();
+	uint16_t nw = fetch_w();
+	cpu.parse_EA( mode, 2, reg, true);
+	uint32_t addr = cpu.ea_v;
 	if( (nw >> 11) & 1 ) {
 		// to EA
-		uint16_t v = cpu->R[(nw>>12)];
-		WRITE16( cpu->mmu->to_real(addr, 2, true, cpu->DFC), v);
+		uint16_t v = cpu.R[(nw>>12)];
+		int attr = ATTR_FC(cpu.DFC)|ATTR_SZ_W;
+		bus_write(mmu->to_real(addr, attr), attr, &v);
 	} else {
 		// from EA
-		cpu->R[(nw>>12)] = READ16( cpu->mmu->to_real(addr, 2, false, cpu->SFC));
+		uint16_t v;
+		int attr = ATTR_FC(cpu.SFC)|ATTR_SZ_W;
+		bus_read(mmu->to_real(addr, attr), attr, &v);
+		cpu.R[(nw>>12)] = v;
 	}
-	test_trace_branch(cpu);
+	test_trace_branch();
 }
 OP(moves_l) {
-	if( ! cpu->S ) {
-		PRIV_VIOLATION(cpu);
+	if( ! cpu.S ) {
+		throw Exception::PrivilegeViolation();
 	}
-	uint16_t nw = cpu->fetch_w();
-	EA ea(cpu, mode, 4, reg, true);
-	uint32_t addr = ea.addr();
+	uint16_t nw = fetch_w();
+	cpu.parse_EA( mode, 4, reg, true);
+	uint32_t addr = cpu.ea_v;
 	if( (nw >> 11) & 1 ) {
 		// to EA
-		uint32_t v = cpu->R[(nw>>12)];
-		WRITE32( cpu->mmu->to_real(addr, 4, true, cpu->DFC), v);
+		uint32_t v = cpu.R[(nw>>12)];
+		int attr = ATTR_FC(cpu.DFC)|ATTR_SZ_L;
+		bus_write(mmu->to_real(addr, attr), attr, &v);
 	} else {
 		// from EA
-		cpu->R[(nw>>12)] = READ32( cpu->mmu->to_real(addr, 4, false, cpu->SFC));
+		uint32_t v;
+		int attr = ATTR_FC(cpu.SFC)|ATTR_SZ_L;
+		bus_read(mmu->to_real(addr, attr), attr, &v);
+		cpu.R[(nw>>12)] = v;
 	}
-	test_trace_branch(cpu);
+	test_trace_branch();
 }
 
 OP(movep_m2r_w) {
-	int16_t disp = cpu->fetch_w();
-	uint32_t addr = cpu->A[reg] +disp;
-	cpu->D[dn] = cpu->mmu->read_b(addr) << 8;
-	cpu->D[dn] |= cpu->mmu->read_b(addr+2);
+	int16_t disp = fetch_w();
+	uint32_t addr = cpu.R[8+reg] +disp;
+	cpu.R[dn] = read_b(addr) << 8;
+	cpu.R[dn] |= read_b(addr+2);
 }
 
 OP(movep_r2m_w) {
-	int16_t disp = cpu->fetch_w();
-	uint32_t addr = cpu->A[reg] +disp;
-	cpu->mmu->write_b(addr, (cpu->D[dn] >> 8) & 0xff);
-	cpu->mmu->write_b(addr + 2, cpu->D[dn] & 0xff);
+	int16_t disp = fetch_w();
+	uint32_t addr = cpu.R[8+reg] +disp;
+	write_b(addr, (cpu.R[dn] >> 8) & 0xff);
+	write_b(addr + 2, cpu.R[dn] & 0xff);
 }
 
 OP(movep_m2r_l) {
-	int16_t disp = cpu->fetch_w();
-	uint32_t addr = cpu->A[reg] +disp;
-	cpu->D[dn] = cpu->mmu->read_b(addr) << 24;
-	cpu->D[dn] |= cpu->mmu->read_b(addr+2) << 16;
-	cpu->D[dn] |= cpu->mmu->read_b(addr+4) << 8;
-	cpu->D[dn] |= cpu->mmu->read_b(addr+6);
+	int16_t disp = fetch_w();
+	uint32_t addr = cpu.R[8+reg] +disp;
+	cpu.R[dn] = read_b(addr) << 24;
+	cpu.R[dn] |= read_b(addr+2) << 16;
+	cpu.R[dn] |= read_b(addr+4) << 8;
+	cpu.R[dn] |= read_b(addr+6);
 }
 
 OP(movep_r2m_l) {
-	int16_t disp = cpu->fetch_w();
-	uint32_t addr = cpu->A[reg] +disp;
-	cpu->mmu->write_b(addr, (cpu->D[dn] >> 24) & 0xff);
-	cpu->mmu->write_b(addr + 2, (cpu->D[dn] >> 16) & 0xff);
-	cpu->mmu->write_b(addr + 4, (cpu->D[dn] >> 8) & 0xff);
-	cpu->mmu->write_b(addr + 6, cpu->D[dn] & 0xff);
+	int16_t disp = fetch_w();
+	uint32_t addr = cpu.R[8+reg] +disp;
+	uint32_t v = cpu.R[dn];
+	write_b(addr, (v >> 24) & 0xff);
+	write_b(addr + 2, (v >> 16) & 0xff);
+	write_b(addr + 4, (v >> 8) & 0xff);
+	write_b(addr + 6, v & 0xff);
 }
 
 OP(move_b) {
-	EA src(cpu, mode, 1, reg, false);
-	EA dst(cpu, (op>>6)&7, 1, dn, true);
-	int8_t v = src.read();
-	dst.write(v);
-	set_nz(cpu, v);
-	cpu->V = cpu->C = false;	
+	cpu.parse_EA( mode, 1, reg, false);
+	int8_t v = cpu.ea_read();
+	cpu.parse_EA( (op>>6)&7, 1, dn, true);
+	cpu.ea_write(v);
+	set_nz( v);
+	cpu.V = cpu.C = false;	
 }
 OP(move_w) {
-	EA src(cpu, mode, 2, reg, false);
-	EA dst(cpu, (op>>6)&7, 2, dn, true);
-	int16_t v = src.read();
-	dst.write(v);
-	set_nz(cpu, v);
-	cpu->V = cpu->C = false;	
+	cpu.parse_EA( mode, 2, reg, false);
+	int16_t v = cpu.ea_read();
+	cpu.parse_EA( (op>>6)&7, 2, dn, true);
+	cpu.ea_write(v);
+	set_nz( v);
+	cpu.V = cpu.C = false;	
 }
 OP(move_l) {
-	EA src(cpu, mode, 4, reg, false);
-	EA dst(cpu, (op>>6)&7, 4, dn, true);
-	int32_t v = src.read();
-	dst.write(v);
-	set_nz(cpu, v);
-	cpu->V = cpu->C = false;	
+	cpu.parse_EA( mode, 4, reg, false);
+	int32_t v = cpu.ea_read();
+	cpu.parse_EA( (op>>6)&7, 4, dn, true);
+	cpu.ea_write(v);
+	set_nz( v);
+	cpu.V = cpu.C = false;	
 }
 OP(movea_w) {
-	EA src(cpu, mode, 2, reg, false);
-	int16_t v = src.read();
-	cpu->A[ dn ] = v;
+	cpu.parse_EA( mode, 2, reg, false);
+	int16_t v = cpu.ea_read();
+	cpu.R[8+ dn ] = v;
 }
 OP(movea_l) {
-	EA src(cpu, mode, 4, reg, false);
-	cpu->A[ dn ] = src.read();
+	cpu.parse_EA( mode, 4, reg, false);
+	cpu.R[8+ dn ] = cpu.ea_read();
 }
 
 
 
 OP(move_from_sr) { 
-	if( ! cpu->S ) {
-		// not supervisand
-		PRIV_VIOLATION(cpu);
+	if( ! cpu.S ) {
+		throw Exception::PrivilegeViolation();
 	}
-	EA ea(cpu, mode, 2, reg, true);
-	ea.write( get_sr(cpu) );
+	cpu.parse_EA( mode, 2, reg, true);
+	cpu.ea_write( get_sr() );
 }
 
 OP(move_from_cr) {
-	EA ea(cpu, mode, 1, reg, true);
-	ea.write( get_cr(cpu) );
+	cpu.parse_EA( mode, 2, reg, true);
+	cpu.ea_write( get_cr() );
 }
 
 OP(move_to_cr) {
-	EA ea(cpu, mode, 1, reg, false);
-	set_cr( cpu, ea.read());
+	cpu.parse_EA( mode, 2, reg, false);
+	set_cr(  cpu.ea_read());
 }
 
 
 OP(move_to_sr) { 
-	if( ! cpu->S ) {
-		// not supervisand
-		PRIV_VIOLATION(cpu);
+	if( ! cpu.S ) {
+		throw Exception::PrivilegeViolation();
 	}
-	EA ea(cpu, mode, 2, reg, false);
-	set_sr( cpu, ea.read() );
-	test_trace_branch(cpu);
-}
-
-struct rte_call {
-	uint32_t ea;
-};
-void m68k_execute();
-uint32_t move_write_w(CPU* cpu, uint32_t addr, int i) {
-	try {
-		cpu->mmu->write_w(addr, cpu->R[i]);
-	} catch( AccessFault& e ) {
-		e.CM = true;
-		e.run(cpu, cpu->NPC);
-		try {
-			m68k_execute();
-		} catch( rte_call& e2) {
-			addr = e2.ea;
-		}
-	}
-	return addr;
-}
-uint32_t move_read_l(CPU* cpu, uint32_t addr, int i) {
-	try {
-		cpu->R[i] = cpu->mmu->read_l(addr);
-	} catch( AccessFault& e ) {
-		e.CM = true;
-		e.run(cpu, cpu->NPC);
-		try {
-			m68k_execute();
-		} catch( rte_call& e2) {
-			addr = e2.ea;
-		}
-	}
-	return addr;
-}
-uint16_t move_read_w(CPU* cpu, uint32_t& addr, int i) {
-	try {
-		cpu->R[i] = cpu->mmu->read_w(addr);
-	} catch( AccessFault& e ) {
-		e.CM = true;
-		e.run(cpu, cpu->NPC);
-		try {
-			m68k_execute();
-		} catch( rte_call& e2) {
-			addr = e2.ea;
-		}
-	}
-	return addr;
-}
-uint32_t move_write_l(CPU* cpu, uint32_t addr, int i) {
-	try {
-		cpu->mmu->write_l(addr, cpu->R[i]);
-	} catch( AccessFault& e ) {
-		e.CM = true;
-		e.run(cpu, cpu->NPC);
-		try {
-			m68k_execute();
-		} catch( rte_call& e2) {
-			addr = e2.ea;
-		}
-	}
-	return addr;
+	cpu.parse_EA( mode, 2, reg, false);
+	set_sr(  cpu.ea_read() );
+	test_trace_branch();
 }
 
 OP(movem_w_to_decr) {
-	uint32_t pc = cpu->PC;
-	uint16_t mask = cpu->fetch_w();
-	uint32_t addr = cpu->A[reg];
-	for(int i = 15; i >= 0; --i ) {
-		if( mask & (1 << i) ) {
-			addr = move_write_w(cpu, addr - 2, i);
-		}
+	uint16_t mask = fetch_w();
+	if( ! cpu.restart ) {
+		cpu.ea_v = cpu.R[8+reg];		
 	}
-	cpu->A[reg] = addr;
+	uint32_t addr = cpu.ea_v;
+	try {
+		for(int i = 0; i < 16 ; ++i ) {
+			if( mask & (1 << i) ) {
+				write_w( addr -= 2, cpu.R[15-i]);
+			}
+		}
+	} catch( Exception::AccessFault& e) {
+		e.ssw |= 1 << 13; // CM
+		throw e;
+	}
+	cpu.R[8+reg] = addr;
+	cpu.restart = false;
 }
 
 OP(movem_w_to) {
-	uint16_t mask = cpu->fetch_w();
-	EA ea(cpu, mode, 2, reg, false);
-	uint32_t addr = ea.addr();
-	for(int i = 0; i < 16; ++i ) {
-		if( mask & (1 << i) ) {
-			addr = move_write_w(cpu, addr, i) + 2;
-		}
+	uint16_t mask = fetch_w();
+	if( ! cpu.restart ) {
+		cpu.parse_EA( mode, 2, reg, false);
 	}
+	uint32_t addr = cpu.ea_v;
+	try {
+		for(int i = 0; i < 16; ++i ) {
+			if( mask & (1 << i) ) {
+				write_w( addr, cpu.R[i]);
+				addr += 2;
+			}
+		}
+	} catch( Exception::AccessFault& e) {
+		e.ssw |= 1 << 13; // CM
+		throw e;
+	}
+	cpu.restart = false;
 }
 
 
 OP(movem_l_to_decr) {
-	uint16_t mask = cpu->fetch_w();
-	uint32_t addr = cpu->A[reg];
-	for(int i = 15; i >= 0; --i ) {
-		if( mask & (1 << i) ) {
-			addr = move_write_l(cpu, addr - 4, i);
-		}
+	uint16_t mask = fetch_w();
+	if( ! cpu.restart ) {
+		cpu.ea_v = cpu.R[8+reg];
 	}
-	cpu->A[reg] = addr;
+	uint32_t addr = cpu.ea_v;
+	try {
+		for(int i = 0; i < 16 ; ++i ) {
+			if( mask & (1 << i) ) {
+				write_l( addr -= 4, cpu.R[15-i]);
+			}
+		}		
+		cpu.R[8+reg] = addr;
+		cpu.restart = false;
+	} catch( Exception::AccessFault& e) {
+		e.ssw |= 1 << 13; // CM
+		throw e;
+	}
 }
 
 OP(movem_l_to) {
-	uint16_t mask = cpu->fetch_w();
-	EA ea(cpu, mode, 4, reg, false);
-	uint32_t addr = ea.addr();
-	for(int i = 0; i < 16; ++i ) {
-		if( mask & (1 << i) ) {
-			addr = move_write_l(cpu, addr, i) + 4;
+	uint16_t mask = fetch_w();
+	if( ! cpu.restart ) {
+		cpu.parse_EA( mode, 4, reg, false);
+	}
+	uint32_t addr = cpu.ea_v;
+	try {
+		for(int i = 0; i < 16; ++i ) {
+			if( mask & (1 << i) ) {
+				write_l( addr, cpu.R[i]);
+				addr += 4;
+			}
 		}
+		cpu.restart = false;
+	} catch( Exception::AccessFault& e) {
+		e.ssw |= 1 << 13; // CM
+		throw e;
 	}
 }
 
 
 
 OP(movem_w_from_incr) {
-	uint16_t mask = cpu->fetch_w();
-	uint32_t addr = cpu->A[reg];	
-	for(int i = 0; i < 16; ++i ) {
-		if( mask & (1 << i) ) {
-			addr = move_read_w(cpu, addr, i) + 2;
-		}
+	uint16_t mask = fetch_w();
+	if( ! cpu.restart ) {
+		cpu.ea_v = cpu.R[8+reg];
 	}
-	cpu->A[reg] = addr;
+	uint32_t addr = cpu.ea_v;
+	try {
+		for(int i = 0; i < 16; ++i ) {
+			if( mask & (1 << i) ) {
+				cpu.R[i] = read_w( addr);
+				addr += 2;
+			}
+		}
+		cpu.R[8+reg] = addr;
+	} catch( Exception::AccessFault& e) {
+		e.ssw |= 1 << 13; // CM
+		throw e;
+	}
 }
 
 OP(movem_w_from) {
-	uint16_t mask = cpu->fetch_w();
-	EA ea(cpu, mode, 2, reg, false);
-	uint32_t addr = ea.addr();
-	for(int i = 0; i < 16; ++i ) {
-		if( mask & (1 << i) ) {
-			addr = move_read_w(cpu, addr, i) + 2;
+	uint16_t mask = fetch_w();
+	if( ! cpu.restart ) {
+		cpu.parse_EA( mode, 2, reg, false);
+	}
+	uint32_t addr = cpu.ea_v;
+	try {
+		for(int i = 0; i < 16; ++i ) {
+			if( mask & (1 << i) ) {
+				cpu.R[i] = read_w( addr);
+				addr += 2;
+			}
 		}
+		cpu.restart = false;
+	} catch( Exception::AccessFault& e) {
+		e.ssw |= 1 << 13; // CM
+		throw e;
 	}
 }
 
 OP(movem_l_from_incr) {
-	uint16_t mask = cpu->fetch_w();
-	uint32_t addr = cpu->A[reg];
-	for(int i = 0; i < 16; ++i ) {
-		if( mask & (1 << i) ) {
-			addr = move_read_w(cpu, addr, i) + 4;
-		}
+	uint16_t mask = fetch_w();
+	if( ! cpu.restart ) {
+		cpu.ea_v = cpu.R[8+reg];
 	}
-	cpu->A[reg] = addr;
+	uint32_t addr = cpu.ea_v;
+	try {
+		for(int i = 0; i < 16; ++i ) {
+			if( mask & (1 << i) ) {
+				cpu.R[i] = read_l( addr);
+				addr += 4;
+			}
+		}
+		cpu.R[8+reg] = addr;
+		cpu.restart = false;
+	} catch( Exception::AccessFault& e) {
+		e.ssw |= 1 << 13; // CM
+		throw e;
+	}
 }
 
 OP(movem_l_from) {
-	uint16_t mask = cpu->fetch_w();
-	EA ea(cpu, mode, 4, reg, false);
-	uint32_t addr = ea.addr();
-	for(int i = 0; i < 16; ++i ) {
-		if( mask & (1 << i) ) {
-			addr = move_read_w(cpu, addr, i) + 4;
+	uint16_t mask = fetch_w();
+	if( ! cpu.restart ) {
+		cpu.parse_EA( mode, 4, reg, false);
+	}
+	uint32_t addr = cpu.ea_v;
+	try {
+		for(int i = 0; i < 16; ++i ) {
+			if( mask & (1 << i) ) {
+				cpu.R[i] = read_l( addr);
+				addr += 4;
+			}
 		}
+		cpu.restart = false;
+	} catch( Exception::AccessFault& e) {
+		e.ssw |= 1 << 13; // CM
+		throw e;
 	}
 }
 
 OP(move_to_usp) {
-	if( ! cpu->S ) {
-		throw PrivViolation();
+	if( ! cpu.S ) {
+		throw Exception::PrivilegeViolation();
 	}
-	cpu->USP = cpu->A[ reg ];
-	test_trace_branch(cpu);
+	cpu.USP = cpu.R[8+ reg ];
+	test_trace_branch();
 }
 
 OP(move_from_usp) {
-	if( ! cpu->S ) {
-		throw PrivViolation();
+	if( ! cpu.S ) {
+		throw Exception::PrivilegeViolation();
 	}
-	cpu->A[ reg ] = cpu->USP;
-	test_trace_branch(cpu);
+	cpu.R[8+ reg ] = cpu.USP;
+	test_trace_branch();
 }
 void m68k_reset (CPU* cpu);
+void emul_reset(uint32_t* d, uint32_t* a);
 
 OP(reset) {
-	cpu->reset();
+	emul_reset(cpu.R, cpu.R+8);
 }
 
 OP( nop ) {
-	test_trace_branch(cpu);
+	test_trace_branch();
 }
 extern bool quit_program;
 
 OP(stop) {
-	if( ! cpu->S ) {
-		throw PrivViolation();
+	if( ! cpu.S ) {
+		throw Exception::PrivilegeViolation();
 	}
-	uint16_t v = cpu->fetch_w();
-	set_sr(cpu, v);
-	test_trace_branch(cpu);
+	uint16_t v = fetch_w();
+	set_sr( v);
+	test_trace_branch();
 	quit_program = true;
 }
 
 OP(rte) {
-	if( ! cpu->S ) {
-		throw PrivViolation();
+	if( ! cpu.S ) {
+		throw Exception::PrivilegeViolation();
 	}
-	uint16_t v = cpu->pop16();
-	set_sr(cpu, v);
-	cpu->PC = cpu->pop32();
-	uint16_t nw = cpu->pop16();
-	int st= nw >> 12;
-	switch(st) {
-	case 1 :
-		break;
-	case 2 :
-	case 3 :
-		cpu->A[7] += 4;
-		break;
-	case 7 : {
-		uint32_t ea = cpu->pop32();
-		uint16_t ssw = cpu->pop16();
-		rte_call ee = {ea };
-		test_trace_branch(cpu);
-		throw rte_call( ee );
-	}
-	}	
-	test_trace_branch(cpu);
+	cpu.return_from_exception();
+	test_trace_branch();
 }
 
 OP(rtd) {
-	int16_t disp =cpu->fetch_w();
-	cpu->PC = cpu->pop32();
-	cpu->A[7] += disp;
-	test_trace_branch(cpu);
+	int16_t disp = fetch_w();
+	uint32_t ret = pop32();
+	cpu.R[8+7] += disp;
+	cpu.change_PC(ret);
 }
 
 OP(rts) {
-	cpu->PC = cpu->pop32();
-	test_trace_branch(cpu);
+	cpu.change_PC(pop32());
 }
 
 OP(trapv) {
-	if( cpu->V ) {
-		throw Trapcc();
+	if( cpu.V ) {
+		throw Exception::TrapCC();
 	}
 }
 
 OP(rtr) {
-	uint8_t cr = cpu->pop16();
-	set_cr(cpu, cr);
-	cpu->PC = cpu->pop32();	
-	test_trace_branch(cpu);
+	uint8_t cr = pop16();
+	set_cr( cr);
+	cpu.change_PC(pop32());
 }
 
 OP(movec_from) {
-	uint16_t nw = cpu->fetch_w();
-	cpu->R[ nw >> 12 ] = cpu->mmu->movec_from(nw & 0xfff);
-	test_trace_branch(cpu);
+	if( ! cpu.S ) {
+		throw Exception::PrivilegeViolation();
+	}
+	uint16_t nw = fetch_w();
+	cpu.R[ nw >> 12 ] = mmu->movec_from(nw & 0xfff);
+	test_trace_branch();
 }
 
 OP(movec_to) {
-	uint16_t nw = cpu->fetch_w();
-	cpu->mmu->movec_to(nw & 0xfff, cpu->R[ nw >> 12 ]);
-	test_trace_branch(cpu);
+	if( ! cpu.S ) {
+		throw Exception::PrivilegeViolation();
+	}
+	uint16_t nw = fetch_w();
+	mmu->movec_to(nw & 0xfff, cpu.R[ nw >> 12 ]);
+	test_trace_branch();
 }
 
 OP(exg_d) {
-	uint32_t tp = cpu->D[reg];
-	cpu->D[reg] = cpu->D[dn];
-	cpu->D[dn] = tp;
+	uint32_t tp = cpu.R[reg];
+	cpu.R[reg] = cpu.R[dn];
+	cpu.R[dn] = tp;
 }
 
 OP(exg_a) {
-	uint32_t tp = cpu->A[reg];
-	cpu->A[reg] = cpu->A[dn];
-	cpu->A[dn] = tp;
+	uint32_t tp = cpu.R[8+reg];
+	cpu.R[8+reg] = cpu.R[8+dn];
+	cpu.R[8+dn] = tp;
 }
 
 OP(exg_da) {
-	uint32_t tp = cpu->A[reg];
-	cpu->A[reg] = cpu->D[dn];
-	cpu->D[dn] = tp;
+	uint32_t tp = cpu.R[8+reg];
+	cpu.R[8+reg] = cpu.R[dn];
+	cpu.R[dn] = tp;
 }
 OP(move16_inc_imm) {
-	uint32_t imm = cpu->fetch_l();
-	uint32_t adr = cpu->A[reg];
-	for(int i = 0; i < 16; ++i ) {
-		cpu->mmu->write_b(adr+i, cpu->mmu->read_b(imm+i));
-	}
-	cpu->A[reg] += 16;
+	uint16_t imm = fetch_w();
+	uint8_t buf[16];
+	read_16(imm, buf);
+	write_16(cpu.R[8+reg], buf);
+	cpu.R[8+reg] += 16;
 }
 OP(move16_imm_r) {
-	uint32_t imm = cpu->fetch_l();
-	uint32_t adr = cpu->A[reg];
-	for(int i = 0; i < 16; ++i ) {
-		cpu->mmu->write_b(imm+i, cpu->mmu->read_b(adr+i));
-	}
+	uint16_t imm = fetch_w();
+	uint8_t buf[16];
+	read_16(cpu.R[8+reg], buf);
+	write_16(imm, buf);
 }
 OP(move16_r_imm) {
-	uint32_t imm = cpu->fetch_l();
-	uint32_t adr = cpu->A[reg];
-	for(int i = 0; i < 16; ++i ) {
-		cpu->mmu->write_b(adr+i, cpu->mmu->read_b(imm+i));
-	}
+	uint16_t imm = fetch_w();
+	uint8_t buf[16];
+	read_16(imm, buf);
+	write_16(cpu.R[8+reg], buf);
 }
 OP(move16_imm_inc) {
-	uint32_t imm = cpu->fetch_l();
-	uint32_t adr = cpu->A[reg];
-	for(int i = 0; i < 16; ++i ) {
-		cpu->mmu->write_b(imm+i, cpu->mmu->read_b(adr+i));
-	}
-	cpu->A[reg] += 16;
+	uint16_t imm = fetch_w();
+	uint8_t buf[16];
+	read_16(cpu.R[8+reg], buf);
+	write_16(imm, buf);
+	cpu.R[8+reg] += 16;
 }
 
 OP(move16_inc_inc) {
-	uint32_t imm = cpu->fetch_l();
+	uint16_t imm = fetch_w();
 	uint32_t adrr = (imm >> 12) & 7;
-	uint32_t adr = cpu->A[adr];
-	uint32_t adr2 = cpu->A[reg];
-	for(int i = 0; i < 16; ++i ) {
-		cpu->mmu->write_b(adr+i, cpu->mmu->read_b(adr2+i));
-	}
-	cpu->A[adrr] += 16;
-	cpu->A[reg] += 16;
+	uint8_t buf[16];
+	read_16(cpu.R[8+reg], buf);
+	write_16(cpu.R[8+adrr], buf);
+	cpu.R[8+adrr] += 16;
+	cpu.R[8+reg] += 16;
 }

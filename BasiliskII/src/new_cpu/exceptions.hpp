@@ -1,165 +1,137 @@
-#ifndef EXCEPTIONS_HPP
-#define EXCEPTIONS_HPP
-enum class EX_VEC {
-	RESET_SP,
-	RESET_PC,
-	ACCESS_FAULT,
-	ADDRESS_ERROR,
-	ILLEGAL_INST,
-	DIV_ZERO,
-	CHK_EX,
-	TRAP_EX,
-	PRIV_VIOLATION,
-	TRACE,
-	A_EX,
-	F_EX,
-	UNUSED,
-	CO_PROC_VIOLATION,
-	FORMAT_ERROR,
-	UNINIT_INT,
-	SPOUR_INT = 24,
-	INT_BASE,
-	TRAP_VEC = 32,
-	FP_UNORDERED = 48,
-	FP_INEXACT,
-	FP_DIV_ZERO,
-	FP_UNDERFLOW,
-	FP_OPERAND_ERROR,
-	FP_OVERFLOW,
-	FP_SIG_NAN,
-	FP_UNIMPLEMENT,
-	MMU_CONF_ERROR,
-	MMU_ILLEGAL_OP,
-	MMU_ACCESS_ERROR,
-	USER_DEFINED = 64
-};
-class exception_t {
+#pragma once
+namespace Exception {
+class Base {
 protected:
-	uint16_t sr;
-	exception_t(int v) : v(v*4) {}
-	virtual void save_stack(CPU* regs, uint32_t pc) = 0;
-	void save_stack0(CPU* regs, uint32_t pc);
-	void save_stack1(CPU* regs, uint32_t pc);
-	void save_stack2(CPU* regs, uint32_t pc, uint32_t addr);
-	void save_stack3(CPU* regs, uint32_t addr);
-	void save_stack4(CPU* regs, uint32_t pc, uint32_t ea);
+	Base(int v, int p) :vec(v), priority(p) {}
 public:
-	const int v;
-	virtual void run(CPU* regs, uint32_t pc);
+	const int vec;
+	const int priority;
+	void exec();
+	virtual void save_stack(uint16_t sr) = 0;
+};
+class Format0 : public Base {
+	uint32_t nextpc;
+protected:
+	Format0(int v, uint32_t next, int priority = 3)
+		:Base(v, priority), nextpc(next) {}
+	void save_stack(uint16_t sr) override;
 };
 
-class Interrupt : public exception_t {	
-	int level;
+class Format1 : public Base {
+	uint32_t nextpc;
 protected:
-	void save_stack(CPU* regs, uint32_t pc) override;
-public:
-	Interrupt(int l) :exception_t(l+24), level(l) { }
+	Format1(int v, uint32_t next, int priority = 3)
+		:Base(v, priority), nextpc(next) {}
+	void save_stack(uint16_t sr) override;
 };
 
-class FormatError : public exception_t {
+class Format2 : public Base {
+	uint32_t nextpc;
+	uint32_t error_address;
 protected:
-	void save_stack(CPU* regs, uint32_t pc) override;
-public:
-	FormatError() :exception_t(14) {}
+	Format2(int v, uint32_t error_addr, uint32_t next, int priority = 3)
+		:Base(v, priority), nextpc(next), error_address(error_addr) {}
+	void save_stack(uint16_t sr) override;
 };
 
-class TRAP_N : public exception_t {
-	int n;
+class Format3 : public Base {
 protected:
-	void save_stack(CPU* regs, uint32_t pc) override;
-public:
-	TRAP_N(int n) :exception_t(n+32), n(n) {}
+	Format3(int v, int priority = 4)
+		:Base(v, priority) {}
+	void save_stack(uint16_t sr) override;
+};
+struct AccessFault : public Base {
+	AccessFault(uint32_t addr, uint16_t ssw, bool is_inst);
+	uint32_t addr;
+	uint16_t ssw;	
+	void save_stack(uint16_t sr) override;
 };
 
-class IllegalInstruction : public exception_t {
-protected:
-	void save_stack(CPU* regs, uint32_t pc) override;
-public:
-	IllegalInstruction() :exception_t(4) {}
+struct AddressError : public Format2 {
+	AddressError(uint32_t addr);
+};
+	
+
+struct DivBy0 : public Format2 {
+	DivBy0();
 };
 
-class DivByZero : public exception_t {
-protected:
-	void save_stack(CPU* regs, uint32_t pc) override;
-public:
-	DivByZero() :exception_t(5) {}
+struct ChkError : public Format2 {
+	ChkError();
+};
+struct TrapCC : public Format2 {
+	TrapCC();
 };
 
-class AInstruction : public exception_t {
-protected:
-	void save_stack(CPU* regs, uint32_t pc) override;
-public:
-	AInstruction() :exception_t(10) {}
+struct IllegalInst : public Format0 {
+	IllegalInst();
 };
 
-class FInstruction : public exception_t {
-protected:
-	void save_stack(CPU* regs, uint32_t pc) override;
-public:
-	FInstruction() :exception_t(11) {}
+struct PrivilegeViolation : public Format0 {
+	PrivilegeViolation();
 };
 
-class PrivViolation : public exception_t {
-protected:
-	void save_stack(CPU* regs, uint32_t pc) override;
-public:
-	PrivViolation() :exception_t(8) {}
+struct Trace : public Format2 {
+	Trace();
 };
 
-class FpuPreInst : public exception_t {
-protected:
-	void save_stack(CPU* regs, uint32_t pc) override;
-public:
-	FpuPreInst(int e) :exception_t(e) {}
+struct FormatError : public Format0 {
+	FormatError();
 };
 
-class ChkTrap : public exception_t {
-protected:
-	void save_stack(CPU* regs, uint32_t pc) override;
-public:
-	ChkTrap() :exception_t(6) {}
+struct ALine : public Format0 {
+	ALine();
 };
 
-class Trapcc : public exception_t {
-protected:
-	void save_stack(CPU* regs, uint32_t pc) override;
-public:
-	Trapcc() :exception_t(7) {}
+struct FLine : public Format0 {
+	FLine();
 };
 
-class TraceEx : public exception_t {
-protected:
-	void save_stack(CPU* regs, uint32_t pc) override;
-public:
-	TraceEx() :exception_t(9) {}
-};
-class UnimplementedFp : public exception_t {
-	uint32_t ea;
-protected:
-	void save_stack(CPU* regs, uint32_t pc) override;
-public:
-	UnimplementedFp(uint32_t ea) :exception_t(11), ea(ea) {}
+
+struct Trap : public Format0 {
+	Trap(int i);
 };
 
-class AddressError : public exception_t {
-	uint32_t ea;
-protected:
-	void save_stack(CPU* regs, uint32_t pc) override;
-public:
-	AddressError(uint32_t ea) :exception_t(3), ea(ea) {}
+struct FP_unimplemented_inst : public Format2 {
+	FP_unimplemented_inst();
 };
 
-class AccessFault : public exception_t {
-protected:
-	void save_stack(CPU* regs, uint32_t pc) override;
-public:
-	uint32_t fa;
-	uint32_t ea;
-	bool CP, CU, CT, CM, MA, ATC, LK, RW;
-	int SIZE, TT, TM;	
-	AccessFault() :exception_t(2), fa(0) {}
+struct FP_BSUN : public Format0 {
+	FP_BSUN();
 };
-void ILLEGAL(CPU* regs) __attribute__((noreturn));
-inline void ILLEGAL(CPU* regs) { throw IllegalInstruction(); }
-inline void PRIV_VIOLATION(CPU* regs) { throw PrivViolation(); }
-#endif
+
+struct FP_INEXACT : public Format0 {
+	FP_INEXACT();
+};
+
+struct FP_DIV_BY_0 : public Format0 {
+	FP_DIV_BY_0();
+};
+
+struct FP_UNDERFLOW : public Format0 {
+	FP_UNDERFLOW();
+};
+struct FP_OPERR : public Format0 {
+	FP_OPERR();
+};
+
+struct FP_OVERFLOW : public Format0 {
+	FP_OVERFLOW();
+};
+struct FP_SNAN : public Format0 {
+	FP_SNAN();
+};
+
+struct FP_unimplemented_type_pre : public Format0 {
+	FP_unimplemented_type_pre();
+};
+
+
+struct FP_unimplemented_type_post : public Format3 {
+	FP_unimplemented_type_post();
+};
+}
+constexpr uint16_t SSW_CP = 1 << 15; // FPU Store Exception pending
+constexpr uint16_t SSW_CU = 1 << 14; // FPU UNimplement Exception Pending
+constexpr uint16_t SSW_CT = 1 << 13; // Trace Pending
+constexpr uint16_t SSW_CM = 1 << 12; // MOVEM pending

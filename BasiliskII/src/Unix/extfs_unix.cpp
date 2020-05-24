@@ -61,14 +61,13 @@ void extfs_exit(void)
  *  Add component to path name
  */
 
-void add_path_component(char *path, const char *component)
+void add_path_component(std::string& path, const char *component)
 {
-	int l = strlen(path);
-	if (l < MAX_PATH_LENGTH-1 && path[l-1] != '/') {
-		path[l] = '/';
-		path[l+1] = 0;
+	int l = path.size();
+	if ( path.back() != '/') {
+		path.append("/");
 	}
-	strncat(path, component, MAX_PATH_LENGTH-1);
+	path.append(component);
 }
 
 
@@ -84,9 +83,9 @@ void add_path_component(char *path, const char *component)
  *  (16+16 bytes)
  */
 
-static void make_helper_path(const char *src, char *dest, const char *add, bool only_dir = false)
+static void make_helper_path(const char *src, std::string& dest, const char *add, bool only_dir = false)
 {
-	dest[0] = 0;
+	dest.clear();
 
 	// Get pointer to last component of path
 	const char *last_part = strrchr(src, '/');
@@ -96,34 +95,34 @@ static void make_helper_path(const char *src, char *dest, const char *add, bool 
 		last_part = src;
 
 	// Copy everything before
-	strncpy(dest, src, last_part-src);
-	dest[last_part-src] = 0;
+	dest = src;
+	dest.resize(last_part-src);
 
 	// Add additional component
-	strncat(dest, add, MAX_PATH_LENGTH-1);
+	dest += add;
 
 	// Add last component
 	if (!only_dir)
-		strncat(dest, last_part, MAX_PATH_LENGTH-1);
+		dest += last_part;
 }
 
 static int create_helper_dir(const char *path, const char *add)
 {
-	char helper_dir[MAX_PATH_LENGTH];
+	std::string helper_dir;
 	make_helper_path(path, helper_dir, add, true);
-	if (helper_dir[strlen(helper_dir) - 1] == '/')	// Remove trailing "/"
-		helper_dir[strlen(helper_dir) - 1] = 0;
-	return mkdir(helper_dir, 0777);
+	if (helper_dir.back() == '/')	// Remove trailing "/"
+		helper_dir.pop_back();
+	return mkdir(helper_dir.c_str(), 0777);
 }
 
 static int open_helper(const char *path, const char *add, int flag)
 {
-	char helper_path[MAX_PATH_LENGTH];
+	std::string helper_path;
 	make_helper_path(path, helper_path, add);
 
 	if ((flag & O_ACCMODE) == O_RDWR || (flag & O_ACCMODE) == O_WRONLY)
 		flag |= O_CREAT;
-	int fd = open(helper_path, flag, 0666);
+	int fd = open(helper_path.c_str(), flag, 0666);
 	if (fd < 0) {
 		if (errno == ENOENT && (flag & O_CREAT)) {
 			// One path component was missing, probably the helper
@@ -131,7 +130,7 @@ static int open_helper(const char *path, const char *add, int flag)
 			int ret = create_helper_dir(path, add);
 			if (ret < 0)
 				return ret;
-			fd = open(helper_path, flag, 0666);
+			fd = open(helper_path.c_str(), flag, 0666);
 		}
 	}
 	return fd;
@@ -338,23 +337,21 @@ ssize_t extfs_write(int fd, void *buffer, size_t length)
 bool extfs_remove(const char *path)
 {
 	// Remove helpers first, don't complain if this fails
-	char helper_path[MAX_PATH_LENGTH];
+	std::string helper_path;
 	make_helper_path(path, helper_path, ".finf/", false);
-	remove(helper_path);
+	remove(helper_path.c_str());
 	make_helper_path(path, helper_path, ".rsrc/", false);
-	remove(helper_path);
+	remove(helper_path.c_str());
 
 	// Now remove file or directory (and helper directories in the directory)
 	if (remove(path) < 0) {
 		if (errno == EISDIR || errno == ENOTEMPTY) {
-			helper_path[0] = 0;
-			strncpy(helper_path, path, MAX_PATH_LENGTH-1);
+			helper_path = path;
 			add_path_component(helper_path, ".finf");
-			rmdir(helper_path);
-			helper_path[0] = 0;
-			strncpy(helper_path, path, MAX_PATH_LENGTH-1);
+			rmdir(helper_path.c_str());
+			helper_path = path;
 			add_path_component(helper_path, ".rsrc");
-			rmdir(helper_path);
+			rmdir(helper_path.c_str());
 			return rmdir(path) == 0;
 		} else
 			return false;
@@ -371,15 +368,15 @@ bool extfs_remove(const char *path)
 bool extfs_rename(const char *old_path, const char *new_path)
 {
 	// Rename helpers first, don't complain if this fails
-	char old_helper_path[MAX_PATH_LENGTH], new_helper_path[MAX_PATH_LENGTH];
+	std::string old_helper_path, new_helper_path;
 	make_helper_path(old_path, old_helper_path, ".finf/", false);
 	make_helper_path(new_path, new_helper_path, ".finf/", false);
 	create_helper_dir(new_path, ".finf/");
-	rename(old_helper_path, new_helper_path);
+	rename(old_helper_path.c_str(), new_helper_path.c_str());
 	make_helper_path(old_path, old_helper_path, ".rsrc/", false);
 	make_helper_path(new_path, new_helper_path, ".rsrc/", false);
 	create_helper_dir(new_path, ".rsrc/");
-	rename(old_helper_path, new_helper_path);
+	rename(old_helper_path.c_str(), new_helper_path.c_str());
 
 	// Now rename file
 	return rename(old_path, new_path) == 0;

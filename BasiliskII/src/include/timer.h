@@ -20,6 +20,8 @@
 
 #ifndef TIMER_H
 #define TIMER_H
+#include <SDL_timer.h>
+#include <atomic>
 
 extern void TimerInit(void);
 extern void TimerExit(void);
@@ -27,23 +29,22 @@ extern void TimerReset(void);
 
 extern void TimerInterrupt(void);
 
-extern int16 InsTime(uint32 tm, uint16 trap);
-extern int16 RmvTime(uint32 tm);
-extern int16 PrimeTime(uint32 tm, int32 time);
-extern void Microseconds(uint32 &hi, uint32 &lo);
+extern int16_t InsTime(uint32_t tm, uint16_t trap);
+extern int16_t RmvTime(uint32_t tm);
+extern int16_t PrimeTime(uint32_t tm, int32_t time);
+extern void Microseconds(uint32_t &hi, uint32_t &lo);
 
-extern uint32 TimerDateTime(void);
-
+extern uint32_t TimerDateTime(void);
+#if 0
 // System specific and internal functions/data
 extern void timer_current_time(tm_time_t &t);
 extern void timer_add_time(tm_time_t &res, tm_time_t a, tm_time_t b);
 extern void timer_sub_time(tm_time_t &res, tm_time_t a, tm_time_t b);
 extern int timer_cmp_time(tm_time_t a, tm_time_t b);
 extern void timer_mac2host_time(tm_time_t &res, int32 mactime);
-extern int32 timer_host2mac_time(tm_time_t hosttime);
-
+extern int32_t timer_host2mac_time(tm_time_t hosttime);
+#endif
 // Suspend execution of emulator thread and resume it on events
 extern void idle_wait(void);
 extern void idle_resume(void);
-
 #endif

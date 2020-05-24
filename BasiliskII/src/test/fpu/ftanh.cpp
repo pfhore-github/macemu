@@ -1,0 +1,12 @@
+#define BOOST_TEST_DYN_LINK
+#include "test_common.hpp"
+#include <math.h>
+
+BOOST_FIXTURE_TEST_SUITE(ftanh, fixture);
+BOOST_AUTO_TEST_CASE(result) {
+	FPU_R.FP[2] = 2.2;
+	test_cpu( { 0171000, (uint16_t)(2 << 10 | 3 << 7 | 0x9 ) });
+	BOOST_TEST( (double)FPU_R.FP[3] == tanh(2.2) );
+}
+
+BOOST_AUTO_TEST_SUITE_END();

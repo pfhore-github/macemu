@@ -23,7 +23,7 @@
  *    Inside Macintosh: Processes, chapter 3 "Time Manager"
  *    Technote 1063: "Inside Macintosh: Processes: Time Manager Addenda"
  */
-
+int timer_thread(void *ptr);
 #include <stdio.h>
 
 #include "sysdeps.h"
@@ -31,11 +31,15 @@
 #include "main.h"
 #include "macos_util.h"
 #include "timer.h"
-
+#include "new_cpu/registers.hpp"
+#include "via.hpp"
 #define DEBUG 0
 #include "debug.h"
-
-
+#include <time.h>
+#include <unistd.h>
+#include <SDL_thread.h>
+#include <SDL_timer.h>
+#include "machine.hpp"
 // Set this to 1 to enable TMQueue management (doesn't work)
 #define TM_QUEUE 0
 
@@ -59,6 +63,12 @@ struct TMDesc {
 const int NUM_DESCS = 64;		// Maximum number of descriptors
 static TMDesc desc[NUM_DESCS];
 
+extern void timer_current_time(tm_time_t &t);
+extern void timer_add_time(tm_time_t &res, tm_time_t a, tm_time_t b);
+extern void timer_sub_time(tm_time_t &res, tm_time_t a, tm_time_t b);
+extern int timer_cmp_time(tm_time_t a, tm_time_t b);
+extern void timer_mac2host_time(tm_time_t &res, int32 mactime);
+extern int32_t timer_host2mac_time(tm_time_t hosttime);
 
 /*
  *  Allocate descriptor for given TMTask in list
@@ -136,12 +146,21 @@ static void dequeue_tm(uint32 tm)
 /*
  *  Initialize Time Manager
  */
-
-void TimerInit(void)
+SDL_TimerID one_sec, vblank;
+void TimerInit()
 {
 	// Mark all descriptors as inactive
 	for (int i=0; i<NUM_DESCS; i++)
 		free_desc(i);
+	one_sec = SDL_AddTimer(1000, [] (uint32_t, void* p) ->uint32_t {
+									 static_cast<VIA*>(p)->do_irq( CA2 );
+									 return 1000;
+								 }, machine->via1);
+	vblank = SDL_AddTimer(16, [] (uint32_t, void* p) ->uint32_t {
+								  static_cast<VIA*>(p)->do_irq( CA1 );
+								  ((VIA*)(machine->via2))->orb8_flip();
+								  return 16;
+								   }, &machine);
 }
 
 
@@ -151,6 +170,8 @@ void TimerInit(void)
 
 void TimerExit(void)
 {
+	SDL_RemoveTimer(one_sec);
+	SDL_RemoveTimer(vblank);
 }
 
 
@@ -314,3 +335,4 @@ void TimerInterrupt(void)
 			}
 		}
 }
+

@@ -25,9 +25,6 @@ dnl Mac OS X Sound
 AC_ARG_ENABLE(macosx-sound,  [  --enable-macosx-sound   enable Mac OS X Sound [default=no]], [WANT_MACOSX_SOUND=$enableval], [WANT_MACOSX_SOUND=no])
 
 dnl Video options.
-AC_ARG_ENABLE(xf86-dga,      [  --enable-xf86-dga       use the XFree86 DGA extension [default=yes]], [WANT_XF86_DGA=$enableval], [WANT_XF86_DGA=yes])
-AC_ARG_ENABLE(xf86-vidmode,  [  --enable-xf86-vidmode   use the XFree86 VidMode extension [default=yes]], [WANT_XF86_VIDMODE=$enableval], [WANT_XF86_VIDMODE=yes])
-AC_ARG_ENABLE(fbdev-dga,     [  --enable-fbdev-dga      use direct frame buffer access via /dev/fb [default=yes]], [WANT_FBDEV_DGA=$enableval], [WANT_FBDEV_DGA=yes])
 AC_ARG_ENABLE(vosf,          [  --enable-vosf           enable video on SEGV signals [default=yes]], [WANT_VOSF=$enableval], [WANT_VOSF=yes])
 
 dnl SDL options.
@@ -42,30 +39,15 @@ dnl JIT compiler options.
 AC_ARG_ENABLE(jit-compiler,  [  --enable-jit-compiler   enable JIT compiler [default=no]], [WANT_JIT=$enableval], [WANT_JIT=yes])
 AC_ARG_ENABLE(jit-debug,     [  --enable-jit-debug      activate native code disassemblers [default=no]], [WANT_JIT_DEBUG=$enableval], [WANT_JIT_DEBUG=no])
 
-dnl FPU emulation core.
-AC_ARG_ENABLE(fpe,
-[  --enable-fpe=FPE        specify which fpu emulator to use [default=auto]],
-[ case "$enableval" in
-    dnl default is always ieee, if architecture has this fp format
-    auto)	FPE_CORE_TEST_ORDER="ieee uae";;
-    ieee)	FPE_CORE_TEST_ORDER="ieee";;
-    uae)	FPE_CORE_TEST_ORDER="uae";;
-    x86)	FPE_CORE_TEST_ORDER="x86";;
-	*)		AC_MSG_ERROR([--enable-fpe takes only one of the following values: auto, x86, ieee, uae]);;
-  esac
-],
-[ FPE_CORE_TEST_ORDER="ieee uae"
-])
 
 dnl Addressing modes.
 AC_ARG_ENABLE(addressing,
 [  --enable-addressing=AM  specify the addressing mode to use [default=fastest]],
 [ case "$enableval" in
-    real) 	ADDRESSING_TEST_ORDER="real";;
     direct)	ADDRESSING_TEST_ORDER="direct";;
     banks)	ADDRESSING_TEST_ORDER="banks";;
     fastest)ADDRESSING_TEST_ORDER="direct banks";;
-    *)		AC_MSG_ERROR([--enable-addressing takes only one of the following values: fastest, real, direct, banks]);;
+    *)		AC_MSG_ERROR([--enable-addressing takes only one of the following values: fastest, direct, banks]);;
   esac
 ],
 [ ADDRESSING_TEST_ORDER="direct banks"
@@ -1798,54 +1780,6 @@ if test -n "$fbigend"; then
 fi
 ])
 
-dnl Select appropriate FPU source.
-gcc_AC_C_FLOAT_FORMAT
-AC_CHECK_HEADERS(ieee754.h ieeefp.h floatingpoint.h nan.h)
-
-for fpe in $FPE_CORE_TEST_ORDER; do
-  case $fpe in
-  ieee)
-    case $ac_cv_c_float_format in
-    IEEE*)
-      FPE_CORE="IEEE fpu core"
-      DEFINES="$DEFINES -DFPU_IEEE"
-      FPUSRCS="../uae_cpu/fpu/fpu_ieee.cpp"
-      dnl Math functions not mandated by C99 standard
-      AC_CHECK_FUNCS(isnanl isinfl)
-      dnl Math functions required by C99 standard, but probably not
-      dnl implemented everywhere. In that case, we fall back to the
-      dnl regular variant for doubles.
-      AC_CHECK_FUNCS(logl log10l expl powl fabsl sqrtl)
-      AC_CHECK_FUNCS(sinl cosl tanl sinhl coshl tanhl)
-      AC_CHECK_FUNCS(asinl acosl atanl asinhl acoshl atanhl)
-      AC_CHECK_FUNCS(floorl ceill)
-      break
-      ;;
-    esac
-    ;;
-  x86)
-    if [[ ":$HAVE_GCC27:$HAVE_I386:$HAVE_GAS:" = ":yes:yes:yes:" ]]; then
-      FPE_CORE="i387 fpu core"
-      DEFINES="$DEFINES -DFPU_X86"
-      FPUSRCS="../uae_cpu/fpu/fpu_x86.cpp"
-      break
-    fi
-    ;;
-  uae)
-    FPE_CORE="uae fpu core"
-    DEFINES="$DEFINES -DFPU_UAE"
-    FPUSRCS="../uae_cpu/fpu/fpu_uae.cpp"
-    break
-    ;;
-  *)
-    AC_MSG_ERROR([Internal configure.in script error for $fpe fpu core])
-    ;;
-  esac
-done
-if [[ "x$FPE_CORE" = "x" ]]; then
-  AC_MSG_ERROR([Sorry, no suitable FPU core found in $FPE_CORE_TEST_ORDER])
-fi
-
 dnl Check for certain math functions
 AC_CHECK_FUNCS(atanh)
 AC_CHECK_FUNCS(isnan isinf finite isnormal signbit)
@@ -1853,16 +1787,9 @@ AC_CHECK_FUNCS(isnan isinf finite isnormal signbit)
 dnl UAE CPU sources for all non-m68k-native architectures.
 if [[ "x$WANT_NATIVE_M68K" = "xno" ]]; then
   CPUINCLUDES="-I../new_cpu -I../uae_cpu"
-  CPUSRCS="../new_cpu/basilisk_glue.cpp ../new_cpu/mem.cpp ../new_cpu/common.cpp  ../new_cpu/inst.cpp ../new_cpu/op_bits.cpp ../new_cpu/op_bcd.cpp ../new_cpu/op_arith.cpp ../new_cpu/op_move.cpp ../new_cpu/exceptions.cpp  ../new_cpu/mmu.cpp"
+  CPUSRCS="../new_cpu/basilisk_glue.cpp ../new_cpu/mem.cpp ../new_cpu/common.cpp  ../new_cpu/inst.cpp ../new_cpu/op_bits.cpp ../new_cpu/op_bcd.cpp ../new_cpu/op_arith.cpp ../new_cpu/op_move.cpp ../new_cpu/exceptions.cpp  ../new_cpu/mmu/mmu.cpp ../new_cpu/common.cpp ../new_cpu/core.cpp ../new_cpu/packed_decimal.cpp"
 fi
 
-dnl Or if we have -IPA (MIPSPro compilers)
-if [[ "x$HAVE_IPA" = "xyes" ]]; then
-  CFLAGS="`echo $CFLAGS | sed -e 's/-g//g'` -O3 -OPT:Olimit=0 -IPA"
-  CXXFLAGS="`echo $CXXFLAGS | sed -e 's/-g//g'` -O3 -OPT:Olimit=0 -IPA"
-  CXXFLAGS="-LANG:std $CXXFLAGS"
-  LDFLAGS="$LDFLAGS -O3 -OPT:Olimit=0 -IPA"
-fi
 
 dnl Generate Makefile.
 AC_SUBST(DEFINES)

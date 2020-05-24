@@ -114,11 +114,7 @@ static volatile bool thread_stop_req = false;
 static volatile bool thread_stop_ack = false;		// Acknowledge for thread_stop_req
 #endif
 
-#ifdef ENABLE_VOSF
-static bool use_vosf = false;						// Flag: VOSF enabled
-#else
 static const bool use_vosf = false;					// VOSF not possible
-#endif
 
 static bool ctrl_down = false;						// Flag: Ctrl key pressed
 static bool opt_down = false;						// Flag: Opt key pressed
@@ -184,14 +180,7 @@ extern void SysMountFirstFloppy(void);
  *  SDL surface locking glue
  */
 
-#ifdef ENABLE_VOSF
-#define SDL_VIDEO_LOCK_VOSF_SURFACE(SURFACE) do {				\
-	if (sdl_window && SDL_GetWindowFlags(sdl_window) & (SDL_WINDOW_FULLSCREEN))	\
-		the_host_buffer = (uint8 *)(SURFACE)->pixels;			\
-} while (0)
-#else
 #define SDL_VIDEO_LOCK_VOSF_SURFACE(SURFACE)
-#endif
 
 #define SDL_VIDEO_LOCK_SURFACE(SURFACE) do {	\
 	if (SDL_MUSTLOCK(SURFACE)) {				\
@@ -495,27 +484,7 @@ static void add_mode(int type, int width, int height, int resolution_id, int byt
 // Set Mac frame layout and base address (uses the_buffer/MacFrameBaseMac)
 static void set_mac_frame_buffer(SDL_monitor_desc &monitor, int depth, bool native_byte_order)
 {
-#if !REAL_ADDRESSING && !DIRECT_ADDRESSING
-	int layout = FLAYOUT_DIRECT;
-	if (depth == VIDEO_DEPTH_16BIT)
-		layout = (screen_depth == 15) ? FLAYOUT_HOST_555 : FLAYOUT_HOST_565;
-	else if (depth == VIDEO_DEPTH_32BIT)
-		layout = (screen_depth == 24) ? FLAYOUT_HOST_888 : FLAYOUT_DIRECT;
-	if (native_byte_order)
-		MacFrameLayout = layout;
-	else
-		MacFrameLayout = FLAYOUT_DIRECT;
-	monitor.set_mac_frame_base(MacFrameBaseMac);
-
-	// Set variables used by UAE memory banking
-	const VIDEO_MODE &mode = monitor.get_current_mode();
-	MacFrameBaseHost = the_buffer;
-	MacFrameSize = VIDEO_MODE_ROW_BYTES * VIDEO_MODE_Y;
-	InitFrameBufferMapping();
-#else
 	monitor.set_mac_frame_base(Host2MacAddr(the_buffer));
-#endif
-	D(bug("monitor.mac_frame_base = %08x\n", monitor.get_mac_frame_base()));
 }
 
 // Set window name and class
@@ -632,16 +601,10 @@ public:
 	SDL_Surface *s;	// The surface we draw into
 };
 
-#ifdef ENABLE_VOSF
-static void update_display_window_vosf(driver_base *drv);
-#endif
 static void update_display_static(driver_base *drv);
 
 static driver_base *drv = NULL;	// Pointer to currently used driver object
 
-#ifdef ENABLE_VOSF
-# include "video_vosf.h"
-#endif
 
 driver_base::driver_base(SDL_monitor_desc &m)
 	: monitor(m), mode(m.get_current_mode()), init_ok(false), s(NULL)
@@ -975,9 +938,6 @@ void driver_base::set_video_mode(int flags)
 	int depth = sdl_depth_of_video_depth(VIDEO_MODE_DEPTH);
 	if ((s = init_sdl_video(VIDEO_MODE_X, VIDEO_MODE_Y, depth, flags)) == NULL)
 		return;
-#ifdef ENABLE_VOSF
-	the_host_buffer = (uint8 *)s->pixels;
-#endif
 }
 
 void driver_base::init()
@@ -985,37 +945,11 @@ void driver_base::init()
 	set_video_mode(display_type == DISPLAY_SCREEN ? SDL_WINDOW_FULLSCREEN : 0);
 	int aligned_height = (VIDEO_MODE_Y + 15) & ~15;
 
-#ifdef ENABLE_VOSF
-	use_vosf = true;
-	// Allocate memory for frame buffer (SIZE is extended to page-boundary)
-	the_buffer_size = page_extend((aligned_height + 2) * s->pitch);
+	// Allocate memory for frame buffer
+	the_buffer_size = (aligned_height + 2) * s->pitch;
+	the_buffer_copy = (uint8 *)calloc(1, the_buffer_size);
 	the_buffer = (uint8 *)vm_acquire_framebuffer(the_buffer_size);
-	the_buffer_copy = (uint8 *)malloc(the_buffer_size);
-	D(bug("the_buffer = %p, the_buffer_copy = %p, the_host_buffer = %p\n", the_buffer, the_buffer_copy, the_host_buffer));
-
-	// Check whether we can initialize the VOSF subsystem and it's profitable
-	if (!video_vosf_init(monitor)) {
-		WarningAlert(GetString(STR_VOSF_INIT_ERR));
-		use_vosf = false;
-	}
-	else if (!video_vosf_profitable()) {
-		video_vosf_exit();
-		printf("VOSF acceleration is not profitable on this platform, disabling it\n");
-		use_vosf = false;
-	}
-    if (!use_vosf) {
-		free(the_buffer_copy);
-		vm_release(the_buffer, the_buffer_size);
-		the_host_buffer = NULL;
-	}
-#endif
-	if (!use_vosf) {
-		// Allocate memory for frame buffer
-		the_buffer_size = (aligned_height + 2) * s->pitch;
-		the_buffer_copy = (uint8 *)calloc(1, the_buffer_size);
-		the_buffer = (uint8 *)vm_acquire_framebuffer(the_buffer_size);
-		D(bug("the_buffer = %p, the_buffer_copy = %p\n", the_buffer, the_buffer_copy));
-	}
+	D(bug("the_buffer = %p, the_buffer_copy = %p\n", the_buffer, the_buffer_copy));
 
 	// Set frame buffer base
 	set_mac_frame_buffer(monitor, VIDEO_MODE_DEPTH, true);
@@ -1099,18 +1033,6 @@ driver_base::~driver_base()
 			the_buffer_copy = NULL;
 		}
 	}
-#ifdef ENABLE_VOSF
-	else {
-		if (the_buffer_copy) {
-			D(bug(" freeing the_buffer_copy at %p\n", the_buffer_copy));
-			free(the_buffer_copy);
-			the_buffer_copy = NULL;
-		}
-
-		// Deinitialize VOSF
-		video_vosf_exit();
-	}
-#endif
 
 	SDL_ShowCursor(1);
 }
@@ -1194,13 +1116,13 @@ static void keycode_init(void)
 	if (use_kc) {
 
 		// Get keycode file path from preferences
-		const char *kc_path = PrefsFindString("keycodefile");
-
+		auto kc_path = PrefsFindString("keycodefile");
+		const char* kc_name = !kc_path.empty() ? kc_path.c_str() : KEYCODE_FILE_NAME;
 		// Open keycode table
-		FILE *f = fopen(kc_path ? kc_path : KEYCODE_FILE_NAME, "r");
+		FILE *f = fopen(kc_name, "r");
 		if (f == NULL) {
 			char str[256];
-			snprintf(str, sizeof(str), GetString(STR_KEYCODE_FILE_WARN), kc_path ? kc_path : KEYCODE_FILE_NAME, strerror(errno));
+			snprintf(str, sizeof(str), GetString(STR_KEYCODE_FILE_WARN), kc_name, strerror(errno));
 			WarningAlert(str);
 			return;
 		}
@@ -1256,7 +1178,7 @@ static void keycode_init(void)
 		// Vendor not found? Then display warning
 		if (!video_driver_found) {
 			char str[256];
-			snprintf(str, sizeof(str), GetString(STR_KEYCODE_VENDOR_WARN), video_driver ? video_driver : "", kc_path ? kc_path : KEYCODE_FILE_NAME);
+			snprintf(str, sizeof(str), GetString(STR_KEYCODE_VENDOR_WARN), video_driver ? video_driver : "", kc_name);
 			WarningAlert(str);
 			return;
 		}
@@ -1323,11 +1245,6 @@ bool VideoInit(bool classic)
 #endif
 	classic_mode = classic;
 
-#ifdef ENABLE_VOSF
-	// Zero the mainBuffer structure
-	mainBuffer.dirtyPages = NULL;
-	mainBuffer.pageInfo = NULL;
-#endif
 
 	// Create Mutexes
 	if ((sdl_events_lock = SDL_CreateMutex()) == NULL)
@@ -1347,7 +1264,7 @@ bool VideoInit(bool classic)
 
 	// Get screen mode from preferences
 	migrate_screen_prefs();
-	const char *mode_str = NULL;
+	std::string mode_str;
 	if (classic_mode)
 		mode_str = "win/512/342";
 	else
@@ -1364,10 +1281,10 @@ bool VideoInit(bool classic)
 		default_height = 480;
 	}
 	display_type = DISPLAY_WINDOW;
-	if (mode_str) {
-		if (sscanf(mode_str, "win/%d/%d", &default_width, &default_height) == 2)
+	if (!mode_str.empty()) {
+		if (sscanf(mode_str.c_str(), "win/%d/%d", &default_width, &default_height) == 2)
 			display_type = DISPLAY_WINDOW;
-		else if (sscanf(mode_str, "dga/%d/%d", &default_width, &default_height) == 2)
+		else if (sscanf(mode_str.c_str(), "dga/%d/%d", &default_width, &default_height) == 2)
 			display_type = DISPLAY_SCREEN;
 	}
 	if (default_width <= 0)
@@ -1760,15 +1677,6 @@ void SDL_monitor_desc::set_palette(uint8 *pal, int num_in)
 			ExpandMap[i] = SDL_MapRGB(drv->s->format, pal[c*3+0], pal[c*3+1], pal[c*3+2]);
 		}
 
-#ifdef ENABLE_VOSF
-		if (use_vosf) {
-			// We have to redraw everything because the interpretation of pixel values changed
-			LOCK_VOSF;
-			PFLAG_SET_ALL;
-			UNLOCK_VOSF;
-			memset(the_buffer_copy, 0, VIDEO_MODE_ROW_BYTES * VIDEO_MODE_Y);
-		}
-#endif
 	}
 
 	// Tell redraw thread to change palette
@@ -2067,13 +1975,6 @@ static int event2keycode(SDL_KeyboardEvent const &ev, bool key_down)
 static void force_complete_window_refresh()
 {
 	if (display_type == DISPLAY_WINDOW) {
-#ifdef ENABLE_VOSF
-		if (use_vosf) {	// VOSF refresh
-			LOCK_VOSF;
-			PFLAG_SET_ALL;
-			UNLOCK_VOSF;
-		}
-#endif
 		// Ensure each byte of the_buffer_copy differs from the_buffer to force a full update.
 		const VIDEO_MODE &mode = VideoMonitors[0]->get_current_mode();
 		const int len = VIDEO_MODE_ROW_BYTES * VIDEO_MODE_Y;
@@ -2559,43 +2460,6 @@ static void video_refresh_dga(void)
 	video_refresh_window_static();
 }
 
-#ifdef ENABLE_VOSF
-#if REAL_ADDRESSING || DIRECT_ADDRESSING
-static void video_refresh_dga_vosf(void)
-{
-	// Quit DGA mode if requested
-	possibly_quit_dga_mode();
-	
-	// Update display (VOSF variant)
-	static uint32 tick_counter = 0;
-	if (++tick_counter >= frame_skip) {
-		tick_counter = 0;
-		if (mainBuffer.dirty) {
-			LOCK_VOSF;
-			update_display_dga_vosf(drv);
-			UNLOCK_VOSF;
-		}
-	}
-}
-#endif
-
-static void video_refresh_window_vosf(void)
-{
-	// Ungrab mouse if requested
-	possibly_ungrab_mouse();
-	
-	// Update display (VOSF variant)
-	static uint32 tick_counter = 0;
-	if (++tick_counter >= frame_skip) {
-		tick_counter = 0;
-		if (mainBuffer.dirty) {
-			LOCK_VOSF;
-			update_display_window_vosf(drv);
-			UNLOCK_VOSF;
-		}
-	}
-}
-#endif // def ENABLE_VOSF
 
 static void video_refresh_window_static(void)
 {
@@ -2623,20 +2487,10 @@ static void VideoRefreshInit(void)
 {
 	// TODO: set up specialised 8bpp VideoRefresh handlers ?
 	if (display_type == DISPLAY_SCREEN) {
-#if ENABLE_VOSF && (REAL_ADDRESSING || DIRECT_ADDRESSING)
-		if (use_vosf)
-			video_refresh = video_refresh_dga_vosf;
-		else
-#endif
-			video_refresh = video_refresh_dga;
+		video_refresh = video_refresh_dga;
 	}
 	else {
-#ifdef ENABLE_VOSF
-		if (use_vosf)
-			video_refresh = video_refresh_window_vosf;
-		else
-#endif
-			video_refresh = video_refresh_window_static;
+		video_refresh = video_refresh_window_static;
 	}
 }
 
@@ -2710,18 +2564,6 @@ static int redraw_func(void *arg)
 #ifdef SHEEPSHAVER
 void video_set_dirty_area(int x, int y, int w, int h)
 {
-#ifdef ENABLE_VOSF
-	const VIDEO_MODE &mode = drv->mode;
-	const unsigned screen_width = VIDEO_MODE_X;
-	const unsigned screen_height = VIDEO_MODE_Y;
-	const unsigned bytes_per_row = VIDEO_MODE_ROW_BYTES;
-
-	if (use_vosf) {
-		vosf_set_dirty_area(x, y, w, h, screen_width, screen_height, bytes_per_row);
-		return;
-	}
-#endif
-
 	// XXX handle dirty bounding boxes for non-VOSF modes
 }
 #endif

@@ -33,15 +33,13 @@
 #include "extfs.h"
 #include "prefs.h"
 
-#if ENABLE_MON
-#include "mon.h"
-#endif
 
 #include "rom_patches.h"
 
 #define DEBUG 0
 #include "debug.h"
-
+#include "new_cpu/registers.hpp"
+extern CPU cpu;
 
 // Global variables
 uint32 UniversalInfo;		// ROM offset of UniversalInfo
@@ -71,7 +69,7 @@ uint16 ROMVersion;
  *  Search ROM for byte string, return ROM offset (or 0)
  */
 
-static uint32 find_rom_data(uint32 start, uint32 end, const uint8 *data, uint32 data_len)
+uint32 find_rom_data(uint32 start, uint32 end, const uint8 *data, uint32 data_len)
 {
 	uint32 ofs = start;
 	while (ofs < end) {
@@ -816,10 +814,8 @@ void InstallSERD(void)
 
 void PatchAfterStartup(void)
 {
-#if SUPPORTS_EXTFS
 	// Install external file system
 	InstallExtFS();
-#endif
 }
 
 
@@ -832,13 +828,10 @@ bool CheckROM(void)
 	// Read version
 	ROMVersion = ntohs(*(uint16 *)(ROMBaseHost + 8));
 
-#if REAL_ADDRESSING || DIRECT_ADDRESSING
 	// Real and direct addressing modes require a 32-bit clean ROM
 	return ROMVersion == ROM_VERSION_32;
-#else
 	// Virtual addressing mode works with 32-bit clean Mac II ROMs and Classic ROMs
-	return (ROMVersion == ROM_VERSION_CLASSIC) || (ROMVersion == ROM_VERSION_32);
-#endif
+	// return (ROMVersion == ROM_VERSION_CLASSIC) || (ROMVersion == ROM_VERSION_32);
 }
 
 
@@ -846,184 +839,24 @@ bool CheckROM(void)
  *  Install ROM patches, returns false if ROM version is not supported
  */
 
-// ROM patches for Mac Classic/SE ROMs (version $0276)
-static bool patch_rom_classic(void)
-{
-	uint16 *wp;
-	uint32 base;
-
-	// Don't jump into debugger (VIA line)
-	wp = (uint16 *)(ROMBaseHost + 0x1c40);
-	*wp = htons(0x601e);
-
-	// Don't complain about incorrect ROM checksum
-	wp = (uint16 *)(ROMBaseHost + 0x1c6c);
-	*wp = htons(0x7c00);
-
-	// Don't initialize IWM
-	wp = (uint16 *)(ROMBaseHost + 0x50);
-	*wp++ = htons(M68K_NOP);
-	*wp = htons(M68K_NOP);
-
-	// Skip startup sound
-	wp = (uint16 *)(ROMBaseHost + 0x6a);
-	*wp++ = htons(M68K_NOP);
-	*wp = htons(M68K_NOP);
-
-	// Don't loop in ADB init
-	wp = (uint16 *)(ROMBaseHost + 0x3364);
-	*wp = htons(M68K_NOP);
-
-	// Patch ClkNoMem
-	wp = (uint16 *)(ROMBaseHost + 0xa2c0);
-	*wp++ = htons(M68K_EMUL_OP_CLKNOMEM);
-	*wp = htons(0x4ed5);			// jmp	(a5)
-
-	// Skip main memory test (not that it wouldn't pass, but it's faster that way)
-	wp = (uint16 *)(ROMBaseHost + 0x11e);
-	*wp++ = htons(M68K_NOP);
-	*wp = htons(M68K_NOP);
-
-	// Don't open .Sound driver but install our own drivers
-	wp = (uint16 *)(ROMBaseHost + 0x36caa);
-	*wp++ = htons(M68K_EMUL_OP_INSTALL_DRIVERS);
-	*wp = htons(0x4e75); //rts
-
-#if 1
-	// Don't look for SCSI devices
-	wp = (uint16 *)(ROMBaseHost + 0xd5a);
-	*wp = htons(0x601e);
-#endif
-
-	// Replace .Sony driver
-	sony_offset = 0x34680;
-	D(bug("sony %08lx\n", sony_offset));
-	memcpy(ROMBaseHost + sony_offset, sony_driver, sizeof(sony_driver));
-
-	// Install .Disk and .AppleCD drivers
-	memcpy(ROMBaseHost + sony_offset + 0x100, disk_driver, sizeof(disk_driver));
-	memcpy(ROMBaseHost + sony_offset + 0x200, cdrom_driver, sizeof(cdrom_driver));
-
-	// Copy icons to ROM
-	SonyDiskIconAddr = ROMBaseMac + sony_offset + 0x400;
-	memcpy(ROMBaseHost + sony_offset + 0x400, SonyDiskIcon, sizeof(SonyDiskIcon));
-	SonyDriveIconAddr = ROMBaseMac + sony_offset + 0x600;
-	memcpy(ROMBaseHost + sony_offset + 0x600, SonyDriveIcon, sizeof(SonyDriveIcon));
-	DiskIconAddr = ROMBaseMac + sony_offset + 0x800;
-	memcpy(ROMBaseHost + sony_offset + 0x800, DiskIcon, sizeof(DiskIcon));
-	CDROMIconAddr = ROMBaseMac + sony_offset + 0xa00;
-	memcpy(ROMBaseHost + sony_offset + 0xa00, CDROMIcon, sizeof(CDROMIcon));
-
-	// Install SERD patch and serial drivers
-	serd_offset = 0x31bae;
-	D(bug("serd %08lx\n", serd_offset));
-	wp = (uint16 *)(ROMBaseHost + serd_offset + 12);
-	*wp++ = htons(M68K_EMUL_OP_SERD);
-	*wp = htons(M68K_RTS);
-	memcpy(ROMBaseHost + serd_offset + 0x100, ain_driver, sizeof(ain_driver));
-	memcpy(ROMBaseHost + serd_offset + 0x200, aout_driver, sizeof(aout_driver));
-	memcpy(ROMBaseHost + serd_offset + 0x300, bin_driver, sizeof(bin_driver));
-	memcpy(ROMBaseHost + serd_offset + 0x400, bout_driver, sizeof(bout_driver));
-
-	// Replace ADBOp()
-	memcpy(ROMBaseHost + 0x3880, adbop_patch, sizeof(adbop_patch));
-
-	// Replace Time Manager
-	wp = (uint16 *)(ROMBaseHost + 0x1a95c);
-	*wp++ = htons(M68K_EMUL_OP_INSTIME);
-	*wp = htons(M68K_RTS);
-	wp = (uint16 *)(ROMBaseHost + 0x1a96a);
-	*wp++ = htons(0x40e7);		// move	sr,-(sp)
-	*wp++ = htons(0x007c);		// ori	#$0700,sr
-	*wp++ = htons(0x0700);
-	*wp++ = htons(M68K_EMUL_OP_RMVTIME);
-	*wp++ = htons(0x46df);		// move	(sp)+,sr
-	*wp = htons(M68K_RTS);
-	wp = (uint16 *)(ROMBaseHost + 0x1a984);
-	*wp++ = htons(0x40e7);		// move	sr,-(sp)
-	*wp++ = htons(0x007c);		// ori	#$0700,sr
-	*wp++ = htons(0x0700);
-	*wp++ = htons(M68K_EMUL_OP_PRIMETIME);
-	*wp++ = htons(0x46df);		// move	(sp)+,sr
-	*wp++ = htons(M68K_RTS);
-	microseconds_offset = (uint8 *)wp - ROMBaseHost;
-	*wp++ = htons(M68K_EMUL_OP_MICROSECONDS);
-	*wp++ = htons(M68K_RTS);
-
-	// Replace DebugUtil
-	debugutil_offset = (uint8 *)wp - ROMBaseHost;
-	*wp++ = htons(M68K_EMUL_OP_DEBUGUTIL);
-	*wp = htons(M68K_RTS);
-
-	// Replace SCSIDispatch()
-	wp = (uint16 *)(ROMBaseHost + 0x1a206);
-	*wp++ = htons(M68K_EMUL_OP_SCSI_DISPATCH);
-	*wp++ = htons(0x2e49);		// move.l	a1,a7
-	*wp = htons(M68K_JMP_A0);
-
-	// Modify vCheckLoad() so we can patch resources
-	wp = (uint16 *)(ROMBaseHost + 0xe740);
-	*wp++ = htons(M68K_JMP);
-	*wp++ = htons((ROMBaseMac + sony_offset + 0x300) >> 16);
-	*wp = htons((ROMBaseMac + sony_offset + 0x300) & 0xffff);
-	wp = (uint16 *)(ROMBaseHost + sony_offset + 0x300);
-	*wp++ = htons(0x2f03);		// move.l	d3,-(sp) (save type)
-	*wp++ = htons(0x2078);		// move.l	$07f0,a0
-	*wp++ = htons(0x07f0);
-	*wp++ = htons(M68K_JSR_A0);
-	*wp++ = htons(0x221f);		// move.l	(sp)+,d1 (restore type)
-	*wp++ = htons(M68K_EMUL_OP_CHECKLOAD);
-	*wp = htons(M68K_RTS);
-
-	// Install PutScrap() patch for clipboard data exchange (the patch is activated by EMUL_OP_INSTALL_DRIVERS)
-	PutScrapPatch = ROMBaseMac + sony_offset + 0xc00;
-	base = ROMBaseMac + 0x12794;
-	wp = (uint16 *)(ROMBaseHost + sony_offset + 0xc00);
-	*wp++ = htons(M68K_EMUL_OP_PUT_SCRAP);
-	*wp++ = htons(M68K_JMP);
-	*wp++ = htons(base >> 16);
-	*wp = htons(base & 0xffff);
-
-#if 0
-	// Boot from internal EDisk
-	wp = (uint16 *)(ROMBaseHost + 0x3f83c);
-	*wp = htons(M68K_NOP);
-#endif
-
-	// Patch VIA interrupt handler
-	wp = (uint16 *)(ROMBaseHost + 0x2b3a);	// Level 1 handler
-	*wp++ = htons(0x5888);		// addq.l	#4,a0
-	*wp++ = htons(0x5888);		// addq.l	#4,a0
-	*wp++ = htons(M68K_NOP);
-	*wp++ = htons(M68K_NOP);
-	*wp++ = htons(M68K_NOP);
-	*wp++ = htons(M68K_NOP);
-	*wp++ = htons(M68K_NOP);
-	*wp++ = htons(M68K_NOP);
-	*wp = htons(M68K_NOP);
-
-	wp = (uint16 *)(ROMBaseHost + 0x2be4);	// 60Hz handler (handles everything)
-	*wp++ = htons(M68K_NOP);
-	*wp++ = htons(M68K_NOP);
-	*wp++ = htons(M68K_EMUL_OP_IRQ);
-	*wp++ = htons(0x4a80);		// tst.l	d0
-	*wp = htons(0x67f4);		// beq		0x402be2
-	return true;
-}
-
+uint32_t modelId;
 // ROM patches for 32-bit clean Mac-II ROMs (version $067c)
 static bool patch_rom_32(void)
 {
 	uint16 *wp;
 	uint8 *bp;
 	uint32 base;
+	// exit from inf loop
+//	wp = (uint16 *)(ROMBaseHost + 0x4b7e);
+//	*wp++ = htons(M68K_EMUL_OP_SUSPEND);
 
 	// Find UniversalInfo
 	static const uint8 universal_dat[] = {0xdc, 0x00, 0x05, 0x05, 0x3f, 0xff, 0x01, 0x00};
 	if ((base = find_rom_data(0x3400, 0x3c00, universal_dat, sizeof(universal_dat))) == 0) return false;
 	UniversalInfo = base - 0x10;
-	D(bug("universal %08lx\n", UniversalInfo));
+	printf("universal %08x\n", UniversalInfo);
 
+#if 0
 	// Patch UniversalInfo (disable NuBus slots)
 	bp = ROMBaseHost + UniversalInfo + ReadMacInt32(ROMBaseMac + UniversalInfo + 12);	// nuBusInfoPtr
 	bp[0] = 0x03;
@@ -1034,30 +867,6 @@ static bool patch_rom_32(void)
 	bp = ROMBaseHost + UniversalInfo + 18;		// productKind
 	*bp = PrefsFindInt32("modelid");
 
-#if !ROM_IS_WRITE_PROTECTED
-#if defined(USE_SCRATCHMEM_SUBTERFUGE)
-	// Set hardware base addresses to scratch memory area
-	if (PatchHWBases) {
-		extern uint8 *ScratchMem;
-		const uint32 ScratchMemBase = Host2MacAddr(ScratchMem);
-		
-		D(bug("LMGlob\tOfs/4\tBase\n"));
-		base = ROMBaseMac + UniversalInfo + ReadMacInt32(ROMBaseMac + UniversalInfo); // decoderInfoPtr
-		wp = (uint16 *)(ROMBaseHost + 0x94a);
-		while (*wp != 0xffff) {
-			int16 ofs = ntohs(*wp++);			// offset in decoderInfo (/4)
-			int16 lmg = ntohs(*wp++);			// address of LowMem global
-			D(bug("0x%04x\t%d\t0x%08x\n", lmg, ofs, ReadMacInt32(base + ofs*4)));
-			
-			// Fake address only if this is not the ASC base
-			if (lmg != 0xcc0)
-				WriteMacInt32(base + ofs*4, ScratchMemBase);
-		}
-	}
-#else
-#error System specific handling for writable ROM is required here
-#endif
-#endif
 
 	// Make FPU optional
 	if (FPUType == 0) {
@@ -1065,12 +874,6 @@ static bool patch_rom_32(void)
 		*bp = 4;	// FPU optional
 	}
 
-	// Install special reset opcode and jump (skip hardware detection and tests)
-	wp = (uint16 *)(ROMBaseHost + 0x8c);
-	*wp++ = htons(M68K_EMUL_OP_RESET);
-	*wp++ = htons(M68K_JMP);
-	*wp++ = htons((ROMBaseMac + 0xba) >> 16);
-	*wp = htons((ROMBaseMac + 0xba) & 0xffff);
 
 	// Don't GetHardwareInfo
 	wp = (uint16 *)(ROMBaseHost + 0xc2);
@@ -1099,17 +902,18 @@ static bool patch_rom_32(void)
 	wp = (uint16 *)(ROMBaseHost + 0x7c0);
 	*wp++ = htons(0x7e00 + CPUType);
 	*wp = htons(M68K_RTS);
-
+#endif
 	// Don't clear end of BootGlobs upto end of RAM (address xxxx0000)
 	static const uint8 clear_globs_dat[] = {0x42, 0x9a, 0x36, 0x0a, 0x66, 0xfa};
 	base = find_rom_data(0xa00, 0xb00, clear_globs_dat, sizeof(clear_globs_dat));
-	D(bug("clear_globs %08lx\n", base));
+	printf("clear_globs %08x\n", base);
+	/*
 	if (base) {		// ROM15/20/22/23/26/27/32
 		wp = (uint16 *)(ROMBaseHost + base + 2);
 		*wp++ = htons(M68K_NOP);
 		*wp = htons(M68K_NOP);
 	}
-
+	*/
 	// Patch InitMMU (no MMU present, don't choke on unknown CPU types)
 	if (ROMSize <= 0x80000) {
 		static const uint8 init_mmu_dat[] = {0x0c, 0x47, 0x00, 0x03, 0x62, 0x00, 0xfe};
@@ -1118,7 +922,8 @@ static bool patch_rom_32(void)
 		static const uint8 init_mmu_dat[] = {0x0c, 0x47, 0x00, 0x04, 0x62, 0x00, 0xfd};
 		if ((base = find_rom_data(0x80000, 0x90000, init_mmu_dat, sizeof(init_mmu_dat))) == 0) return false;
 	}
-	D(bug("init_mmu %08lx\n", base));
+	printf("init_mmu %04x\n", base);
+#if 0
 	wp = (uint16 *)(ROMBaseHost + base);
 	*wp++ = htons(M68K_NOP);
 	*wp++ = htons(M68K_NOP);
@@ -1127,7 +932,7 @@ static bool patch_rom_32(void)
 	wp++;
 	*wp++ = htons(0x7000);			// moveq #0,d0
 	*wp = htons(M68K_NOP);
-
+#endif
 	// Patch InitMMU (no RBV present)
 	static const uint8 init_mmu2_dat[] = {0x08, 0x06, 0x00, 0x0d, 0x67};
 	if (ROMSize <= 0x80000) {
@@ -1135,12 +940,13 @@ static bool patch_rom_32(void)
 	} else {
 		base = find_rom_data(0x80000, 0x90000, init_mmu2_dat, sizeof(init_mmu2_dat));
 	}
-	D(bug("init_mmu2 %08lx\n", base));
+	printf("init_mmu2 %08x\n", base);
+	/*
 	if (base) {		// ROM11/10/13/26
 		bp = (uint8 *)(ROMBaseHost + base + 4);
 		*bp = 0x60;						// bra
 	}
-
+	*/
 	// Patch InitMMU (don't init MMU)
 	static const uint8 init_mmu3_dat[] = {0x0c, 0x2e, 0x00, 0x01, 0xff, 0xe6, 0x66, 0x0c, 0x4c, 0xed, 0x03, 0x87, 0xff, 0xe8};
 	if (ROMSize <= 0x80000) {
@@ -1148,49 +954,14 @@ static bool patch_rom_32(void)
 	} else {
 		if ((base = find_rom_data(0x80000, 0x90000, init_mmu3_dat, sizeof(init_mmu3_dat))) == 0) return false;
 	}
-	D(bug("init_mmu3 %08lx\n", base));
+	printf("init_mmu3 %08x\n", base);
+	/*
 	wp = (uint16 *)(ROMBaseHost + base + 6);
 	*wp = htons(M68K_NOP);
+	*/
+	
 
-	// Replace XPRAM routines
-	static const uint8 read_xpram_dat[] = {0x26, 0x4e, 0x41, 0xf9, 0x50, 0xf0, 0x00, 0x00, 0x08, 0x90, 0x00, 0x02};
-	base = find_rom_data(0x40000, 0x50000, read_xpram_dat, sizeof(read_xpram_dat));
-	D(bug("read_xpram %08lx\n", base));
-	if (base) {			// ROM10
-		wp = (uint16 *)(ROMBaseHost + base);
-		*wp++ = htons(M68K_EMUL_OP_READ_XPRAM);
-		*wp = htons(0x4ed6);		// jmp	(a6)
-	}
-	static const uint8 read_xpram2_dat[] = {0x26, 0x4e, 0x08, 0x92, 0x00, 0x02, 0xea, 0x59, 0x02, 0x01, 0x00, 0x07, 0x00, 0x01, 0x00, 0xb8};
-	base = find_rom_data(0x40000, 0x50000, read_xpram2_dat, sizeof(read_xpram2_dat));
-	D(bug("read_xpram2 %08lx\n", base));
-	if (base) {			// ROM11
-		wp = (uint16 *)(ROMBaseHost + base);
-		*wp++ = htons(M68K_EMUL_OP_READ_XPRAM);
-		*wp = htons(0x4ed6);		// jmp	(a6)
-	}
-	if (ROMSize > 0x80000) {
-		static const uint8 read_xpram3_dat[] = {0x48, 0xe7, 0xe0, 0x60, 0x02, 0x01, 0x00, 0x70, 0x0c, 0x01, 0x00, 0x20};
-		base = find_rom_data(0x80000, 0x90000, read_xpram3_dat, sizeof(read_xpram3_dat));
-		D(bug("read_xpram3 %08lx\n", base));
-		if (base) {		// ROM15
-			wp = (uint16 *)(ROMBaseHost + base);
-			*wp++ = htons(M68K_EMUL_OP_READ_XPRAM2);
-			*wp = htons(M68K_RTS);
-		}
-	}
-
-	// Patch ClkNoMem
-	base = find_rom_trap(0xa053);
-	wp = (uint16 *)(ROMBaseHost + base);
-	if (ntohs(*wp) == 0x4ed5) {	// ROM23/26/27/32
-		static const uint8 clk_no_mem_dat[] = {0x40, 0xc2, 0x00, 0x7c, 0x07, 0x00, 0x48, 0x42};
-		if ((base = find_rom_data(0xb0000, 0xb8000, clk_no_mem_dat, sizeof(clk_no_mem_dat))) == 0) return false;
-	}
-	D(bug("clk_no_mem %08lx\n", base));
-	wp = (uint16 *)(ROMBaseHost + base);
-	*wp++ = htons(M68K_EMUL_OP_CLKNOMEM);
-	*wp = htons(0x4ed5);			// jmp	(a5)
+#if 0
 
 	// Patch BootGlobs
 	wp = (uint16 *)(ROMBaseHost + 0x10e);
@@ -1200,7 +971,7 @@ static bool patch_rom_32(void)
 	// Don't init SCC
 	static const uint8 init_scc_dat[] = {0x08, 0x38, 0x00, 0x01, 0x0d, 0xd1, 0x67, 0x04};
 	if ((base = find_rom_data(0xa00, 0xa80, init_scc_dat, sizeof(init_scc_dat))) == 0) return false;
-	D(bug("init_scc %08lx\n", base));
+	printf("init_scc %08lx\n", base);
 	wp = (uint16 *)(ROMBaseHost + base);
 	*wp = htons(M68K_RTS);
 
@@ -1225,7 +996,7 @@ static bool patch_rom_32(void)
 	// Don't init ASC
 	static const uint8 init_asc_dat[] = {0x26, 0x68, 0x00, 0x30, 0x12, 0x00, 0xeb, 0x01};
 	base = find_rom_data(0x4000, 0x5000, init_asc_dat, sizeof(init_asc_dat));
-	D(bug("init_asc %08lx\n", base));
+	printf("init_asc %08lx\n", base);
 	if (base) {		// ROM15/22/23/26/27/32
 		wp = (uint16 *)(ROMBaseHost + base);
 		*wp = htons(0x4ed6);		// jmp	(a6)
@@ -1257,14 +1028,6 @@ static bool patch_rom_32(void)
 	*wp++ = htons(0x0cea);
 	*wp = htons(M68K_RTS);
 
-#if REAL_ADDRESSING
-	// Move system zone to start of Mac RAM
-	wp = (uint16 *)(ROMBaseHost + 0x50a);
-	*wp++ = htons(HiWord(RAMBaseMac + 0x2000));
-	*wp++ = htons(LoWord(RAMBaseMac + 0x2000));
-	*wp++ = htons(HiWord(RAMBaseMac + 0x3800));
-	*wp = htons(LoWord(RAMBaseMac + 0x3800));
-#endif
 
 #if !ROM_IS_WRITE_PROTECTED
 #if defined(USE_SCRATCHMEM_SUBTERFUGE)
@@ -1280,48 +1043,12 @@ static bool patch_rom_32(void)
 #endif
 #endif
 
-#if REAL_ADDRESSING && defined(AMIGA)
-	// Don't overwrite SysBase under AmigaOS
-	wp = (uint16 *)(ROMBaseHost + 0xccb4);
-	*wp++ = htons(M68K_NOP);
-	*wp = htons(M68K_NOP);
-#endif
-	
-#if REAL_ADDRESSING && !defined(AMIGA)
-	// gb-- Temporary hack to get rid of crashes in Speedometer
-	wp = (uint16 *)(ROMBaseHost + 0xdba2);
-	if (ntohs(*wp) == 0x662c)		// bne.b	#$2c
-		*wp = htons(0x602c);		// bra.b	#$2c
-#endif
 	
 	// Don't write to VIA in InitTimeMgr
 	wp = (uint16 *)(ROMBaseHost + 0xb0e2);
 	*wp++ = htons(0x4cdf);			// movem.l	(sp)+,d0-d5/a0-a4
 	*wp++ = htons(0x1f3f);
 	*wp = htons(M68K_RTS);
-
-	// Don't read ModelID from 0x5ffffffc
-	static const uint8 model_id_dat[] = {0x20, 0x7c, 0x5f, 0xff, 0xff, 0xfc, 0x72, 0x07, 0xc2, 0x90};
-	base = find_rom_data(0x40000, 0x50000, model_id_dat, sizeof(model_id_dat));
-	D(bug("model_id %08lx\n", base));
-	if (base) {		// ROM20
-		wp = (uint16 *)(ROMBaseHost + base + 8);
-		*wp++ = htons(M68K_NOP);
-		*wp++ = htons(M68K_NOP);
-		*wp++ = htons(M68K_NOP);
-		*wp = htons(M68K_NOP);
-	}
-
-	// Don't read ModelID from 0x5ffffffc
-	static const uint8 model_id2_dat[] = {0x45, 0xf9, 0x5f, 0xff, 0xff, 0xfc, 0x20, 0x12};
-	base = find_rom_data(0x4000, 0x5000, model_id2_dat, sizeof(model_id2_dat));
-	D(bug("model_id2 %08lx\n", base));
-	if (base) {		// ROM27/32
-		wp = (uint16 *)(ROMBaseHost + base + 6);
-		*wp++ = htons(0x7000);	// moveq	#0,d0
-		*wp++ = htons(0xb040);	// cmp.w	d0,d0
-		*wp = htons(0x4ed6);	// jmp		(a6)
-	}
 
 	// Install slot ROM
 	if (!InstallSlotROM())
@@ -1330,7 +1057,7 @@ static bool patch_rom_32(void)
 	// Don't probe NuBus slots
 	static const uint8 nubus_dat[] = {0x45, 0xfa, 0x00, 0x0a, 0x42, 0xa7, 0x10, 0x11};
 	base = find_rom_data(0x5000, 0x6000, nubus_dat, sizeof(nubus_dat));
-	D(bug("nubus %08lx\n", base));
+	printf("nubus %08lx\n", base);
 	if (base) {		// ROM10/11
 		wp = (uint16 *)(ROMBaseHost + base + 6);
 		*wp++ = htons(M68K_NOP);
@@ -1341,7 +1068,7 @@ static bool patch_rom_32(void)
 	// Don't EnableOneSecInts
 	static const uint8 lea_dat[] = {0x41, 0xf9};
 	if ((base = find_rom_data(0x226, 0x22a, lea_dat, sizeof(lea_dat))) == 0) return false;
-	D(bug("enable_one_sec_ints %08lx\n", base));
+	printf("enable_one_sec_ints %08lx\n", base);
 	wp = (uint16 *)(ROMBaseHost + base);
 	*wp++ = htons(M68K_NOP);
 	*wp++ = htons(M68K_NOP);
@@ -1357,7 +1084,7 @@ static bool patch_rom_32(void)
 		else
 			return false;
 	}
-	D(bug("enable_60hz_ints %08lx\n", base));
+	printf("enable_60hz_ints %08lx\n", base);
 	wp = (uint16 *)(ROMBaseHost + base);
 	*wp++ = htons(M68K_NOP);
 	*wp++ = htons(M68K_NOP);
@@ -1382,7 +1109,7 @@ static bool patch_rom_32(void)
 
 	static const uint8 fix_memsize2_dat[] = {0x22, 0x30, 0x81, 0xe2, 0x0d, 0xdc, 0xff, 0xba, 0xd2, 0xb0, 0x81, 0xe2, 0x0d, 0xdc, 0xff, 0xec, 0x21, 0xc1, 0x1e, 0xf8};
 	base = find_rom_data(0x4c000, 0x4c080, fix_memsize2_dat, sizeof(fix_memsize2_dat));
-	D(bug("fix_memsize2 %08lx\n", base));
+	printf("fix_memsize2 %08lx\n", base);
 	if (base) {		// ROM15/22/23/26/27/32
 		wp = (uint16 *)(ROMBaseHost + base + 16);
 		*wp++ = htons(M68K_NOP);
@@ -1442,7 +1169,7 @@ static bool patch_rom_32(void)
 
 	// Don't EnableSlotInts
 	if ((base = find_rom_data(0x2ee, 0x2f2, lea_dat, sizeof(lea_dat))) == 0) return false;
-	D(bug("enable_slot_ints %08lx\n", base));
+	printf("enable_slot_ints %08lx\n", base);
 	wp = (uint16 *)(ROMBaseHost + base);
 	*wp++ = htons(M68K_NOP);
 	*wp++ = htons(M68K_NOP);
@@ -1461,7 +1188,7 @@ static bool patch_rom_32(void)
 	if (ROMSize > 0x80000) {
 		static const uint8 frame_base_dat[] = {0x22, 0x78, 0x0d, 0xd8, 0xd3, 0xe9, 0x00, 0x08};
 		base = find_rom_data(0x8c000, 0x8d000, frame_base_dat, sizeof(frame_base_dat));
-		D(bug("frame_base %08lx\n", base));
+		printf("frame_base %08lx\n", base);
 		if (base) {		// ROM22/23/26/27/32
 			wp = (uint16 *)(ROMBaseHost + base);
 			*wp++ = htons(0x2401);	// move.l	d1,d2
@@ -1472,14 +1199,14 @@ static bool patch_rom_32(void)
 	// Don't write to VIA2
 	static const uint8 via2_dat[] = {0x20, 0x78, 0x0c, 0xec, 0x11, 0x7c, 0x00, 0x90};
 	if ((base = find_rom_data(0xa000, 0xa400, via2_dat, sizeof(via2_dat))) == 0) return false;
-	D(bug("via2 %08lx\n", base));
+	printf("via2 %08lx\n", base);
 	wp = (uint16 *)(ROMBaseHost + base + 4);
 	*wp = htons(M68K_RTS);
 
 	// Don't write to VIA2, even on ROM20
 	static const uint8 via2b_dat[] = {0x20, 0x78, 0x0c, 0xec, 0x11, 0x7c, 0x00, 0x90, 0x00, 0x13, 0x4e, 0x75};
 	base = find_rom_data(0x40000, 0x44000, via2b_dat, sizeof(via2b_dat));
-	D(bug("via2b %08lx\n", base));
+	printf("via2b %08lx\n", base);
 	if (base) {		// ROM19/20
 		wp = (uint16 *)(ROMBaseHost + base + 4);
 		*wp = htons(M68K_RTS);
@@ -1491,7 +1218,7 @@ static bool patch_rom_32(void)
 		// BlockMove()
 		static const uint8 bmove_dat[] = {0x20, 0x5f, 0x22, 0x5f, 0x0c, 0x38, 0x00, 0x04, 0x01, 0x2f};
 		base = find_rom_data(0x87000, 0x87800, bmove_dat, sizeof(bmove_dat));
-		D(bug("block_move %08lx\n", base));
+		printf("block_move %08lx\n", base);
 		if (base) {		// ROM15/22/23/26/27/32
 			wp = (uint16 *)(ROMBaseHost + base + 4);
 			*wp++ = htons(M68K_EMUL_OP_BLOCK_MOVE);
@@ -1502,7 +1229,7 @@ static bool patch_rom_32(void)
 		// SANE
 		static const uint8 ptest2_dat[] = {0x0c, 0x38, 0x00, 0x04, 0x01, 0x2f, 0x6d, 0x54, 0x48, 0xe7, 0xf8, 0x60};
 		base = find_rom_data(0, ROMSize, ptest2_dat, sizeof(ptest2_dat));
-		D(bug("ptest2 %08lx\n", base));
+		printf("ptest2 %08lx\n", base);
 		if (base) {		// ROM15/20/22/23/26/27/32
 			wp = (uint16 *)(ROMBaseHost + base + 8);
 			*wp++ = htons(M68K_NOP);
@@ -1516,7 +1243,7 @@ static bool patch_rom_32(void)
 	// Don't set MemoryDispatch() to unimplemented trap
 	static const uint8 memdisp_dat[] = {0x30, 0x3c, 0xa8, 0x9f, 0xa7, 0x46, 0x30, 0x3c, 0xa0, 0x5c, 0xa2, 0x47};
 	base = find_rom_data(0x4f100, 0x4f180, memdisp_dat, sizeof(memdisp_dat));
-	D(bug("memdisp %08lx\n", base));
+	printf("memdisp %08lx\n", base);
 	if (base) {	// ROM15/22/23/26/27/32
 		wp = (uint16 *)(ROMBaseHost + base + 10);
 		*wp = htons(M68K_NOP);
@@ -1527,7 +1254,7 @@ static bool patch_rom_32(void)
 	if (edisk_offset) {
 		static const uint8 edisk_dat[] = {0xd5, 0xfc, 0x00, 0x01, 0x00, 0x00, 0xb5, 0xfc, 0x00, 0xe0, 0x00, 0x00};
 		base = find_rom_data(edisk_offset, edisk_offset + 0x10000, edisk_dat, sizeof(edisk_dat));
-		D(bug("edisk %08lx\n", base));
+		printf("edisk %08lx\n", base);
 		if (base) {
 			wp = (uint16 *)(ROMBaseHost + base + 8);
 			*wp++ = 0;
@@ -1537,7 +1264,7 @@ static bool patch_rom_32(void)
 
 	// Replace .Sony driver
 	sony_offset = find_rom_resource(FOURCC('D','R','V','R'), 4);
-	D(bug("sony %08lx\n", sony_offset));
+	printf("sony %08lx\n", sony_offset);
 	memcpy(ROMBaseHost + sony_offset, sony_driver, sizeof(sony_driver));
 
 	// Install .Disk and .AppleCD drivers
@@ -1556,7 +1283,7 @@ static bool patch_rom_32(void)
 
 	// Install SERD patch and serial drivers
 	serd_offset = find_rom_resource(FOURCC('S','E','R','D'), 0);
-	D(bug("serd %08lx\n", serd_offset));
+	printf("serd %08lx\n", serd_offset);
 	wp = (uint16 *)(ROMBaseHost + serd_offset + 12);
 	*wp++ = htons(M68K_EMUL_OP_SERD);
 	*wp = htons(M68K_RTS);
@@ -1656,6 +1383,8 @@ static bool patch_rom_32(void)
 	*wp++ = htons(M68K_EMUL_OP_IRQ);
 	*wp++ = htons(0x4a80);		// tst.l	d0
 	*wp = htons(0x67f4);		// beq		0x4080a294
+#endif
+
 	return true;
 }
 
@@ -1666,29 +1395,13 @@ bool PatchROM(void)
 		print_rom_info();
 
 	// Patch ROM depending on version
-	switch (ROMVersion) {
-		case ROM_VERSION_CLASSIC:
-			if (!patch_rom_classic())
-				return false;
-			break;
-		case ROM_VERSION_32:
-			if (!patch_rom_32())
-				return false;
-			break;
-		default:
-			return false;
-	}
+	if (!patch_rom_32())
+		return false;
 
 	// Install breakpoint
 	if (ROMBreakpoint) {
-#if ENABLE_MON
-		mon_add_break_point(ROMBaseMac + ROMBreakpoint);
-		printf("ROM start address at %08x\n", ROMBaseMac);
-		printf("Set ROM break point at %08x\n", ROMBaseMac + ROMBreakpoint);
-#else
 		uint16 *wp = (uint16 *)(ROMBaseHost + ROMBreakpoint);
 		*wp = htons(M68K_EMUL_BREAK);
-#endif
 	}
 
 	// Clear caches as we loaded and patched code

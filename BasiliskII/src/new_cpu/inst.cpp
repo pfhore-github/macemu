@@ -1,304 +1,269 @@
 #include "registers.hpp"
 #include "common.hpp"
-#include "exceptions.hpp"
+#include <functional>
 #include "inst_cmn.hpp"
-#define OP(name_) extern "C" void op_##name_(CPU* cpu, uint16_t op __attribute__((unused)), int dn __attribute__((unused)), int mode __attribute__((unused)), int reg __attribute__((unused)))
-#include "op.h"
-void ILLEGAL(CPU* cpu) __attribute__((noreturn));
-void callm(CPU* cpu, uint32_t, int) {
-	ILLEGAL(cpu);
+#include "../rom/data.hpp"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+#include <pthread.h>
+namespace ROM {
+std::unordered_map<uint32_t, std::function<void()>> rom_routines;
 }
-void rtm(CPU* cpu,uint32_t) {
-	ILLEGAL(cpu);
+#define OP(name_) extern "C" void op_##name_(uint16_t op, int dn, int mode, int reg)
+#include "op.h"
+void callm(uint32_t, int) {
+	throw Exception::IllegalInst();
+}
+void rtm(uint32_t) {
+	throw Exception::IllegalInst();
 }
 
 
 OP(illegal) {
-	ILLEGAL(cpu);
+	throw Exception::IllegalInst();
 }
-
-
-OP(cmp2_b) {
-	int wd = cpu->fetch_w();
-	int8_t v = cpu->R[wd >> 12];
-	EA ea(cpu, mode, 1, reg, false);
-	int8_t lw = cpu->mmu->read_b(ea.addr());
-	int8_t hi = cpu->mmu->read_b(ea.addr()+1);
-	cpu->Z = ( v == lw || v == hi );
-	cpu->C = ( v < lw || v > hi );
-	if( ((wd >> 11) & 1) && cpu->C ) {
-		throw ChkTrap();
-	}
-}
-
-
-
-
-
-OP(cmp2_w) {
-	int wd = cpu->fetch_w() >> 12;
-	int16_t v = cpu->R[wd];
-	EA ea(cpu, mode, 2, reg, false);
-	int16_t lw = cpu->mmu->read_w(ea.addr());
-	int16_t hi = cpu->mmu->read_w(ea.addr()+2);
-	cpu->Z = ( v == lw || v == hi );
-	cpu->C = ( v < lw || v > hi );
-	if( ((wd >> 11) & 1) && cpu->C ) {
-		throw ChkTrap();
-	}
-}
-
-
-
 
 OP(rtm_d) {
-	rtm(cpu, cpu->D[reg]);
+	rtm(cpu.R[reg]);
 }
 OP(rtm_a) {
-	rtm(cpu, cpu->A[reg]);
+	rtm(cpu.R[8+reg]);
 }
 
 OP(callm) {
-	int ac = cpu->fetch_w();
-	EA ea(cpu, mode, 1, reg, false);
-	callm(cpu, ea.addr(), ac);
+	int ac = fetch_w();
+	cpu.parse_EA(mode, 1, reg, false);
+	callm(cpu.ea_v, ac);
 }
 
 
 
 
 OP(clr_b) {
-	EA ea(cpu, mode, 1, reg, true);	
-	cpu->N = cpu->V = cpu->C = false;
-	cpu->Z = true;
-	ea.write( 0 );
+	cpu.parse_EA(mode, 1, reg, true);	
+	cpu.N = cpu.V = cpu.C = false;
+	cpu.Z = true;
+	cpu.ea_write( 0 );
 }
 
 OP(clr_w) {
-	EA ea(cpu, mode, 2, reg, true);
-	cpu->N = cpu->V = cpu->C = false;
-	cpu->Z = true;
-	ea.write( 0 );
+	cpu.parse_EA(mode, 2, reg, true);
+	cpu.N = cpu.V = cpu.C = false;
+	cpu.Z = true;
+	cpu.ea_write( 0 );
 }
 
 OP(clr_l) {
-	EA ea(cpu, mode, 4, reg, true);
-	cpu->N = cpu->V = cpu->C = false;
-	cpu->Z = true;
-	ea.write( 0 );
+	cpu.parse_EA(mode, 4, reg, true);
+	cpu.N = cpu.V = cpu.C = false;
+	cpu.Z = true;
+	cpu.ea_write( 0 );
 }
 
 
 OP(link_l) {
-	int32_t disp = cpu->fetch_l();
-	cpu->push32(cpu->A[reg]);
-	cpu->A[reg] = cpu->A[7];
-	cpu->A[7] += disp;
+	int32_t disp = fetch_l();
+	push32(cpu.R[8+reg]);
+	cpu.R[8+reg] = cpu.R[15];
+	cpu.R[15] += disp;
 }
 
 
 
 OP(bkpt) {
 	int vc = reg;
-	throw IllegalInstruction();
+	(void)vc;
+	throw Exception::IllegalInst();
 }
 
 OP(pea) {
-	EA ea(cpu, mode, 4, reg, false);
-	cpu->push32(ea.addr());
+	cpu.parse_EA(mode, 4, reg, false);
+	push32(cpu.ea_v);
 }
 
 
 OP(trap) {
 	uint8_t v = op & 15;
-	throw TRAP_N(v);
+	throw Exception::Trap(v);
 }
 
 OP(link_w) {
-	int16_t offset = cpu->fetch_w();
-	cpu->push32(cpu->A[reg]);
-	cpu->A[reg] = cpu->A[7];
-	cpu->A[7] += offset;	
+	int16_t offset = fetch_w();
+	push32(cpu.R[8+reg]);
+	cpu.R[8+reg] = cpu.R[15];
+	cpu.R[15] += offset;	
 }
 
 OP(unlk) {
-	cpu->A[7] = cpu->A[reg];
-	uint32_t v = cpu->pop32();
-	cpu->A[reg] = v;
+	cpu.R[15] = cpu.R[8+reg];
+	uint32_t v = pop32();
+	cpu.R[8+reg] = v;
 }
 
 
 
 OP(jsr) {
-	cpu->push32(cpu->PC);
-	EA ea(cpu, mode, 2, reg, false);
-	cpu->PC = ea.addr();
-	test_trace_branch(cpu);
+	push32(cpu.PC);
+	cpu.parse_EA(mode, 2, reg, false);
+	cpu.change_PC(cpu.ea_v);
 }
 
 OP(jmp) {
-	EA ea(cpu, mode, 2, reg, false);
-	cpu->PC = ea.addr();
-	test_trace_branch(cpu);
+	cpu.parse_EA(mode, 2, reg, false);
+	cpu.change_PC(cpu.ea_v);
 }
 
 OP(chk_l) {
-	EA ea(cpu, mode, 4, reg, false);
-	int32_t mx = ea.read();
-	int32_t v = cpu->D[dn];
+	cpu.parse_EA(mode, 4, reg, false);
+	int32_t mx = cpu.ea_read();
+	int32_t v = cpu.R[dn];
 	if( v < 0 ) {
-		cpu->N = true;
-		throw ChkTrap();
+		cpu.N = true;
+		throw Exception::ChkError();
 	} else if( v > mx ) {
-		cpu->N = false;
-		throw ChkTrap();
+		cpu.N = false;
+		throw Exception::ChkError();
 	}
 }
 
 OP(chk_w) {
-	EA ea(cpu, mode, 2, reg, false);
-	int16_t mx = ea.read();
-	int16_t v = cpu->D[dn];
+	cpu.parse_EA(mode, 2, reg, false);
+	int16_t mx = cpu.ea_read();
+	int16_t v = cpu.R[dn];
 	if( v < 0 ) {
-		cpu->N = true;
-		throw ChkTrap();
+		cpu.N = true;
+		throw Exception::ChkError();
 	} else if( v > mx ) {
-		cpu->N = false;
-		throw ChkTrap();
+		cpu.N = false;
+		throw Exception::ChkError();
 	}
 }
 
 
 OP(lea) {
-	EA ea(cpu, mode, 4, reg, false);
-	uint32_t addr = ea.addr();
-	cpu->A[ dn ] = addr;
+	cpu.parse_EA(mode, 4, reg, false);
+	uint32_t addr = cpu.ea_v;
+	cpu.R[ 8+dn ] = addr;
 }
+#pragma GCC diagnostic pop
 
-bool get_cond(CPU* cpu, int cd) {
+bool get_cond(int cd) {
 	switch( cd ) {
 	case 0 : return true;
 	case 1 : return false;
-	case 2 : return ! ( cpu->C || cpu->Z );
-	case 3 : return ( cpu->C || cpu->Z );
-	case 4 : return ! cpu->C;
-	case 5 : return cpu->C; 
-	case 6 : return ! cpu->Z;
-	case 7 : return cpu->Z;
-	case 8 : return ! cpu->V; 
-	case 9 : return cpu->V; 
-	case 10 : return ! cpu->N;
-	case 11 : return cpu->N;
-	case 12 : return cpu->N == cpu->V;
-	case 13 : return cpu->N != cpu->V;
-	case 14 : return cpu->N == cpu->V && ! cpu->Z;
-	case 15 : return cpu->Z || cpu->N != cpu->V;		
+	case 2 : return ! ( cpu.C || cpu.Z );
+	case 3 : return ( cpu.C || cpu.Z );
+	case 4 : return ! cpu.C;
+	case 5 : return cpu.C; 
+	case 6 : return ! cpu.Z;
+	case 7 : return cpu.Z;
+	case 8 : return ! cpu.V; 
+	case 9 : return cpu.V; 
+	case 10 : return ! cpu.N;
+	case 11 : return cpu.N;
+	case 12 : return cpu.N == cpu.V;
+	case 13 : return cpu.N != cpu.V;
+	case 14 : return cpu.N == cpu.V && ! cpu.Z;
+	case 15 : return cpu.Z || cpu.N != cpu.V;		
 	}
 	return false;
 }
 
 OP(scc) {
-	EA ea(cpu, mode, 1, reg, true);
-	ea.write( get_cond(cpu, (op >> 8) & 15 ) ? 1 : 0 );
+	cpu.parse_EA(mode, 1, reg, true);
+	cpu.ea_write( get_cond((op >> 8) & 15 ) ? 0xff : 0 );
 }
 
 OP(dbcc) {
-	uint32_t now = cpu->PC;
-	int16_t disp = cpu->fetch_w();	
-	if( ! get_cond(cpu, (op >> 8) & 15 ) && (-- cpu->D[ reg ]) != -1 ) {
-		cpu->PC = now + disp;
-		test_trace_branch(cpu);
+	uint32_t now = cpu.PC;
+	int16_t disp = fetch_w();
+	int16_t u = cpu.R[ reg ];
+	cpu.setD_W(reg, --u);
+	if( ! get_cond((op >> 8) & 15 ) && u != -1 ) {
+		cpu.change_PC(now+disp);
 	}
 }
 
 OP(trapcc) {
-	if( get_cond(cpu, (op>>8) & 15)) {
-		throw Trapcc();
+	if( get_cond((op>>8) & 15)) {
+		throw Exception::TrapCC();
 	}
 }
 OP(trapcc_w) {
-	if( get_cond(cpu, (op>>8) & 15)) {
-		throw Trapcc();
+	cpu.PC += 2;
+	if( get_cond((op>>8) & 15)) {
+		throw Exception::TrapCC();
 	}
-	cpu->PC += 2;
 }
 OP(trapcc_l) {
-	if( get_cond(cpu, (op>>8) & 15)) {
-		throw Trapcc();
+	cpu.PC += 4;
+	if( get_cond((op>>8) & 15)) {
+		throw Exception::TrapCC();
 	}
-	cpu->PC += 4;
 }
 OP(bra) {
 	int8_t disp = op & 0xff;
-	uint32_t now = cpu->PC;
+	uint32_t now = cpu.PC;
 	if( disp == 0 ) {
-		int16_t d16 = cpu->fetch_w();
-		cpu->PC = now + d16;
+		int16_t d16 = fetch_w();
+		cpu.change_PC(now+d16);
 	} else if( disp == -1 ) {
-		int32_t d32 = cpu->fetch_l();
-		cpu->PC = now + d32;
+		int32_t d32 = fetch_l();
+		cpu.change_PC(now+d32);
 	} else {
-		cpu->PC = now + disp;
+		cpu.change_PC(now+disp);
 	}
-	test_trace_branch(cpu);
 }
 OP(bsr) {
 	int8_t disp = op & 0xff;
-	uint32_t now = cpu->PC;
+	uint32_t now = cpu.PC;
 	if( disp == 0 ) {
-		int16_t d16 = cpu->fetch_w();
-		cpu->push32(cpu->PC);
-		cpu->PC = now + d16;
+		int16_t d16 = fetch_w();
+		push32(cpu.PC);
+		cpu.change_PC(now+d16);
 	} else if( disp == -1 ) {
-		int32_t d32 = cpu->fetch_l();
-		cpu->push32(cpu->PC);
-		cpu->PC = now + d32;
+		int32_t d32 = fetch_l();
+		push32(cpu.PC);
+		cpu.change_PC(now+d32);
 	} else {
-		cpu->push32(cpu->PC);
-		cpu->PC = now + disp;
+		push32(cpu.PC);
+		cpu.change_PC(now+disp);
 	}
-	test_trace_branch(cpu);
 }
 OP(bcc) {
 	int8_t disp = op & 0xff;
-	uint32_t now = cpu->PC;
+	uint32_t now = cpu.PC;
 	if( disp == 0 ) {
-		int16_t d16 = cpu->fetch_w();
-		if( get_cond(cpu, (op >> 8) & 15 ) ) {
-			cpu->PC = now + d16;
-			test_trace_branch(cpu);
+		int16_t d16 = fetch_w();
+		if( get_cond((op >> 8) & 15 ) ) {
+			cpu.change_PC(now+d16);
 		}
 	} else if( disp == -1 ) {
-		int32_t d32 = cpu->fetch_l();
-		if( get_cond(cpu, (op >> 8) & 15 ) ) {
-			cpu->PC = now + d32;
-			test_trace_branch(cpu);
+		int32_t d32 = fetch_l();
+		if( get_cond((op >> 8) & 15 ) ) {
+			cpu.change_PC(now+d32);
 		}
 	} else {
-		if( get_cond(cpu, (op >> 8) & 15 ) ) {
-			cpu->PC = now + disp;
-			test_trace_branch(cpu);
+		if( get_cond((op >> 8) & 15 ) ) {
+			cpu.change_PC(now+disp);
 		}
 	}
 }
 OP(moveq) {
 	int8_t v = op & 0xff;
-	set_nz(cpu, v);
-	cpu->V = cpu->C = false;
-	cpu->D[dn] = v;
+	set_nz(v);
+	cpu.V = cpu.C = false;
+	cpu.R[dn] = v;
 }
 OP(fpu) {
-	if( ! cpu->fpu ) {
-		throw FInstruction();
-	}
-	cpu->fpu->exec(cpu, op, mode, reg);
+	fpu->exec(op, mode, reg);
 }
 OP(mmu) {
-	if( ! cpu->mmu ){
-		throw FInstruction();
+	if( ! mmu ){
+		throw Exception::FLine();
+	} else {
+		mmu->exec(op, mode, reg);
 	}
-	cpu->mmu->exec(op, mode, reg);
-	
 }
 struct M68kRegisters {
 	uint32_t d[8];
@@ -309,80 +274,121 @@ struct M68kRegisters {
 void EmulOp(uint16_t opcode, M68kRegisters *r);
 OP(emul) {
 	M68kRegisters r;
-	for(int i = 0; i < 8; ++i ) {
-		r.d[i] = cpu->D[i];
-		r.a[i] = cpu->A[i];
-	}
-	r.sr = get_sr(cpu);
+	memcpy(&r, cpu.R, sizeof(uint32_t)*16);
+	r.sr = get_sr();
 	EmulOp(op, &r);
-	for(int i = 0; i < 8; ++i ) {
-		cpu->D[i] = r.d[i];
-		cpu->A[i] = r.a[i];
-	}
-	set_sr(cpu, r.sr);	
+	memcpy(cpu.R, &r, sizeof(uint32_t)*16);
+	set_sr(r.sr);	
 }
 bool quit_program;
-CPU cpu;
 extern uint32_t ROMBaseMac;
-using op_type = void (*)(CPU*, uint16_t op, int dn, int mode, int reg);
+using op_type = void (*)(uint16_t op, int dn, int mode, int reg);
 op_type op_list[65536];
 
 
 void CPU::reset ()
 {
-	ISP = A[7] = 0x2000;
-	PC = ROMBaseMac + 0x2a;
 	S = true;
 	M = false;
+	restart = false;
 	T = 0;
-	Z = false;
-	X = false;
-	C = false;
-	V = false;
-	N = false;
 	IX = 0;
-	intmask = 0;
-	VBR = SFC = DFC = 0;
-//	fpu_reset();
-
+	intmask = 7;
+	VBR = 0;
+	in_ex = false;
+	if(mmu)
+		mmu->reset();
+	R[15] = read_l(0);
+	PC = read_l(4);
 }
 
 void CPU::irq(int level) {
 	IX = level;
 }
 
-void m68k_execute() {
-	while(! quit_program) {
-		if( cpu.IX ) {	
-			uint16_t sr = get_sr(&cpu);
-			if( cpu.intmask > cpu.IX )
-				return;
-			cpu.S =true;
-			cpu.T = 0;		
-			uint32_t nextaddr = cpu.mmu->read_l(cpu.VBR+(cpu.IX << 2));
-			if( cpu.M ) {
-				cpu.M = 0;
-				cpu.MSP = cpu.A[7];
-				cpu.A[7] = cpu.ISP;
-			} 
-			cpu.push16(cpu.IX << 2);
-			cpu.push32( cpu.PC);
-			cpu.push16( sr);
-			cpu.IX = 0;
-			cpu.PC = nextaddr;
+void CPU::do_irq() {
+	uint16_t sr = get_sr();
+	if( intmask > IX )
+		return ;
+	S = true;
+	T = 0;
+	intmask = IX;
+	uint32_t nextaddr = read_l(VBR+(IX << 2));
+	if( M ) {
+		M = 0;
+		MSP = R[15];
+		R[15] = ISP;
+		push16( 1 << 12 | IX << 2);
+	} else {
+		push16( IX << 2);
+	}
+	push32( PC);
+	push16( sr);
+	IX = 0;
+	NPC = nextaddr;
+	return ;
+}
+void CPU::dump() {
+	printf("%08x:D:(", NPC);
+	for(int i = 0; i < 8; ++i ) {
+		printf("%x,",R[i]);
+	}
+	printf("), A:(");
+	for(int i = 0; i < 6; ++i ) {
+		printf("%x,",R[8+i]);
+	}
+	printf("),LR=%x,SP=%x;", R[14],R[15]);
+	if(Z) { printf("Z,"); }
+	if(N) { printf("N,"); }
+	if(C) { printf("C,"); }
+	if(V) { printf("V,"); }
+	if(S) { printf("S,"); }
+	printf("\n");
+}
+bool dump_ = true;
+void CPU::change_PC(uint32_t new_pc) {
+	if( new_pc & 1 ) {
+		throw Exception::AddressError(new_pc);
+	}
+	auto routine = ROM::rom_routines.find(new_pc & 0xfffff);
+	if( routine != ROM::rom_routines.end() ) {
+		routine->second();
+	} else {
+		PC = new_pc;
+		if( T == 1 ) {
+			trace = true;
 		}
-		printf("%08x\n", cpu.PC);
-		cpu.NPC = cpu.PC;
-		try {
-			uint16_t op = cpu.fetch_w();		
-			op_list[op](&cpu, op, (op>>9)&7, (op>>3)&7, op&7);
-			if( cpu.T == 2 ) {
-				TraceEx e;
-				e.run(&cpu, cpu.NPC);
-			}
-		} catch( exception_t& e) {
-			e.run(&cpu, cpu.NPC);
+	}
+}
+void CPU::do_op() {
+	if( IX )
+		do_irq();
+	NPC = PC;
+	try {
+		uint16_t op = fetch_w();
+		if( dump_ ) {
+			dump();
 		}
+		if( T == 2 ) {
+			trace = true;
+		}
+		op_list[op](op, (op>>9)&7, (op>>3)&7, op&7);
+	} catch( Exception::AccessFault& e ) {
+		if( trace ) {
+			// Trace pending
+			e.ssw |= 1 >> 13;
+			trace = false;
+		}
+		e.exec();
+	} catch( Exception::Base& e) {
+		if( e.priority == 3 || e.priority == 4 ) {
+			trace = false;
+		}
+		e.exec();
+	}
+	if( trace ) {
+		trace = false;
+		Exception::Trace().exec();
 	}
 }
 
@@ -556,7 +562,7 @@ void CPU::init() {
 		}
 
 		// AN
-		op_list[ 003410 | i ] = op_rtm_a; // 0 000 011 100 001 nnn
+		op_list[ 003310 | i ] = op_rtm_a; // 0 000 011 100 001 nnn
 		for(int j = 0; j < 8; ++j ) {
 			int nm_v = j << 9 | i;		
 			op_list[ 0410 | nm_v ] = op_movep_m2r_w; // 0 000 nnn 100 001 mmm
@@ -573,10 +579,10 @@ void CPU::init() {
 			op_list[ 020110 | nm_v ] = op_movea_l; // 0 010 nnn 001 001 mmm
 			op_list[ 030110 | nm_v ] = op_movea_w; // 0 011 nnn 001 001 mmm
 			
-			op_list[ 050110 | nm_v ] = op_addq_w;  // 0 101 xxx 001 001 mmm
-			op_list[ 050210 | nm_v ] = op_addq_l;  // 0 101 xxx 010 001 mmm
-			op_list[ 050510 | nm_v ] = op_subq_w;  // 0 101 xxx 101 001 mmm
-			op_list[ 050610 | nm_v ] = op_subq_l;  // 0 101 xxx 110 001 mmm
+			op_list[ 050110 | nm_v ] = op_addq_a;  // 0 101 xxx 001 001 mmm
+			op_list[ 050210 | nm_v ] = op_addq_a;  // 0 101 xxx 010 001 mmm
+			op_list[ 050510 | nm_v ] = op_subq_a;  // 0 101 xxx 101 001 mmm
+			op_list[ 050610 | nm_v ] = op_subq_a;  // 0 101 xxx 110 001 mmm
 
 			op_list[ 0100410 | nm_v ] = op_sbcd_m; // 1 000 nnn 100 001 mmm 
 			op_list[ 0100510 | nm_v ] = op_pack_m; // 1 000 nnn 101 001 mmm 
@@ -697,6 +703,7 @@ void CPU::init() {
 			op_list[ 045300 | ea_v ] = op_tas; // 0 100 101 011 <EA>
 
 			op_list[ 046000 | ea_v ] = op_mul_l; // 0 100 110 000 <EA>
+			op_list[ 046100 | ea_v ] = op_div_l; // 0 100 110 001 <EA>
 
 			op_list[ 0160300 | ea_v ] = op_asr_ea;  // 1 110 000 011 <EA>
 			op_list[ 0161300 | ea_v ] = op_lsr_ea;  // 1 110 001 011 <EA>
@@ -735,6 +742,14 @@ void CPU::init() {
 					op_list[ 040700 | k << 9 | ea_v ] = op_lea; 
 				}
 			}
+			if( j == 3 ) {
+				op_list[ 046200 | ea_v ] = op_movem_w_from_incr; 
+				op_list[ 046300 | ea_v ] = op_movem_l_from_incr; 
+			}
+			if( j == 4 ) {
+				op_list[ 044200 | ea_v ] = op_movem_w_to_decr; 
+				op_list[ 044300 | ea_v ] = op_movem_l_to_decr; 
+			}
 			for( int k = 0; k < 8; ++k ) {
 				int pm = k << 9 | ea_v;
 				op_list[ 040400 | pm ] = op_chk_l;    // 0 100 kkk 100 <EA>
@@ -770,7 +785,7 @@ void CPU::init() {
 				op_list[ 0110400 | pm ] = op_sub_m_b;// 1 001 nnn 100 <EA>
 				op_list[ 0110500 | pm ] = op_sub_m_w;// 1 001 nnn 101 <EA>
 				op_list[ 0110600 | pm ] = op_sub_m_l;// 1 001 nnn 110 <EA>
-				op_list[ 0110700 | pm ] = op_suba_w; // 1 001 nnn 111 <EA>
+				op_list[ 0110700 | pm ] = op_suba_l; // 1 001 nnn 111 <EA>
 
 				op_list[ 0130000 | pm ] = op_cmp_b;  // 1 011 nnn 000 <EA>
 				op_list[ 0130100 | pm ] = op_cmp_w;  // 1 011 nnn 001 <EA>
@@ -823,7 +838,7 @@ void CPU::init() {
 
 	}
 	for(int i = 0; i <16; ++i ) {
-		op_list[ 04710 | i ] = op_trap;
+		op_list[ 047100 | i ] = op_trap;
 		op_list[ 050372 | i << 8 ] = op_trapcc_w;
 		op_list[ 050373 | i << 8 ] = op_trapcc_l;
 		op_list[ 050374 | i << 8 ] = op_trapcc;
@@ -842,7 +857,7 @@ void CPU::init() {
 		op_list[ 0173010 | i ] = op_move16_imm_inc; // 1 111 011 001 mmm
 		op_list[ 0173020 | i ] = op_move16_r_imm;   // 1 111 011 010 mmm
 		op_list[ 0173030 | i ] = op_move16_imm_r;   // 1 111 011 011 mmm
-		op_list[ 0173000 | i ] = op_move16_inc_inc; // 1 111 011 000 mmm
+		op_list[ 0173040 | i ] = op_move16_inc_inc; // 1 111 011 100 mmm
 
 		for(int j = 0; j < 8; ++j ) {
 			int opx = i << 9 | j;
@@ -878,14 +893,14 @@ void CPU::init() {
 
 			
 			op_list[ 0160400 | opx ] = op_asl_b_i; // 1 110 mmm 100 000 yyy
-			op_list[ 0170410 | opx ] = op_lsl_b_i; // 1 110 mmm 100 001 yyy
-			op_list[ 0170420 | opx ] = op_roxl_b_i;// 1 110 mmm 100 010 yyy
-			op_list[ 0170430 | opx ] = op_rol_b_i; // 1 110 mmm 100 011 yyy
+			op_list[ 0160410 | opx ] = op_lsl_b_i; // 1 110 mmm 100 001 yyy
+			op_list[ 0160420 | opx ] = op_roxl_b_i;// 1 110 mmm 100 010 yyy
+			op_list[ 0160430 | opx ] = op_rol_b_i; // 1 110 mmm 100 011 yyy
 
 			op_list[ 0160440 | opx ] = op_asl_b_d; // 1 110 mmm 100 100 yyy
 			op_list[ 0160450 | opx ] = op_lsl_b_d; // 1 110 mmm 100 101 yyy
 			op_list[ 0160460 | opx ] = op_roxl_b_d;// 1 110 mmm 100 110 yyy
-			op_list[ 0160070 | opx ] = op_rol_b_d; // 1 110 mmm 100 111 yyy
+			op_list[ 0160470 | opx ] = op_rol_b_d; // 1 110 mmm 100 111 yyy
 
 			op_list[ 0160500 | opx ] = op_asl_w_i; // 1 110 mmm 101 000 yyy
 			op_list[ 0160510 | opx ] = op_lsl_w_i; // 1 110 mmm 101 001 yyy
@@ -927,8 +942,8 @@ void CPU::init() {
 	op_list[ 047165 ] = op_rts;
 	op_list[ 047166 ] = op_trapv;
 	op_list[ 047167 ] = op_rtr;
-	op_list[ 047172 ] = op_movec_to;
-	op_list[ 047173 ] = op_movec_from;
+	op_list[ 047172 ] = op_movec_from;
+	op_list[ 047173 ] = op_movec_to;
 	for(int k = 0; k < 0x100; ++k ) {
 		op_list[ 060000 | k ] = op_bra;
 		op_list[ 060400 | k ] = op_bsr;
@@ -943,7 +958,7 @@ void CPU::init() {
 		op_list[0171000 | i ] = op_fpu; // 1 111 001 xxx <EA>
 		op_list[0172000 | i ] = op_mmu; // 1 111 010 xxx <EA>
 	}
-	for(int i =0; i < 0x10000; ++i ) {
+	for(int i =0; i < 0x100; ++i ) {
 		op_list[0x7100 | i ] = op_emul;
 	}
 }

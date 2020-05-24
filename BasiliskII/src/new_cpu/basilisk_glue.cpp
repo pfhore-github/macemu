@@ -24,9 +24,12 @@
 #include "emul_op.h"
 #include "rom_patches.h"
 #include "timer.h"
-
+#include "adb.h"
 #include "registers.hpp"
-
+#include "fpu/68881.hpp"
+#include "../rom/data.hpp"
+#include <SDL_thread.h>
+#include <SDL_events.h>
 // RAM and ROM pointers
 uint32 RAMBaseMac = 0;		// RAM base (Mac address space) gb-- initializer is important
 uint8 *RAMBaseHost;			// RAM base (host address space)
@@ -40,14 +43,17 @@ uint8 *MacFrameBaseHost;	// Frame buffer base (host address space)
 uint32 MacFrameSize;		// Size of frame buffer
 int MacFrameLayout;			// Frame buffer layout
 uintptr MEMBaseDiff;
-
-
+CPU cpu;
+static NoFPU no_fpu;
+FPU* fpu = &no_fpu;
+MMU* mmu;
 #if USE_JIT
 bool UseJIT = false;
 #endif
-extern CPU cpu;
 // From newcpu.cpp
 extern bool quit_program;
+void init_rom_routines();
+bool is_quadra = true;
 
 
 /*
@@ -58,11 +64,15 @@ bool Init680x0(void)
 {
 	// Mac address space = host address space minus constant offset (MEMBaseDiff)
 	// NOTE: MEMBaseDiff is set up in main_unix.cpp/main()
-	RAMBaseMac = 0;
-	ROMBaseMac = Host2MacAddr(ROMBaseHost);
 
-	cpu.init();
-	cpu.mmu =new NonMMU(&cpu);
+	cpu.init();	
+	mmu =new MC68040_MMU();
+	fpu = new M68040_FPU();
+	cpu.reset();
+	// ROM to RAM
+	memcpy(RAMBaseHost, ROMBaseHost, ROMSize);
+	init_rom_routines();
+
 #if USE_JIT
 //	UseJIT = compiler_use_jit();
 //	if (UseJIT)
@@ -71,7 +81,7 @@ bool Init680x0(void)
 	return true;
 }
 
-
+static std::atomic<bool> emul_done = false;
 /*
  *  Deinitialize 680x0 emulation
  */
@@ -82,7 +92,7 @@ void Exit680x0(void)
 //    if (UseJIT)
 //		compiler_exit();
 #endif
-//	exit_m68k();
+	emul_done = true;
 }
 
 
@@ -92,16 +102,20 @@ void Exit680x0(void)
 
 void InitFrameBufferMapping(void)
 {
-#if !REAL_ADDRESSING && !DIRECT_ADDRESSING
-	memory_init();
-#endif
 }
 void m68k_execute();
+// CPU thread
+static int run_cpu(void*) {
+	m68k_execute();
+	return 0;
+}
+void handle_adb(SDL_Event* e);
 /*
  *  Reset and start 680x0 emulation (doesn't return)
  */
 void Start680x0(void)
 {
+	
 	cpu.init();
 	cpu.reset();
 #if USE_JIT
@@ -109,14 +123,34 @@ void Start680x0(void)
 //	m68k_compile_execute();
 //    else
 #endif
-	m68k_execute();
+	SDL_Thread* th = SDL_CreateThread(run_cpu, "CPU", nullptr);
+	SDL_DetachThread(th);
+	// input handling
+	for(;;) {
+		if( emul_done )
+			return;
+		// input handling
+		SDL_Event e;
+		while( SDL_PollEvent(&e) ) {
+			handle_adb(&e);
+		}
+		SDL_Delay(0);
+	}
 }
-
+void m68k_execute() {
+	cpu.run = true;
+	while(! quit_program) {
+		if( cpu.run )
+			cpu.do_op();
+		else
+			pthread_yield();
+		
+	}
+}
 
 /*
  *  Trigger interrupt
  */
-extern CPU cpu;
 void TriggerInterrupt(void)
 {
 	idle_resume();
@@ -125,7 +159,7 @@ void TriggerInterrupt(void)
 
 void TriggerNMI(void)
 {
-	//!! not implemented yet
+	cpu.irq(7);
 }
 
 
@@ -146,44 +180,31 @@ int intlev(void)
 
 void Execute68kTrap(uint16 trap, struct M68kRegisters *r)
 {
-#if 0
-	int i;
 
 	// Save old PC
-	uaecptr oldpc = m68k_getpc();
+	uint32_t oldpc = cpu.PC;
 
 	// Set registers
-	for (i=0; i<8; i++)
-		m68k_dreg(regs, i) = r->d[i];
-	for (i=0; i<7; i++)
-		m68k_areg(regs, i) = r->a[i];
+	memcpy(&cpu.R[0], r, sizeof(uint32_t)*15);
 
 	// Push trap and EXEC_RETURN on stack
-	m68k_areg(regs, 7) -= 2;
-	put_word(m68k_areg(regs, 7), M68K_EXEC_RETURN);
-	m68k_areg(regs, 7) -= 2;
-	put_word(m68k_areg(regs, 7), trap);
+	push16(M68K_EXEC_RETURN);
+	push16(trap);
 
 	// Execute trap
-	m68k_setpc(m68k_areg(regs, 7));
-	fill_prefetch_0();
+	cpu.PC = cpu.R[15];
 	quit_program = false;
 	m68k_execute();
 
 	// Clean up stack
-	m68k_areg(regs, 7) += 4;
+	cpu.R[15] += 4;
 
 	// Restore old PC
-	m68k_setpc(oldpc);
-	fill_prefetch_0();
+	cpu.PC = oldpc;
 
 	// Get registers
-	for (i=0; i<8; i++)
-		r->d[i] = m68k_dreg(regs, i);
-	for (i=0; i<7; i++)
-		r->a[i] = m68k_areg(regs, i);
+	memcpy(r, &cpu.R[0], sizeof(uint32_t)*15);
 	quit_program = false;
-#endif
 }
 
 
@@ -195,54 +216,33 @@ void Execute68kTrap(uint16 trap, struct M68kRegisters *r)
 
 void Execute68k(uint32 addr, struct M68kRegisters *r)
 {
-#if 0
-	int i;
 
 	// Save old PC
-	uaecptr oldpc = m68k_getpc();
+	uaecptr oldpc = cpu.PC;
 
 	// Set registers
-	for (i=0; i<8; i++)
-		m68k_dreg(regs, i) = r->d[i];
-	for (i=0; i<7; i++)
-		m68k_areg(regs, i) = r->a[i];
+	memcpy(&cpu.R[0], r, sizeof(uint32_t)*15);
 
-	// Push EXEC_RETURN and faked return address (points to EXEC_RETURN) on stack
-	m68k_areg(regs, 7) -= 2;
-	put_word(m68k_areg(regs, 7), M68K_EXEC_RETURN);
-	m68k_areg(regs, 7) -= 4;
-	put_long(m68k_areg(regs, 7), m68k_areg(regs, 7) + 4);
+	// EXEC_RETURN to $0
+	uint32_t oldlr = cpu.R[14];
+	cpu.R[14] = 0x40000000;
+	write_w(0x40000000, M68K_EXEC_RETURN);
 
 	// Execute routine
-	m68k_setpc(addr);
-	fill_prefetch_0();
+	cpu.PC = addr;
 	quit_program = false;
 	m68k_execute();
 
 	// Clean up stack
-	m68k_areg(regs, 7) += 2;
+	cpu.R[14] = oldlr;
 
 	// Restore old PC
-	m68k_setpc(oldpc);
-	fill_prefetch_0();
+	cpu.PC = oldpc;
 
 	// Get registers
-	for (i=0; i<8; i++)
-		r->d[i] = m68k_dreg(regs, i);
-	for (i=0; i<7; i++)
-		r->a[i] = m68k_areg(regs, i);
+	memcpy(r, &cpu.R[0], sizeof(uint32_t)*15);
 	quit_program = false;
-#endif
 }
-#include <stdio.h>
 void m68k_dumpstate() {
-	for(int i = 0; i < 8; ++i ) {
-		printf("D%d: %08x ", i, cpu.D[i]);
-	}
-	printf("\n");
-	for(int i = 0; i < 8; ++i ) {
-		printf("A%d: %08x ", i, cpu.A[i]);
-	}
-	printf("\nFLAGS: X=%d N=%d Z=%d V=%d C=%d\n",
-		   cpu.X, cpu.N, cpu.Z, cpu.V, cpu.C);
+	cpu.dump();
 }

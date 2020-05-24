@@ -106,7 +106,7 @@ static uint32 fs_data = 0;		// Mac address of global data
 static char FS_NAME[32], VOLUME_NAME[32];
 
 // This directory is our root (read from prefs)
-static char RootPath[MAX_PATH_LENGTH];
+static std::string RootPath;
 static bool ready = false;
 static struct stat root_stat;
 
@@ -196,7 +196,7 @@ static uint32 get_creation_time(const char *path)
 {
 	if (path == NULL)
 		return 0;
-	if (!strcmp(path, RootPath)) {
+	if (RootPath == path) {
 		static uint32 root_crtime = UINT_MAX;
 		if (root_crtime == UINT_MAX)
 			root_crtime = do_get_creation_time(path);
@@ -281,7 +281,7 @@ static FSItem *find_fsitem_guest(const char *guest_name, FSItem *parent)
  *  Get full path (->full_path) for given FSItem
  */
 
-static char full_path[MAX_PATH_LENGTH];
+static std::string full_path;
 
 static void add_path_comp(const char *s)
 {
@@ -291,10 +291,9 @@ static void add_path_comp(const char *s)
 static void get_path_for_fsitem(FSItem *p)
 {
 	if (p->id == ROOT_PARENT_ID) {
-		full_path[0] = 0;
+		full_path = "";
 	} else if (p->id == ROOT_ID) {
-		strncpy(full_path, RootPath, MAX_PATH_LENGTH-1);
-		full_path[MAX_PATH_LENGTH-1] = 0;
+		full_path = RootPath;
 	} else {
 		get_path_for_fsitem(p->parent);
 		add_path_comp(p->name);
@@ -435,12 +434,11 @@ void ExtFSInit(void)
 	p->guest_name[31] = 0;
 
 	// Find path for root
-	*RootPath = 0;
-	const char *path = PrefsFindString("extfs");
-	if (path != NULL) {
-		strncpy(RootPath, path, MAX_PATH_LENGTH - 1);
-		RootPath[MAX_PATH_LENGTH - 1] = 0;
-		if (stat(RootPath, &root_stat))
+	RootPath = "";
+	auto paths = PrefsFindString("extfs");
+	if (!paths.empty()) {
+		RootPath =  paths[0];
+		if (stat(RootPath.c_str(), &root_stat))
 			return;
 		if (!S_ISDIR(root_stat.st_mode))
 			return;
@@ -1212,7 +1210,7 @@ static int16 fs_set_vol(uint32 pb, bool hfs, uint32 vcb)
 
 		// Is it a directory?
 		struct stat st;
-		if (stat(full_path, &st))
+		if (stat(full_path.c_str(), &st))
 			return dirNFErr;
 		if (!S_ISDIR(st.st_mode))
 			return dirNFErr;
@@ -1276,7 +1274,7 @@ static int16 fs_get_file_info(uint32 pb, bool hfs, uint32 dirID)
 		get_path_for_fsitem(p);
 
 		// Look for nth item in directory and add name to path
-		DIR *d = opendir(full_path);
+		DIR *d = opendir(full_path.c_str());
 		if (d == NULL)
 			return dirNFErr;
 		struct dirent *de = NULL;
@@ -1300,7 +1298,7 @@ read_next_de:
 
 	// Get stats
 	struct stat st;
-	if (stat(full_path, &st))
+	if (stat(full_path.c_str(), &st))
 		return fnfErr;
 	if (S_ISDIR(st.st_mode))
 		return fnfErr;
@@ -1309,7 +1307,7 @@ read_next_de:
 	if (ReadMacInt32(pb + ioNamePtr))
 		cstr2pstr((char *)Mac2HostAddr(ReadMacInt32(pb + ioNamePtr)), fs_item->guest_name);
 	WriteMacInt16(pb + ioFRefNum, 0);
-	WriteMacInt8(pb + ioFlAttrib, access(full_path, W_OK) == 0 ? 0 : faLocked);
+	WriteMacInt8(pb + ioFlAttrib, access(full_path.c_str(), W_OK) == 0 ? 0 : faLocked);
 	WriteMacInt32(pb + ioDirID, fs_item->id);
 
 #if defined(__BEOS__) || defined(WIN32)
@@ -1321,14 +1319,14 @@ read_next_de:
 #endif
 	WriteMacInt32(pb + ioFlMdDat, TimeToMacTime(st.st_mtime));
 
-	get_finfo(full_path, pb + ioFlFndrInfo, hfs ? pb + ioFlXFndrInfo : 0, false);
+	get_finfo(full_path.c_str(), pb + ioFlFndrInfo, hfs ? pb + ioFlXFndrInfo : 0, false);
 
 	WriteMacInt16(pb + ioFlStBlk, 0);
 	uint32 file_size = (uint32) st.st_size;
 	WriteMacInt32(pb + ioFlLgLen, file_size);
 	WriteMacInt32(pb + ioFlPyLen, (file_size | (AL_BLK_SIZE - 1)) + 1);
 	WriteMacInt16(pb + ioFlRStBlk, 0);
-	uint32 rf_size = get_rfork_size(full_path);
+	uint32 rf_size = get_rfork_size(full_path.c_str());
 	WriteMacInt32(pb + ioFlRLgLen, rf_size);
 	WriteMacInt32(pb + ioFlRPyLen, (rf_size | (AL_BLK_SIZE - 1)) + 1);
 
@@ -1353,13 +1351,13 @@ static int16 fs_set_file_info(uint32 pb, bool hfs, uint32 dirID)
 
 	// Get stats
 	struct stat st;
-	if (stat(full_path, &st) < 0)
+	if (stat(full_path.c_str(), &st) < 0)
 		return errno2oserr();
 	if (S_ISDIR(st.st_mode))
 		return fnfErr;
 
 	// Set Finder info
-	set_finfo(full_path, pb + ioFlFndrInfo, hfs ? pb + ioFlXFndrInfo : 0, false);
+	set_finfo(full_path.c_str(), pb + ioFlFndrInfo, hfs ? pb + ioFlXFndrInfo : 0, false);
 
 	//!! times
 	return noErr;
@@ -1400,7 +1398,7 @@ static int16 fs_get_cat_info(uint32 pb)
 		get_path_for_fsitem(p);
 
 		// Look for nth item in directory and add name to path
-		DIR *d = opendir(full_path);
+		DIR *d = opendir(full_path.c_str());
 		if (d == NULL)
 			return dirNFErr;
 		struct dirent *de = NULL;
@@ -1424,7 +1422,7 @@ read_next_de:
 
 	// Get stats
 	struct stat st;
-	if (stat(full_path, &st) < 0)
+	if (stat(full_path.c_str(), &st) < 0)
 		return errno2oserr();
 	if (dir_index == -1 && !S_ISDIR(st.st_mode))
 		return dirNFErr;
@@ -1433,7 +1431,7 @@ read_next_de:
 	if (ReadMacInt32(pb + ioNamePtr))
 		cstr2pstr((char *)Mac2HostAddr(ReadMacInt32(pb + ioNamePtr)), fs_item->guest_name);
 	WriteMacInt16(pb + ioFRefNum, 0);
-	WriteMacInt8(pb + ioFlAttrib, (S_ISDIR(st.st_mode) ? faIsDir : 0) | (access(full_path, W_OK) == 0 ? 0 : faLocked));
+	WriteMacInt8(pb + ioFlAttrib, (S_ISDIR(st.st_mode) ? faIsDir : 0) | (access(full_path.c_str(), W_OK) == 0 ? 0 : faLocked));
 	WriteMacInt8(pb + ioACUser, 0);
 	WriteMacInt32(pb + ioDirID, fs_item->id);
 	WriteMacInt32(pb + ioFlParID, fs_item->parent_id);
@@ -1453,7 +1451,7 @@ read_next_de:
 	WriteMacInt32(pb + ioFlMdDat, TimeToMacTime(mtime));
 	WriteMacInt32(pb + ioFlBkDat, 0);
 
-	get_finfo(full_path, pb + ioFlFndrInfo, pb + ioFlXFndrInfo, S_ISDIR(st.st_mode));
+	get_finfo(full_path.c_str(), pb + ioFlFndrInfo, pb + ioFlXFndrInfo, S_ISDIR(st.st_mode));
 
 	if (S_ISDIR(st.st_mode)) {
 
@@ -1463,7 +1461,7 @@ read_next_de:
 			count = fs_item->cache_dircount;
 		else {
 			count = 0;
-			DIR *d = opendir(full_path);
+			DIR *d = opendir(full_path.c_str());
 			if (d) {
 				struct dirent *de;
 				for (;;) {
@@ -1485,7 +1483,7 @@ read_next_de:
 		WriteMacInt32(pb + ioFlLgLen, file_size);
 		WriteMacInt32(pb + ioFlPyLen, (file_size | (AL_BLK_SIZE - 1)) + 1);
 		WriteMacInt16(pb + ioFlRStBlk, 0);
-		uint32 rf_size = get_rfork_size(full_path);
+		uint32 rf_size = get_rfork_size(full_path.c_str());
 		WriteMacInt32(pb + ioFlRLgLen, rf_size);
 		WriteMacInt32(pb + ioFlRPyLen, (rf_size | (AL_BLK_SIZE - 1)) + 1);
 		WriteMacInt32(pb + ioFlClpSiz, 0);
@@ -1506,11 +1504,11 @@ static int16 fs_set_cat_info(uint32 pb)
 
 	// Get stats
 	struct stat st;
-	if (stat(full_path, &st) < 0)
+	if (stat(full_path.c_str(), &st) < 0)
 		return errno2oserr();
 
 	// Set Finder info
-	set_finfo(full_path, pb + ioFlFndrInfo, pb + ioFlXFndrInfo, S_ISDIR(st.st_mode));
+	set_finfo(full_path.c_str(), pb + ioFlFndrInfo, pb + ioFlXFndrInfo, S_ISDIR(st.st_mode));
 
 	//!! times
 	return noErr;
@@ -1530,7 +1528,7 @@ static int16 fs_open(uint32 pb, uint32 dirID, uint32 vcb, bool resource_fork)
 
 	// Convert ioPermssn to open() flag
 	int flag = 0;
-	bool write_ok = (access(full_path, W_OK) == 0);
+	bool write_ok = (access(full_path.c_str(), W_OK) == 0);
 	switch (ReadMacInt8(pb + ioPermssn)) {
 		case fsCurPerm:		// Whatever is currently allowed
 			if (write_ok)
@@ -1555,9 +1553,9 @@ static int16 fs_open(uint32 pb, uint32 dirID, uint32 vcb, bool resource_fork)
 	int fd = -1;
 	struct stat st;
 	if (resource_fork) {
-		if (access(full_path, F_OK))
+		if (access(full_path.c_str(), F_OK))
 			return fnfErr;
-		fd = open_rfork(full_path, flag);
+		fd = open_rfork(full_path.c_str(), flag);
 		if (fd >= 0) {
 			if (fstat(fd, &st) < 0) {
 				close(fd);
@@ -1568,7 +1566,7 @@ static int16 fs_open(uint32 pb, uint32 dirID, uint32 vcb, bool resource_fork)
 			st.st_mode = 0;
 		}
 	} else {
-		fd = open(full_path, flag);
+		fd = open(full_path.c_str(), flag);
 		if (fd < 0)
 			return errno2oserr();
 		if (fstat(fd, &st) < 0) {
@@ -1599,7 +1597,7 @@ static int16 fs_open(uint32 pb, uint32 dirID, uint32 vcb, bool resource_fork)
 	WriteMacInt32(fcb + fcbVPtr, vcb);
 	WriteMacInt32(fcb + fcbClmpSize, CLUMP_SIZE);
 
-	get_finfo(full_path, fs_data + fsPB, 0, false);
+	get_finfo(full_path.c_str(), fs_data + fsPB, 0, false);
 	WriteMacInt32(fcb + fcbFType, ReadMacInt32(fs_data + fsPB + fdType));
 
 	WriteMacInt32(fcb + fcbCatPos, fd);
@@ -1627,7 +1625,7 @@ static int16 fs_close(uint32 pb)
 		FSItem *item = find_fsitem_by_id(ReadMacInt32(fcb + fcbFlNm));
 		if (item) {
 			get_path_for_fsitem(item);
-			close_rfork(full_path, fd);
+			close_rfork(full_path.c_str(), fd);
 		}
 	} else
 		close(fd);
@@ -1954,11 +1952,11 @@ static int16 fs_create(uint32 pb, uint32 dirID)
 		return result;
 
 	// Does the file already exist?
-	if (access(full_path, F_OK) == 0)
+	if (access(full_path.c_str(), F_OK) == 0)
 		return dupFNErr;
 
 	// Create file
-	int fd = creat(full_path, 0666);
+	int fd = creat(full_path.c_str(), 0666);
 	if (fd < 0)
 		return errno2oserr();
 	else {
@@ -1979,11 +1977,11 @@ static int16 fs_dir_create(uint32 pb)
 		return result;
 
 	// Does the directory already exist?
-	if (access(full_path, F_OK) == 0)
+	if (access(full_path.c_str(), F_OK) == 0)
 		return dupFNErr;
 
 	// Create directory
-	if (mkdir(full_path, 0777) < 0)
+	if (mkdir(full_path.c_str(), 0777) < 0)
 		return errno2oserr();
 	else {
 		WriteMacInt32(pb + ioDirID, fs_item->id);
@@ -2003,7 +2001,7 @@ static int16 fs_delete(uint32 pb, uint32 dirID)
 		return result;
 
 	// Delete file
-	if (!extfs_remove(full_path))
+	if (!extfs_remove(full_path.c_str()))
 		return errno2oserr();
 	else
 		return noErr;
@@ -2021,8 +2019,7 @@ static int16 fs_rename(uint32 pb, uint32 dirID)
 		return result;
 
 	// Save path of existing item
-	char old_path[MAX_PATH_LENGTH];
-	strcpy(old_path, full_path);
+	std::string old_path = full_path;
 
 	// Find path for new name
 	Mac2Mac_memcpy(fs_data + fsPB, pb, SIZEOF_IOParam);
@@ -2033,12 +2030,12 @@ static int16 fs_rename(uint32 pb, uint32 dirID)
 		return result;
 
 	// Does the new name already exist?
-	if (access(full_path, F_OK) == 0)
+	if (access(full_path.c_str(), F_OK) == 0)
 		return dupFNErr;
 
 	// Rename item
 	D(bug("  renaming %s -> %s\n", old_path, full_path));
-	if (!extfs_rename(old_path, full_path))
+	if (!extfs_rename(old_path.c_str(), full_path.c_str()))
 		return errno2oserr();
 	else {
 		// The ID of the old file/dir has to stay the same, so we swap the IDs of the FSItems
@@ -2062,8 +2059,7 @@ static int16 fs_cat_move(uint32 pb)
 		return result;
 
 	// Save path of existing item
-	char old_path[MAX_PATH_LENGTH];
-	strcpy(old_path, full_path);
+	std::string old_path = full_path;
 
 	// Find path for new directory
 	Mac2Mac_memcpy(fs_data + fsPB, pb, SIZEOF_IOParam);
@@ -2077,12 +2073,12 @@ static int16 fs_cat_move(uint32 pb)
 	add_path_comp(fs_item->name);
 
 	// Does the new name already exist?
-	if (access(full_path, F_OK) == 0)
+	if (access(full_path.c_str(), F_OK) == 0)
 		return dupFNErr;
 
 	// Move item
-	D(bug("  moving %s -> %s\n", old_path, full_path));
-	if (!extfs_rename(old_path, full_path))
+	D(bug("  moving %s -> %s\n", old_path.c_str(), full_path.c_str()));
+	if (!extfs_rename(old_path.c_str(), full_path.c_str()))
 		return errno2oserr();
 	else {
 		// The ID of the old file/dir has to stay the same, so we swap the IDs of the FSItems

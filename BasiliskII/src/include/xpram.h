@@ -27,7 +27,7 @@ const int XPRAM_SIZE = 8192;
 const int XPRAM_SIZE = 256;
 #endif
 
-extern uint8 XPRAM[XPRAM_SIZE];
+extern uint8_t XPRAM[XPRAM_SIZE];
 
 extern void XPRAMInit(const char *vmdir);
 extern void XPRAMExit(void);

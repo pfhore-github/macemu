@@ -1,76 +1,74 @@
 #ifndef INST_CMN_HPP
 #define INST_CMN_HPP
-void ILLEGAL(CPU* cpu) __attribute__((noreturn));
 
-inline void test_trace_branch(CPU* cpu) {
-	if( cpu->T == 1 ) {
-		TraceEx e;
-		e.run(cpu, cpu->NPC);
+inline void test_trace_branch() {
+	if( cpu.T == 1 ) {
+		throw Exception::Trace();
 	}
 }
-inline uint8_t get_cr(CPU* regs) {
-	return regs->X << 4 |
-		regs->N << 3 |
-		regs->Z << 2 |
-		regs->V << 1 |
-		regs->C;
+inline uint8_t get_cr() {
+	return cpu.X << 4 |
+		cpu.N << 3 |
+		cpu.Z << 2 |
+		cpu.V << 1 |
+		cpu.C;
 }
 
-inline void set_cr(CPU* regs, uint8_t v) {
-	regs->X = (v >> 4) & 1;
-	regs->N = (v >> 3) & 1;
-	regs->Z = (v >> 2) & 1;
-	regs->V = (v >> 1) & 1;
-	regs->C = v & 1;
+inline void set_cr(uint8_t v) {
+	cpu.X = (v >> 4) & 1;
+	cpu.N = (v >> 3) & 1;
+	cpu.Z = (v >> 2) & 1;
+	cpu.V = (v >> 1) & 1;
+	cpu.C = v & 1;
 }
 
-inline uint16_t get_sr(CPU* regs) {
-	uint16_t low = get_cr(regs);
+inline uint16_t get_sr() {
+	uint16_t low = get_cr();
 	low |=
-		regs->IX << 8 |
-		regs->M << 12 |
-		regs->S << 13 |
-		regs->T << 14;
+		cpu.intmask << 8 |
+		cpu.M << 12 |
+		cpu.S << 13 |
+		cpu.T << 14;
 	return low;
 }
-inline void save_sp(CPU* regs) {
-	if( ! regs->S ) {
-		regs->ISP = regs->A[7];
-	} else if( regs->M ) {
-		regs->MSP = regs->A[7];
+inline void save_sp() {
+	if( ! cpu.S ) {
+		cpu.ISP = cpu.R[15];
+	} else if( cpu.M ) {
+		cpu.MSP = cpu.R[15];
 	} else {
-		regs->ISP = regs->A[7];
+		cpu.ISP = cpu.R[15];
 	}
 }
-inline void load_sp(CPU* regs) {
-	if( ! regs->S ) {
-		regs->A[7] = regs->ISP;
-	} else if( regs->M ) {
-		regs->A[7] = regs->MSP;
+inline void load_sp() {
+	if( ! cpu.S ) {
+		cpu.R[15] = cpu.ISP;
+	} else if( cpu.M ) {
+		cpu.R[15] = cpu.MSP;
 	} else {
-		regs->A[7] = regs->ISP;
+		cpu.R[15] = cpu.ISP;
 	}
 }
-inline void set_sr(CPU* regs, uint16_t v) {
-	save_sp(regs);
-	set_cr(regs, v);
-	regs->IX =(v >> 8) & 3;
-	regs->M =(v >> 12) & 1;
-	regs->S =(v >> 13) & 1;
-	regs->T =(v >> 14) & 3;
-	load_sp(regs);
+inline void set_sr(uint16_t v) {
+	save_sp();
+	set_cr(v);
+	cpu.intmask =(v >> 8) & 7;
+	cpu.M =(v >> 12) & 1;
+	cpu.S =(v >> 13) & 1;
+	cpu.T =(v >> 14) & 3;
+	load_sp();
 }
-inline void set_nz(CPU* regs, int8_t v) {
-	regs->N = v < 0;
-	regs->Z = !v;
+inline void set_nz(int8_t v) {
+	cpu.N = v < 0;
+	cpu.Z = !v;
 }
-inline void set_nz(CPU* regs, int16_t v) {
-	regs->N = v < 0;
-	regs->Z = !v;
+inline void set_nz(int16_t v) {
+	cpu.N = v < 0;
+	cpu.Z = !v;
 }
-inline void set_nz(CPU* regs, int32_t v) {
-	regs->N = v < 0;
-	regs->Z = !v;
+inline void set_nz(int32_t v) {
+	cpu.N = v < 0;
+	cpu.Z = !v;
 }
 
 
