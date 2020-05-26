@@ -11,7 +11,11 @@ td, th {
 }
 #mmap td { text-align: right; }
 td.na {
-	text-align: center !important; 
-	font-style: italic;
 	background: #404040;
+	text-align: center !important; 
+}
+td.na::before {
+	font-style: italic;
+	content: "N/A";
+	
 }

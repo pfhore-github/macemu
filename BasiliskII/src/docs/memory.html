@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+	<meta charset="UTF-8" />
+	<title>M68K macintosh hardware reference Address Map</title>
+	<link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+	<h2>M68K macintosh hardware reference - Address Map</h2>
+		<table id="mmap">
+	  <caption>メモリーマップ</caption>
+	  <thead>
+	  <tr><th colspan="2"></th><th>GLU (SE/30, IIx, IIcx)</th><th>MDU (IIci, IIsi)</th><th>OSS (IIfx)</th><th>V8 (LC, LCII, IIvx, IIvi)</th>
+		<th>MCU (Quadra 700, Quadra 9x0)</th><th>Jaws (PB 14x, PB170)</th><th>MSC (PB 150, PB Duo)</th><th>Sonora (LC III)</th>
+		<th>Niagara (PB 16x, PB 180)</th><th>MEMCjr (Quadra 605, LC475, LC575)</th><th> F108 (LC 630, LC 580)</th><th>Ardbeg (LC 520, 550)</th>
+	  </tr>
+	  </thead>
+	  <tbody>
+	  <tr><th rowspan="10">RAM</th><th>SIMMサイズ</th><td colspan="3">1MB~64MB</td><td>1MB~8MB</td><td>4MB~64MB</td>
+		<td>512KB~2MB</td><td>2MB~8MB</td><td>1MB~16MB</td><td>512KB~2MB</td><td colspan="3">1MB~64MB</td></tr>
+	  <tr><th>(固定)</th><td colspan="3" class="na"></td><td>#00000000</td><td colspan="3" class="na"></td><td>#00000000</td><td class="na"></td>
+		<td colspan="3">#00000000</td></tr>
+	  <tr><th>Ch-A</th><td colspan="3">#00000000</td><td>#00800000(8MB)<br/>#00400000(4MB)</td><td colspan="3">#00000000</td><td>#01000000</td><td>#00000000</td><td colspan="2">#04000000</td>
+		<td>#01000000</td></tr>
+	  <tr><th>Ch-B</th><td colspan="3">#04000000</td><td class="na"></td><td>#04000000</td>
+		<td colspan="2">#00200000</td><td>#02000000</td><td>#00200000</td><td colspan="2">#08000000</td><td>#02000000</td></tr>
+	  <tr><th>Ch-C</th><td colspan="4" class="na"></td><td>#08000000 <em>(Quadra 9x0)</em></td><td colspan="2">#00400000</td>
+		<td>#03000000</td><td>#00400000</td><td colspan="2">#0C000000</td><td>#03000000</td></tr>
+	  <tr><th>Ch-D</th><td colspan="4" class="na"></td><td>#0C000000 <em>(Quadra 9x0)</em></td><td colspan="2">#00600000</td>
+		<td>#04000000</td><td>#00600000</td><td colspan="2">#10000000</td><td>#04000000</td></tr>
+		<tr><th>Ch-E</th><td colspan="6" class="na"></td><td>#00800000</td><td class="na"></td><td>#00800000</td>
+		  <td colspan="3"  class="na"></td></tr>
+		<tr><th>Ch-F</th><td colspan="6" class="na"></td><td>#01000000</td><td class="na"></td><td>#00A00000</td>
+		  <td colspan="3"  class="na"></td></tr>
+		<tr><th>Ch-G</th><td colspan="6" class="na"></td><td>#01800000</td><td class="na"></td><td>#00C00000</td>
+		  <td colspan="3"  class="na"></td></tr>
+		<tr><th>Ch-H</th><td colspan="6" class="na"></td><td>#02000000</td><td class="na"></td><td>#00E00000</td>
+		  <td colspan="3"  class="na"></td></tr>
+	  <tr>
+		<th><a href="rom.html">ROM</a></th><th>base</th><td colspan="3">#40800000</td><td>#40A00000</td><td>#40800000</td>
+		<td colspan="2">#40800000</td><td>#40800000</td><td>#40800000</td><td colspan="3">#40800000</td></tr>
+	  </tr>
+	  <tr><th rowspan="22">IO</th><th><a href="via.html#via1">VIA1</a></th><td colspan="12">#50F00000</td></tr>
+	  <tr><th><a href="#via2">VIA2</a></th><td>#50F02000</td><td colspan="3" class="na"></td><td>#50F02000</td>
+		<td>#50F02000</td><td colspan="2" class="na"></td><td>#50F02000</td><td colspan="2">#50F02000</td><td class="na"></td></tr>
+	  <tr><th><a href="#scc">SCC</a></th><td colspan="2">#50F04000</td><td><em>(SCC.IOP)</em> #50F0C020</td><td>#50F04000</td>
+		<td><em>(SCC.IOP)</em> #50F0C020</td><td colspan="2">#50F04000</td><td>#50F04000</td><td>#50F04000</td>
+		<td colspan="2">#50F0C020</td><td>#50F04000</td></tr>
+	  <tr><th><a href="#scsi1">SCSI handshake</a></th><td colspan="2">#50F06000</td><td class="na"></td><td>#50F06000</td>
+		<td class="na"></td><td colspan="2">#50F06000</td><td>#50F06000</td><td>#50F06000</td>
+		<td colspan="2" class="na"></td><td>#50F06000</td></tr>
+	  <tr><th><a href="#ether">Ethernet</a></th><td colspan="4" class="na">NA</td><td>#50F0A000</td>
+		<td colspan="2" class="na">NA</td><td>#50F0A000</td><td class="na">NA</td><td colspan="3">#50F0A000</td></tr>
+	  <tr><th><a href="#scsi2">SCSI</a></th><td colspan="2">#50F10000</td><td><i>(DMA)</i> #50F08000</td><td>#50F10000</td>
+		<td>#50F0F000 (internal)<br>#50F0F402 (external)</i></td><td colspan="2">#50F10000</td><td>#50F10000</td><td>#50F10000</td>
+		<td colspan="2">#50F10000</td><td>#50F10000</td></tr>
+	  <tr><th><a href="#scsi3">SCSI(psedu DMA)</a></th><td colspan="2">#50F12000</td><td class="na"></td><td>#50F12000</td>
+		<td class="na"></td><td>#50F06000</td><td>#50F12000</td><td>#50F12000</td><td>#50F06000</td>
+		<td colspan="2" class="na"></td><td>#50F12000</td></tr>
+	  <tr><th><a href="#asc">ASC</a></th><td colspan="12">#50F14000</td></tr>
+	  <tr><th><a href="#swim">SWIM</a></th><td colspan="2">#50F16000</td><td><em>(SWIM.IOP)</em> #50F12020</td><td>#50F16000</td>
+		<td><em>(SWIM.IOP on 9x0)</em> #50F1E000</td><td colspan="2">#50F16000</td><td>#50F16000</td><td>#50F16000</td>
+		<td colspan="2"> #50F01E00</td><td>#50F16000</td></tr>
+	  <tr><th><a href="#vdac">VDAC</a></th><td class="na"></td><td>#50F24000</td><td class="na"></td><td>#50F24000</td>
+		<td>#F9800000</td><td class="na"></td><td>#50F20000</td><td>#50F24000</td><td>#50F20000</td>
+		<td>#F9800000</td><td>#50F24000</td><td>#50F24000</td></tr>
+	  <tr><th><a href="#rbv">RBV</a></th><td class="na"></td><td>#50F26000</td><td class="na"></td><td>#50F26000</td>
+		<td colspan="2" class="na"></td><td>#50F26000</td><td>#50F26000</td><td colspan="3" class="na"></td><td>#50F26000</td></tr>
+	  <tr><th>メモリーコントローラ</th><td colspan="2" class="na"></td>
+		<td><a href="#oss">#50F1A000</a><br /><a href="#exp0">#50F1C000</a><br /><a href="#exp1">#50F1E000</a></td>
+		<td><a href="#v8">#00A00000</a></td>
+		<td><a href="#mcu">#5000E000</a><br /><a href="#quadra">#F9800000</a><br /></td><td><a href="#pb_reg">#50F80000</a></td><td class="na" colspan="2"></td>
+		<td><a href="#pb_reg">#50F80000</a></td><td><a href="#quadra">#F9800000</a></td><td><a href="#f108">#F50F1A000</a></td>
+		<td class="na"></td>
+	  </tr>
+	  </tbody>
+	</table>
+  </body>
+</html>

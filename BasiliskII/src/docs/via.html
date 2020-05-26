@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+	<meta charset="UTF-8" />
+	<title>M68K macintosh hardware reference</title>
+	<link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+	<h1>M68K macintosh hardware reference VIA</h1>
+	<nav><a href="index.html">目次</a></nav>
+	<h2 id="via">VIA</h2>
+	<table><caption>書き出し</caption>
+	  <thead>
+		<tr><th>アドレス<br>(9-12ビットのみ有効)</th><th>NAME</th><th>7</th><th>6</th><th>5</th><th>4</th><th>3</th><th>2</th><th>1</th><th>0</th></tr>
+		<tr><th>$0000</th><th>RB</th>
+		  <td colspan="8">
+			ポートB入出力。
+			<table>
+			  <tr><th>DDRB</th><th>ACR.1</th><th>書き込み</th><th>読み出し</th></tr>
+			  <tr><th>1(出力)</th><th>-</th><td>ポートBへの転送</td><td>内部レジスタORBの読み出し</td></tr>
+			  <tr><th rowspan="2">0(入力)</th><th>0</th><td rowspan="2">内部レジスタORBへの書き込み。DDRBを1に設定した瞬間に転送される</td><td>ポートBからの転送</td></tr>
+			  <tr><th>1</th><td>内部レジスタIRBの値。CB1がONになった瞬間に更新される</td></tr>
+			</table>
+		  </td>
+		</tr>
+		<tr><th>$0200</th><th>RA_H</th>
+		  <td colspan="8">
+			ハンドシェイクありポートA入出力。
+			<table>
+			  <tr><th>DDRB</th><th>ACR.1</th><th>書き込み</th><th>読み出し</th></tr>
+			  <tr><th rowspan="2">1(出力)</th><th>0</th><td rowspan="2">ポートAへの転送</td><td>ポートAからの転送し</td></tr>
+			  <tr><th>1</th><td>内部レジスタIRAの値。CA1がONになった瞬間に更新される</td></tr>
+			  <tr><th rowspan="2">0(入力)</th><th>0</th><td rowspan="2">内部レジスタORAへの書き込み。DDABを1に設定した瞬間に転送される</td><td>ポートAからの転送</td></tr>
+			  <tr><th>1</th><td>内部レジスタIRAの値。CA1がONになった瞬間に更新される</td></tr>
+			</table>
+		  </td>
+			</td>
+		</tr>
+		<tr><th>$0400</th><th>DDRB</th>
+		  <td colspan="8">1のときポートB出力モード</td>
+		</tr>
+		<tr><th>$0600</th><th>DDRA</th>
+		  <td colspan="8">1のときポートA出力モード</td>
+		</tr>
+		<tr><th>$0800</th><th>TIMER1_L</th>
+		  <td colspan="8">
+			R:Timer1下位ワード(IER.6をリセット)<br />
+			W:Timer1ラッチ下位バイト
+		  </td>
+		</tr>
+		<tr><th>$0A00</th><th>TIMER1_H</th>
+		  <td colspan="8">
+			R: Timer1上位バイト<br />
+			W: Timer1ラッチ上位バイト(IER.6をリセット・Timer1に値がコピーされる)
+		  </td>
+		</tr>
+		<tr><th>$0C00</th><th>TIMER1_L_LATCH</th>
+		  <td colspan="8">Timer1ラッチ下位バイト</td>
+		</tr>
+		<tr><th>$0E00</th><th>TIMER1_H_LATCH</th>
+		  <td colspan="8">Timer1ラッチ上位バイト</td>
+		</tr>
+		<tr><th>$1000</th><th>TIMER2_L</th>
+		  <td colspan="8">
+			R: Timer2下位バイト(IER.5をリセット)<br />
+			W: Timer2下位バイト
+		  </td>
+		</tr>
+		<tr><th>$1200</th><th>TIMER2_H</th>
+		  <td colspan="8">
+			R:Timer2上位バイト.H<br />
+			W:Timer2ラッチ上バイト(IER.5をリセット・Timer2に値がコピーされる)
+		  </td>
+		</tr>
+		<tr><th>$1400</th><th>SR</th>
+		  <td colspan="8"><a href="#via_sr">シフトレジスタ</a>。読み書きするとIER.2がリセットされる</td>
+		</tr>
+		<tr><th>$1600</th><th>ACR</th>
+		  <td>T1 PB7 有効</td>
+		  <td>T1連続モード</td>
+		  <td>T1 PB6 カウントモード</td>
+		  <td colspan="3" id="via_sr">
+			<dl>
+			  <dt> ACR.4=0(シフトイン)</dt>			  
+			  <dd>
+				<p><code>SR = (SR << 1) | CB2.IN</code></p>
+				<table>
+				  <tr><th>3/2</th><th>タイミング</th></tr>
+				  <tr><th>00</th><td>無効</td></tr>
+				  <tr><th>01</th><td>Timer2</td></tr>
+				  <tr><th>10</th><td>システムクロック(783.36 kHz)</td></tr>
+				  <tr><th>11</th><td>CBがONになった後</td></tr>
+				</table>
+			  </dd>
+			  <dt> ACR.4=1(シフトアウト)</dt>
+			  <dd>
+				<p><code>CB2.OUT = SR.7<br> SR = ROL.B(SR, 1) </code></p>
+				<table>
+				  <tr><th>3/2</th><th>タイミング</th></tr>
+				  <tr><th>00</th><td>Timer2(連続モード)</td></tr>
+				  <tr><th>01</th><td>Timer2(8回シフトすると止まる)</td></tr>
+				  <tr><th>10</th><td>システムクロック(783.36 kHz)</td></tr>
+				  <tr><th>11</th><td>CBがONになった後</td></tr>
+				</table>
+			  </dd>
+			</dl>
+		  </td>			  
+		  <td>Port Bラッチ<a href="#via_latch">[1]</a>有効</td>
+		  <td>Port Aラッチ<a href="#via_latch">[1]</a>有効</td>
+		</tr>
+		<tr><th>$1800</th><th>PCR</th>
+		  <td>CB2出力モード</td>
+		  <td colspan="2">
+			<dl>
+			  <dt>出力モード=0</dt>
+			  <dd>
+				<dl>
+				  <dt>BIT6(#40)</dt>
+				  <dd>0ならCB2がOFFになる時にIFR.3がセットされる。1ならONになる時にセットされる</dd>
+				  <dt>BIT5(#20)</dt>
+				  <dd>0ならBポートの読み書き時にIFR.3がクリアされる。１ならされない。</dd>
+				</dl>
+			  </dd>
+			  <dt>出力モード=1</dt>
+			  <dd>
+				<table>
+				  <tr><th>6/5</th><th>CB2にOFFが送信されるタイミング</th><th>CB2にONが送信されるタイミング</th></tr>
+				  <tr><th>0/0</th><td>Bポートレジスタへの書き込み</td><td>CB1がONになった時</td></tr>
+				  <tr><th>0/1</th><td>Bポートレジスタへの書き込み(1回のみ)</td><td>それ以外</td></tr>
+				  <tr><th>1/0</th><td colspan="2">常にOFF</td></tr>
+				  <tr><th>1/1</th><td colspan="2">常にON</td></tr>
+				</table>
+			  </dd>
+			</dl>
+		  </td>
+		  <td>1ならCB1がONになるときにIFR.4がONになる。0ならCB1がOFFになるときにONになる</td>
+		  <td>CA2出力モード</td>
+		  <td colspan="2">
+			<dl>
+			  <dt>出力モード=0</dt>
+			  <dd>
+				<dl>
+				  <dt>BIT2(#4)</dt>
+				  <dd>0ならCA2がOFFになる時にIFR.0がセットされる。1ならONになる時にセットされる</dd>
+				  <dt>BIT1(#2)</dt>
+				  <dd>0ならAポートの読み書き時にIFR.0がクリアされる。１ならされない。</dd>
+				</dl>
+			  </dd>
+			  <dt>出力モード=1</dt>
+			  <dd>
+				<table>
+				  <tr><th>2/1</th><th>CA2にOFFが送信されるタイミング</th><th>CA2にONが送信されるタイミング</th></tr>
+				  <tr><th>0/0</th><td>Aポートレジスタへの読み書き</td><td>CA1がONになった時</td></tr>
+				  <tr><th>0/1</th><td>Aポートレジスタへの書き込み(1回のみ)</td><td>それ以外</td></tr>
+				  <tr><th>1/0</th><td colspan="2">常にOFF</td></tr>
+				  <tr><th>1/1</th><td colspan="2">常にON</td></tr>
+				</table>
+			  </dd>
+			</dl>
+		  </td>
+		  <td>1ならCBAがONになるときにIFR.1がONになる。0ならCA1がOFFになるときにONになる</td>
+		</tr>
+		<tr><th>$1A00</th><th>IFR</th>
+		  <td>Master</td><td>Timer1</td><td>Timer2</td><td>CB1</td><td>CB2</td><td><a href="#via_sr">SR</a></td>
+		  <td>CA1</td><td>CA2</td>
+		</tr>
+		<tr><th>$1C00</th><th>IER</th>
+		  <td>SET/CLEAR</td><td>Timer1</td><td>Timer2</td><td>CB1</td><td>CB2</td><td><a href="#via_sr">SR</a></td>
+		  <td>CA1</td><td>CA2</td>
+		</tr>
+		<tr><th>$1E00</th><th>RA</th>
+		  <td colspan="8">ポートA入出力。読み書き時にはIER.0, IER.1がリセットされる
+			<table>
+			  <tr><th>DDRB</th><th>ACR.1</th><th>書き込み</th><th>読み出し</th></tr>
+			  <tr><th rowspan="2">1(出力)</th><th>0</th><td rowspan="2">ポートAへの転送</td><td>ポートAからの転送し</td></tr>
+			  <tr><th>1</th><td>内部レジスタIRAの値。CA1がONになった瞬間に更新される</td></tr>
+			  <tr><th rowspan="2">0(入力)</th><th>0</th><td rowspan="2">内部レジスタORAへの書き込み。DDABを1に設定した瞬間に転送される</td><td>ポートAからの転送</td></tr>
+			  <tr><th>1</th><td>内部レジスタIRAの値。CA1がONになった瞬間に更新される</td></tr>
+			</table>
+		  </td>
+		</tr>
+	  </thead>
+	</table>
+	<h3 id="via1">VIA1</h3>
+	<table>
+	  <caption>出力</caption>
+	  <tr><th rowspan="2"></th><th colspan="8">port A</th><th colspan="8">port B</th><th rowspan="2">CB2</th></tr>
+	  <tr>
+		<th>7(#80)</th><th>6(#40)</th><th>5(#20)</th><th>4(#10)</th><th>3(#08)</th><th>2(#04)</th><th>1(#02)</th><th>0(#01)</th>
+		<th>7(#80)</th><th>6(#40)</th><th>5(#20)</th><th>4(#10)</th><th>3(#08)</th><th>2(#04)</th><th>1(#02)</th><th>0(#01)</th>
+	  </tr>
+	  <tr><th>SE/30</th><td rowspan="5" class="na"></td><td>画面バッファ切り替え (1=main, 0=alternate)</td>
+		<td rowspan="4"><a href="swim.html">フロッピーヘッド切り替え</a></td>
+		<td rowspan="2">1=ROMをアドレス0にマップ</td>
+		<td rowspan="4"><a href="scc.html">1=モデムポートでの同期モデムサポート有効化(GPiピンによる同期)</a></td>
+		<td rowspan="5" colspan="3" class="na"></td>
+		<td rowspan="5" class="na"></td>
+		<td>0=vSync割り込みを有効化</td>
+		<td colspan="2" rowspan="4"><a href="adb.html">ADB状態</a> </td>
+		<td rowspan="5" class="na"></td>
+		<td rowspan="5"><a href="rtc.html">0=RTC有効化</a></td>
+		<td rowspan="5"><a href="rtc.html">RTCクロック信号</a></td>
+		<td rowspan="5"><a href="rtc.html">RTC出力信号</a></td>
+		<td rowspan="4"><a href="adb.html">ADBデータ</a></td>
+	  </tr>
+	  <tr><th>IIx, IIcx</th><td rowspan="4" class="na"></td><td rowspan="4" class="na"></td></tr>
+	  <tr><th>IIci + PGC</th>
+		<td>0=パリティチェック有効化</td></tr>
+	  <tr><th><i>others</i></th><td rowspan="2" class="na"></td></tr>
+	  <tr><th>IIfx</th><td class="na"></td><td class="na"></td><td class="na" colspan="2"></td><td class="na"></td></tr>
+	</table>
+	<table>
+	  <caption>読み出し</caption>
+	  <tr><th rowspan="2"></th><th colspan="8">port A</th><th colspan="8">port B</th><th rowspan="2">CA1</th><th rowspan="2">CA2</th><th rowspan="2">CB1</th><th rowspan="2">CB2</th></tr>
+	  <tr>
+		<th>7(#80)</th><th>6(#40)</th><th>5(#20)</th><th>4(#10)</th><th>3(#08)</th><th>2(#04)</th><th>1(#02)</th><th>0(#01)</th>
+		<th>7(#80)</th><th>6(#40)</th><th>5(#20)</th><th>4(#10)</th><th>3(#08)</th><th>2(#04)</th><th>1(#02)</th><th>0(#01)</th>
+	  </tr>
+	  <tr><th>SE/30</th>
+		<td rowspan="13">0=<a href="scc.html">SCC リクエスト</a></td><td>1</td>
+		<td rowspan="14" class="na"></td>
+		<td rowspan="3" class="na"></td>
+		<td rowspan="14" class="na"></td>
+		<td rowspan="3" colspan="3" class="na"></td>
+		<td rowspan="9" class="na"></td>
+		<td rowspan="14" class="na"></td>
+		<td rowspan="14" colspan="2" class="na"></td>
+		<td rowspan="13">0=enable ADB interrupt</td>
+		<td rowspan="14" colspan="2" class="na"></td>
+		<td rowspan="14">RTC DATA</td>
+		<td rowspan="14">RTC 1s interrupt</td>
+		<td rowspan="14">Timer2 overflow interrupt(60.15Hz)</td>
+		<td rowspan="13">ADB CLOCK</td>
+		<td rowspan="13">ADB DATA</td>
+	  </tr>
+	  <tr><th>IIx</th><td>0</td></tr>
+	  <tr><th>IIcx</th><td>1</td></tr>
+	  <tr><th>PowerBook Duo 2x0</th><td rowspan="4">0</td><td>0</td><td rowspan="3">0</td>
+		<td rowspan="2">0</td><td rowspan="11" class="na"></td></tr>
+	  <tr><th>Quadra 950</th><td rowspan="3">1</td></tr>
+	  <tr><th>Power Book 1x0</th><td rowspan="2">1</td></tr>
+	  <tr><th>IIsi</th><td>1</td></tr>
+	  <tr><th>Quadra 700</th><td rowspan="5">1</td><td rowspan="2">0</td><td>0</td><td>0</td></tr>
+	  <tr><th>IIci</th><td rowspan="2">1</td><td rowspan="2">1</td></tr>
+	  <tr><th>IIci + PGC</th><td rowspan="3">1</td><td>parity error</td></tr>
+	  <tr><th>Quadra 900</th><td>0</td><td rowspan="2">0</td><td rowspan="4" class="na"></td></tr>
+	  <tr><th>LC</th><td>1</td></tr>
+	  <tr><th><i>others</i></th><td class="na"></td><td class="na"></td><td colspan="2" class="na"></td></tr>
+	  <tr><th>IIfx</th><td class="na"></td><td>1</td><td>1</td><td>0</td><td>1</td><td class="na"></td><td class="na"></td><td class="na"></td></tr>
+	</table>
+
+	<h3 id="via2">VIA2</h3>
+	<table>
+	  <caption>WRITE</caption>
+	  <tr><th rowspan="2"></th><th colspan="8">port A</th><th colspan="8">port B</th><th rowspan="2">CB2</th></tr>
+	  <tr>
+		<th>7(#80)</th><th>6(#40)</th><th>5(#20)</th><th>4(#10)</th><th>3(#08)</th><th>2(#04)</th><th>1(#02)</th><th>0(#01)</th>
+		<th>7(#80)</th><th>6(#40)</th><th>5(#20)</th><th>4(#10)</th><th>3(#08)</th><th>2(#04)</th><th>1(#02)</th><th>0(#01)</th>
+	  </tr>
+	  <tr><th>GLU (SE/30, IIx, IIcx)</th><td colspan="2">RAM size
+		<table>
+		  <tr><th>bit</th><th>size</th></tr>
+		  <tr><th>00</th><td>1MB</td></tr>
+		  <tr><th>01</th><td>4MB</td></tr>
+		  <tr><th>10</th><td>16MB</td></tr>
+		  <tr><th>11</th><td>64MB</td></tr>
+		</table>
+	  </td>
+	  <td colspan="6" rowspan="3" class="na"></td>
+	  <td  rowspan="2" >VIA1 60.15Hz interrupt</td>
+	  <td  rowspan="3" class="na"></td>
+	  <td  rowspan="3" class="na"></td>
+	  <td  rowspan="3" class="na"></td>
+	  <td  rowspan="2" class="na"></td>
+	  <td rowspan="3" >0=power off</td>
+	  <td rowspan="3" >0=NuBus lock out</td>
+	  <td  rowspan="2">0=Disable CPU cache</td>
+	  <td rowspan="3" ><i>(SCSI IRQ)</i></td>
+	  </tr>
+	  <tr><th><i>others</i></th>	<td colspan="2" rowspan="2" class="na"></td></tr>
+	  <tr><th>IIci</th><td>0=party test mode</td>
+		<td>0=flush cache card</td><td>0=disable cache card</td></tr>
+	</table>
+	<table>
+	  <caption>READ</caption>
+	  <tr><th rowspan="2"></th><th colspan="8">port A</th><th colspan="8">port B</th><th rowspan="2">CA1</th><th rowspan="2">CA2</th><th rowspan="2">CB1</th><th rowspan="2">CB2</th></tr>
+ 	  <tr>
+		<th>7(#80)</th><th>6(#40)</th><th>5(#20)</th><th>4(#10)</th><th>3(#08)</th><th>2(#04)</th><th>1(#02)</th><th>0(#01)</th>
+		<th>7(#80)</th><th>6(#40)</th><th>5(#20)</th><th>4(#10)</th><th>3(#08)</th><th>2(#04)</th><th>1(#02)</th><th>0(#01)</th>
+	  </tr>
+	  <tr><th>SE/30</th>
+		<td rowspan="5" class="na"></td>
+		<td rowspan="4" class="na"></td>
+		<td rowspan="5" >NuBus slot E IRQ</td>
+		<td rowspan="5" >NuBus slot D IRQ</td>
+		<td rowspan="5" >NuBus slot C IRQ</td>
+		<td rowspan="5" >NuBus slot B IRQ</td>
+		<td rowspan="5" >NuBus slot A IRQ</td>
+		<td rowspan="5" >NuBus slot 9 IRQ</td>
+		<td rowspan="5" class="na"></td>
+		<td>0</td>
+		<td colspan="2" rowspan="5" >Nubus tranfer mode acknowledge</td>
+		<td rowspan="2">0</td>
+		<td colspan="3" rowspan="5" class="na"></td>
+		<td rowspan="5" >NuBus IRQ</td>
+		<td rowspan="5" >SCSI DRQ</td>
+		<td rowspan="5" >ASC IRQ</td>
+		<td rowspan="5" >SCSI IRQ</td>
+	  </tr>
+	  <tr><th>IIx</th><td rowspan="4">0=external sound enabled</td></tr>
+	  <tr><th>IIcx</th><td>1</td>
+	  <tr><th><i>others</i></th><td rowspan="2" class="na"></td></tr>
+	  <tr><th>IIci</th><td>Video IRQ</td></tr>
+	</table>
+	  </tr>
+  </body>
