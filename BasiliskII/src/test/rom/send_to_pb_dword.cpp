@@ -33,7 +33,7 @@ BOOST_AUTO_TEST_CASE( not_ready ) {
 	prepare();
 	auto via2 = std::make_shared<VIA_TEST>();
 	via2->write(VIA_REG::DDRB, 0xbd);
-	via2->write(VIA_REG::ORB, 0x66);
+	via2->write(VIA_REG::RB, 0x66);
 	via2->reset_written();
 	via2->b[1].set_read_data({ false } );
 	via2->b[6].set_read_data({ false } );
@@ -48,7 +48,7 @@ struct common_fixture {
 		prepare();
 		auto via2 = std::make_shared<VIA_TEST>();
 		via2->write(VIA_REG::DDRB, 0xbd);
-		via2->write(VIA_REG::ORB, 0x66);
+		via2->write(VIA_REG::RB, 0x66);
 		via2->reset_written();
 		via2->b[1].set_read_data({ true } );
 		via2->b[6].set_read_data({ true } );

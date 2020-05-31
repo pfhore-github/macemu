@@ -525,7 +525,7 @@ void init_modem_port() {
 	INIT_FLAGS.set( INIT_FLAG_T::MODEM_PORT_VALID );
 	machine->scc->read(offset+SCC_REG::A_DATA);
 	machine->via1->set( VIA_REG::DDRA, 3 );
-	machine->via1->clear( VIA_REG::ORA, 3 );
+	machine->via1->clear( VIA_REG::RA, 3 );
 }
 // $B9FDA
 void write_modem_port_byte(uint8_t val) {
@@ -533,7 +533,7 @@ void write_modem_port_byte(uint8_t val) {
 	machine->scc->write(SCC_REG::A_DATA, val);	
 	do {
 		machine->scc->write(SCC_REG::A_CMD, 1);
-	} while( ! (machine->scc->bit(SCC_REG::A_CMD, 0)) );
+	} while( ! (machine->scc->bit(SCC_REG::A_CMD, 0)) ); //RR[1].0 [ ALL Sent ]
 }
 
 // $B9FF6

@@ -153,11 +153,11 @@ void TimerInit()
 	for (int i=0; i<NUM_DESCS; i++)
 		free_desc(i);
 	one_sec = SDL_AddTimer(1000, [] (uint32_t, void* p) ->uint32_t {
-									 static_cast<VIA*>(p)->do_irq( CA2 );
+									 static_cast<VIA*>(p)->do_irq( IRQ_FLAG::CA2 );
 									 return 1000;
-								 }, machine->via1);
+								 }, machine->via1.get());
 	vblank = SDL_AddTimer(16, [] (uint32_t, void* p) ->uint32_t {
-								  static_cast<VIA*>(p)->do_irq( CA1 );
+								  static_cast<VIA*>(p)->do_irq( IRQ_FLAG::CA1 );
 								  ((VIA*)(machine->via2))->orb8_flip();
 								  return 16;
 								   }, &machine);

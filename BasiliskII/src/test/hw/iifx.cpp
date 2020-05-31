@@ -13,6 +13,6 @@ BOOST_AUTO_TEST_CASE( iifx_exp1_ok )  {
 	v.b[4].set_read_data( { false } );
 	v.b[5].set_read_data( { false } );
 	v.write( VIA_REG::DDRB, 0xC3 );
-	BOOST_TEST( v.read(VIA_REG::ORB) == 0x05 );
+	BOOST_TEST( v.read(VIA_REG::RB) == 0x05 );
 }
 BOOST_AUTO_TEST_SUITE_END();

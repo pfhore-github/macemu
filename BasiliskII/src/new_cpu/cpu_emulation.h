@@ -29,13 +29,13 @@
  */
 
 // RAM and ROM pointers (allocated and set by main_*.cpp)
-extern uint32 RAMBaseMac;		// RAM base (Mac address space), does not include Low Mem when != 0
-extern uint8 *RAMBaseHost;		// RAM base (host address space)
-extern uint32 RAMSize;			// Size of RAM
+extern uint32_t RAMBaseMac;		// RAM base (Mac address space), does not include Low Mem when != 0
+extern uint8_t *RAMBaseHost;		// RAM base (host address space)
+extern uint32_t RAMSize;			// Size of RAM
 
-extern uint32 ROMBaseMac;		// ROM base (Mac address space)
-extern uint8 *ROMBaseHost;		// ROM base (host address space)
-extern uint32 ROMSize;			// Size of ROM
+extern uint32_t ROMBaseMac;		// ROM base (Mac address space)
+extern uint8_t *ROMBaseHost;		// ROM base (host address space)
+extern uint32_t ROMSize;			// Size of ROM
 
 extern int MacFrameLayout;		// Frame buffer layout (see defines below)
 
@@ -81,10 +81,10 @@ static inline uint32_t  Host2MacAddr(uint8_t *addr) {
 	return (uint32_t)(addr - RAMBaseHost);
 }
 
-static inline void *Mac_memset(uint32 addr, int c, size_t n) {return memset(Mac2HostAddr(addr), c, n);}
-static inline void *Mac2Host_memcpy(void *dest, uint32 src, size_t n) {return memcpy(dest, Mac2HostAddr(src), n);}
-static inline void *Host2Mac_memcpy(uint32 dest, const void *src, size_t n) {return memcpy(Mac2HostAddr(dest), src, n);}
-static inline void *Mac2Mac_memcpy(uint32 dest, uint32 src, size_t n) {return memcpy(Mac2HostAddr(dest), Mac2HostAddr(src), n);}
+static inline void *Mac_memset(uint32_t addr, int c, size_t n) {return memset(Mac2HostAddr(addr), c, n);}
+static inline void *Mac2Host_memcpy(void *dest, uint32_t src, size_t n) {return memcpy(dest, Mac2HostAddr(src), n);}
+static inline void *Host2Mac_memcpy(uint32_t dest, const void *src, size_t n) {return memcpy(Mac2HostAddr(dest), src, n);}
+static inline void *Mac2Mac_memcpy(uint32_t dest, uint32_t src, size_t n) {return memcpy(Mac2HostAddr(dest), Mac2HostAddr(src), n);}
 
 
 /*
@@ -106,8 +106,8 @@ const bool UseJIT = false;
 // 680x0 emulation functions
 struct M68kRegisters;
 extern void Start680x0(void);									// Reset and start 680x0
-extern "C" void Execute68k(uint32 addr, M68kRegisters *r);		// Execute 68k code from EMUL_OP routine
-extern "C" void Execute68kTrap(uint16 trap, M68kRegisters *r);	// Execute MacOS 68k trap from EMUL_OP routine
+extern "C" void Execute68k(uint32_t addr, M68kRegisters *r);		// Execute 68k code from EMUL_OP routine
+extern "C" void Execute68kTrap(uint16_t trap, M68kRegisters *r);	// Execute MacOS 68k trap from EMUL_OP routine
 
 // Interrupt functions
 extern void TriggerInterrupt(void);								// Trigger interrupt level 1 (InterruptFlag must be set first)

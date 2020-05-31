@@ -208,7 +208,7 @@ void VIA::cb2_in_push(bool v) {
 uint8_t VIA::read(int n) {
 	uint8_t v = 0;
 	switch(n&0xf) {
-	case VIA_REG::ORB :
+	case VIA_REG::RB :
 		v = orB & dirB;
 		if( a_ctl.PB_LATCH ) {
 			v |= irB & ~dirB;
@@ -257,7 +257,7 @@ uint8_t VIA::read(int n) {
 	case VIA_REG::IER :
 		nanosleep_x(1400);
 		return irq_enable | 0x80; /* Apple-VIA's IER always returns high bit */
-	case VIA_REG::ORA :
+	case VIA_REG::RA :
 		if( a_ctl.PA_LATCH ) {
 			v = irA;
 		} else {
@@ -266,7 +266,7 @@ uint8_t VIA::read(int n) {
 			}
 		}
 		return v;
-	case VIA_REG::ORA_H :
+	case VIA_REG::RA_H :
 		if( a_ctl.PA_LATCH ) {
 			v = irA;
 		} else {
@@ -308,7 +308,7 @@ void VIA::do_writeB(int i, bool v) {
 }
 void VIA::write(int n, uint8_t v) {
 	switch(n&0xf) {
-	case VIA_REG::ORB :
+	case VIA_REG::RB :
 		orB = v;
 		for(int i = 0; i < 8; ++i ) {
 			if( dirB & 1 << i ) {
@@ -412,7 +412,7 @@ void VIA::write(int n, uint8_t v) {
 			irq_enable &= ((~v)&0x7f);
 		}
 		return;
-	case VIA_REG::ORA_H :
+	case VIA_REG::RA_H :
 		orA = v;
 		for(int i = 0; i < 8; ++i ) {
 			if( dirA & 1 << i ) {
@@ -438,7 +438,7 @@ void VIA::write(int n, uint8_t v) {
 		default :
 			return;
 		}
-	case VIA_REG::ORA :
+	case VIA_REG::RA :
 		orA = v;
 		for(int i = 0; i < 8; ++i ) {
 			if( dirA & 1 << i ) {
@@ -486,14 +486,14 @@ void set_machine(const std::string& s) {
 uint8_t Via_Lite::read(int n) {
 	uint8_t v = 0;
 	switch(n ) {
-	case RBV_REG::ORB :
+	case RBV_REG::RB :
 		irq_flg &= ~(IRQ_FLAG::CB1|IRQ_FLAG::CB2);
 		for(int i = 0; i < 8; ++i ) {
 			v |= (readB(i) << i);
 		}
 		return v;
 	case RBV_REG::EXP : return 0;
-	case RBV_REG::ORA :
+	case RBV_REG::RA :
 		irq_flg &= ~(IRQ_FLAG::CA1|IRQ_FLAG::CA2);
 		for(int i = 0; i < 8; ++i ) {
 			v |= (readA(i) << i);
@@ -507,13 +507,13 @@ uint8_t Via_Lite::read(int n) {
 
 void Via_Lite::write(int n, uint8_t v) {
 	switch(n ) {
-	case RBV_REG::ORB :
+	case RBV_REG::RB :
 		irq_flg &= ~(IRQ_FLAG::CB1|IRQ_FLAG::CB2);
 		for(int i = 0; i < 8; ++i ) {
 			writeB(i, v & (1<<i));
 		}
 		return;
-	case RBV_REG::ORA :
+	case RBV_REG::RA :
 		irq_flg &= ~(IRQ_FLAG::CA1|IRQ_FLAG::CA2);
 		for(int i = 0; i < 8; ++i ) {
 			writeA(i, v & (1<<i));

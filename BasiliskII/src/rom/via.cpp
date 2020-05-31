@@ -11,9 +11,9 @@ void reset_via() {
 	if( INIT_HW_FLG.test( INIT_HW_FLG_T::VIA1) ) {
 		const VIA_DATA_T* vdata1 = model->via_data1;
 		if( vdata1 ) {
-			machine->via1->write(VIA_REG::ORA, vdata1->regA); // REG A
+			machine->via1->write(VIA_REG::RA, vdata1->regA); // REG A
 			machine->via1->write(VIA_REG::DDRA, vdata1->dirA); // DIR A
-			machine->via1->write(VIA_REG::ORB, vdata1->regB); // REG B
+			machine->via1->write(VIA_REG::RB, vdata1->regB); // REG B
 			machine->via1->write(VIA_REG::DDRB, vdata1->dirB); // DIR B
 			machine->via1->write(VIA_REG::PCR, vdata1->pcr);  // PCR
 			machine->via1->write(VIA_REG::ACR, vdata1->acr);  // AUX-CR
@@ -23,10 +23,10 @@ void reset_via() {
 	if( INIT_HW_FLG.test( INIT_HW_FLG_T::VIA2) ) {
 		auto vdata2 = model->via_data2;
 		if( vdata2) {
-			uint8_t d3 = machine->via2->read(VIA_REG::ORA); // REG A
-			machine->via2->write(VIA_REG::ORA, d3|vdata2->regA); // REG A
+			uint8_t d3 = machine->via2->read(VIA_REG::RA); // REG A
+			machine->via2->write(VIA_REG::RA, d3|vdata2->regA); // REG A
 			machine->via2->write(VIA_REG::DDRA, vdata2->dirA); // DIR A
-			machine->via2->write(VIA_REG::ORB, vdata2->regB); // REG B
+			machine->via2->write(VIA_REG::RB, vdata2->regB); // REG B
 			machine->via2->write(VIA_REG::DDRB, vdata2->dirB); // DIR B
 			machine->via2->write(VIA_REG::PCR, vdata2->pcr);  // PCR
 			machine->via2->write(VIA_REG::ACR , vdata2->acr);  // AUX-CR
@@ -37,11 +37,11 @@ void reset_via() {
 	}
 	if( INIT_HW_FLG.test( INIT_HW_FLG_T::RBV) ) {
 		machine->rbv->write(int(RBV_REG::IER), 0x7f);
-		machine->rbv->write(int(RBV_REG::ORB), 0x8f);
+		machine->rbv->write(int(RBV_REG::RB), 0x8f);
 		if( ROM_FLG.test( ROM_FLG_T::MONITOR) ) {
 			cpu.Z = dynamic_cast<NoFPU*>(fpu) != nullptr;	// has FPU?
 			if( cpu.Z ) {
-				machine->rbv->write(int(RBV_REG::ORB), 0x8e);
+				machine->rbv->write(int(RBV_REG::RB), 0x8e);
 			}
 			machine->rbv->write(int(RBV_REG::SIER), 0x7f);
 		} else {
@@ -73,15 +73,15 @@ uint32_t read_id_from_via() {
 	uint8_t h = 0, l = 0;
 	uint32_t v = 0;
 	if( INIT_HW_FLG.test( INIT_HW_FLG_T::VIA1) ) {
-		h = read_via_impl(machine->via1, VIA_REG::ORA, VIA_REG::DDRA, motherboard->via1A_mask);
-		l = read_via_impl(machine->via1, VIA_REG::ORB, VIA_REG::DDRB, motherboard->via1B_mask);
+		h = read_via_impl(machine->via1, VIA_REG::RA, VIA_REG::DDRA, motherboard->via1A_mask);
+		l = read_via_impl(machine->via1, VIA_REG::RB, VIA_REG::DDRB, motherboard->via1B_mask);
 	}	
 	v = h << 24 | l << 16;		
 	if( ! INIT_HW_FLG.test( INIT_HW_FLG_T::VIA2 ) ) {
 		return v;
 	}
-	h = read_via_impl(machine->via2, VIA_REG::ORA, VIA_REG::DDRA, motherboard->via2A_mask);
-	l = read_via_impl(machine->via2, VIA_REG::ORB, VIA_REG::DDRB, motherboard->via2B_mask);
+	h = read_via_impl(machine->via2, VIA_REG::RA, VIA_REG::DDRA, motherboard->via2A_mask);
+	l = read_via_impl(machine->via2, VIA_REG::RB, VIA_REG::DDRB, motherboard->via2B_mask);
 	v |= h << 8 | l;
 	return v;
 }

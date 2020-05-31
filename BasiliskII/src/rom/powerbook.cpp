@@ -27,8 +27,8 @@ bool send_to_pb_key() {
 // xxxx(02-7F)xx: 4byte
 bool send_to_pb_dword(uint32_t data) {
 	auto via2 = machine->get_via2();
-	machine->via1->read(VIA_REG::ORB);
-	if( ! machine->via2->bit(VIA_REG::ORB, TRANS_READY) ) {
+	machine->via1->read(VIA_REG::RB);
+	if( ! machine->via2->bit(VIA_REG::RB, TRANS_READY) ) {
 		return false;
 	}
 	bool is_msc = false;
@@ -85,24 +85,24 @@ bool send_to_pb_byte(uint8_t data, bool* is_msc) {
 		}
 		// send via port A
 		via2->write(VIA_REG::DDRA, 0xff); // all bit is out
-		via2->write(VIA_REG::ORA_H, data);
+		via2->write(VIA_REG::RA_H, data);
 	}
 	
 	// $478F0
 	
 	bool ret = false;
-	via2->clear(VIA_REG::ORB, TRANS_STANDBY);
-	machine->via1->read(VIA_REG::ORB);
+	via2->clear(VIA_REG::RB, TRANS_STANDBY);
+	machine->via1->read(VIA_REG::RB);
 
-	if( ! via2->bit(VIA_REG::ORB, TRANS_READY) ) { 
-		via2->set(VIA_REG::ORB, TRANS_STANDBY);	   
-		machine->via1->read(VIA_REG::ORB);
-		if( via2->bit(VIA_REG::ORB, TRANS_READY) ) { 
+	if( ! via2->bit(VIA_REG::RB, TRANS_READY) ) { 
+		via2->set(VIA_REG::RB, TRANS_STANDBY);	   
+		machine->via1->read(VIA_REG::RB);
+		if( via2->bit(VIA_REG::RB, TRANS_READY) ) { 
 			ret = true;
 		}
 	}
 	// $47918
-	via2->set(VIA_REG::ORB, TRANS_STANDBY);
+	via2->set(VIA_REG::RB, TRANS_STANDBY);
 	via2->write(VIA_REG::DDRA, 0); // all bit is in...
 	return ret;
 }
@@ -119,12 +119,12 @@ std::optional<uint8_t> recv_from_pb(bool* is_msc) {
 		// send command to IOP
 		machine->via1->clear(VIA_REG::ACR, 4 ); // shift in mode
 		machine->via1->read(VIA_REG::SR); // transport DR(3) from 68HC05(IOP?)
-		via2->clear( VIA_REG::ORB, 2 );
-		machine->via1->read( VIA_REG::ORB );
-		if( ! via2->bit(VIA_REG::ORB, TRANS_READY ) ) { 
-			via2->set( VIA_REG::ORB, 2);
-			machine->via1->read( VIA_REG::ORB );
-			if( via2->bit(VIA_REG::ORB, TRANS_READY ) ) { 
+		via2->clear( VIA_REG::RB, 2 );
+		machine->via1->read( VIA_REG::RB );
+		if( ! via2->bit(VIA_REG::RB, TRANS_READY ) ) { 
+			via2->set( VIA_REG::RB, 2);
+			machine->via1->read( VIA_REG::RB );
+			if( via2->bit(VIA_REG::RB, TRANS_READY ) ) { 
 				ret = machine->via1->read( VIA_REG::SR );
 			}
 		}				
@@ -137,17 +137,17 @@ std::optional<uint8_t> recv_from_pb(bool* is_msc) {
 		// set A-port all read
 		via2->write( VIA_REG::DDRA, 0 );
 		// 
-		if( ! via2->bit(VIA_REG::ORB, 1) ) {
-			machine->via1->read( VIA_REG::ORB );
-			via2->set( VIA_REG::ORB, 2);
-			ret = via2->read( VIA_REG::ORA_H );
-			if( via2->bit(VIA_REG::ORB, 1) ) { 
-				machine->via1->read( VIA_REG::ORB );
+		if( ! via2->bit(VIA_REG::RB, 1) ) {
+			machine->via1->read( VIA_REG::RB );
+			via2->set( VIA_REG::RB, 2);
+			ret = via2->read( VIA_REG::RA_H );
+			if( via2->bit(VIA_REG::RB, 1) ) { 
+				machine->via1->read( VIA_REG::RB );
 			}
 		}
 	}
 	// 479a0
-	via2->set( VIA_REG::ORB, 2);
+	via2->set( VIA_REG::RB, 2);
 	if( ROM_FLG.test( ROM_FLG_T::MSC ) ) {
 		machine->via1->set(VIA_REG::ACR, 4);
 	} else {

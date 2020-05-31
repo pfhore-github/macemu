@@ -6,7 +6,7 @@
 #include "mem.hpp"
 #include "scc.hpp"
 #include "iop.hpp"
-#include "scc_impl.hpp"
+#include "z8530.hpp"
 // TODO
 void MSC_VIA1::cb2_out(bool v) {
 	base->msc->c_in = base->msc->c_in << 1 | v;
@@ -21,7 +21,7 @@ MSC::MSC() {
 	// TODO
 	asc = newEASC();
 	msc = std::make_shared<MSC_REG>();
-	scc = std::make_shared<SCC>(std::make_shared<Z85C80>());
+	scc = newZ85C80();
 	scsi = std::make_shared<Ncr5380>();
 	vdac = std::make_shared<VDAC>(); 
 }

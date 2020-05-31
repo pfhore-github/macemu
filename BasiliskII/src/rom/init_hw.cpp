@@ -105,12 +105,12 @@ bool ram_check() {
 	switch( GEN ) {
 	case 4 : 
 		// GLUE;  $A0040
-		machine->via2->write( VIA_REG::ORA, machine->via2->read( VIA_REG::ORA ) | 0xC0 );
+		machine->via2->write( VIA_REG::RA, machine->via2->read( VIA_REG::RA ) | 0xC0 );
 		if( ! X_A01C6(ram_slots, sum_size, mem_size) ) {
 			return false;
 		}
 		// $A030A
-		machine->via2->write( VIA_REG::ORA, machine->via2->read( VIA_REG::ORA )
+		machine->via2->write( VIA_REG::RA, machine->via2->read( VIA_REG::RA )
 							  & VIA_RAMSIZE[ mem_size & 0xf ] );
 		offset = 28;
 		break;

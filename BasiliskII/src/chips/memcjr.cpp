@@ -8,7 +8,7 @@
 #include "asc.hpp"
 #include "scc.hpp"
 #include "sonic.hpp"
-#include "scc_impl.hpp"
+#include "z8530.hpp"
 void QuitEmulator();
 uint8_t MEMCjr_REG1::read(int addr) {
 	return 0;
@@ -27,7 +27,7 @@ MEMCjr::MEMCjr() {
 	via1 = std::make_shared<VIA1>();
 	via2 = std::make_shared<VIA2>();
 	asc = newPlaneASC();
-	scc = std::make_shared<SCC>(std::make_shared<Z8530>());
+	scc = newZ8530();
 	reg1 = std::make_shared<MEMCjr_REG1>();
 	reg2 = std::make_shared<MEMCjr_REG2>();
 	ether = std::make_shared<SONIC>();

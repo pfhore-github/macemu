@@ -7,10 +7,10 @@
 #include "machine.hpp"
 #include "ncr5380.hpp"
 #include "scc.hpp"
+#include "z8530.hpp"
 #include "via1.hpp"
 #include "via2.hpp"
 #include "asc.hpp"
-#include "scc_impl.hpp"
 void QuitEmulator();
 uint8_t JAWS_REG::read(int addr) {
 	return 0;
@@ -78,7 +78,7 @@ JAWS::JAWS() {
 	via1 = std::make_shared<VIA1>();
 	via2 = std::make_shared<JawsVia2>();
 	asc = newEASC();
-	scc = std::make_shared<SCC>(std::make_shared<Z85C80>());
+	scc = newZ8530();
 	scsi = std::make_shared<Ncr5380>();
 	pb = std::make_shared<JAWS_REG>();
 	pb2 = std::make_shared<JAWS_REG2>();
@@ -128,7 +128,7 @@ Niagara::Niagara() {
 	via1 = via1_;
 	via2 = std::make_shared<VIA2>();
 	asc = newEASC(0xbb);
-	scc = std::make_shared<SCC_IOP>(std::make_shared<Z85C80>());
+	scc = newZ85C80( true );
 	scsi = std::make_shared<Ncr5380>();
 	pb = std::make_shared<PB_REG>();
 }

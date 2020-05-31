@@ -37,7 +37,6 @@ class VIA1 : public VIA {
 	// reg A
 	bool sync;
 	bool fd_head;
-	bool scc_wr_req;
 	uint8_t adb_state;
 	uint8_t last_cmd;
 	// reg B
@@ -57,6 +56,7 @@ protected:
 	void cb2_out(bool v) override;
 public:	
 	std::shared_ptr<ADB_VIA> adb_bus;
+	std::atomic<bool> scc_wr_req;
 	VIA1(int i = 1);
 };
 

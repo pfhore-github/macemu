@@ -21,7 +21,7 @@ BOOST_AUTO_TEST_CASE( orb_read_no_latch )  {
 	v.b[4].set_read_data( { false } );
 	v.b[5].set_read_data( { false } );
 	v.write( VIA_REG::DDRB, 0xC3 );
-	BOOST_TEST( v.read(VIA_REG::ORB) == 0x05 );
+	BOOST_TEST( v.read(VIA_REG::RB) == 0x05 );
 }
 
 BOOST_AUTO_TEST_CASE( orb_read_latch )  {
@@ -38,10 +38,10 @@ BOOST_AUTO_TEST_CASE( orb_read_latch )  {
 	v.b[7].set_read_data( { true } );
 	v.write( VIA_REG::DDRB, 0xC3 );
 	v.write( VIA_REG::ACR, 2 );
-	BOOST_TEST( v.read(VIA_REG::ORB) == 0x11 );
+	BOOST_TEST( v.read(VIA_REG::RB) == 0x11 );
 	v.cb1_in(true);
 	v.cb1_in(false);
-	BOOST_TEST( v.read(VIA_REG::ORB) == 0x05 );
+	BOOST_TEST( v.read(VIA_REG::RB) == 0x05 );
 }
 
 
@@ -49,7 +49,7 @@ BOOST_AUTO_TEST_CASE( orb_write )  {
 	VIA_TEST v;
 	v.write( VIA_REG::DDRB, 0xf0);
 	v.reset_written();
-	v.write( VIA_REG::ORB, 0xff);
+	v.write( VIA_REG::RB, 0xff);
 	for(int i = 0; i < 8; ++i ) {
 		if( i >= 4 ) {
 			v.b[i].verify( { true } );
@@ -72,7 +72,7 @@ BOOST_AUTO_TEST_CASE( ora_read_no_latch )  {
 	v.a[6].set_read_data( { true } );
 	v.a[7].set_read_data( { false } );
 	v.write( VIA_REG::DDRA, 0xf0);
-	BOOST_TEST( v.read(VIA_REG::ORA) == 0x55 );
+	BOOST_TEST( v.read(VIA_REG::RA) == 0x55 );
 }
 
 BOOST_AUTO_TEST_CASE( ora_read_latch )  {
@@ -89,17 +89,17 @@ BOOST_AUTO_TEST_CASE( ora_read_latch )  {
 	v.a[7].set_read_data( { false } );
 	v.write( VIA_REG::DDRA, 0xf0 );
 	v.write( VIA_REG::ACR, 1 );
-	BOOST_TEST( v.read(VIA_REG::ORA) == 0xAA );
+	BOOST_TEST( v.read(VIA_REG::RA) == 0xAA );
 	v.ca1_in(true);
 	v.ca1_in(false);
-	BOOST_TEST( v.read(VIA_REG::ORA) == 0x55 );
+	BOOST_TEST( v.read(VIA_REG::RA) == 0x55 );
 }
 
 BOOST_AUTO_TEST_CASE( ora_write )  {
 	VIA_TEST v;
 	v.write( VIA_REG::DDRA, 0xf0);
 	v.reset_written();
-	v.write( VIA_REG::ORA, 0xff);
+	v.write( VIA_REG::RA, 0xff);
 	for(int i = 0; i < 8; ++i ) {
 		if( i >= 4 ) {
 			v.a[i].verify( { true } );
@@ -208,7 +208,7 @@ BOOST_DATA_TEST_CASE( timer2_counter, bdata::xrange(2), irq)  {
 	v.write(VIA_REG::DDRB, 0xff);
 
 	for(int i = 0; i < 128; ++i ) {
-		v.write(VIA_REG::ORB, 1 << 6);
+		v.write(VIA_REG::RB, 1 << 6);
 	}
 	if( irq ) {
 		BOOST_TEST( v.irq_cnt == 1);
@@ -244,7 +244,7 @@ BOOST_AUTO_TEST_CASE( handshake_r ) {
 	for(int i = 0; i < 8; ++i ) {
 		v.a[i].set_read_data( { false } );
 	}
-	v.read( VIA_REG::ORA_H );
+	v.read( VIA_REG::RA_H );
 	v.ca2.verify( { false } );
 	v.reset_written();
 	v.ca1_in(true);
@@ -258,14 +258,14 @@ BOOST_AUTO_TEST_CASE( handshake_r_pulse ) {
 	for(int i = 0; i < 8; ++i ) {
 		v.a[i].set_read_data( { false } );
 	}
-	v.read( VIA_REG::ORA_H );
+	v.read( VIA_REG::RA_H );
 	v.ca2.verify( { false, true } );
 }
 
 BOOST_AUTO_TEST_CASE( handshake_w_a ) {
 	VIA_TEST v;
 	v.write(VIA_REG::PCR, 0x8);
-	v.write( VIA_REG::ORA_H, 0 );
+	v.write( VIA_REG::RA_H, 0 );
 	v.ca2.verify( { false } );
 	v.reset_written();
 	v.ca1_in(true);
@@ -276,7 +276,7 @@ BOOST_AUTO_TEST_CASE( handshake_w_a ) {
 BOOST_AUTO_TEST_CASE( handshake_w_b ) {
 	VIA_TEST v;
 	v.write(VIA_REG::PCR, 0x80);
-	v.write( VIA_REG::ORB, 0 );
+	v.write( VIA_REG::RB, 0 );
 	v.cb2.verify( { false } );
 	v.reset_written();
 	v.cb1_in(true);
@@ -287,7 +287,7 @@ BOOST_AUTO_TEST_CASE( handshake_w_b ) {
 BOOST_AUTO_TEST_CASE( pcr_ca1_negative ) {
 	VIA_TEST v;
 	v.write( VIA_REG::PCR, 0x8 );
-	v.write( VIA_REG::ORA_H, 0 );
+	v.write( VIA_REG::RA_H, 0 );
 	v.reset_written();
 	v.ca1_in( false );
 	v.ca1_in( false );
@@ -304,7 +304,7 @@ BOOST_AUTO_TEST_CASE( pcr_ca1_positive ) {
 	VIA_TEST v;
 	v.ca1_in( true );
 	v.write( VIA_REG::PCR, 0x9 );
-	v.write( VIA_REG::ORA_H, 0 );
+	v.write( VIA_REG::RA_H, 0 );
 	v.reset_written();
 	v.ca1_in( true );
 	v.ca2.verify( {} );
@@ -332,7 +332,7 @@ BOOST_AUTO_TEST_CASE( pcr_ca2_input_negative ) {
 	BOOST_TEST( ! ( v.read( VIA_REG::IFR) & IRQ_FLAG::CA2 ) );
 	v.ca2_in_push( false );
 	BOOST_TEST( v.read( VIA_REG::IFR) & IRQ_FLAG::CA2 );
-	v.write( VIA_REG::ORA_H, 0 );
+	v.write( VIA_REG::RA_H, 0 );
 	BOOST_TEST( ! ( v.read( VIA_REG::IFR) & IRQ_FLAG::CA2 ) );
 }
 
@@ -352,7 +352,7 @@ BOOST_AUTO_TEST_CASE( pcr_ca2_independent_negative ) {
 	BOOST_TEST( ! ( v.read( VIA_REG::IFR) & IRQ_FLAG::CA2 ) );
 	v.ca2_in_push( false );
 	BOOST_TEST( v.read( VIA_REG::IFR) & IRQ_FLAG::CA2 );
-	v.write( VIA_REG::ORA_H, 0 );
+	v.write( VIA_REG::RA_H, 0 );
 	BOOST_TEST( v.read( VIA_REG::IFR) & IRQ_FLAG::CA2 );
 }
 
@@ -373,7 +373,7 @@ BOOST_AUTO_TEST_CASE( pcr_ca2_input_positive ) {
 	BOOST_TEST( ! ( v.read( VIA_REG::IFR) & IRQ_FLAG::CA2 ) );
 	v.ca2_in_push( true );
 	BOOST_TEST( v.read( VIA_REG::IFR) & IRQ_FLAG::CA2 );
-	v.write( VIA_REG::ORA_H, 0 );
+	v.write( VIA_REG::RA_H, 0 );
 	BOOST_TEST( ! ( v.read( VIA_REG::IFR) & IRQ_FLAG::CA2 ) );
 }
 
@@ -394,7 +394,7 @@ BOOST_AUTO_TEST_CASE( pcr_ca2_independent_positive ) {
 	BOOST_TEST( ! ( v.read( VIA_REG::IFR) & IRQ_FLAG::CA2 ) );
 	v.ca2_in_push( true );
 	BOOST_TEST( v.read( VIA_REG::IFR) & IRQ_FLAG::CA2 );
-	v.write( VIA_REG::ORA_H, 0 );
+	v.write( VIA_REG::RA_H, 0 );
 	BOOST_TEST( v.read( VIA_REG::IFR) & IRQ_FLAG::CA2 );
 }
 
@@ -413,7 +413,7 @@ BOOST_AUTO_TEST_CASE( pcr_ca2_manual_high ) {
 BOOST_AUTO_TEST_CASE( pcr_cb1_negative ) {
 	VIA_TEST v;
 	v.write( VIA_REG::PCR, 0x80 );
-	v.write( VIA_REG::ORB, 0 );
+	v.write( VIA_REG::RB, 0 );
 	v.reset_written();
 	v.cb1_in( false );
 	v.cb1_in( false );
@@ -429,7 +429,7 @@ BOOST_AUTO_TEST_CASE( pcr_cb1_positive ) {
 	VIA_TEST v;
 	v.cb1_in( true );
 	v.write( VIA_REG::PCR, 0x90 );
-	v.write( VIA_REG::ORB, 0 );
+	v.write( VIA_REG::RB, 0 );
 	v.reset_written();
 	v.cb1_in( true );
 	v.cb2.verify( {} );
@@ -457,7 +457,7 @@ BOOST_AUTO_TEST_CASE( pcr_cb2_input_negative ) {
 	BOOST_TEST( ! ( v.read( VIA_REG::IFR) & IRQ_FLAG::CB2 ) );
 	v.cb2_in_push( false );
 	BOOST_TEST( v.read( VIA_REG::IFR) & IRQ_FLAG::CB2 );
-	v.write( VIA_REG::ORB, 0 );
+	v.write( VIA_REG::RB, 0 );
 	BOOST_TEST( ! ( v.read( VIA_REG::IFR) & IRQ_FLAG::CB2 ) );
 }
 
@@ -477,7 +477,7 @@ BOOST_AUTO_TEST_CASE( pcr_cb2_independent_negative ) {
 	BOOST_TEST( ! ( v.read( VIA_REG::IFR) & IRQ_FLAG::CB2 ) );
 	v.cb2_in_push( false );
 	BOOST_TEST( v.read( VIA_REG::IFR) & IRQ_FLAG::CB2 );
-	v.write( VIA_REG::ORB, 0 );
+	v.write( VIA_REG::RB, 0 );
 	BOOST_TEST( v.read( VIA_REG::IFR) & IRQ_FLAG::CB2 );
 }
 
@@ -498,7 +498,7 @@ BOOST_AUTO_TEST_CASE( pcr_cb2_input_positive ) {
 	BOOST_TEST( ! ( v.read( VIA_REG::IFR) & IRQ_FLAG::CB2 ) );
 	v.cb2_in_push( true );
 	BOOST_TEST( v.read( VIA_REG::IFR) & IRQ_FLAG::CB2 );
-	v.write( VIA_REG::ORB, 0 );
+	v.write( VIA_REG::RB, 0 );
 	BOOST_TEST( ! ( v.read( VIA_REG::IFR) & IRQ_FLAG::CB2 ) );
 }
 
@@ -521,7 +521,7 @@ BOOST_AUTO_TEST_CASE( pcr_cb2_independent_positive ) {
 	BOOST_TEST( ! ( v.read( VIA_REG::IFR) & IRQ_FLAG::CB2 ) );
 	v.cb2_in_push( true );
 	BOOST_TEST( v.read( VIA_REG::IFR) & IRQ_FLAG::CB2 );
-	v.write( VIA_REG::ORB, 0 );
+	v.write( VIA_REG::RB, 0 );
 	BOOST_TEST( v.read( VIA_REG::IFR) & IRQ_FLAG::CB2 );
 }
 

@@ -30,9 +30,9 @@ BOOST_AUTO_TEST_CASE( via1 )  {
 
 	machine->via1 = via1;
 	TEST_ROM( 02E8C );
-	via1->verify( VIA_REG::ORA, { 1 } );
+	via1->verify( VIA_REG::RA, { 1 } );
 	via1->verify( VIA_REG::DDRA, { 0x3f } );
-	via1->verify( VIA_REG::ORB, { 0x37 } );
+	via1->verify( VIA_REG::RB, { 0x37 } );
 	via1->verify( VIA_REG::DDRB, { 0xb7 });
 	via1->verify( VIA_REG::PCR, { 0 });
 	via1->verify( VIA_REG::ACR, { 0 });
@@ -46,12 +46,12 @@ BOOST_AUTO_TEST_CASE( via2 )  {
 	AR(1) = 0x40803688;
 	DR(0) = 1 << INIT_HW_FLG_T::VIA2;
 	auto via2 = std::make_shared<IO_TEST<VIA2>>();
-	via2->set_read_data( VIA_REG::ORA, { 0x80 } );
+	via2->set_read_data( VIA_REG::RA, { 0x80 } );
 	machine->via2 = via2;
 	TEST_ROM( 02E8C );
-	via2->verify(VIA_REG::ORA, { 0x80 });
+	via2->verify(VIA_REG::RA, { 0x80 });
 	via2->verify(VIA_REG::DDRA, { 0xc0 });
-	via2->verify(VIA_REG::ORB, { 0x07 });
+	via2->verify(VIA_REG::RB, { 0x07 });
 	via2->verify(VIA_REG::DDRB, { 0x80 });
 	via2->verify(VIA_REG::PCR, { 0x60 });
 	via2->verify(VIA_REG::ACR, { 0xc0 });
@@ -71,7 +71,7 @@ BOOST_AUTO_TEST_CASE( rbv_pbDuo_w_fpu )  {
 	machine->rbv = rbv;
 	TEST_ROM( 02E8C );
 	rbv->verify(RBV_REG::IER, { 0x7f });
-	rbv->verify(RBV_REG::ORB, { 0x8f });
+	rbv->verify(RBV_REG::RB, { 0x8f });
 	rbv->verify(RBV_REG::SIER, { 0x7f });
 		
 }
@@ -87,7 +87,7 @@ BOOST_AUTO_TEST_CASE( rbv_iici )  {
 	machine->rbv = rbv;
 	TEST_ROM( 02E8C );
 	rbv->verify(RBV_REG::IER, { 0x7f });
-	rbv->verify(RBV_REG::ORB, { 0x8f });
+	rbv->verify(RBV_REG::RB, { 0x8f });
 	rbv->verify(RBV_REG::MONP, { 0x40 });
 	rbv->verify(RBV_REG::SIER, { 0xff });
 }

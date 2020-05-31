@@ -2,6 +2,7 @@
 #include "iop.hpp"
 #include "devices/serial.hpp"
 #include <memory>
+#include <atomic>
 /* SCC (Z8530) */
 class SCC_impl;
 namespace SCC_REG {
@@ -12,24 +13,49 @@ enum SCC_REG_t {
 	A_DATA,	
 };
 }
+enum class SCC_INT {
+	NONE = -1,
+	/* internal name */
+	TRANS = 0,
+	EXTERNAL = 1,
+	RECV_AVAIL = 2,
+	RECV_SPECIAL = 3,
+	/* external name */
+	TRANS_B = 0,
+	EXTERNAL_B = 1,
+	RECV_AVAIL_B = 2,
+	RECV_SPECIAL_B = 3,
+	TRANS_A = 4,
+	EXTERNAL_A = 5,
+	RECV_AVAIL_A = 6,
+	RECV_SPECIAL_A = 7
+};
+
 class SCC : virtual public IO_BASE {
 	std::shared_ptr<SCC_impl> modem, printer;
+	// MIC
+	bool VIS, NV, DLC, MIE, status_H, INTACK;
+	std::atomic<uint8_t> vec_h;
+	std::atomic<uint8_t> vec_l;
+	std::atomic<uint8_t> vec_f;
+	// modem port RR2
+	std::atomic<uint8_t> int_pending;
+	SCC_INT IUS;
+	void write_MIC(uint8_t);
 public:
 	SCC(const std::shared_ptr<SCC_impl>& o);
-	bool wait_request();
 	// reset
 	void reset();
 	// connect
 	void connect_modem(const std::shared_ptr<SerialDevice>&);
 	void connect_printer(const std::shared_ptr<SerialDevice>&);
-	// input signal
-	void r_xd(SerialDevice& dev, uint8_t v);
-	void hsk_i(SerialDevice& dev);
-	void gp_i(SerialDevice& dev, bool v);
 	
 	uint8_t read(int) override;
 	void write(int, uint8_t) override;
-	void irq();
+
+protected:
+	// IRQ
+	void interrupt(SCC_INT i);
 	friend class SCC_impl;
 };
 // IOP enabled

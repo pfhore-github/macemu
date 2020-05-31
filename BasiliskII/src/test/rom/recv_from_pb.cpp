@@ -43,15 +43,15 @@ BOOST_AUTO_TEST_CASE( msc_ok ) {
 BOOST_AUTO_TEST_CASE( jaws ) {
 	prepare(MB_TYPE::JAWS);
 	machine->via1->write( VIA_REG::DDRA, 0x28 ); 
-	machine->via1->write( VIA_REG::ORA, 0x21 ); 
+	machine->via1->write( VIA_REG::RA, 0x21 ); 
 	machine->via1->write( VIA_REG::DDRB, 0x87 ); 
-	machine->via1->write( VIA_REG::ORB, 0x87 ); 
+	machine->via1->write( VIA_REG::RB, 0x87 ); 
 	machine->via2->write( VIA_REG::DDRA, 0x00 ); 
-	machine->via2->write( VIA_REG::ORA, 0x00 ); 
+	machine->via2->write( VIA_REG::RA, 0x00 ); 
 	machine->via2->write( VIA_REG::DDRB, 0xBD ); 
-	machine->via2->write( VIA_REG::ORB, 0x66 ); 
+	machine->via2->write( VIA_REG::RB, 0x66 ); 
 	UT_get_sawsVia2( machine->via2, 0xab );
-	machine->via2->clear( VIA_REG::ORB, 2);
+	machine->via2->clear( VIA_REG::RB, 2);
 	AR(0) = 0x40803608;
 	AR(2) = 0x50f00000;
 	AR(3) = 0x50f02000;

@@ -10,14 +10,14 @@
 #include "machine.hpp"
 #include "ncr5380.hpp"
 #include "asc.hpp"
-#include "scc_impl.hpp"
+#include "z8530.hpp"
 GLU::GLU() {
 	via1 = std::make_shared<VIA1>();
 	auto adb_via_bus = std::make_shared<ADB_VIA>();
 	adb_bus = adb_via_bus;
 	via2 = std::make_shared<VIA2>();
 	asc = newPlaneASC();
-	scc = std::make_shared<SCC>(std::make_shared<Z8530>());
+	scc = newZ8530();
 	scsi = std::make_shared<Ncr5380>();
 	// connect VIA1 <-> ADB
 	via1->adb_bus = adb_via_bus;

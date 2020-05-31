@@ -2,7 +2,7 @@
 #include "via.hpp"
 namespace RBV_REG {
 enum RBV_REG_t {
-	ORB,
+	RB,
 	EXP,
 	SIFR,
 	IFR,
@@ -10,7 +10,7 @@ enum RBV_REG_t {
 	CHPT,
 	SIER,
 	IER,
-	ORA = SIFR,
+	RA = SIFR,
 	MSC_RBV_X16 = 16,
 	PB_RBV_X33 = 33,
 };

@@ -25,7 +25,7 @@ BOOST_AUTO_TEST_CASE( non_msc ) {
 	AR(5) = 0;
 	DR(3) = 0xff;
 	machine->via2->write(VIA_REG::DDRB, 0xbd);
-	machine->via2->write(VIA_REG::ORB, 0x66);
+	machine->via2->write(VIA_REG::RB, 0x66);
 	TEST_ROM( 478C2 );
 	BOOST_TEST( UT_get_JawsVia2(machine->via2) == 0xff );
 	BOOST_TEST( DR(2) == 0 );

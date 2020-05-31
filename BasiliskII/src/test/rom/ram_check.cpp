@@ -54,10 +54,10 @@ BOOST_DATA_TEST_CASE( success, bdata::xrange(1, 8), n ) {
 		.nth_is(1, std::bitset<4>("0000"), 0, CHECK_DATA )
 		.nth_is(2, std::bitset<4>("0000"), 0x04000000, CHECK_DATA );
 	auto via2 = std::make_shared<IO_TEST<VIA2>>(0);
-	via2->set_read_data( VIA_REG::ORA, { 0x3f, 0xff } );
+	via2->set_read_data( VIA_REG::RA, { 0x3f, 0xff } );
 	machine->via2 = via2;
 	TEST_ROM( A0000 );
-	via2->verify( VIA_REG::ORA, { 0xff, uint8_t(0xff & VIA_RAMSIZE[ n ]) } );
+	via2->verify( VIA_REG::RA, { 0xff, uint8_t(0xff & VIA_RAMSIZE[ n ]) } );
 	BOOST_CHECK_EQUAL( read_l( 2*sz-28), 0 ); // BASE[0]
 	BOOST_CHECK_EQUAL( read_l( 2*sz-24), sz ); // SIZE[0]
 	BOOST_CHECK_EQUAL( read_l( 2*sz-20), sz ); // BASE[1]
@@ -77,10 +77,10 @@ BOOST_AUTO_TEST_CASE( fail_A ) {
 		.nth_is(1, std::bitset<4>("0100"), 0, CHECK_DATA )
 		.nth_is(2, std::bitset<4>("0000"), 0x04000000, CHECK_DATA );
 	auto via2 = std::make_shared<IO_TEST<VIA2>>(0);
-	via2->set_read_data( VIA_REG::ORA, { 0x3f, 0xff } );
+	via2->set_read_data( VIA_REG::RA, { 0x3f, 0xff } );
 	machine->via2 = via2;
 	TEST_ROM( A0000 );
-	via2->verify( VIA_REG::ORA, { 0xff } );
+	via2->verify( VIA_REG::RA, { 0xff } );
 	BOOST_CHECK( ! cpu.Z );
 }
 
@@ -93,10 +93,10 @@ BOOST_AUTO_TEST_CASE( fail_B ) {
 		.nth_is(1, std::bitset<4>("0000"), 0, CHECK_DATA )
 		.nth_is(2, std::bitset<4>("1000"), 0x04000000, CHECK_DATA );
 	auto via2 = std::make_shared<IO_TEST<VIA2>>(0);
-	via2->set_read_data( VIA_REG::ORA, { 0x3f, 0xff } );
+	via2->set_read_data( VIA_REG::RA, { 0x3f, 0xff } );
 	machine->via2 = via2;
 	TEST_ROM( A0000 );
-	via2->verify( VIA_REG::ORA, { 0xff } );
+	via2->verify( VIA_REG::RA, { 0xff } );
 	BOOST_CHECK( ! cpu.Z );
 }
 BOOST_AUTO_TEST_SUITE_END()

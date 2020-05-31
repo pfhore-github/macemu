@@ -35,8 +35,8 @@ enum PCR_MODE_t : uint32_t {
 }
 namespace VIA_REG {
 enum VIA_REG_t {
-	ORB = 0, /* reg B */
-	ORA_H, /* reg A with handshake */
+	RB = 0, /* reg B */
+	RA_H, /* reg A with handshake */
 	DDRB, /* reg B direction */
 	DDRA, /* reg A direction */
 	TIMER1_L, /* Timer1 low bit */
@@ -50,7 +50,7 @@ enum VIA_REG_t {
 	PCR, /* peprpheral control register */
 	IFR, /* interrupt flag register */
 	IER, /* interrupt enable register */
-	ORA, /* reg A without handshake */
+	RA, /* reg A without handshake */
 };
 }
 // 1tick(783.36kHz) = 1.27655 us

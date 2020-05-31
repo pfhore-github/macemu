@@ -8,7 +8,7 @@
 #include "machine.hpp"
 #include "ncr5380.hpp"
 #include "asc.hpp"
-#include "scc_impl.hpp"
+#include "z8530.hpp"
 #include "intel.h"
 void QuitEmulator();
 namespace OSS_IRQ {
@@ -60,7 +60,7 @@ OSS::OSS() {
 	// TODO
 	oss = std::make_shared<OSS_REG>();
 	asc = newPlaneASC();
-	scc = std::make_shared<SCC_IOP>(std::make_shared<Z8530>());
+	scc = newZ8530( true );
 	scsi = std::make_shared<Ncr5380Ext>();
 	exp0 = std::make_shared<IIFX_exp0>();
 	exp1 = std::make_shared<IIFX_exp1>();

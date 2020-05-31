@@ -8,6 +8,7 @@
 #include "via1.hpp"
 #include "machine.hpp"
 #include "scc.hpp"
+#include "glu.hpp"
 extern bool adb_interrupt;
 
 VIA1::VIA1(int i) :VIA(i), sync(false), fd_head(false) {
@@ -21,7 +22,7 @@ bool VIA1::readA(int n) {
 	case 4 : return machine->model_map[2];
 	case 5 : return fd_head;
 	case 6 : return machine->model_map[3];
-	case 7 : return machine->scc->wait_request();
+	case 7 : return scc_wr_req.exchange(true);
 	}
 	return false;
 }
@@ -38,6 +39,11 @@ bool VIA1::readB(int n) {
 void VIA1::writeA(int n, bool v) {
 	switch(n) {
 	case 3 : sync = v; return;
+	case 4 :
+		if( v && dynamic_cast<GLU*>(machine.get()) ) {
+			machine->rom_mirror = true;
+		}
+		return;
 	case 5 : fd_head = v; return;
 	case 7 : scc_wr_req = v; return;
 	default : return;

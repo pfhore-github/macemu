@@ -5,7 +5,7 @@
 #include "ncr5380.hpp"
 #include "rbv.hpp"
 #include "scc.hpp"
-#include "scc_impl.hpp"
+#include "z8530.hpp"
 #include "via1.hpp"
 #include "via2.hpp"
 #include "asc.hpp"
@@ -17,7 +17,7 @@ MCU::MCU()  {
 	via1 = std::make_shared<VIA1>(6);
 	via2 = std::make_shared<VIA2>();
 	asc = newPlaneASC();
-	scc = std::make_shared<SCC_IOP>(std::make_shared<Z85C80>());
+	scc = newZ85C80();
 	vdac = std::make_shared<VDAC>();
 	mcu = std::make_shared<MCU_REG>();
 	// TODO actually 53c96 

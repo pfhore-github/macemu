@@ -26,7 +26,7 @@ void init_hw3() {
 	if( INIT_HW_FLG.test( INIT_HW_FLG_T::MCU ) ) {
 		uint32_t d4 = 0x124f0810;
 		machine->via2->clear(VIA_REG::DDRB, 5); // VIA2B_vTfr1;
-		if( machine->via2->bit(VIA_REG::ORB, 5 ) ) {
+		if( machine->via2->bit(VIA_REG::RB, 5 ) ) {
 			d4 = 0x138b0810;
 		}
 		for(uint32_t i = 0, addr = 0; i < 32; ++i, d4 >>= 1, addr += 4 ) {
@@ -87,7 +87,7 @@ void init_hw3() {
 			// $49C4
 			machine->via1->write(VIA_REG::DDRA, 0x28);
 			// get CPUID
-			uint8_t cpu_id = 0x14 &	machine->via1->read(VIA_REG::ORA);
+			uint8_t cpu_id = 0x14 &	machine->via1->read(VIA_REG::RA);
 			cpu_id >>= 2;
 			if( cpu_id & (1<<2) ) {
 				cpu_id |= 1 << 1;

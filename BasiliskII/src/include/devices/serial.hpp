@@ -1,5 +1,5 @@
 #pragma once
-#include <optional>
+#include <vector>
 #include <memory>
 class SCC_impl;
 class SerialDevice {
@@ -10,9 +10,9 @@ class SerialDevice {
 	std::weak_ptr<SCC_impl> connected_to;
 public:
     // handshake output
-	virtual void hsk_o(bool t) = 0;
+	virtual void hsk_o() {}
     // data output
-	virtual void t_xd(uint8_t v) = 0;
-    // data output
-	virtual void abort() = 0;
+	virtual void transmit_xd(const std::vector<bool>& ) {}
+	void recieve_xd(const std::vector<bool>& v);
+
 };
