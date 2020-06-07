@@ -13,6 +13,7 @@
 #include "io.hpp"
 #include "wrapper.hpp"
 #include "mock.hpp"
+#include <deque>
 #define FPU_R (*(M68040_FPU*)fpu)
 extern uint8_t *RAMBaseHost;
 struct conds {

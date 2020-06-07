@@ -3,6 +3,8 @@
 #include "devices/serial.hpp"
 #include <memory>
 #include <atomic>
+#include <shared_mutex>
+#include <mutex>
 /* SCC (Z8530) */
 class SCC_impl;
 namespace SCC_REG {
@@ -35,11 +37,9 @@ class SCC : virtual public IO_BASE {
 	std::shared_ptr<SCC_impl> modem, printer;
 	// MIC
 	bool VIS, NV, DLC, MIE, status_H, INTACK;
-	std::atomic<uint8_t> vec_h;
-	std::atomic<uint8_t> vec_l;
+	std::shared_mutex rr2_mutex;
 	std::atomic<uint8_t> vec_f;
-	// modem port RR2
-	std::atomic<uint8_t> int_pending;
+
 	SCC_INT IUS;
 	void write_MIC(uint8_t);
 public:
@@ -49,10 +49,19 @@ public:
 	// connect
 	void connect_modem(const std::shared_ptr<SerialDevice>&);
 	void connect_printer(const std::shared_ptr<SerialDevice>&);
-	
+	uint8_t get_int_vec();
 	uint8_t read(int) override;
 	void write(int, uint8_t) override;
 
+	// HLE
+	void write_reg(bool is_modem, int reg, uint8_t value);
+	uint8_t read_reg(bool is_modem, int reg);
+	void write_regA(int reg, uint8_t value) { write_reg(true, reg, value); }
+	void write_regB(int reg, uint8_t value) { write_reg(false, reg, value); }
+	uint8_t read_regA(int reg) { return read_reg(true, reg); }
+	uint8_t read_regB(int reg) { return read_reg(false, reg); }
+	
+	uint8_t interrupt_ack();
 protected:
 	// IRQ
 	void interrupt(SCC_INT i);

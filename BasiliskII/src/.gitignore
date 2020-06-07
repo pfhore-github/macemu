@@ -6,4 +6,5 @@ test/**/bin/*
 **/cov/**
 CMakeFiles/
 quadra630.rom
+CMakeCache.txt
 

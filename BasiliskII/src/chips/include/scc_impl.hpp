@@ -2,6 +2,7 @@
 #include <atomic>
 #include <queue>
 #include "boost/lockfree/queue.hpp"
+#include "boost/crc.hpp"
 namespace WREG {
 enum {
 	CMD,
@@ -15,6 +16,17 @@ enum {
 };
 }
 static constexpr int W_CMD_REG = 0;
+enum class RR0 : unsigned char {
+	RX_CHAR_AVAILABLE = 1U,
+	BAUD_ZERO_COUNT = 1U << 1,
+	TX_BUFFER_EMPTY = 1U << 2,
+	DCD = 1U << 3,
+	SYNC_HUNT = 1U << 4, 
+	CTS = 1U << 5, 
+	TX_OVERRUN_EOM = 1U << 6,
+	BREAK_ABORT = 1U << 7
+};
+
 class SCC_impl {
 	friend class SCC;
 	friend class TransferModeBase;
@@ -26,18 +38,17 @@ protected:
 	std::atomic<uint8_t> rr[16];
 	std::atomic<uint8_t> wr[16];
 	// RR0
-	std::atomic<bool> rx_char_avaliable;
-	std::atomic<bool> zero_count;
-	std::atomic<bool> tx_buffer_empty;
-	std::atomic<bool> dcd;
-	std::atomic<bool> sync_hunt;
-	std::atomic<bool> cts;
-	bool tx_overrun_eom;
-	std::atomic<bool> break_abort ;
+	std::atomic<uint8_t> current_rr0;
+	uint8_t latched_rr0;
 	// RR1
 	std::atomic<bool> all_sent;
 	uint8_t residue_codes;
 	bool end_of_frame;
+	// RR3
+	bool external_pending;
+	bool trans_pending;
+	bool recv_avail_pending;
+	bool recv_special_pending;
     // RR8
 	uint8_t recv_data;
 	// WR1
@@ -48,61 +59,72 @@ protected:
 	bool transmit_empty_interrupt;
 	bool external_interrupt_enable;
 	// WR3
-	uint8_t async_recv_size = 5;
-	bool auto_enable = false;
-	bool recv_hunt_mode = false;
-	bool recv_crc_enable = false;
-	bool recv_addr_search_mode = false;
-	bool recv_sync_char_load_inhibit = false;
-	bool recv_enable = false;
+	uint8_t recv_size;
+	bool auto_enable;
+	bool recv_hunt_mode;
+	bool recv_crc_enable;
+	bool recv_addr_search_mode;
+	bool recv_sync_char_load_inhibit;
+	bool recv_enable;
 	// WR4
-	bool parity_enable = false;
-	bool parity_even = false;
-	bool async_mode = false;
+	bool parity_enable;
+	bool parity_even;
+	bool async_mode;
+	bool sdlc_mode;
+	uint8_t sync_size;
 	// WR5
-	uint8_t async_send_size = 5;
+	uint8_t send_size = 5;
+	bool crc_is_16;
 	bool rts = true;
+	bool enable_crc;
+	// WR6/7
+	uint16_t sync_char;
+	// WR10
+	bool sync_6bit = false;
+	bool crc_init;
 	// WR 14
 	bool dtr_enable = false;
 	// WR 15
-	bool break_abort_int_enable;
-	bool underrun_eom_int_enable;
-	bool cts_int_enable;
-	bool sync_hunt_enable;
-	bool dct_int_enable;
-	bool zero_count_enable;
+	uint8_t external_status_int_enable;
 	
 	SCC_impl(bool is_modem);
-	void transmit(const std::vector<bool>& w);
+	uint8_t decode_byte(uint8_t w);
 	int reg_ptr;
 	void interrupt(SCC_INT i);
 public:
 	// data read
-	void recieve_xd( const std::vector<bool>& vs);
+	void recieve_xd(const stream_t& in);
 	// handshake input
-	void hsk_i();
+	void hsk_i(bool v);
 	// GP input
 	void gp_i(bool v);
 
 	virtual std::shared_ptr<SCC_impl> clone(bool t) = 0;
 	std::shared_ptr<SerialDevice> device;
 	// FIFO doens't overflow(no overrun support...)
-	boost::lockfree::queue<uint16_t> read_buffers { 3 };
-	std::vector<bool> send_pending;
+	boost::lockfree::queue<uint16_t> read_buffers { 256 };
+	std::vector<data_async> send_pending;
 	uint8_t top_error;
 	virtual ~SCC_impl() {}
 	uint8_t read_reg();
 	void write_reg(uint8_t);
 	void cmd(uint8_t c);
 	uint8_t read_data();
-	void write_data(const uint8_t v);
+	void write_data(uint8_t v);
 	void ch_reset();
 	void reset();
 	void write_reg0(uint8_t);
 private:
 	// internal
 	bool first_letter;
-	bool r0_latched;
+	bool latch_enable;
+	boost::crc_16_type send_crc16;
+	boost::crc_ccitt_type send_crc_ccitt;
+	boost::crc_16_type recv_crc16;
+	boost::crc_ccitt_type recv_crc_ccitt;
+	data_sync sync_data;
+	uint16_t recieved_crc;
+	void int_external(RR0);
 };
 // NMOS
 class Z8530 : public SCC_impl {
