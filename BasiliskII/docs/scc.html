@@ -17,6 +17,7 @@
 	  <dt>DCD(入力)</dt><dd>GPi信号</dd>
 	  <dt>DTR(出力)</dt><dd>HSKoA(ハンドシェイク・出力)信号</dd>
 	  <dt>REQ(出力：ターゲットはVIA1)</dt><dd>SCC wait/request</dd>
+	  <dt>SYNC</dt><dd>Macintoshでは未実装</dd>
 	</dl>
 	<h2>外部レジスタ</h2>
 	<dl>
@@ -71,14 +72,16 @@
 	  <tr><th>000XXXXX</th><td>5</td></tr>
 	</table>
 	<p>受信時は、非同期モードの場合、非更新ビットは1で埋められ、同期モードの場合は、未定義である。</p>
-	<h3>非同期モード</h3>
-	<p>非同期モードの信号が開始ビット1、 1-8ビットのデータフィールド(LSB-first)、任意のパリティビット、サイズ1, 1.5, 2クロック分の終了ビット1で表現される。</p>
-	<h3>同期モード</h3>
-	<p>同期モードの信号は、最初にSYNC文字（6,8,12,16ビット)が送信され、その後に、任意のデータ列(パリティありの場合あり）が続き、最後にCRCデータが送信される。</p>
-	<h3>SDLCモード</h3>
-	<p>SDLCモードの信号は、最初に$7E文字(~)が送信され、その後に、アドレス(8bit)、制御バイト(8bit)、任意のデータ列(パリティありの場合あり）、CRCデータが続き、再び$7E文字(~)が来て終わる。</p>
+	<p>以下は各モードで送信されるビット列である。ここで、各データは１〜８ビットのLSBファーストのデータ＋オプションのパリティビットの最大9ビットである</p>
+	<dl>
+	<dt>非同期モード</dt>
+	<dd> [start bit(0)] [data] [ stop bit(1;1/1.5/2 clock) ]</dd>
+	<dt>同期モード</dt>
+	<dd> [sync char(6/8/12/16 bit) ] [data]* [ CRC ] </dd>
+	<dt>SDLCモード</dt>
+	<dd> [ begin flag($7E) ] [ address (8bit) ] [ ctl (8bit) ] [data]* [ CRC ] [ end flag( $7E ) ]</dd>
 	<h2>内部レジスタ</h2>
-	<table>
+	<table><caption>書き込み</caption>
 	  <tr>
 		<th>番号</th><th>名前</th>
 		<th >7(#80)</th><th >6(#40)</th><th >5(#20)</th><th >4(#10)</th>
@@ -88,9 +91,9 @@
 		<td colspan="2">
 		  <table><caption>CRC初期化</caption>
 			<tr><th>00</th><td>何もしない</td></tr>
-			<tr><th>01</th><td>受信CRCの初期化</td></tr>
-			<tr><th>10</th><td>送信CRCの初期化</td></tr>
-			<tr><th>11</th><td>メッセージ終了を検知できるようにする</td></tr>
+			<tr><th>01</th><td>受信CRC</td></tr>
+			<tr><th>10</th><td>送信CRC</td></tr>
+			<tr><th>11</th><td>メッセージ終了ラッチ</td></tr>
 		  </table>
 		</td>
 		<td colspan="3">
@@ -99,7 +102,7 @@
 			<tr><th>001</th><td>レジスタ番号として8-15を選択する</td></tr>
 			<tr><th>010</th><td>外部割り込みのラッチを解放する</td></tr>
 			<tr><th>011</th><td>SDLCアボートを送信して、メッセージを終了する</td></tr>
-			<tr><th>100</th><td id="reset_next_char">次に受信した文字を先頭文字として扱う</td></tr>
+			<tr><th>100</th><td id="reset_next_char">先頭文字状態初期化</td></tr>
 			<tr><th>101</th><td id="reset_tx_int">送信終了。これ以降、送信バッファが空になっても割り込みを発生させない</td></tr>
 			<tr><th>110</th><td>エラーのラッチを解放する</td></tr>
 			<tr><th>111</th><td>処理中の割り込み状態を初期化して低位の割り込みを検知できるようにする</td></tr>
@@ -124,8 +127,8 @@
 		<td colspan="2">
 		  <table><caption>受信割り込みモード</caption>
 			<tr><th>00</th><td>無効</td></tr>
-			<tr><th>01</th><td>受信完了以外の特殊状態と<a href="#reset_next_char">Enable Interrupt On Next Rx Character Command</a>を発行した直後の文字受信</td></tr>
-			<tr><th>10</th><td>受信完了以外の特殊状態と文字受信のたびにRecv interrupt on all chars or special cond</td></tr>
+			<tr><th>01</th><td>受信完了以外の特殊状態と<a href="#reset_next_char">先頭文字</a>受信</td></tr>
+			<tr><th>10</th><td>受信完了以外の特殊状態と文字受信のたびに</td></tr>
 			<tr><th>11</th><td>受信完了以外の特殊状態</td></tr>
 		  </table>
 		</td>
@@ -151,67 +154,107 @@
 		<td>SYNC文字をFIFOへのキューとCRC計算から除外する</td>
 		<td>受信有効化</td>
 	  </tr>
-	</table>
-	<table><caption>Internal(R)</caption>
-	  <tr><th rowspan="2">reg</th><th colspan="8">W</th>
-	  <tr>
-		<th>7(#80)</th><th>6(#40)</th><th>5(#20)</th><th>4(#10)</th><th>3(#08)</th><th>2(#04)</th><th>1(#02)</th><th>0(#01)</th>
-	  </tr>
-	  <tr><th>0</th>
+	  <tr><th>4</th><th>送受信パラメータ</th>
 		<td colspan="2">
-		  <table><caption>CRC reset</caption>
-			<tr><th>code</th><th>op</th></tr>
-			<tr><th>00</th><td>do noting</td></tr>
-			<tr><th>01</th><td>reset CRC checker</td></tr>
-			<tr><th>10</th><td>reset transmit CRC generator</td></tr>
-			<tr><th>11</th><td>reset transmit underrun/EOM latch</td></tr>
+		  <p>クロック倍率キャラクタあたりの受信ビット数</p>
+		  <table>
+			<tr><th>00</th><td>1倍</td></tr>
+			<tr><th>01</th><td>16倍</td></tr>
+			<tr><th>10</th><td>32倍</td></tr>
+			<tr><th>11</th><td>64倍</td></tr>
 		  </table>
 		</td>
-		<td colspan="3">
-		  <table><caption>CRC CMD</caption>
-			<tr><th>code</th><th>op</th></tr>
-			<tr><th>000</th><td>do noting</td></tr>
-			<tr><th>001</th><td>set high register</td></tr>
-			<tr><th>010</th><td>reset external/status interrupt</td></tr>
-			<tr><th>011</th><td>send abort</td></tr>
-			<tr><th>100</th><td>enable interrupt on next character</td></tr>
-			<tr><th>101</th><td>reset Transmit interrupt pending</td></tr>
-			<tr><th>110</th><td>error reset</td></tr>
-			<tr><th>111</th><td>reset highest IUS</td></tr>
-		  </table>
-		</td>
-		<td colspan="3">register number</td>
-		<td>break/abort</td>
-		<td>Transmit underrun/EOM</td>
-		<td>CTS(HSKiA pin)</td>
-		<td>sync/hunt</td>
-		<td>DCD</td>
-		<td>Tranmit buffer empty</td>
-		<td>zero count</td>
-		<td>recievec character avlaiable</td>
-	  </tr>
-	  <tr><th>1</th>
-		<td>WAIT/DMA Request Enable</td>
-		<td>WAIT/DMA Request Function</td>
-		<td>WAIT/DMA Request On Recv/Xfer</td>
 		<td colspan="2">
-		  <table><caption>recv interrupt modes</caption>
-			<tr><th>CODE</th><th>meaning</th></tr>
-			<tr><th>00</th><td>Recv interrupt disable</td></tr>
-			<tr><th>01</th><td>Recv interrupt on first char or special cond</td></tr>
-			<tr><th>10</th><td>Recv interrupt on all chars or special cond</td></tr>
-			<tr><th>11</th><td>Recv interrupt on special cond</td></tr>
+		  <table><caption>SYNCモード</caption>
+			<tr><th>00</th><td>8bitSYNC</td></tr>
+			<tr><th>01</th><td>16bitSYNC</td></tr>
+			<tr><th>10</th><td>SDLCモード</td></tr>
+			<tr><th>11</th><td>外部SYNC</td></tr>
 		  </table>
 		</td>
-		<td>parity is special condtion</td>
-		<td>transmitter interrupt enable</td>
-		<td>external/status master interrupt enable</td>
-		<td>end of frame status(SDLC only)</td>
-		<td>CRC(sync/SDLC)/framing error(async) status</td>
-		<td>receiver overrun error status</td>
-		<td>parity error status</td>
-		<td colspan="3">residue codes (SDLC)</td>
-		<td>all sent (async)</td>
+		<td colspan="2">
+		  <table><caption>ASYNCモード</caption>
+			<tr><th>00</th><td>ASYNC無効(Syncモード)</td></tr>
+			<tr><th>01</th><td>1クロック停止ビット</td></tr>
+			<tr><th>10</th><td>1.5クロック停止ビット</td></tr>
+			<tr><th>11</th><td>2クロック停止ビット</td></tr>
+		  </table>
+		</td>
+		<td>偶数パリティモード</td>
+		<td>パリティ有効</td>	
+	  </tr>
+	  <tr><th>5</th><th>送信パラメータ</th>
+		<td>DTRピン送信</td>
+		<td colspan="2">
+		  <p>キャラクタあたりの送信ビット数</p>
+		  <table>
+			<tr><th>00</th><td>5以下</td></tr>
+			<tr><th>01</th><td>7</td></tr>
+			<tr><th>10</th><td>6</td></tr>
+			<tr><th>11</th><td>8</td></tr>
+		  </table>
+		</td>
+		<td>1=強制ブレーク送信</td>
+		<td>送信有効化</td>
+		<td>CRC-16使用フラグ</td>
+		<td>RTSピンビット</td>
+		<td>CRC有効フラグ</td>
+	  </tr>		
+	  <tr><th>6</th><th>Sync文字1/ SDLCアドレス</th>
+		<td colspan="8">
+		  <table>
+			<tr><th>6bit</th><td>送信用8bit Sync（下位6bitが使われる。上位2bitは下位2bitのコピー)</td></tr>
+			<tr><th>8bit</th><td>送信用8bit Sync</td></tr>
+			<tr><th>12bit</th><td>共用16bit Sync下位(上位4bitのみ、下位4bitは1固定)</td></tr>
+			<tr><th>16bit</th><td>共用16bit Sync下位</td></tr>
+			<tr><th>SDLC</th><td>アドレスフィールド</td></tr>
+		  </table>
+		</td>
+	  </tr>
+	  <tr><th>7</th><th>Sync文字2/ SDLCフラグ</th>
+		<td colspan="8">
+		  <table>
+			<tr><th>6bit</th><td>受信用8bit Sync（<strong>上位</strong>6bitが使われる。)</td></tr>
+			<tr><th>8bit</th><td>受信用8bit Sync</td></tr>
+			<tr><th>12bit</th><td  rowspan="2">共用16bit Sync上位</td></tr>
+			<tr><th>16bit</th></tr>
+			<tr><th>SDLC</th><td>01111110固定</td></tr>
+		  </table>
+		</td>
+	  </tr>
+	  <tr><th>8</th><th>送信バッファ</th><td colspan="8">送信データ</td></tr>
+	  <tr><th>9</th><th>マスター割り込み制御（2ポート共通)</th>
+		<td colspan="2">
+		  <table>
+			<tr><th>00</th><td>何もしない</td></tr>
+			<tr><th>01</th><td>プリンタポートリセット</td></tr>
+			<tr><th>10</th><td>モデムポートリセット</td></tr>
+			<tr><th>11</th><td>SCC全リセット</td></tr>
+		  </table>
+		</td>
+		<td class="na"></td>
+		<td>RR2変更位置(1=低位)</td>
+		<td>割り込みマスター</td>
+		<td>下位割り込み停止</td>
+		<td>割り込み応答なし</td>
+		<td>割り込み応答にステータスを付加しない</td>
+	  </tr>
+	  <tr><th>10</th><th>雑多制御</th>
+		<td>CRC初期ビット</td>
+		<td colspan="2">
+		  <table><caption>信号線制御</caption>
+			<tr><th>00</th><td>NRZ(HIGH=1,LOW=0)</td></tr>
+			<tr><th>01</th><td>NRZI(stay=1,flip=0)</td></tr>
+			<tr><th>10</th><td>FM1(edge=1,no-edge=0)</td></tr>
+			<tr><th>11</th><td>FM0(no-edge=1, edge=0)</td></tr>
+		  </table>
+		</td>
+		<td>SDLCループモードで$7E送信時にもう1ビット送信する(stub)</td>
+		<td>SDLCがアイドル時に1を流す</td>
+		<td>SDLCがバッファアンダーランの時にアボート信号を流す</td>
+		<td>SDLCループモード</td>
+		<td>Syncを6bitにする</td>
+	  </tr>
 	</table>
   </body>
 </html>

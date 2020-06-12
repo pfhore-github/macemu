@@ -12,22 +12,18 @@ struct data_async {
 struct data_sync {
 	uint16_t sync;
 	std::vector<uint8_t> values;
-	std::vector<bool> parities;
 	uint16_t crc;
 };
 struct data_sdlc {
 	uint8_t begin;
-	uint8_t addr;
-	uint8_t ctrl;
 	std::vector<uint8_t> values;
-	std::vector<bool> parities;
 	uint16_t crc;
 	uint8_t end;
 };
 
 struct data_break {};
 struct data_eom {};
-using stream_t = std::variant<data_async, data_sync, data_sdlc, data_break, data_eom>;
+using stream_t = std::variant<std::monostate, data_async, data_sync, data_sdlc, data_break, data_eom>;
 class SerialDevice {
 	friend class SCC;
 	friend std::shared_ptr<SCC_impl> which(SerialDevice& t) {

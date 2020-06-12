@@ -5,10 +5,15 @@
 #include "machine.hpp"
 #include "via1.hpp"
 #include <boost/crc.hpp>
-#include <thread>
+#include <mutex>
 SCC_impl::SCC_impl(bool is_modem)
 	:is_modem(is_modem),
 	 device(std::make_shared<SerialDevice>()) {
+	send_char = {};
+	external_pending = false;
+	trans_pending = false;
+	recv_avail_pending = false;
+	recv_special_pending = false;
 }
 void SCC::reset() {
 	IUS = SCC_INT::NONE;
@@ -32,15 +37,7 @@ SCC::SCC(const std::shared_ptr<SCC_impl>& o) {
 	modem->parent = this;
 	printer = o->clone(false);
 	printer->parent = this;
-	vec_f = 0;
-	modem->external_pending = false;
-	modem->trans_pending = false;
-	modem->recv_avail_pending = false;
-	modem->recv_special_pending = false;
-	printer->external_pending = false;
-	printer->trans_pending = false;
-	printer->recv_avail_pending = false;
-	printer->recv_special_pending = false;
+	vec_f = 0;	
 	reset();
 }
 
@@ -70,7 +67,8 @@ void SCC_impl::ch_reset() {
 	top_error = 0;
 	latch_enable = false;
 	current_rr0 = uint8_t(RR0::TX_OVERRUN_EOM) | uint8_t(RR0::TX_BUFFER_EMPTY);	
-	first_letter = false;
+	first_letter = true;
+	sync_sending = false;
 	read_buffers.consume_all([](uint16_t) {} );
 	write_reg_impl(0, 0);
 	write_reg_impl(1, 0);
@@ -84,101 +82,97 @@ void SCC_impl::ch_reset() {
 	write_reg_impl(15, 0xF8);
 	residue_codes = 3;
 	end_of_frame = false;
-	first_letter = true;
-}
+}	
+struct RecieveVisiter {
+	SCC_impl* impl;
+	void operator()(std::monostate) {}
+	void operator()(const data_async& recv) {
+		impl->current_rr0 &= uint8_t(RR0::BREAK_ABORT) ^ 0xff;
+		if( ! impl->async_mode ) {
+			// framing error
+			impl->read_buffers.push( 0x4000 );
+			return;
+		}
+		uint16_t v = recv.value;
+		bool parity = (! impl->parity_even) ^ __builtin_parity(v);
+		if( parity != recv.parity ) {
+			v |= 0x1000;
+		}
+		switch( impl->recv_size ) {
+		case 5 : v |= 0xE0; break;
+		case 6 : v |= 0xC0; break;
+		case 7 : v |= 0x80; break;
+		}
+		impl->read_buffers.push( v );
+		impl->current_rr0 |= uint8_t(RR0::RX_CHAR_AVAILABLE);
+	}
+	void operator()(const data_sync& recv) {
+		impl->current_rr0 &= uint8_t(RR0::BREAK_ABORT) ^ 0xff;
+		if( impl->async_mode ) {
+			// CRC error
+			impl->read_buffers.push( 0x4000 );
+			return;
+		}
+		uint16_t sync_v = 0;
+		switch( impl->sync_size ) {
+		case SYNC_SIZE::SIZE_6 : sync_v = impl->sync_char[1] & 0x3f; break;
+		case SYNC_SIZE::SIZE_8 : sync_v = impl->sync_char[1]; break;
+		case SYNC_SIZE::SIZE_12 : sync_v = (impl->sync_char[1] << 4) | ( (impl->sync_char[0] & 0xf0)>> 4); break;
+		case SYNC_SIZE::SIZE_16 : sync_v = impl->sync_char[1] << 8 | impl->sync_char[0]; break;
+		case SYNC_SIZE::EXTERNAL :
+			/* */
+			break;
+		}
+		if( impl->recv_hunt_mode ) {
+			if( recv.sync != sync_v ) {
+				// skip data
+				return;
+			} else {
+				impl->recv_hunt_mode = false;
+				impl->recv_crc16.reset( impl->crc_init ? 0xffff : 0);
+				impl->recv_crc_ccitt.reset( impl->crc_init ? 0xffff : 0);
+				impl->int_external(RR0::SYNC_HUNT);
+			}
+		}
+		if( impl->sync_size == SYNC_SIZE::SIZE_8 && ! impl->recv_sync_char_load_inhibit ) {
+			impl->read_buffers.push( sync_v );
+		}
+		for(unsigned int i = 0; i < recv.values.size(); ++i ) {
+			uint16_t v = recv.values[i] & ((1 << impl->recv_size) - 1);
+			impl->read_buffers.push( v );
+		}
+		impl->recieved_crc = recv.crc;
+		impl->current_rr0 |= uint8_t(RR0::RX_CHAR_AVAILABLE);
+	}
+	void operator()(const data_sdlc&) {}
+	void operator()(data_break) {
+		impl->read_buffers.push( 0x0000 );
+		impl->int_external( RR0::BREAK_ABORT );
+	}
+	void operator()(data_eom) {}
+};
 // Data Recieve
 void SCC_impl::recieve_xd( const stream_t& in) {
+	if( ! recv_enable ) {
+		return;
+	}
 	// data arrive
 	if( ! w_req_is_wait_mode && w_req_is_recv_mode ) {
 		machine->via1->scc_wr_req = false;
 	}
 	interrupt( SCC_INT::RECV_AVAIL );
 	current_rr0 &= uint8_t(RR0::RX_CHAR_AVAILABLE) ^ 0xff;
-	if( async_mode ) {
-		switch( in.index() ) {
-		case 0 :
-		{
-			current_rr0 &= uint8_t(RR0::BREAK_ABORT) ^ 0xff;
-			uint16_t v = std::get<0>(in).value;
-			bool parity = (! parity_even) ^ __builtin_parity(v);
-			if( parity != std::get<0>(in).parity ) {
-				v |= 0x1000;
-			}
-			switch( recv_size ) {
-			case 5 : v |= 0xE0; break;
-			case 6 : v |= 0xC0; break;
-			case 7 : v |= 0x80; break;
-			}
-			read_buffers.push( v );
-			current_rr0 |= uint8_t(RR0::RX_CHAR_AVAILABLE);
-			break;
-		}
-		case 3 :
-			// BREAK
-			read_buffers.push( 0x0000 );
-			int_external( RR0::BREAK_ABORT );
-			return;
-		default :
-			// framing error
-			read_buffers.push( 0x4000 );
-		}
-	} else {
-		switch( in.index() ) {
-		case 1 :
-		{
-			current_rr0 &= uint8_t(RR0::BREAK_ABORT) ^ 0xff;
-			auto recv = std::get<1>(in);
-			uint16_t sync = recv.sync;
-			uint16_t sync_v = 0;
-			switch( sync_size ) {
-			case 6 : sync_v = sync_char & 0x3f; break;
-			case 8 : sync_v = sync_char & 0xff; break;
-			case 12 : sync_v = (sync_char & 0xff00) >> 4 | ( (sync_char & 0xf0)>> 4); break;
-			case 16 : sync_v = sync_char; break;
-			default :
-				/* */
-				break;
-			}
-			if( recv_hunt_mode ) {
-				if( sync != sync_v ) {
-					// skip data
-					return;
-				} else {
-					recv_hunt_mode = false;
-					recv_crc16.reset( crc_init ? 0xffff : 0);
-					recv_crc_ccitt.reset(crc_init ? 0xffff : 0);
-					int_external(RR0::SYNC_HUNT);
-				}
-			}
-			if( sync_size != 8 || ! recv_sync_char_load_inhibit ) {
-				read_buffers.push( sync_v );
-			}
-			for(unsigned int i = 0; i < recv.values.size(); ++i ) {
-				uint16_t v = recv.values[i] & ((1 << recv_size) - 1);
-				if( i < recv.parities.size() ) { 
-					bool parity = (! parity_even) ^ __builtin_parity(recv.values[i]);
-					if( parity != recv.parities[i] ) {
-						v |= 0x1000;
-					}
-				}
-				
-				read_buffers.push( v );
-			}
-			recieved_crc = recv.crc;
-			current_rr0 |= uint8_t(RR0::RX_CHAR_AVAILABLE);
-			break;
-		}
-		default :
-			// framing error
-			read_buffers.push( 0x4000 );
-		}
-	}
+	std::visit( RecieveVisiter { this }, in );
 }
 void SCC_impl::hsk_i(bool v) {
 	if( v && !( current_rr0 & uint8_t(RR0::CTS) )) {
 		int_external( RR0::CTS );
 	} else if( ! v && ( current_rr0 & uint8_t(RR0::CTS) ) ) {
 		current_rr0 &= uint8_t(RR0::CTS) ^ 0xff;
+	}
+	if( auto_enable && v ) {
+		send_enable = true;
+		write_data();
 	}
 }
 
@@ -188,25 +182,32 @@ void SCC_impl::gp_i(bool b) {
 	} else if( ! b && ( current_rr0 & uint8_t(RR0::DCD) ) ){
 		current_rr0 &= uint8_t(RR0::DCD) ^ 0xff;
 	}
+	if( auto_enable && b ) {
+		recv_enable = true;
+	}
 }
 uint8_t SCC_impl::read_data() {
 	uint16_t v;
 	if( read_buffers.pop(v) ) {
-		{
-			std::lock_guard lock(parent->rr2_mutex);
-			recv_avail_pending = false;
-		}
+		recv_avail_pending = false;
 		recv_data = v & 0xff;
 		if( enable_crc ) {
 			if( crc_is_16 ) {
 				recv_crc16.process_byte( recv_data );
+				if( recv_crc16.checksum() != recieved_crc ) {
+					v |= 0x4000;
+				}
 			} else {
 				recv_crc_ccitt.process_byte( recv_data );
+				if( recv_crc_ccitt.checksum() != recieved_crc ) {
+					v |= 0x4000;
+				}
 			}
+
 		}
 		top_error = ((v >> 8) & 0x40) | ((top_error | (v >> 8)) & 0x30);
 		if( ( parity_error_is_special && (v & 0x1000) ) || 	// parity error
-			( v & 0x4000 ) 			// framing error
+			(async_mode && ( v & 0x4000 )) 			// framing error
 			) {
 			first_letter = true;
 			interrupt( SCC_INT::RECV_SPECIAL);
@@ -247,35 +248,33 @@ uint8_t SCC_impl::decode_byte(uint8_t w) {
 	return 0;
 }
 
-// transmit data(async)
-void SCC_impl::write_data(uint8_t v) {
-	uint8_t val = decode_byte(v);
+
+// transmit data
+void SCC_impl::write_data() {
+	if( ! send_enable || ! send_char ) {
+		return;
+	}
+	uint8_t val = decode_byte(*send_char);
 	if( async_mode ) {
-		{
-			std::lock_guard lock(parent->rr2_mutex);
-			trans_pending = false;
+		if( ! rts ) {
+			return;
 		}
-		current_rr0 &= uint8_t( RR0::TX_BUFFER_EMPTY ) ^ 0xff;
-		if( rts ) {
-			device->transmit_xd(data_async(val));
-		} else {
-			send_pending.emplace_back( data_async(val) );
-		}
-		all_sent.store( true );
-	} else {
-		if( first_letter ) {
+		device->transmit_xd(data_async(val));
+	} else if( ! sdlc_mode ) {
+		if( ! std::exchange(sync_sending, true) ) {
 			switch( sync_size ) {
-			case 6 : sync_data.sync = sync_char & 0x3f; break;
-			case 8 : sync_data.sync = sync_char & 0xff; break;
-			case 12 : /* no 12bit sync char for send*/
-			case 16 :
-				sync_data.sync = sync_char;
+			case SYNC_SIZE::SIZE_6 : sync_data.sync = sync_char[0] & 0x3f; break;
+			case SYNC_SIZE::SIZE_8 : sync_data.sync = sync_char[0]; break;
+			case SYNC_SIZE::SIZE_12 : /* no 12bit sync char for send*/
+			case SYNC_SIZE::SIZE_16 :
+				sync_data.sync = sync_char[1] << 8 | sync_char[0];
+				break;
+			case SYNC_SIZE::EXTERNAL :
+				/* TODO: external sync mode */
 				break;
 			}
-			first_letter = false;
 		}
 		sync_data.values.push_back( val );
-		sync_data.parities.push_back( __builtin_parity( val ) );
 		if( enable_crc ) {
 			if( crc_is_16 ) {
 				send_crc16.process_byte( val );
@@ -283,7 +282,18 @@ void SCC_impl::write_data(uint8_t v) {
 				send_crc_ccitt.process_byte( val );
 			}
 		}
+	} else {
+		if( ! std::exchange(sync_sending, true) ) {
+			// SDLC
+			sdlc_data.begin = 0x7E;
+		}
+		sdlc_data.values.push_back( val );
+		if( enable_crc ) {
+			send_crc_ccitt.process_byte( val );
+		}
 	}
+	all_sent.store( true );
+	send_char = {};
 	current_rr0 |= uint8_t(RR0::TX_BUFFER_EMPTY);
 	if( w_req_is_wait_mode && ! w_req_is_recv_mode ) {
 		machine->via1->scc_wr_req = false;
@@ -303,8 +313,8 @@ void SCC::write(int addr, uint8_t v) {
 	switch(addr) {
 	case SCC_REG::B_CMD : printer->write_reg(v); break;
 	case SCC_REG::A_CMD : modem->write_reg(v); break;
-	case SCC_REG::B_DATA : printer->write_data(v); break;
-	case SCC_REG::A_DATA : modem->write_data(v); break;
+	case SCC_REG::B_DATA : printer->write_wr8(v); break;
+	case SCC_REG::A_DATA : modem->write_wr8(v); break;
 	}
 }
 uint8_t SCC_impl::read_reg() {
@@ -315,12 +325,7 @@ uint8_t SCC_impl::read_reg() {
 
 
 void SCC_impl::write_reg(uint8_t v) {
-	if( reg_ptr == 0 ) {
-		write_reg_impl(0, v);
-	} else {
-		write_reg_impl(reg_ptr, v);
-		reg_ptr = 0;
-	}
+	write_reg_impl(std::exchange(reg_ptr, 0), v);
 }
 uint8_t SCC_impl::read_reg_impl(int reg) {
 	uint8_t v = 0;
@@ -345,7 +350,6 @@ uint8_t SCC_impl::read_reg_impl(int reg) {
 		if( is_modem ) {
 			v = parent->vec_f.load();
 		} else {
-			std::shared_lock lock(parent->rr2_mutex);
 			if( parent->modem->recv_avail_pending ) {
 				v = parent->status_H ? 0x30 : 0xC;
 			} else if( parent->modem->recv_special_pending ) {
@@ -391,11 +395,8 @@ void SCC_impl::write_reg0(uint8_t v) {
 	case 1 : reg_ptr |= 8; break;
 	case 2 :
 		// RESET Ext/Status Interrupts
-	{
-		std::lock_guard lock(parent->rr2_mutex);
 		latch_enable = false;		
 		external_pending = false;
-	}
 		break;
 	case 3 :		
 		// SEND Abort SDLC
@@ -408,23 +409,15 @@ void SCC_impl::write_reg0(uint8_t v) {
 		break;
 	case 5 : {
 		// Reset Tx Int Pending
-		std::lock_guard lock(parent->rr2_mutex);
 		trans_pending = false;
-	}
 		if( ! async_mode && ! (current_rr0 & uint8_t(RR0::TX_OVERRUN_EOM) ) ) {
 			// transmit CRC
-			sync_data.crc = crc_is_16 ? send_crc16.checksum() : send_crc_ccitt.checksum();
-			device->transmit_xd(sync_data);
-			sync_data.values.clear();
-			sync_data.parities.clear();
+			sync_done();
 			current_rr0 |= uint8_t(RR0::TX_OVERRUN_EOM);
-			first_letter = false;
 		}
 		break;
 	case 6 :
 		// ERROR reset
-	{
-		std::lock_guard lock(parent->rr2_mutex);
 		top_error = 0;
 		recv_special_pending = false;
 		break;
@@ -479,7 +472,6 @@ void SCC_impl::write_reg_impl(int n, uint8_t v) {
 		break;
 	case 2 :
 	{
-		std::lock_guard lock(parent->rr2_mutex);
 		parent->vec_f = v;
 		parent->modem->recv_avail_pending = v >> 5 & 1;
 		parent->modem->recv_special_pending = v >> 5 & 1 ;
@@ -505,11 +497,14 @@ void SCC_impl::write_reg_impl(int n, uint8_t v) {
 		if( v >> 4 & 1 ) {
 			recv_hunt_mode = true;
 			int_external(RR0::SYNC_HUNT);
+		} else {
+			recv_hunt_mode = false;
 		}
 		recv_crc_enable = v >> 3 & 1;
 		recv_addr_search_mode = v >> 2 & 1;
 		recv_sync_char_load_inhibit = v >> 1 & 1;
 		recv_enable = v & 1;
+	
 		break;
 	case 4 :
 	{
@@ -521,10 +516,10 @@ void SCC_impl::write_reg_impl(int n, uint8_t v) {
 		}
 		sdlc_mode = false;
 		switch( (v>>4)&3 ) {
-		case 0 : sync_size = sync_6bit ? 6 : 8; break;
-		case 1 : sync_size = sync_6bit ? 12 : 16; break;
+		case 0 : sync_size = sync_6bit ? SYNC_SIZE::SIZE_6 : SYNC_SIZE::SIZE_8; break;
+		case 1 : sync_size = sync_6bit ? SYNC_SIZE::SIZE_12 : SYNC_SIZE::SIZE_16; break;
 		case 2 : sdlc_mode = true; break;
-		case 3 : sync_size = -1; break;
+		case 3 : sync_size = SYNC_SIZE::EXTERNAL; break;
 		return;
 		}
 		break;
@@ -543,6 +538,7 @@ void SCC_impl::write_reg_impl(int n, uint8_t v) {
 			device->transmit_xd(data_break {});
 			return;
 		}
+		send_enable = v >> 3 & 1;
 		crc_is_16 = v >> 2 & 1;
 		if( ! ( v & 2 ) ) {
 			if( async_mode ) {
@@ -552,38 +548,30 @@ void SCC_impl::write_reg_impl(int n, uint8_t v) {
 			}
 		} else {
 			rts = true;
-			if( async_mode ) {
-				for( const data_async& c : send_pending ) {
-					device->transmit_xd( c );
-				}
-				send_pending.clear();
-			}
 		}
+		write_data();
 		enable_crc = v & 1;
 		return;
 	case 6 :
-		if( sync_size <= 8 ) {			
-			sync_char = v;
-		} else {
-			sync_char = (sync_char & 0xff00) | v;
-		}
+		sync_char[0] = v;
 		break;
 	case 7 :
-		sync_char = (sync_char & 0xff) | v << 8;
+		sync_char[1] = v;
 		break;
-	case 8 : // transmit buffer 
-		write_data(v);
-		return;
+	case 8 : // transmit buffer
+		write_wr8(v);
+		break;
 	case 9 :
 		parent->write_MIC(v);
 		return;
 	case 10 :
 		sync_6bit = v & 1;
 		switch( sync_size ) {
-		case 6 :
-		case 8 : sync_size = sync_6bit ? 6 : 8; break;
-		case 12 :
-		case 16 : sync_size = sync_6bit ? 12 : 16; break;
+		case SYNC_SIZE::SIZE_6 :
+		case SYNC_SIZE::SIZE_8 : sync_size = sync_6bit ? SYNC_SIZE::SIZE_6 : SYNC_SIZE::SIZE_8; break;
+		case SYNC_SIZE::SIZE_12 :
+		case SYNC_SIZE::SIZE_16 : sync_size = sync_6bit ? SYNC_SIZE::SIZE_12 : SYNC_SIZE::SIZE_16; break;
+		case SYNC_SIZE::EXTERNAL : break;
 		}
 		crc_init = v >> 7 & 1;
 		break;
@@ -603,6 +591,12 @@ void SerialDevice::gp_i(bool v) {
 	connected_to.lock()->gp_i(v);
 }
 
+void SCC_impl::write_wr8(uint8_t v) {
+	send_char = v;
+	current_rr0 &= uint8_t( RR0::TX_BUFFER_EMPTY ) ^ 0xff;
+	trans_pending = false;
+	write_data();
+}
 void SCC_impl::interrupt(SCC_INT i ) {
 	switch( i ) {
 	case SCC_INT::TRANS :
@@ -649,7 +643,6 @@ void SCC::interrupt(SCC_INT i) {
 	if( ! MIE ) {
 		return;
 	}
-	std::lock_guard lock(rr2_mutex);
 	switch( i ) {
 	case SCC_INT::NONE: break;
 	case SCC_INT::EXTERNAL_B : printer->external_pending = true; break;
@@ -677,7 +670,6 @@ void SCC::interrupt(SCC_INT i) {
 }
 
 uint8_t SCC::get_int_vec() {
-	std::shared_lock lock(rr2_mutex);
 	return ( modem->recv_avail_pending | modem->recv_special_pending ) << 5 |
 		modem->trans_pending << 4 |
 		modem->external_pending << 3 |
@@ -705,4 +697,20 @@ uint8_t SCC::read_reg(bool is_modem, int reg) {
 	} else {
 		return printer->read_reg_impl(reg);
 	}		
+}
+void SCC_impl::sync_done() {
+	sync_data.crc = crc_is_16 ? send_crc16.checksum() : send_crc_ccitt.checksum();
+	device->transmit_xd(sync_data);
+	sync_data.values.clear();
+	sync_sending = false;
+}
+// DMA/Sync mode
+void SCC::write_all_data(bool port, const std::vector<uint8_t>& values) {
+	SCC_impl& impl = port ? *modem : *printer;
+	for( uint8_t v : values ) {
+		impl.send_char = v;
+		impl.write_data();
+	}
+	impl.sync_done();
+	
 }

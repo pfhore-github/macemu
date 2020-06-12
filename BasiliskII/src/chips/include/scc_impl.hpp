@@ -26,10 +26,16 @@ enum class RR0 : unsigned char {
 	TX_OVERRUN_EOM = 1U << 6,
 	BREAK_ABORT = 1U << 7
 };
-
+enum class SYNC_SIZE {
+	SIZE_6,
+	SIZE_8,
+	SIZE_12,
+	SIZE_16,
+	EXTERNAL
+};
 class SCC_impl {
 	friend class SCC;
-	friend class TransferModeBase;
+	friend class RecieveVisiter;
 	SCC* parent;
 protected:
 	const bool is_modem;
@@ -71,14 +77,17 @@ protected:
 	bool parity_even;
 	bool async_mode;
 	bool sdlc_mode;
-	uint8_t sync_size;
+	SYNC_SIZE sync_size;
 	// WR5
 	uint8_t send_size = 5;
+	bool send_enable;
 	bool crc_is_16;
 	bool rts = true;
 	bool enable_crc;
 	// WR6/7
-	uint16_t sync_char;
+	uint8_t sync_char[2];
+	// WR8
+	std::optional<uint8_t> send_char;
 	// WR10
 	bool sync_6bit = false;
 	bool crc_init;
@@ -88,6 +97,7 @@ protected:
 	uint8_t external_status_int_enable;
 	
 	SCC_impl(bool is_modem);
+	void write_wr8(uint8_t v);
 	uint8_t decode_byte(uint8_t w);
 	int reg_ptr;
 	void interrupt(SCC_INT i);
@@ -103,17 +113,18 @@ public:
 	std::shared_ptr<SerialDevice> device;
 	// FIFO doens't overflow(no overrun support...)
 	boost::lockfree::queue<uint16_t> read_buffers { 256 };
-	std::vector<data_async> send_pending;
+	
 	uint8_t top_error;
 	virtual ~SCC_impl() {}
 	uint8_t read_reg();
 	void write_reg(uint8_t);
 	void cmd(uint8_t c);
 	uint8_t read_data();
-	void write_data(uint8_t v);
+	void write_data();
 	void ch_reset();
 	void reset();
 	void write_reg0(uint8_t);
+
 private:
 	// internal
 	bool first_letter;
@@ -122,9 +133,12 @@ private:
 	boost::crc_ccitt_type send_crc_ccitt;
 	boost::crc_16_type recv_crc16;
 	boost::crc_ccitt_type recv_crc_ccitt;
+	bool sync_sending;
 	data_sync sync_data;
+	data_sdlc sdlc_data;
 	uint16_t recieved_crc;
 	void int_external(RR0);
+	void sync_done();
 };
 // NMOS
 class Z8530 : public SCC_impl {

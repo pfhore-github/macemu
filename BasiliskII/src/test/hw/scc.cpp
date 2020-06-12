@@ -37,20 +37,20 @@ init_async(bool is_modem, int bit = 8, std::optional<bool> parity_even = {} ) {
 
 	switch( bit ) {
 	case 6 :
-		scc->write_reg( is_modem, 3, 0xA0 );
-		scc->write_reg( is_modem, 5, 0x40 );
+		scc->write_reg( is_modem, 3, 0xA1 );
+		scc->write_reg( is_modem, 5, 0x48 );
 		break;
 	case 7 :
-		scc->write_reg( is_modem, 3, 0x60 );
-		scc->write_reg( is_modem, 5, 0x20 );
+		scc->write_reg( is_modem, 3, 0x61 );
+		scc->write_reg( is_modem, 5, 0x28 );
 		break;
 	case 8 :
-		scc->write_reg( is_modem, 3, 0xE0 );
-		scc->write_reg( is_modem, 5, 0x60 );
+		scc->write_reg( is_modem, 3, 0xE1 );
+		scc->write_reg( is_modem, 5, 0x68 );
 		break;
 	default :
-		scc->write_reg( is_modem, 3, 0x20 );
-		scc->write_reg( is_modem, 5, 0x00 );
+		scc->write_reg( is_modem, 3, 0x21 );
+		scc->write_reg( is_modem, 5, 0x08 );
 		break;
 	}
 	return { scc, dev };
@@ -166,24 +166,49 @@ BOOST_DATA_TEST_CASE( rts, bdata::xrange(2), port ) {
 	scc->write_reg( port, 9, 0xC0 );
 	scc->write_reg( port, 4, 0xC );
 
-	scc->write_reg( port, 3, 0x00 );
-	scc->write_reg( port, 5, 0x00 );
+	scc->write_reg( port, 3, 0x01 );
+	scc->write_reg( port, 5, 0x08 );
 	
 	scc->write_reg( port, 8, 0xf1 );
-	BOOST_CHECK_EQUAL( dev->s.index(), 3 );
-	scc->write_reg( port, 5, 2 );
-	BOOST_REQUIRE_EQUAL( dev->s.index(), 0 );
-	BOOST_CHECK_EQUAL( std::get<0>(dev->s).value, 1 );
+	BOOST_CHECK_EQUAL( dev->s.index(), 4 );
+	scc->write_reg( port, 5, 0xA );
+	BOOST_REQUIRE_EQUAL( dev->s.index(), 1 );
+	BOOST_CHECK_EQUAL( std::get<1>(dev->s).value, 1 );
 }
+
+BOOST_DATA_TEST_CASE( auto_enable, bdata::xrange(2), port ) {
+	auto scc = newZ8530();
+ 	auto dev = std::make_shared<TestDevice>();
+	if( port ) {
+		scc->connect_modem( dev );
+	} else {
+		scc->connect_printer( dev );
+	}
+	init_machine(MB_TYPE::GLU);
+	machine->via1->scc_wr_req = true;
+	// WR
+	scc->write_reg( port, 9, 0xC0 );
+	scc->write_reg( port, 4, 0xC );
+
+	scc->write_reg( port, 3, 0x21 );
+	scc->write_reg( port, 5, 0x02 );
+	
+	scc->write_reg( port, 8, 0xf1 );
+	BOOST_CHECK_EQUAL( dev->s.index(), 4 );
+	dev->hsk_i(true);
+	BOOST_REQUIRE_EQUAL( dev->s.index(), 1 );
+	BOOST_CHECK_EQUAL( std::get<1>(dev->s).value, 1 );
+}
+
 
 void send_and_test(bool port, int bit, std::optional<bool> parity_even,
 				   uint8_t data, uint8_t expected, bool e_parity = false) {
 	auto [ scc, dev ] = init_async(port, bit, parity_even);
 	scc->write_reg( port, 8, data );
-	BOOST_REQUIRE_EQUAL( dev->s.index(), 0 );
-	BOOST_CHECK_EQUAL( std::get<0>(dev->s).value, expected );
+	BOOST_REQUIRE_EQUAL( dev->s.index(), 1 );
+	BOOST_CHECK_EQUAL( std::get<1>(dev->s).value, expected );
 	if( parity_even ) {
-		BOOST_CHECK_EQUAL( std::get<0>(dev->s).parity, !*parity_even ^ e_parity );
+		BOOST_CHECK_EQUAL( std::get<1>(dev->s).parity, !*parity_even ^ e_parity );
 	}
 		
 }
@@ -313,13 +338,170 @@ BOOST_DATA_TEST_CASE( parity_8bit, bdata::xrange(2), port ) {
 BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE_END()
 
+std::pair<std::shared_ptr<SCC>, std::shared_ptr<TestDevice>>
+init_sync(bool is_modem, int sync_size, std::optional<bool> crc = {}) {
+	init_machine(MB_TYPE::GLU);
+	auto scc = newZ8530();
+ 	auto dev = std::make_shared<TestDevice>();
+	if( is_modem ) {
+		scc->connect_modem( dev );
+	} else {
+		scc->connect_printer( dev );
+	}
+	machine->via1->scc_wr_req = true;
+	// WR
+	scc->write_reg( is_modem, 9, 0xC0 );
+	switch( sync_size ) {
+	case 6 :
+		scc->write_reg( is_modem, 4, 0 );
+		scc->write_reg( is_modem, 10, 1 | ( crc ? *crc : 0 ) << 7);
+		break;
+	case 8 :
+		scc->write_reg( is_modem, 4, 0 );
+		scc->write_reg( is_modem, 10, ( crc ? *crc : 0 ) << 7);
+		break;
+	case 12 :
+		scc->write_reg( is_modem, 4, 0x10 );
+		scc->write_reg( is_modem, 10, 1 | ( crc ? *crc : 0 ) << 7);
+		break;
+	case 16 :
+		scc->write_reg( is_modem, 4, 0x10 );
+		scc->write_reg( is_modem, 10, ( crc ? *crc : 0 ) << 7);
+		break;
+	}
+	scc->write_reg( is_modem, 3, 0xC1 | ( crc ? 1 : 0 ) << 3 );
+	scc->write_reg( is_modem, 5, 0x68 | ( crc ? 1 : 0 ) );
+	scc->write_reg( is_modem, 0, 1 << 6 );
+	scc->write_reg( is_modem, 0, 2 << 6 );
+	return { scc, dev };
+}
+
 
 BOOST_AUTO_TEST_SUITE( sync_io )
 BOOST_AUTO_TEST_SUITE( send )
 
-BOOST_AUTO_TEST_CASE( sync_6bit ) {
+BOOST_DATA_TEST_CASE( value, bdata::xrange(2), port ) {
+	auto [ scc, dev ] = init_sync(port, 6, false);
+	scc->write_reg( port, 8, 0xff );
+	scc->write_all_data( port, { 0x12, 0x34, 0x56 } );
+	
+	BOOST_REQUIRE_EQUAL( dev->s.index(), 2 );
+	auto ret = std::get<2>(dev->s);
+	std::vector<uint8_t> expected = { 0xff, 0x12, 0x34, 0x56 };
+	BOOST_CHECK_EQUAL_COLLECTIONS( ret.values.begin(), ret.values.end(),
+								   expected.begin(), expected.end() );
 }
+
+BOOST_DATA_TEST_CASE( crc, bdata::xrange(2) * bdata::xrange(2),
+					  port, crc_init ) {
+	auto [ scc, dev ] = init_sync(port, 6, crc_init);
+	scc->write_reg( port, 6, 0xff );
+	scc->write_all_data( port, { 0x35, 0x2a, 0xd4 } );
+	
+	BOOST_REQUIRE_EQUAL( dev->s.index(), 2 );
+	auto ret = std::get<2>(dev->s);
+	BOOST_CHECK_EQUAL( ret.crc, crc_init ? 0x801d : 0x4c81 );
+}
+
+BOOST_DATA_TEST_CASE( sync_6bit, bdata::xrange(2), port ) {
+	auto [ scc, dev ] = init_sync(port, 6, false);
+	scc->write_reg( port, 6, 0xff );
+	scc->write_all_data( port, { 0x12 } );
+	
+	BOOST_REQUIRE_EQUAL( dev->s.index(), 2 );
+	auto ret = std::get<2>(dev->s);
+	BOOST_CHECK_EQUAL( ret.sync, 0x3f );
+}
+
+BOOST_DATA_TEST_CASE( sync_8bit, bdata::xrange(2), port ) {
+	auto [ scc, dev ] = init_sync(port, 8, false);
+	scc->write_reg( port, 6, 0xff );
+	scc->write_all_data( port, { 0x12 } );
+	
+	BOOST_REQUIRE_EQUAL( dev->s.index(), 2 );
+	auto ret = std::get<2>(dev->s);
+	BOOST_CHECK_EQUAL( ret.sync, 0xff );
+}
+
+BOOST_DATA_TEST_CASE( sync_16bit, bdata::xrange(2), port ) {
+	auto [ scc, dev ] = init_sync(port, 16, false);
+	scc->write_reg( port, 6, 0x12 );
+	scc->write_reg( port, 7, 0x34 );
+	scc->write_all_data( port, { 0x12 } );
+	
+	BOOST_REQUIRE_EQUAL( dev->s.index(), 2 );
+	auto ret = std::get<2>(dev->s);
+	BOOST_CHECK_EQUAL( ret.sync, 0x3412 );
+}
+
 BOOST_AUTO_TEST_SUITE_END()
+BOOST_AUTO_TEST_SUITE( recv )
+BOOST_DATA_TEST_CASE( value, bdata::xrange(2), port ) {
+	auto [ scc, dev ] = init_sync(port, 6, false);
+	scc->write_reg( port, 7, 0x10 );
+	dev_run( *scc, *dev, data_sync { 0x10, { 0x12, 0x34, 0x56 }, 0 } );
+	BOOST_CHECK_EQUAL( scc->read_reg( port, 8), 0x12 );
+	BOOST_CHECK_EQUAL( scc->read_reg( port, 8), 0x34 );
+	BOOST_CHECK_EQUAL( scc->read_reg( port, 8), 0x56 );		
+}
+
+BOOST_DATA_TEST_CASE( crc, bdata::xrange(2) * bdata::xrange(2),
+					  port, crc_init ) {
+	auto [ scc, dev ] = init_sync(port, 6, crc_init);
+	scc->write_reg( port, 6, 0x10 );
+	dev_run( *scc, *dev, data_sync { 0x10, { 0x35, 0x2a, 0xd4 }, uint16_t(crc_init ? 0x801d : 0x4c81) } );
+	scc->read_reg( port, 8);
+	scc->read_reg( port, 8);
+	BOOST_CHECK( scc->read_reg( port, 1) & 0x40 );
+	scc->read_reg( port, 8);
+	BOOST_CHECK( ! (scc->read_reg( port, 1) & 0x40) );
+}
+
+BOOST_DATA_TEST_CASE( sync_6bit, bdata::xrange(2), port ) {
+	auto [ scc, dev ] = init_sync(port, 6);
+	scc->write_reg( port, 7, 0x10 );
+	scc->write_reg( port, 3, 0xD1 );
+	dev_run( *scc, *dev, data_sync { 0x13, { 0x11 }, 0 } );
+	dev_run( *scc, *dev, data_sync { 0x10, { 0x22 }, 0 } );
+	BOOST_CHECK_EQUAL( scc->read_reg( port, 8), 0x22 );
+}
+
+BOOST_DATA_TEST_CASE( sync_8bit, bdata::xrange(2) * bdata::xrange(2),
+					  port, inhibit ) {
+	auto [ scc, dev ] = init_sync(port, 8);
+	scc->write_reg( port, 7, 0xff );
+	scc->write_reg( port, 3, 0xD1 | inhibit << 1);
+	dev_run( *scc, *dev, data_sync { 0x7f, { 0x11 }, 0 } );
+	dev_run( *scc, *dev, data_sync { 0xff, { 0x22 }, 0 } );
+	if( ! inhibit ) {
+		BOOST_CHECK_EQUAL( scc->read_reg( port, 8), 0xff );
+	}
+	BOOST_CHECK_EQUAL( scc->read_reg( port, 8), 0x22 );
+}
+
+BOOST_DATA_TEST_CASE( sync_12bit, bdata::xrange(2), port ) {
+	auto [ scc, dev ] = init_sync(port, 12);
+	scc->write_reg( port, 6, 0x3f );
+	scc->write_reg( port, 7, 0x14 );
+	scc->write_reg( port, 3, 0xD1 );
+	dev_run( *scc, *dev, data_sync { 0x123, { 0x11 }, 0 } );
+	dev_run( *scc, *dev, data_sync { 0x143, { 0x22 }, 0 } );
+	BOOST_CHECK_EQUAL( scc->read_reg( port, 8), 0x22 );
+}
+
+BOOST_DATA_TEST_CASE( sync_16bit, bdata::xrange(2), port ) {
+	auto [ scc, dev ] = init_sync(port, 16);
+	scc->write_reg( port, 6, 0xab );
+	scc->write_reg( port, 7, 0xcd );
+	scc->write_reg( port, 3, 0xD1 );
+	dev_run( *scc, *dev, data_sync { 0xaaaa, { 0x11 }, 0 } );
+	dev_run( *scc, *dev, data_sync { 0xcdab, { 0x22 }, 0 } );
+	BOOST_CHECK_EQUAL( scc->read_reg( port, 8), 0x22 );
+}
+
+
+BOOST_AUTO_TEST_SUITE_END()
+
 BOOST_AUTO_TEST_SUITE_END()
 
 	

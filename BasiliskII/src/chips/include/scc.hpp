@@ -3,8 +3,6 @@
 #include "devices/serial.hpp"
 #include <memory>
 #include <atomic>
-#include <shared_mutex>
-#include <mutex>
 /* SCC (Z8530) */
 class SCC_impl;
 namespace SCC_REG {
@@ -37,7 +35,6 @@ class SCC : virtual public IO_BASE {
 	std::shared_ptr<SCC_impl> modem, printer;
 	// MIC
 	bool VIS, NV, DLC, MIE, status_H, INTACK;
-	std::shared_mutex rr2_mutex;
 	std::atomic<uint8_t> vec_f;
 
 	SCC_INT IUS;
@@ -54,6 +51,8 @@ public:
 	void write(int, uint8_t) override;
 
 	// HLE
+	void write_all_data(bool port, const std::vector<uint8_t>& velues);
+	
 	void write_reg(bool is_modem, int reg, uint8_t value);
 	uint8_t read_reg(bool is_modem, int reg);
 	void write_regA(int reg, uint8_t value) { write_reg(true, reg, value); }
