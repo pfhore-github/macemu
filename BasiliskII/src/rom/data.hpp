@@ -6,6 +6,9 @@
 #ifndef DATA_PATH
 #define DATA_PATH "/home/michiaki/Document/macemu/macemu/BasiliskII/src/rom/data/"
 #endif
+constexpr uint32_t OSTYPE(const char s[]) {
+	return uint8_t(s[0]) << 24 | uint8_t(s[1]) << 16 | uint8_t(s[2]) << 8 | uint8_t(s[3]);
+}
 extern uint8_t* ROMBaseHost;
 extern uint32_t rom_base;
 namespace ROM {
@@ -17,9 +20,13 @@ struct VIA_DATA_T {
 	uint8_t pcr;
 	uint8_t acr;
 };
-struct RAM_SLOT_T {
-	uint32_t unit;
-	std::vector<std::pair<uint32_t, uint32_t>> ranges;
+struct RAM_SLOT_T;
+struct MODEL_UNKOWN52 {
+	uint32_t BASE;
+	uint32_t value[3];
+	uint16_t (*handler4)(uint16_t d1);
+	uint32_t value2[5];
+	uint16_t value3;
 };
 struct MACHINE_TABLE_T {
 	uint32_t BASE;
@@ -40,9 +47,9 @@ struct MACHINE_TABLE_T {
 	const VIA_DATA_T* via_data1;
 	const VIA_DATA_T* via_data2;
 	uint32_t unknown_48;
-	uint32_t unknown_52;
+	const MODEL_UNKOWN52* unknown_52;
 	uint32_t unknown_56;
-	uint32_t unknown_60;
+	std::optional<uint8_t> unknown_60;
 	uint32_t unknown_64;
 	uint16_t machine_id;
 	uint16_t gestalt_machine_id() const { return gestalt << 8 | generation; }
@@ -95,7 +102,7 @@ struct MOTHERBOARD_TABLE_T {
 	uint32_t unknown140;		
 };
 extern const MACHINE_TABLE_T old_machines[19];
-extern const MACHINE_TABLE_T new_machines[27];
+extern const std::vector<MACHINE_TABLE_T> new_machines;
 extern std::unordered_map<uint32_t, std::function<void()>> rom_routines;
 namespace ROM_FLG_T {
 enum ROM_FLG_T {
@@ -123,10 +130,13 @@ enum {
 	MASTER = 0,					// always true
 	MASTER2,					// always true
 	VIA1,						// always true
-	IIFX_1,						// only IIfx false
-	IIFX_2,						// only IIfx false
+	NON_IIFX_1,						// only IIfx false
+	NON_IIFX_2,						// only IIfx false
 	NO_ISM,						// only IIfx false
-	VIA2 = 11,					//
+	PSUEDO_DMA_1 = 8,			// not true DMA SCSI(1)
+	PSUEDO_DMA_2,
+	PSUEDO_DMA_3,
+	VIA2,					//
 	KNOWN_HW, 						// always true?
 	RBV,
 	VDAC,
@@ -256,13 +266,11 @@ struct EASC_param {
 	uint16_t data3;
 	uint16_t data4;
 };
-extern const MOTHERBOARD_TABLE_T motherboards[13];
+extern const std::vector<MOTHERBOARD_TABLE_T> motherboards;
 extern const MACHINE_TABLE_T old_machines[19];
-extern const MACHINE_TABLE_T new_machines[27];
-static constexpr int TRANS_READY = 1;
-static constexpr int TRANS_STANDBY = 2;
 // $03DC8
 extern const uint32_t vbr_table[4];
+
 inline constexpr uint32_t operator"" _mb(unsigned long long v) { return v * 1024 * 1024; }  
 inline constexpr uint32_t operator"" _kb(unsigned long long v) { return v * 1024 ; }  
 

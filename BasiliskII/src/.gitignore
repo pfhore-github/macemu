@@ -1,10 +1,10 @@
-.so
-.a
-.o
+*.so
+*.a
+*.o
 bin/
 test/**/bin/*
 **/cov/**
 CMakeFiles/
-quadra630.rom
+*.rom
 CMakeCache.txt
-
+test/rom/Testing/**

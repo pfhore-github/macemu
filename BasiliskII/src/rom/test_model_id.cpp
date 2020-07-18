@@ -3,7 +3,7 @@
 #include "prototype.hpp"
 namespace ROM {
 // $4B6C
-static constexpr uint16_t MODEL_ID_IS_IN_VIA = 1 << 10;
+static constexpr uint16_t MODEL_ID_IS_IN_VIA = 1 << 11;
 bool test_model_id() {
 	INIT_FLAGS.set( INIT_FLAG_T::FAULT_SKIP );
 	auto id = get_model_id(); // $04BE4
@@ -21,9 +21,10 @@ bool test_model_id() {
 				if( ( model_id & model->model_mask ) == model->model_id ) {
 					return true;
 				}				
+			} else {
+				// 4BDC
+				return true;
 			}
-			// 4BDC
-			return true;
 		}
 	}
 	// HALT

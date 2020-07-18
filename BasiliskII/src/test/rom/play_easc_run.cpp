@@ -2,10 +2,11 @@
 #include "test_common.hpp"
 #include "machine.hpp"
 #include "asc.hpp"
+#include "sonora.hpp"
 namespace bdata = boost::unit_test::data;
 using namespace ROM;
 void prepare() {
-	fixture f(MB_TYPE::SONORA);
+	fixture f(std::make_unique<Sonora>());
 	INIT_HW_FLG = 0;
 	ROM_FLG = 0;
 	HWCFG_FLAGS = 0;

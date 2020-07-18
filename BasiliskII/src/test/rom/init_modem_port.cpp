@@ -3,6 +3,7 @@
 #include "machine.hpp"
 #include "scc.hpp"
 #include "glu.hpp"
+#include "oss.hpp"
 #include "scc_impl.hpp"
 #include <memory>
 using namespace ROM;
@@ -10,11 +11,8 @@ static bool fw_load = false;
 namespace ROM {
 uint16_t init_scc_iop_fw() { fw_load = true; return 0; }
 }
-void prepare(MB_TYPE m) {
-	fixture f(m);
-}
 BOOST_AUTO_TEST_CASE( glu ) {
-	prepare(MB_TYPE::GLU);
+	fixture f;
 	AR(6) = 0;
 	DR(3) = 0 ;
 	AR(2) = 0x50F00000 ;
@@ -36,7 +34,7 @@ BOOST_AUTO_TEST_CASE( glu ) {
 }
 
 BOOST_AUTO_TEST_CASE( iop ) {
-	prepare(MB_TYPE::OSS);
+	fixture f(std::make_unique<OSS>());
 	AR(6) = 0;
 	AR(2) = 0x50F00000 ;
 	AR(3) = 0x50F04020 ;

@@ -11,6 +11,8 @@
 #include "via1.hpp"
 #include "via2.hpp"
 #include "asc.hpp"
+#include "msc.hpp"
+#include "powerbook.hpp"
 void QuitEmulator();
 uint8_t JAWS_REG::read(int addr) {
 	return 0;
@@ -26,19 +28,19 @@ void JAWS_REG2::write(int addr, uint8_t v) {
 }
 
 class JawsVia2 : public VIA2 {
-	bool ack;
 	friend uint8_t UT_get_JawsVia2(const std::shared_ptr<IO_BASE>& via);
 	friend void UT_get_sawsVia2(const std::shared_ptr<IO_BASE>& via, uint8_t v);
-	uint8_t val;
+	uint8_t val = 0;
+	bool tran_mode = false;
+	bool ready;
 protected:	
 	bool readA(int n) override {
-		ack = true;
 		return val >> n & 1;
 	}
 	bool readB(int n) override {
 		switch(n) {
-		case 1 : // handshake responce
-			return ack;
+		case PB_TRANS_READY : // transport complete
+			return ready;
 		default:
 			return false;
 		}
@@ -49,11 +51,30 @@ protected:
 		} else {
 			val &= ~(1<<n);
 		}
+		if( n == 7 ) {
+			machine->pb_ex->c_in = val;
+		}
 	}
 	void writeB(int n, bool v) override {
 		switch( n ) {
-		case 2 : // write handshake
-			ack = v;
+		case PB_TRANS_READ_MODE : // transport mode
+			if( v ) {
+				if( ! std::exchange(tran_mode, v) ) {
+					// read
+					if( auto v2 = machine->pb_ex->pop_out() ) {
+						val = *v2;
+					}
+				} 
+				ready = true;
+			} else {
+				tran_mode = v;
+				ready = false;
+				// write
+				if( machine->pb_ex->c_in ) {
+					machine->pb_ex->cmd( *machine->pb_ex->c_in ) ;
+					machine->pb_ex->c_in = {};
+				}
+			}
 			break;
 		default:
 			break;
@@ -74,7 +95,7 @@ void UT_get_sawsVia2(const std::shared_ptr<IO_BASE>& via, uint8_t v) {
 		real_via->val = v;
 	}
 }
-JAWS::JAWS() {
+JAWS::JAWS(bool is_pb170) {
 	via1 = std::make_shared<VIA1>();
 	via2 = std::make_shared<JawsVia2>();
 	asc = newEASC();
@@ -82,6 +103,15 @@ JAWS::JAWS() {
 	scsi = std::make_shared<Ncr5380>();
 	pb = std::make_shared<JAWS_REG>();
 	pb2 = std::make_shared<JAWS_REG2>();
+	pb_ex = std::make_shared<PB_EX_REG>();
+
+	if( is_pb170 ) {
+		model_map[0] = true;
+		model_map[1] = false;
+		model_map[2] = true;
+		model_map[3] = false;
+	}
+
 }
 std::shared_ptr<IO_BASE> JAWS::get_io(uint32_t base) {
 	switch((base>>13) & 0x7f) {
@@ -131,10 +161,22 @@ Niagara::Niagara() {
 	scc = newZ85C80( true );
 	scsi = std::make_shared<Ncr5380>();
 	pb = std::make_shared<PB_REG>();
+	pb_ex = std::make_shared<PB_EX_REG>();
+	// PB 180
+	model_map[0] = true;
+	model_map[1] = false;
+	model_map[2] = true;
+	model_map[3] = false;
+
 }
 std::shared_ptr<IO_BASE> Niagara::get_io(uint32_t base) {
 	switch((base>>13)&0x7f) {
-	case 0 : return via1;
+	case 0 :
+		if( ((base>>13) & 0x700) != 0x700 ) {
+			return {};
+		} else {
+			return via1;
+		}
 	case 1 : return via2;
 	case 2 : return scc;
 	case 8 : return scsi;
@@ -145,7 +187,13 @@ std::shared_ptr<IO_BASE> Niagara::get_io(uint32_t base) {
 }
 uint8_t Niagara::io_read_b(uint32_t addr, int attr) {
 	switch((addr>>13) & 0x7f) {
-	case 0 : return via1->read(addr >> 9 & 0xf);
+	case 0 :
+		if( ((addr>>13) & 0x700) != 0x700 ) {
+			bus_error(addr, attr);
+			return 0;
+		} else {
+			return via1->read(addr >> 9 & 0xf);
+		}		
 	case 1 : return via2->read(addr >> 9 & 0xf);
 	case 2  : return scc->read(addr>>1&3);
 	case 8  : return scsi->read(addr>>4&7);
@@ -156,7 +204,12 @@ uint8_t Niagara::io_read_b(uint32_t addr, int attr) {
 }
 void Niagara::io_write_b(uint32_t addr, uint8_t v, int attr) {
 	switch((addr>>13) & 0x7f) {
-	case 0 : return via1->write(addr >> 9 & 0xf, v);
+	case 0 :
+		if( ((addr>>13) & 0x700) != 0x700 ) {
+			return bus_error(addr, attr);
+		} else {
+			return via1->write(addr >> 9 & 0xf, v);
+		}
 	case 1 : return via2->write(addr >> 9 & 0xf, v);
 	case 2  : return scc->write(addr>>1&3, v);
 	case 8  : return scsi->write(addr>>4&7, v);

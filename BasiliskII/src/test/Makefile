@@ -141,6 +141,21 @@ hw_via1/fast:
 .PHONY : hw_via1/fast
 
 # Convenience name for target.
+test/CMakeFiles/hw_msc.dir/rule:
+	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f CMakeFiles/Makefile2 test/CMakeFiles/hw_msc.dir/rule
+.PHONY : test/CMakeFiles/hw_msc.dir/rule
+
+# Convenience name for target.
+hw_msc: test/CMakeFiles/hw_msc.dir/rule
+
+.PHONY : hw_msc
+
+# fast build rule for target.
+hw_msc/fast:
+	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/CMakeFiles/hw_msc.dir/build.make test/CMakeFiles/hw_msc.dir/build
+.PHONY : hw_msc/fast
+
+# Convenience name for target.
 test/CMakeFiles/hw_rbv.dir/rule:
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f CMakeFiles/Makefile2 test/CMakeFiles/hw_rbv.dir/rule
 .PHONY : test/CMakeFiles/hw_rbv.dir/rule
@@ -4001,6 +4016,33 @@ hw/iop.cpp.s:
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/CMakeFiles/hw_iop.dir/build.make test/CMakeFiles/hw_iop.dir/hw/iop.cpp.s
 .PHONY : hw/iop.cpp.s
 
+hw/msc.o: hw/msc.cpp.o
+
+.PHONY : hw/msc.o
+
+# target to build an object file
+hw/msc.cpp.o:
+	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/CMakeFiles/hw_msc.dir/build.make test/CMakeFiles/hw_msc.dir/hw/msc.cpp.o
+.PHONY : hw/msc.cpp.o
+
+hw/msc.i: hw/msc.cpp.i
+
+.PHONY : hw/msc.i
+
+# target to preprocess a source file
+hw/msc.cpp.i:
+	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/CMakeFiles/hw_msc.dir/build.make test/CMakeFiles/hw_msc.dir/hw/msc.cpp.i
+.PHONY : hw/msc.cpp.i
+
+hw/msc.s: hw/msc.cpp.s
+
+.PHONY : hw/msc.s
+
+# target to generate assembly for a file
+hw/msc.cpp.s:
+	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/CMakeFiles/hw_msc.dir/build.make test/CMakeFiles/hw_msc.dir/hw/msc.cpp.s
+.PHONY : hw/msc.cpp.s
+
 hw/rbv.o: hw/rbv.cpp.o
 
 .PHONY : hw/rbv.o
@@ -4172,6 +4214,7 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... hw_scc"
 	@echo "... hw_via1"
+	@echo "... hw_msc"
 	@echo "... hw_rbv"
 	@echo "... hw_oss"
 	@echo "... hw_via"
@@ -4598,6 +4641,9 @@ help:
 	@echo "... hw/iop.o"
 	@echo "... hw/iop.i"
 	@echo "... hw/iop.s"
+	@echo "... hw/msc.o"
+	@echo "... hw/msc.i"
+	@echo "... hw/msc.s"
 	@echo "... hw/rbv.o"
 	@echo "... hw/rbv.i"
 	@echo "... hw/rbv.s"

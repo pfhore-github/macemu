@@ -1,6 +1,8 @@
 #include <stdint.h>
 #include "io.hpp"
 #include "via.hpp"
+#include "via1.hpp"
+#include "glu.hpp"
 #include "registers.hpp"
 #include "via2.hpp"
 #include "machine.hpp"
@@ -46,12 +48,33 @@ bool VIA2::readB(int n) {
 }
 void QuitEmulator();
 void VIA2::writeA(int n, bool v) {
-	return;
+	switch( n ) {
+		// memory size
+	case 6 :		
+	case 7 :
+		if( auto glu = machine_is<GLU>() ) {
+			if( v ) {
+				glu->bankA_size |= 1 << (n-6);
+			} else {
+				glu->bankA_size &= ~(1 << (n-6));
+			}
+		}
+	default : return;
+	}
 }
 
 void VIA2::writeB(int n, bool v) {
-	if(n == 2 && !v)
-		QuitEmulator();
+	switch(n) {
+	case 2 :
+		// power-off
+		if( !v) {
+			QuitEmulator();
+		}
+		break;
+	case 7 :
+		// VIA1 60MHz timer
+		machine->via1->ca1_in(v);
+	}	
 }
 
 

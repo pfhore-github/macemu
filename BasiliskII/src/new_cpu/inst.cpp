@@ -350,6 +350,9 @@ void CPU::change_PC(uint32_t new_pc) {
 	if( new_pc & 1 ) {
 		throw Exception::AddressError(new_pc);
 	}
+	if( cpu.PC & 0xfff00000 ) {		
+		rom_base = cpu.PC & 0xfff00000;
+	}
 	auto routine = ROM::rom_routines.find(new_pc & 0xfffff);
 	if( routine != ROM::rom_routines.end() ) {
 		routine->second();

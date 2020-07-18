@@ -10,12 +10,7 @@ td, th {
 	empty-cells: hide;
 }
 #mmap td { text-align: right; }
-td.na {
+td:empty {
 	background: #404040;
 	text-align: center !important; 
-}
-td.na::before {
-	font-style: italic;
-	content: "N/A";
-	
 }

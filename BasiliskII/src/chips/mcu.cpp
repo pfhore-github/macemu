@@ -13,16 +13,42 @@
 #include "machine.hpp"
 #include <string.h>
 void QuitEmulator();
-MCU::MCU()  {
+extern uint8_t* RAMBaseHost;
+MCU::MCU(MODEL model)  {
 	via1 = std::make_shared<VIA1>(6);
 	via2 = std::make_shared<VIA2>();
 	asc = newPlaneASC();
-	scc = newZ85C80();
+	scc = newZ85C80(true);
 	vdac = std::make_shared<VDAC>();
 	mcu = std::make_shared<MCU_REG>();
 	// TODO actually 53c96 
 	scsi = std::make_shared<Ncr5380>();
 	ether = std::make_shared<SONIC>();
+	model_id = 0;
+	switch( model ) {
+	case MODEL::Q700 :
+		model_map[0] = false;
+		model_map[1] = false;
+		model_map[2] = false;
+		model_map[3] = true;
+		break;
+	case MODEL::Q900 :
+		model_map[0] = false;
+		model_map[1] = false;
+		model_map[2] = true;
+		model_map[3] = true;
+		RAMBaseHost[0x78] = 'r';
+		RAMBaseHost[0x79] = 'o';
+		RAMBaseHost[0x7A] = 'm';
+		RAMBaseHost[0x7B] = 'p';
+		break;
+	case MODEL::Q950 :
+		model_map[0] = false;
+		model_map[1] = false;
+		model_map[2] = true;
+		model_map[3] = false;
+		break;
+	}
 }
 
 std::shared_ptr<IO_BASE> MCU::get_io(uint32_t base) {
@@ -84,4 +110,6 @@ void MCU_REG::write(int addr, uint8_t v) {
 	} else {
 	}
 }
-
+void* MCU::get_ram_addr(uint32_t addr, int attr) {
+	return Machine::get_ram_addr(addr, attr);
+}

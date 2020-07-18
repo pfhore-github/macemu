@@ -3,12 +3,14 @@
 #include "machine.hpp"
 #include "asc.hpp"
 #include "via.hpp"
+#include "glu.hpp"
+#include "sonora.hpp"
 namespace ROM {
 void play_asc_5() { MOCK::invoke<void>("play_asc_5"); }
 void play_easc(int i) { MOCK::invoke<void>("play_easc", i); }
 }
-void prepare(MB_TYPE m) {
-	fixture f(m);
+void prepare(std::unique_ptr<Machine>&& m) {
+	fixture f(std::move(m));
 	AR(3) = 0x50F14000;
 	AR(5) = 0x50F00000;
 	MOCK::reset_all();
@@ -19,13 +21,13 @@ void prepare(MB_TYPE m) {
 }
 using namespace ROM;
 BOOST_AUTO_TEST_CASE( asc ) {
-	prepare(MB_TYPE::GLU);
+	prepare(std::make_unique<GLU>());
 	TEST_ROM( 45C52 );
 	MOCK::verify("play_asc_5");
 }
 
 BOOST_AUTO_TEST_CASE( easc ) {
-	prepare(MB_TYPE::SONORA);
+	prepare(std::make_unique<Sonora>());
 	MOCK::get<void(int)>("play_easc")->always( 4 );
 	TEST_ROM( 45C52 );
 	MOCK::verify("play_easc");

@@ -1,9 +1,10 @@
 #define BOOST_TEST_DYN_LINK
 #include "test_common.hpp"
 #include "asc.hpp"
+#include "sonora.hpp"
 using namespace ROM;
 void prepare() {
-	fixture f(MB_TYPE::SONORA);
+	fixture f(std::make_unique<Sonora>());
 	rom_base = 0x40800000;
 	AR(6) = 0x50F14000;
 }

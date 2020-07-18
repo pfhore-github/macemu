@@ -47,6 +47,8 @@ void run_47EF6() ;
 void run_4AA98() ;
 void run_8AC00() ;
 void run_A0000() ;
+void run_A01C0() ;
+void run_A01C6() ;
 void run_A0242() ;
 void run_A0286() ;
 void run_B29C4() ;

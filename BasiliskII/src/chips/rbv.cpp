@@ -24,8 +24,8 @@ void RBV::write(int addr, uint8_t v) {
 void SonorRBV::write(int addr, uint8_t v) {
 	switch(addr) {
 	case 0x1 : return ; // TODO; unknown; set 0
-	case 0x4 : return ; // TODO; unknown; set 0x40
-	case 0x5 : return ; // TODO; unknown; set 2 or 3(LCIII+ only)
+	case 0x8 : return ; // TODO; unknown; set 0x40
+	case 0x9 : return ; // TODO; unknown; set 2 or 3(LCIII+ only)
 	default : RBV::write(addr, v); return;
 	}
 }

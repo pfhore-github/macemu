@@ -4,6 +4,7 @@ public:
 	enum STATE { NONE, UNIMP, POSTINST } state = NONE;
 	virtual void exec(uint16_t op, int mode, int reg) = 0;
 	virtual void reset() = 0;
+	virtual ~FPU() {}
 };
 
 class NoFPU : public FPU {

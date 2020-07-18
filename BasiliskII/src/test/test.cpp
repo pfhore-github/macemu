@@ -9,6 +9,7 @@
 #include "data.hpp"
 #include <fenv.h>
 #include "main.h"
+#include "glu.hpp"
 #include "via_test.hpp"
 #include "fmt/core.h"
 #include <iostream>
@@ -57,7 +58,6 @@ std::ostream& operator<<(std::ostream& os, const conds &cd) {
 		cd.C << "," << cd.Z << "," << cd.V << "," << cd.N;
 }
 #include "machine.hpp"
-extern MB_TYPE mb_type;
 using op_type = void (*)(CPU*, uint16_t op, int dn, int mode, int reg);
 extern op_type op_list[65536];
 std::vector<conds> t_data = {
@@ -107,10 +107,12 @@ std::vector<conds> f_data = {
 	{ 15, false, false, false, false }, // !LE(~N~V~Z)
 };
 CPU cpu;
-fixture::fixture(MB_TYPE m) {
-	init_machine(m);
+fixture::fixture()
+	:fixture(std::make_unique<GLU>()) {}
+
+fixture::fixture(std::unique_ptr<Machine>&& m) {
+	machine = std::move(m);
 	memset(&cpu.R, 0, sizeof(uint32_t)*15);
-	memset(RAMBaseHost, 0, 4098);
 	cpu.X = cpu.C = cpu.V = cpu.Z = cpu.N = false;
 	cpu.S = false;
 	cpu.R[8+7] = 3*1024;
@@ -434,8 +436,8 @@ void IO_TEST_IMPL::write(uint32_t addr, uint8_t v) {
 	*written[ addr ] << char(v);
 }
 
-bool STREAM_TEST::in() {
-	bool c = in_.front();
+uint8_t STREAM_TEST::in() {
+	uint8_t c = in_.front();
 	if( in_.size() != 1 ) { in_.pop_front(); }
 	return c;
 }
@@ -486,4 +488,15 @@ void adb_set_state(int) __attribute__((weak));
 void adb_set_state(int) {}
 #include "adb.h"
 uint8_t ADB_Bus::get_from() { return 0;}
+
+extern uint32_t ROMSize;
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/mman.h>
+#include <fcntl.h>
+
+#include "machine.hpp"
+#include "asc.hpp"
+#include <unistd.h>
+#include <stdlib.h>
 

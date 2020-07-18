@@ -1,18 +1,21 @@
 #define BOOST_TEST_DYN_LINK
 #include "test_common.hpp"
+#include "glu.hpp"
+#include "mcu.hpp"
 #include "scc.hpp"
 #include "scc_impl.hpp"
 using namespace ROM;
 namespace ROM {
 }
-void prepare(MB_TYPE m) {
-	fixture f(m);
+template<class T>
+void prepare() {
+	fixture f(std::make_unique<T>());
 	rom_base = 0x40800000;
 }
 struct NON_IOP_F {
 	std::shared_ptr<IO_TEST<SCC>> scc = std::make_shared<IO_TEST<SCC>>(std::make_shared<Z8530>());
 	NON_IOP_F() {
-		prepare(MB_TYPE::GLU);
+		prepare<GLU>();
 		motherboard = &motherboards[ 0 ];
 		AR(3) = 0x50F04000;
 		DR(3) = 0;
@@ -74,7 +77,7 @@ BOOST_AUTO_TEST_SUITE_END()
 struct IOP_F {
 	std::shared_ptr<IO_TEST<SCC_IOP>> scc = std::make_shared<IO_TEST<SCC_IOP>>(std::make_shared<Z8530>());
 	IOP_F() {
-		prepare(MB_TYPE::MCU);
+		prepare<MCU>();
 		motherboard = &motherboards[ 4 ];
 		AR(3) = 0x50F0C020;
 		DR(3) = 0;

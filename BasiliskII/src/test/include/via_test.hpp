@@ -33,8 +33,7 @@ protected:
 	bool readB(int n) override  { return b.at(n).in(); }
 	void writeB(int n, bool v) override  { b.at(n).out(v); }
 //	bool cb2_in_pull() override  { return cb2.out(); }
-	void cb2_out(bool v) override  { cb2.out(v); }
-	void ca2_out(bool v) override  { ca2.out(v); }
+	void cb2_out(uint8_t v) override  { cb2.out(v); }
 	void irq_pin() override  { ++irq_cnt; }
 };
 

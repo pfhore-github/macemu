@@ -1,5 +1,4 @@
-#ifndef H_68881_HPP
-#define H_68881_HPP 
+#pragma once
 #include "../registers.hpp"
 #include "../common.hpp"
 
@@ -81,4 +80,3 @@ private:
 
 void write_ld(uint32_t addr, long double ld);
 long double read_ld( uint32_t addr);
-#endif

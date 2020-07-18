@@ -5,7 +5,7 @@
 #include "inst_cmn.hpp"
 #include "data.hpp"
 #include "machine.hpp"
-
+#include "glu.hpp"
 // MOCK
 namespace ROM {
 void init_mmu() { MOCK::invoke<void>("init_mmu"); }
@@ -15,7 +15,7 @@ void run_rom(uint32_t) {}
 }
 using namespace ROMWrapper;
 BOOST_AUTO_TEST_CASE( exec )  {
-	fixture f;
+	fixture f( std::make_unique<GLU>());
 	clear_global();
 	MOCK::objects.clear();
 	MOCK::make<void()>("init_mmu")->always_do( []() { } );

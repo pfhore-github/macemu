@@ -1,13 +1,15 @@
 #define BOOST_TEST_DYN_LINK
 #include "test_common.hpp"
-
+#include "glu.hpp"
+#include "mcu.hpp"
+#include "oss.hpp"
 namespace ROM {
 bool test_scsi_cmd(uint32_t a) { return MOCK::invoke<bool>("test_scsi_cmd", a); }
 bool test_iifx_exp1(uint32_t b) { return MOCK::invoke<bool>("test_iifx_exp1", b); }
 }
 using namespace ROM;
-void prepare(MB_TYPE m) {
-	fixture f(m);
+void prepare(std::unique_ptr<Machine>&& m) {
+	fixture f(std::move(m));
 	set_sr( 0x2700 );
 	DEFINE_ROM( 04672 );
 	DEFINE_ROM( 04708 );
@@ -19,7 +21,7 @@ void prepare(MB_TYPE m) {
 }
 
 BOOST_AUTO_TEST_CASE( none )  {
-	prepare(MB_TYPE::GLU);
+	prepare(std::make_unique<GLU>());
 	AR(1) = 0x40803688;
 	DR(0) = 1 << INIT_HW_FLG_T::SCSI_DMA |
 		1 << 8 |
@@ -38,7 +40,7 @@ BOOST_AUTO_TEST_CASE( none )  {
 }
 
 BOOST_AUTO_TEST_CASE( scsi_040 )  {
-	prepare(MB_TYPE::MCU);
+	prepare(std::make_unique<MCU>());
 	AR(1) = 0x40803910;
 	DR(0) |= 1 << INIT_HW_FLG_T::SCSI_040_INT |
 		1 << INIT_HW_FLG_T::SCSI_DMA |
@@ -58,7 +60,7 @@ BOOST_AUTO_TEST_CASE( scsi_040 )  {
 }
 
 BOOST_AUTO_TEST_CASE( scsi_040_failure )  {
-	prepare(MB_TYPE::MCU);
+	prepare(std::make_unique<MCU>());
 	AR(1) = 0x40803910;
 	DR(0) |= 1 << INIT_HW_FLG_T::SCSI_040_INT |
 		1 << INIT_HW_FLG_T::SCSI_DMA |
@@ -77,7 +79,7 @@ BOOST_AUTO_TEST_CASE( scsi_040_failure )  {
 }
 
 BOOST_AUTO_TEST_CASE( scsi_040_2 )  {
-	prepare(MB_TYPE::MCU);
+	prepare(std::make_unique<MCU>());
 	AR(1) = 0x40803910;
 	DR(0) |= 1 << INIT_HW_FLG_T::SCSI_040_INT |
 		1 << INIT_HW_FLG_T::SCSI_DMA |
@@ -100,7 +102,7 @@ BOOST_AUTO_TEST_CASE( scsi_040_2 )  {
 }
 
 BOOST_AUTO_TEST_CASE( scsi_040_2_failure )  {
-	prepare(MB_TYPE::MCU);
+	prepare(std::make_unique<MCU>());
 	AR(1) = 0x40803910;
 	DR(0) |= 1 << INIT_HW_FLG_T::SCSI_040_INT |
 		1 << INIT_HW_FLG_T::SCSI_DMA |
@@ -123,7 +125,7 @@ BOOST_AUTO_TEST_CASE( scsi_040_2_failure )  {
 }
 
 BOOST_AUTO_TEST_CASE( iifx )  {
-	prepare(MB_TYPE::OSS);
+	prepare(std::make_unique<OSS>());
 	AR(1) = 0x408037F0;
 	DR(0) = 1 << INIT_HW_FLG_T::IIFX_EXP1 ;
 	MOCK::get<bool(uint32_t)>("test_iifx_exp1")->always(true, 0x50F1E000 );
@@ -134,7 +136,7 @@ BOOST_AUTO_TEST_CASE( iifx )  {
 }
 
 BOOST_AUTO_TEST_CASE( iifx_failure )  {
-	prepare(MB_TYPE::OSS);
+	prepare(std::make_unique<OSS>());
 	AR(1) = 0x408037F0;
 	DR(0) = 1 << INIT_HW_FLG_T::IIFX_EXP1 ;
 	MOCK::get<bool(uint32_t)>("test_iifx_exp1")->always(false, 0x50F1E000 );

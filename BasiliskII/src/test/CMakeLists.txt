@@ -28,3 +28,5 @@ ADD_EXECUTABLE(hw_asc hw/asc.cpp )
 ADD_EXECUTABLE(hw_iop hw/iop.cpp )
 ADD_EXECUTABLE(hw_scc hw/scc.cpp )
 ADD_EXECUTABLE(hw_oss hw/iifx.cpp )
+ADD_EXECUTABLE(hw_msc hw/msc.cpp )
+

@@ -37,3 +37,11 @@ void clear_global() {
 	INIT_FLAGS = 0;
 	EXCEPTION_STATUS = 0;
 }
+
+extern uint8_t* rom2;
+void run_rom_as_650(uint32_t addr) {
+	uint8_t* rom_old = ROMBaseHost;
+	ROMBaseHost = rom2;
+	test_rom( addr );
+	ROMBaseHost = rom_old;
+}

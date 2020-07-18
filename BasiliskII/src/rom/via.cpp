@@ -39,9 +39,10 @@ void reset_via() {
 		machine->rbv->write(int(RBV_REG::IER), 0x7f);
 		machine->rbv->write(int(RBV_REG::RB), 0x8f);
 		if( ROM_FLG.test( ROM_FLG_T::MONITOR) ) {
-			cpu.Z = dynamic_cast<NoFPU*>(fpu) != nullptr;	// has FPU?
+			cpu.Z = dynamic_cast<NoFPU*>(fpu) != nullptr;	// 270c has FPU
 			if( cpu.Z ) {
-				machine->rbv->write(int(RBV_REG::RB), 0x8e);
+				// isn't 270c ? (only 270c is color model )
+				machine->rbv->clear(int(RBV_REG::RB), 0);
 			}
 			machine->rbv->write(int(RBV_REG::SIER), 0x7f);
 		} else {
@@ -80,8 +81,8 @@ uint32_t read_id_from_via() {
 	if( ! INIT_HW_FLG.test( INIT_HW_FLG_T::VIA2 ) ) {
 		return v;
 	}
-	h = read_via_impl(machine->via2, VIA_REG::RA, VIA_REG::DDRA, motherboard->via2A_mask);
-	l = read_via_impl(machine->via2, VIA_REG::RB, VIA_REG::DDRB, motherboard->via2B_mask);
+	h = read_via_impl(machine->get_via2(), VIA_REG::RA, VIA_REG::DDRA, motherboard->via2A_mask);
+	l = read_via_impl(machine->get_via2(), VIA_REG::RB, VIA_REG::DDRB, motherboard->via2B_mask);
 	v |= h << 8 | l;
 	return v;
 }

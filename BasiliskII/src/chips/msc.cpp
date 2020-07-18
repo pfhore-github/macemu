@@ -2,28 +2,57 @@
 #include "msc.hpp"
 #include "asc.hpp"
 #include "ncr5380.hpp"
+#include "powerbook.hpp"
+
 #include "rbv.hpp"
 #include "mem.hpp"
 #include "scc.hpp"
 #include "iop.hpp"
 #include "z8530.hpp"
-// TODO
-void MSC_VIA1::cb2_out(bool v) {
-	base->msc->c_in = base->msc->c_in << 1 | v;
-	++base->msc->c_in_c;
+#include "fpu/fpu.hpp"
+#include "fpu/68881.hpp"
+void MSC_VIA1::cb2_out(uint8_t v) {
+	machine->pb_ex->c_in = v;
+}
+// no ADB
+uint8_t MSC_VIA1::read(int n) {
+	return VIA::read(n);
 }
 
 MSC_VIA1::MSC_VIA1(MSC* parent) :VIA1(1), base(parent) {}
-
-MSC::MSC() {	
+static NuBus msc_nu_e = {
+	msc_nu_e_read_b,
+	nullptr,
+	msc_nu_e_read_l,
+	msc_nu_e_write_b,
+	nullptr,
+	nullptr
+};
+MSC::MSC(MODEL model) {	
 	via1 = std::make_shared<MSC_VIA1>(this);
 	via2 = rbv = std::make_shared<MSCRbv>(this);
 	// TODO
 	asc = newEASC();
-	msc = std::make_shared<MSC_REG>();
+	pb_ex = std::make_shared<PB_EX_REG>();
 	scc = newZ85C80();
 	scsi = std::make_shared<Ncr5380>();
-	vdac = std::make_shared<VDAC>(); 
+	vdac = std::make_shared<VDAC>();
+	switch( model ) {
+	case MODEL::PB_Duo210 : model_id = 0xA55A1004; break;
+	case MODEL::PB_Duo230 : model_id = 0xA55A1005; break;
+	case MODEL::PB_Duo270c : model_id = 0xA55A1002; break;
+	}
+	if( fpu ) {
+		delete fpu;
+	}
+	if( model == MODEL::PB_Duo270c ) {
+		// TODO: actually 68882
+		fpu = new M68040_FPU();
+	} else {
+		fpu = new NoFPU();
+	}
+	nubus[5] = &msc_nu_e;
+	
 }
 
 
@@ -46,7 +75,7 @@ uint8_t MSC::io_read_b(uint32_t addr, int attr) {
 	case 8  : return scsi->read(addr>>4&7);
 	case 10 : return asc->read(addr&0xffff);
 	case 18 : return vdac->read(addr>>2&7);
-	case 19 : return rbv->read( addr & 0xff);
+	case 19 : return rbv->read((addr&3)|(addr>>2&0xC));
 	default : bus_error(addr, attr);
 	}
 }
@@ -58,35 +87,37 @@ void MSC::io_write_b(uint32_t addr, uint8_t v, int attr) {
 	case 8  : return scsi->write(addr>>4&7, v);
 	case 10 : return asc->write(addr&0xffff, v);
 	case 18 : return vdac->write(addr>>2&7, v);
-	case 19 : return rbv->write(addr & 0xff, v);
+	case 19 : return rbv->write((addr&3)|(addr>>2&0xC) , v);
 	default : bus_error(addr, attr);
 	}
 }
 
 bool MSCRbv::readB(int n) {
 	switch(n) {
-	case 1 : // transport complete
-		return base->msc->ready;
+	case PB_TRANS_READY : // transport complete
+		return base->ready;
 	default:
 		return RBV::readB(n);
 	}
 }
 void MSCRbv::writeB(int n, bool v) {
 	switch( n ) {
-	case 2 : // transport mode
+	case PB_TRANS_READ_MODE : // transport mode
 		if( v ) {
-			// read
-			for(int i = 7; i >= 0; --i ) {
-				machine->via1->cb2_in_push(base->msc->c_out >> i & 1);
-			}
-			base->msc->ready = true;
+			if( ! std::exchange(tran_mode, v) ) {
+				// read
+				if( auto v2 = base->pb_ex->pop_out() ) {
+					machine->via1->cb2_in_push_byte(*v2);
+				}
+			} 
+			base->ready = true;
 		} else {
+			tran_mode = v;
+			base->ready = false;
 			// write
-			base->msc->ready = false;
-			if( base->msc->c_in_c == 8 ) {
-				base->msc->c_out = base->msc->cmd(base->msc->c_in);
-				base->msc->c_in = 0;
-				base->msc->c_in_c = 0;
+			if( base->pb_ex->c_in ) {
+				base->pb_ex->cmd( *base->pb_ex->c_in ) ;
+				base->pb_ex->c_in = {};
 			}
 		}
 		break;
@@ -95,40 +126,40 @@ void MSCRbv::writeB(int n, bool v) {
 		break;
 	}
 }
-#include <stdio.h>
-uint8_t MSC_REG::cmd(uint8_t c) {
-	if( firmware_pos != -1 ) {
-		if( firmware_pos < 0x8003 ) {
-			firmware[firmware_pos++] = c;
-		} else {
-			firmware_loaded = true;
-			firmware_pos = -1;
-		}
-		return 0;
-	}
-	switch(c) {
-	case 0xE1:
-		// send firmware
-		firmware_pos = 0;
-		return 0;
-	case 0xE2:
-		// ROM VERSION?
-		return firmware_loaded ? 0x62 : 0;
-	default:
-		printf("CMD: %02x\n", c);
-		return 0;
+
+void MSCRbv::write(int addr, uint8_t v) {
+	switch(addr) {
+	case 0x10 : return; // TODO memory address?
+	default : RBV::write(addr, v); return;
 	}
 }
 
 uint8_t MSCRbv::read(int addr) {
 	switch(addr) {
 	case 0x10 : return 0; // TODO memory address?
-	default : return RBV::read((addr&3)|(addr>>2&4) | (addr&0x20)); 
+	default : return RBV::read(addr); 
 	}
 }	
-void MSCRbv::write(int addr, uint8_t v) {
-	switch(addr) {
-	case 0x10 : return; // TODO memory address?
-	default : RBV::write((addr&3)|(addr>>2&4) | (addr&0x20), v); return;
+
+uint32_t msc_nu_e_read_l(uint32_t v)
+{
+	switch( v ) {
+	case 0xFFFFE4 : return 0x52757373; // "Russ"
+	case 0xFFFFE8 : return 0x53574321; // "SWC2"
+	}
+	return 0;	
+}
+uint8_t msc_nu_e_read_b(uint32_t v) {
+	switch( v ) {
+	case 0xE00021 : return 0;
+	case 0xE08000 : return 0;
+	}
+	return 0;
+}
+void msc_nu_e_write_b(uint32_t v, uint8_t c) {
+	switch( v ) {
+	case 0xE08000 :
+		break;
 	}
 }
+		

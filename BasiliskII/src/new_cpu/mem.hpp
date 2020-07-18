@@ -1,6 +1,7 @@
 #ifndef MEM_HPP_
 #define MEM_HPP_ 
 #include "SDL_endian.h"
+extern uint8_t *RAMBaseHost;
 constexpr uint32_t ATTR_SZ_B = 1;
 constexpr uint32_t ATTR_SZ_W = 2;
 constexpr uint32_t ATTR_SZ_L = 0;

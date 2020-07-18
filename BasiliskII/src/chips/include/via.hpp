@@ -54,11 +54,7 @@ enum VIA_REG_t {
 };
 }
 // 1tick(783.36kHz) = 1.27655 us
-static inline uint64_t CLOCK() {
-	return SDL_GetPerformanceCounter() * 7833600
-		/ SDL_GetPerformanceFrequency();
-}
-void tick_sleep(std::atomic<bool>& running, uint16_t tick);
+// macintosh CA2 is input only
 class via_timer;
 /** limited MOS 6522 VIA */
 class VIA : public IO_BASE {
@@ -69,7 +65,6 @@ class VIA : public IO_BASE {
 	uint16_t t2_counter = 0;
 	
 	const uint8_t IRQ;
-	bool handshake;
 	bool ca1_old;
 	bool cb1_old;
 	bool ca2_old;
@@ -84,8 +79,7 @@ class VIA : public IO_BASE {
 	void do_writeB(int i, bool v);
 
 	void set_timer2();
-	friend int timer_repeat(void* p);
-	friend int timer_once(void* p);
+	friend uint32_t timer_exec(uint32_t i, void* p);
 protected:
 	VIA(uint8_t irq);
 	uint8_t irq_flg;
@@ -125,16 +119,16 @@ protected:
 	virtual void writeA(int n, bool v) {}
 	virtual bool readB(int n) { return false; }
 	virtual void writeB(int n, bool v) {}
-	virtual void cb2_out(bool v) {}
-	virtual void ca2_out(bool v) {}
+	virtual void cb2_out(uint8_t v) {} // for VIA1; ADB
 	virtual void irq_pin();
 	friend class ADB_VIA;
 	
 public:
-	void ca1_in(bool v);		// for handshake
-	void cb1_in(bool v);		// for handshake
-	void ca2_in_push(bool v);	// 
-	void cb2_in_push(bool v);	// 
+	void ca1_in(bool v);		
+	void cb1_in(bool v);		
+	void ca2_in_push(bool v);	
+	void cb2_in_push_byte(uint8_t v); // for ADB   
+	void cb2_in_push(bool v);   
 	void do_irq(int i);
 	void reset_irq(int i);
 	uint8_t read(int n) override ;

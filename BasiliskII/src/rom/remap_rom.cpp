@@ -6,7 +6,6 @@
 #include "data.hpp"
 #include "prototype.hpp"
 namespace ROM {
-uint32_t rom_base = 0;
 // $04AFE
 uint32_t remap_rom(uint32_t base) {
 	uint32_t b = motherboard->rom_base - AR(2);

@@ -8,15 +8,18 @@
 class MSC;
 class MSC_VIA1 : public VIA1 {
 	MSC* base;
-	std::shared_ptr<IOP> iop;
 protected:
-	void cb2_out(bool v) override;
+	void cb2_out(uint8_t v) override;
+	uint8_t read(int n) override ;
+	
 public:
 	MSC_VIA1(MSC* parent);
 };
 
+
 class MSCRbv : public RBV {
 	MSC* base;
+	bool tran_mode = false;
 protected:	
 	bool readB(int n) override;
 	void writeB(int n, bool v) override;
@@ -26,28 +29,22 @@ public:
 	MSCRbv(MSC* parent) :base(parent) {}
 };
 
-class MSC_REG {
-	friend class MSC_VIA1;
-	friend class MSCRbv;
-	uint8_t firmware[0x8003];
-	bool firmware_loaded = false;
-	int firmware_pos = -1;
-	uint8_t c_in = 0;	
-	uint8_t c_out = 0;
-	uint8_t c_in_c = 0;
-	bool ready = true;
-public:
-	virtual uint8_t cmd(uint8_t c);
-	uint32_t DEBUG_GET_C_IN() { return c_in; }
-	uint8_t DEBUG_GET_C_OUT() { return c_out; }
-	void DEBUG_SET_C_OUT(uint8_t v) { c_out = v; ready = false; }
-};
-
 class MSC : public Machine {
+	bool ready = false;
+	friend class MSCRbv;
 public:
-	MSC();	
+	enum class MODEL {
+		PB_Duo210,
+		PB_Duo230,
+		PB_Duo270c,
+	};
+	MSC(MODEL model = MODEL::PB_Duo210);	
 	std::shared_ptr<IO_BASE> get_io(uint32_t base) override;
 	uint8_t io_read_b(uint32_t addr, int attr) override;
 	void io_write_b(uint32_t addr, uint8_t v, int attr) override;
 };
 
+
+uint32_t msc_nu_e_read_l(uint32_t v);
+void msc_nu_e_write_b(uint32_t v, uint8_t);
+uint8_t msc_nu_e_read_b(uint32_t v);

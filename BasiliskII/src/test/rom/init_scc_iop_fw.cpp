@@ -9,7 +9,7 @@
 #include <memory>
 using namespace ROM;
 void prepare() {
-	fixture f( MB_TYPE::OSS );
+	fixture f( std::make_unique<OSS>() );
 	rom_base = 0x40800000;
 	motherboard = &motherboards[ 2 ];
 }
@@ -38,7 +38,7 @@ BOOST_AUTO_TEST_CASE( ok ) {
 }
 
 BOOST_AUTO_TEST_CASE( ng ) {
-	init_machine(MB_TYPE::OSS);
+	machine = std::make_unique<OSS>();
 	AR(6) = 0;
 	AR(2) = 0x50F00000 ;
 	AR(3) = 0x50F04020 ;

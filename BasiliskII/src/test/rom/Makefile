@@ -111,6 +111,21 @@ depend:
 .PHONY : depend
 
 # Convenience name for target.
+test/rom/CMakeFiles/init_adb.dir/rule:
+	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f CMakeFiles/Makefile2 test/rom/CMakeFiles/init_adb.dir/rule
+.PHONY : test/rom/CMakeFiles/init_adb.dir/rule
+
+# Convenience name for target.
+init_adb: test/rom/CMakeFiles/init_adb.dir/rule
+
+.PHONY : init_adb
+
+# fast build rule for target.
+init_adb/fast:
+	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/init_adb.dir/build.make test/rom/CMakeFiles/init_adb.dir/build
+.PHONY : init_adb/fast
+
+# Convenience name for target.
 test/rom/CMakeFiles/play_easc.dir/rule:
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f CMakeFiles/Makefile2 test/rom/CMakeFiles/play_easc.dir/rule
 .PHONY : test/rom/CMakeFiles/play_easc.dir/rule
@@ -426,6 +441,21 @@ init_modem_port/fast:
 .PHONY : init_modem_port/fast
 
 # Convenience name for target.
+test/rom/CMakeFiles/check_simm_slots.dir/rule:
+	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f CMakeFiles/Makefile2 test/rom/CMakeFiles/check_simm_slots.dir/rule
+.PHONY : test/rom/CMakeFiles/check_simm_slots.dir/rule
+
+# Convenience name for target.
+check_simm_slots: test/rom/CMakeFiles/check_simm_slots.dir/rule
+
+.PHONY : check_simm_slots
+
+# fast build rule for target.
+check_simm_slots/fast:
+	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/check_simm_slots.dir/build.make test/rom/CMakeFiles/check_simm_slots.dir/build
+.PHONY : check_simm_slots/fast
+
+# Convenience name for target.
 test/rom/CMakeFiles/init_hw3.dir/rule:
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f CMakeFiles/Makefile2 test/rom/CMakeFiles/init_hw3.dir/rule
 .PHONY : test/rom/CMakeFiles/init_hw3.dir/rule
@@ -576,21 +606,6 @@ play_asc2/fast:
 .PHONY : play_asc2/fast
 
 # Convenience name for target.
-test/rom/CMakeFiles/init_hw2.dir/rule:
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f CMakeFiles/Makefile2 test/rom/CMakeFiles/init_hw2.dir/rule
-.PHONY : test/rom/CMakeFiles/init_hw2.dir/rule
-
-# Convenience name for target.
-init_hw2: test/rom/CMakeFiles/init_hw2.dir/rule
-
-.PHONY : init_hw2
-
-# fast build rule for target.
-init_hw2/fast:
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/init_hw2.dir/build.make test/rom/CMakeFiles/init_hw2.dir/build
-.PHONY : init_hw2/fast
-
-# Convenience name for target.
 test/rom/CMakeFiles/test_iifx_exp1.dir/rule:
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f CMakeFiles/Makefile2 test/rom/CMakeFiles/test_iifx_exp1.dir/rule
 .PHONY : test/rom/CMakeFiles/test_iifx_exp1.dir/rule
@@ -696,6 +711,21 @@ test_model_id/fast:
 .PHONY : test_model_id/fast
 
 # Convenience name for target.
+test/rom/CMakeFiles/init_powerbook.dir/rule:
+	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f CMakeFiles/Makefile2 test/rom/CMakeFiles/init_powerbook.dir/rule
+.PHONY : test/rom/CMakeFiles/init_powerbook.dir/rule
+
+# Convenience name for target.
+init_powerbook: test/rom/CMakeFiles/init_powerbook.dir/rule
+
+.PHONY : init_powerbook
+
+# fast build rule for target.
+init_powerbook/fast:
+	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/init_powerbook.dir/build.make test/rom/CMakeFiles/init_powerbook.dir/build
+.PHONY : init_powerbook/fast
+
+# Convenience name for target.
 test/rom/CMakeFiles/read_modem_cmd_dword.dir/rule:
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f CMakeFiles/Makefile2 test/rom/CMakeFiles/read_modem_cmd_dword.dir/rule
 .PHONY : test/rom/CMakeFiles/read_modem_cmd_dword.dir/rule
@@ -784,6 +814,21 @@ send_to_pb_dword: test/rom/CMakeFiles/send_to_pb_dword.dir/rule
 send_to_pb_dword/fast:
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/send_to_pb_dword.dir/build.make test/rom/CMakeFiles/send_to_pb_dword.dir/build
 .PHONY : send_to_pb_dword/fast
+
+# Convenience name for target.
+test/rom/CMakeFiles/pb_handler52.dir/rule:
+	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f CMakeFiles/Makefile2 test/rom/CMakeFiles/pb_handler52.dir/rule
+.PHONY : test/rom/CMakeFiles/pb_handler52.dir/rule
+
+# Convenience name for target.
+pb_handler52: test/rom/CMakeFiles/pb_handler52.dir/rule
+
+.PHONY : pb_handler52
+
+# fast build rule for target.
+pb_handler52/fast:
+	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/pb_handler52.dir/build.make test/rom/CMakeFiles/pb_handler52.dir/build
+.PHONY : pb_handler52/fast
 
 # Convenience name for target.
 test/rom/CMakeFiles/check_mb.dir/rule:
@@ -1196,6 +1241,33 @@ check_simm_size.cpp.s:
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/check_simm_size.dir/build.make test/rom/CMakeFiles/check_simm_size.dir/check_simm_size.cpp.s
 .PHONY : check_simm_size.cpp.s
 
+check_simm_slots.o: check_simm_slots.cpp.o
+
+.PHONY : check_simm_slots.o
+
+# target to build an object file
+check_simm_slots.cpp.o:
+	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/check_simm_slots.dir/build.make test/rom/CMakeFiles/check_simm_slots.dir/check_simm_slots.cpp.o
+.PHONY : check_simm_slots.cpp.o
+
+check_simm_slots.i: check_simm_slots.cpp.i
+
+.PHONY : check_simm_slots.i
+
+# target to preprocess a source file
+check_simm_slots.cpp.i:
+	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/check_simm_slots.dir/build.make test/rom/CMakeFiles/check_simm_slots.dir/check_simm_slots.cpp.i
+.PHONY : check_simm_slots.cpp.i
+
+check_simm_slots.s: check_simm_slots.cpp.s
+
+.PHONY : check_simm_slots.s
+
+# target to generate assembly for a file
+check_simm_slots.cpp.s:
+	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/check_simm_slots.dir/build.make test/rom/CMakeFiles/check_simm_slots.dir/check_simm_slots.cpp.s
+.PHONY : check_simm_slots.cpp.s
+
 # target to build an object file
 cmake_pch.hxx.gch:
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/boot.dir/build.make test/rom/CMakeFiles/boot.dir/cmake_pch.hxx.gch
@@ -1244,6 +1316,7 @@ common.o: common.cpp.o
 
 # target to build an object file
 common.cpp.o:
+	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/init_adb.dir/build.make test/rom/CMakeFiles/init_adb.dir/common.cpp.o
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/play_easc.dir/build.make test/rom/CMakeFiles/play_easc.dir/common.cpp.o
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/play_chime_4.dir/build.make test/rom/CMakeFiles/play_chime_4.dir/common.cpp.o
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/play_asc.dir/build.make test/rom/CMakeFiles/play_asc.dir/common.cpp.o
@@ -1265,6 +1338,7 @@ common.cpp.o:
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/send_to_pb_key.dir/build.make test/rom/CMakeFiles/send_to_pb_key.dir/common.cpp.o
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/test_scsi_cmd.dir/build.make test/rom/CMakeFiles/test_scsi_cmd.dir/common.cpp.o
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/init_modem_port.dir/build.make test/rom/CMakeFiles/init_modem_port.dir/common.cpp.o
+	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/check_simm_slots.dir/build.make test/rom/CMakeFiles/check_simm_slots.dir/common.cpp.o
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/init_hw3.dir/build.make test/rom/CMakeFiles/init_hw3.dir/common.cpp.o
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/test_scsi_io.dir/build.make test/rom/CMakeFiles/test_scsi_io.dir/common.cpp.o
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/modem_port_send1.dir/build.make test/rom/CMakeFiles/modem_port_send1.dir/common.cpp.o
@@ -1275,7 +1349,6 @@ common.cpp.o:
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/check_easc_fifo_done.dir/build.make test/rom/CMakeFiles/check_easc_fifo_done.dir/common.cpp.o
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/has_fpu.dir/build.make test/rom/CMakeFiles/has_fpu.dir/common.cpp.o
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/play_asc2.dir/build.make test/rom/CMakeFiles/play_asc2.dir/common.cpp.o
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/init_hw2.dir/build.make test/rom/CMakeFiles/init_hw2.dir/common.cpp.o
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/test_iifx_exp1.dir/build.make test/rom/CMakeFiles/test_iifx_exp1.dir/common.cpp.o
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/get_model_id.dir/build.make test/rom/CMakeFiles/get_model_id.dir/common.cpp.o
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/write_modem_integer.dir/build.make test/rom/CMakeFiles/write_modem_integer.dir/common.cpp.o
@@ -1283,12 +1356,14 @@ common.cpp.o:
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/ram_check.dir/build.make test/rom/CMakeFiles/ram_check.dir/common.cpp.o
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/wait_until_easc_fifo_half.dir/build.make test/rom/CMakeFiles/wait_until_easc_fifo_half.dir/common.cpp.o
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/test_model_id.dir/build.make test/rom/CMakeFiles/test_model_id.dir/common.cpp.o
+	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/init_powerbook.dir/build.make test/rom/CMakeFiles/init_powerbook.dir/common.cpp.o
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/read_modem_cmd_dword.dir/build.make test/rom/CMakeFiles/read_modem_cmd_dword.dir/common.cpp.o
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/easc_beep.dir/build.make test/rom/CMakeFiles/easc_beep.dir/common.cpp.o
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/get_hw_info2.dir/build.make test/rom/CMakeFiles/get_hw_info2.dir/common.cpp.o
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/check_easc_fifo_half.dir/build.make test/rom/CMakeFiles/check_easc_fifo_half.dir/common.cpp.o
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/test_iop.dir/build.make test/rom/CMakeFiles/test_iop.dir/common.cpp.o
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/send_to_pb_dword.dir/build.make test/rom/CMakeFiles/send_to_pb_dword.dir/common.cpp.o
+	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/pb_handler52.dir/build.make test/rom/CMakeFiles/pb_handler52.dir/common.cpp.o
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/check_mb.dir/build.make test/rom/CMakeFiles/check_mb.dir/common.cpp.o
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/reset_via.dir/build.make test/rom/CMakeFiles/reset_via.dir/common.cpp.o
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/check_easc_fifo_empty.dir/build.make test/rom/CMakeFiles/check_easc_fifo_empty.dir/common.cpp.o
@@ -1310,6 +1385,7 @@ common.i: common.cpp.i
 
 # target to preprocess a source file
 common.cpp.i:
+	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/init_adb.dir/build.make test/rom/CMakeFiles/init_adb.dir/common.cpp.i
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/play_easc.dir/build.make test/rom/CMakeFiles/play_easc.dir/common.cpp.i
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/play_chime_4.dir/build.make test/rom/CMakeFiles/play_chime_4.dir/common.cpp.i
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/play_asc.dir/build.make test/rom/CMakeFiles/play_asc.dir/common.cpp.i
@@ -1331,6 +1407,7 @@ common.cpp.i:
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/send_to_pb_key.dir/build.make test/rom/CMakeFiles/send_to_pb_key.dir/common.cpp.i
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/test_scsi_cmd.dir/build.make test/rom/CMakeFiles/test_scsi_cmd.dir/common.cpp.i
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/init_modem_port.dir/build.make test/rom/CMakeFiles/init_modem_port.dir/common.cpp.i
+	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/check_simm_slots.dir/build.make test/rom/CMakeFiles/check_simm_slots.dir/common.cpp.i
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/init_hw3.dir/build.make test/rom/CMakeFiles/init_hw3.dir/common.cpp.i
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/test_scsi_io.dir/build.make test/rom/CMakeFiles/test_scsi_io.dir/common.cpp.i
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/modem_port_send1.dir/build.make test/rom/CMakeFiles/modem_port_send1.dir/common.cpp.i
@@ -1341,7 +1418,6 @@ common.cpp.i:
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/check_easc_fifo_done.dir/build.make test/rom/CMakeFiles/check_easc_fifo_done.dir/common.cpp.i
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/has_fpu.dir/build.make test/rom/CMakeFiles/has_fpu.dir/common.cpp.i
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/play_asc2.dir/build.make test/rom/CMakeFiles/play_asc2.dir/common.cpp.i
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/init_hw2.dir/build.make test/rom/CMakeFiles/init_hw2.dir/common.cpp.i
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/test_iifx_exp1.dir/build.make test/rom/CMakeFiles/test_iifx_exp1.dir/common.cpp.i
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/get_model_id.dir/build.make test/rom/CMakeFiles/get_model_id.dir/common.cpp.i
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/write_modem_integer.dir/build.make test/rom/CMakeFiles/write_modem_integer.dir/common.cpp.i
@@ -1349,12 +1425,14 @@ common.cpp.i:
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/ram_check.dir/build.make test/rom/CMakeFiles/ram_check.dir/common.cpp.i
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/wait_until_easc_fifo_half.dir/build.make test/rom/CMakeFiles/wait_until_easc_fifo_half.dir/common.cpp.i
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/test_model_id.dir/build.make test/rom/CMakeFiles/test_model_id.dir/common.cpp.i
+	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/init_powerbook.dir/build.make test/rom/CMakeFiles/init_powerbook.dir/common.cpp.i
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/read_modem_cmd_dword.dir/build.make test/rom/CMakeFiles/read_modem_cmd_dword.dir/common.cpp.i
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/easc_beep.dir/build.make test/rom/CMakeFiles/easc_beep.dir/common.cpp.i
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/get_hw_info2.dir/build.make test/rom/CMakeFiles/get_hw_info2.dir/common.cpp.i
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/check_easc_fifo_half.dir/build.make test/rom/CMakeFiles/check_easc_fifo_half.dir/common.cpp.i
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/test_iop.dir/build.make test/rom/CMakeFiles/test_iop.dir/common.cpp.i
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/send_to_pb_dword.dir/build.make test/rom/CMakeFiles/send_to_pb_dword.dir/common.cpp.i
+	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/pb_handler52.dir/build.make test/rom/CMakeFiles/pb_handler52.dir/common.cpp.i
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/check_mb.dir/build.make test/rom/CMakeFiles/check_mb.dir/common.cpp.i
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/reset_via.dir/build.make test/rom/CMakeFiles/reset_via.dir/common.cpp.i
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/check_easc_fifo_empty.dir/build.make test/rom/CMakeFiles/check_easc_fifo_empty.dir/common.cpp.i
@@ -1376,6 +1454,7 @@ common.s: common.cpp.s
 
 # target to generate assembly for a file
 common.cpp.s:
+	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/init_adb.dir/build.make test/rom/CMakeFiles/init_adb.dir/common.cpp.s
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/play_easc.dir/build.make test/rom/CMakeFiles/play_easc.dir/common.cpp.s
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/play_chime_4.dir/build.make test/rom/CMakeFiles/play_chime_4.dir/common.cpp.s
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/play_asc.dir/build.make test/rom/CMakeFiles/play_asc.dir/common.cpp.s
@@ -1397,6 +1476,7 @@ common.cpp.s:
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/send_to_pb_key.dir/build.make test/rom/CMakeFiles/send_to_pb_key.dir/common.cpp.s
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/test_scsi_cmd.dir/build.make test/rom/CMakeFiles/test_scsi_cmd.dir/common.cpp.s
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/init_modem_port.dir/build.make test/rom/CMakeFiles/init_modem_port.dir/common.cpp.s
+	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/check_simm_slots.dir/build.make test/rom/CMakeFiles/check_simm_slots.dir/common.cpp.s
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/init_hw3.dir/build.make test/rom/CMakeFiles/init_hw3.dir/common.cpp.s
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/test_scsi_io.dir/build.make test/rom/CMakeFiles/test_scsi_io.dir/common.cpp.s
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/modem_port_send1.dir/build.make test/rom/CMakeFiles/modem_port_send1.dir/common.cpp.s
@@ -1407,7 +1487,6 @@ common.cpp.s:
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/check_easc_fifo_done.dir/build.make test/rom/CMakeFiles/check_easc_fifo_done.dir/common.cpp.s
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/has_fpu.dir/build.make test/rom/CMakeFiles/has_fpu.dir/common.cpp.s
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/play_asc2.dir/build.make test/rom/CMakeFiles/play_asc2.dir/common.cpp.s
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/init_hw2.dir/build.make test/rom/CMakeFiles/init_hw2.dir/common.cpp.s
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/test_iifx_exp1.dir/build.make test/rom/CMakeFiles/test_iifx_exp1.dir/common.cpp.s
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/get_model_id.dir/build.make test/rom/CMakeFiles/get_model_id.dir/common.cpp.s
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/write_modem_integer.dir/build.make test/rom/CMakeFiles/write_modem_integer.dir/common.cpp.s
@@ -1415,12 +1494,14 @@ common.cpp.s:
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/ram_check.dir/build.make test/rom/CMakeFiles/ram_check.dir/common.cpp.s
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/wait_until_easc_fifo_half.dir/build.make test/rom/CMakeFiles/wait_until_easc_fifo_half.dir/common.cpp.s
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/test_model_id.dir/build.make test/rom/CMakeFiles/test_model_id.dir/common.cpp.s
+	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/init_powerbook.dir/build.make test/rom/CMakeFiles/init_powerbook.dir/common.cpp.s
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/read_modem_cmd_dword.dir/build.make test/rom/CMakeFiles/read_modem_cmd_dword.dir/common.cpp.s
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/easc_beep.dir/build.make test/rom/CMakeFiles/easc_beep.dir/common.cpp.s
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/get_hw_info2.dir/build.make test/rom/CMakeFiles/get_hw_info2.dir/common.cpp.s
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/check_easc_fifo_half.dir/build.make test/rom/CMakeFiles/check_easc_fifo_half.dir/common.cpp.s
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/test_iop.dir/build.make test/rom/CMakeFiles/test_iop.dir/common.cpp.s
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/send_to_pb_dword.dir/build.make test/rom/CMakeFiles/send_to_pb_dword.dir/common.cpp.s
+	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/pb_handler52.dir/build.make test/rom/CMakeFiles/pb_handler52.dir/common.cpp.s
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/check_mb.dir/build.make test/rom/CMakeFiles/check_mb.dir/common.cpp.s
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/reset_via.dir/build.make test/rom/CMakeFiles/reset_via.dir/common.cpp.s
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/check_easc_fifo_empty.dir/build.make test/rom/CMakeFiles/check_easc_fifo_empty.dir/common.cpp.s
@@ -1760,6 +1841,33 @@ has_via.cpp.s:
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/has_via.dir/build.make test/rom/CMakeFiles/has_via.dir/has_via.cpp.s
 .PHONY : has_via.cpp.s
 
+init_adb.o: init_adb.cpp.o
+
+.PHONY : init_adb.o
+
+# target to build an object file
+init_adb.cpp.o:
+	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/init_adb.dir/build.make test/rom/CMakeFiles/init_adb.dir/init_adb.cpp.o
+.PHONY : init_adb.cpp.o
+
+init_adb.i: init_adb.cpp.i
+
+.PHONY : init_adb.i
+
+# target to preprocess a source file
+init_adb.cpp.i:
+	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/init_adb.dir/build.make test/rom/CMakeFiles/init_adb.dir/init_adb.cpp.i
+.PHONY : init_adb.cpp.i
+
+init_adb.s: init_adb.cpp.s
+
+.PHONY : init_adb.s
+
+# target to generate assembly for a file
+init_adb.cpp.s:
+	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/init_adb.dir/build.make test/rom/CMakeFiles/init_adb.dir/init_adb.cpp.s
+.PHONY : init_adb.cpp.s
+
 init_hw.o: init_hw.cpp.o
 
 .PHONY : init_hw.o
@@ -1786,33 +1894,6 @@ init_hw.s: init_hw.cpp.s
 init_hw.cpp.s:
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/init_hw.dir/build.make test/rom/CMakeFiles/init_hw.dir/init_hw.cpp.s
 .PHONY : init_hw.cpp.s
-
-init_hw2.o: init_hw2.cpp.o
-
-.PHONY : init_hw2.o
-
-# target to build an object file
-init_hw2.cpp.o:
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/init_hw2.dir/build.make test/rom/CMakeFiles/init_hw2.dir/init_hw2.cpp.o
-.PHONY : init_hw2.cpp.o
-
-init_hw2.i: init_hw2.cpp.i
-
-.PHONY : init_hw2.i
-
-# target to preprocess a source file
-init_hw2.cpp.i:
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/init_hw2.dir/build.make test/rom/CMakeFiles/init_hw2.dir/init_hw2.cpp.i
-.PHONY : init_hw2.cpp.i
-
-init_hw2.s: init_hw2.cpp.s
-
-.PHONY : init_hw2.s
-
-# target to generate assembly for a file
-init_hw2.cpp.s:
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/init_hw2.dir/build.make test/rom/CMakeFiles/init_hw2.dir/init_hw2.cpp.s
-.PHONY : init_hw2.cpp.s
 
 init_hw3.o: init_hw3.cpp.o
 
@@ -1922,6 +2003,33 @@ init_pb_duo.cpp.s:
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/init_pb_duo.dir/build.make test/rom/CMakeFiles/init_pb_duo.dir/init_pb_duo.cpp.s
 .PHONY : init_pb_duo.cpp.s
 
+init_powerbook.o: init_powerbook.cpp.o
+
+.PHONY : init_powerbook.o
+
+# target to build an object file
+init_powerbook.cpp.o:
+	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/init_powerbook.dir/build.make test/rom/CMakeFiles/init_powerbook.dir/init_powerbook.cpp.o
+.PHONY : init_powerbook.cpp.o
+
+init_powerbook.i: init_powerbook.cpp.i
+
+.PHONY : init_powerbook.i
+
+# target to preprocess a source file
+init_powerbook.cpp.i:
+	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/init_powerbook.dir/build.make test/rom/CMakeFiles/init_powerbook.dir/init_powerbook.cpp.i
+.PHONY : init_powerbook.cpp.i
+
+init_powerbook.s: init_powerbook.cpp.s
+
+.PHONY : init_powerbook.s
+
+# target to generate assembly for a file
+init_powerbook.cpp.s:
+	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/init_powerbook.dir/build.make test/rom/CMakeFiles/init_powerbook.dir/init_powerbook.cpp.s
+.PHONY : init_powerbook.cpp.s
+
 init_scc_iop_fw.o: init_scc_iop_fw.cpp.o
 
 .PHONY : init_scc_iop_fw.o
@@ -1949,198 +2057,6 @@ init_scc_iop_fw.cpp.s:
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/init_scc_iop_fw.dir/build.make test/rom/CMakeFiles/init_scc_iop_fw.dir/init_scc_iop_fw.cpp.s
 .PHONY : init_scc_iop_fw.cpp.s
 
-mock_data.o: mock_data.cpp.o
-
-.PHONY : mock_data.o
-
-# target to build an object file
-mock_data.cpp.o:
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/play_easc.dir/build.make test/rom/CMakeFiles/play_easc.dir/mock_data.cpp.o
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/play_chime_4.dir/build.make test/rom/CMakeFiles/play_chime_4.dir/mock_data.cpp.o
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/play_asc.dir/build.make test/rom/CMakeFiles/play_asc.dir/mock_data.cpp.o
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/play_asc5.dir/build.make test/rom/CMakeFiles/play_asc5.dir/mock_data.cpp.o
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/has_rbv.dir/build.make test/rom/CMakeFiles/has_rbv.dir/mock_data.cpp.o
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/to_ascii.dir/build.make test/rom/CMakeFiles/to_ascii.dir/mock_data.cpp.o
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/read_id_from_via.dir/build.make test/rom/CMakeFiles/read_id_from_via.dir/mock_data.cpp.o
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/has_ether.dir/build.make test/rom/CMakeFiles/has_ether.dir/mock_data.cpp.o
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/init_scc_iop_fw.dir/build.make test/rom/CMakeFiles/init_scc_iop_fw.dir/mock_data.cpp.o
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/init_pb_duo.dir/build.make test/rom/CMakeFiles/init_pb_duo.dir/mock_data.cpp.o
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/boot.dir/build.make test/rom/CMakeFiles/boot.dir/mock_data.cpp.o
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/read_modem_cmd1.dir/build.make test/rom/CMakeFiles/read_modem_cmd1.dir/mock_data.cpp.o
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/check_flag.dir/build.make test/rom/CMakeFiles/check_flag.dir/mock_data.cpp.o
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/send_to_pb_byte.dir/build.make test/rom/CMakeFiles/send_to_pb_byte.dir/mock_data.cpp.o
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/init_hw.dir/build.make test/rom/CMakeFiles/init_hw.dir/mock_data.cpp.o
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/play_easc_run.dir/build.make test/rom/CMakeFiles/play_easc_run.dir/mock_data.cpp.o
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/test_scsi.dir/build.make test/rom/CMakeFiles/test_scsi.dir/mock_data.cpp.o
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/send_to_pb_key.dir/build.make test/rom/CMakeFiles/send_to_pb_key.dir/mock_data.cpp.o
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/test_scsi_cmd.dir/build.make test/rom/CMakeFiles/test_scsi_cmd.dir/mock_data.cpp.o
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/init_modem_port.dir/build.make test/rom/CMakeFiles/init_modem_port.dir/mock_data.cpp.o
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/init_hw3.dir/build.make test/rom/CMakeFiles/init_hw3.dir/mock_data.cpp.o
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/test_scsi_io.dir/build.make test/rom/CMakeFiles/test_scsi_io.dir/mock_data.cpp.o
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/modem_port_send1.dir/build.make test/rom/CMakeFiles/modem_port_send1.dir/mock_data.cpp.o
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/has_via.dir/build.make test/rom/CMakeFiles/has_via.dir/mock_data.cpp.o
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/check_simm_size.dir/build.make test/rom/CMakeFiles/check_simm_size.dir/mock_data.cpp.o
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/play_chime_1.dir/build.make test/rom/CMakeFiles/play_chime_1.dir/mock_data.cpp.o
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/has_lowmem1.dir/build.make test/rom/CMakeFiles/has_lowmem1.dir/mock_data.cpp.o
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/check_easc_fifo_done.dir/build.make test/rom/CMakeFiles/check_easc_fifo_done.dir/mock_data.cpp.o
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/has_fpu.dir/build.make test/rom/CMakeFiles/has_fpu.dir/mock_data.cpp.o
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/play_asc2.dir/build.make test/rom/CMakeFiles/play_asc2.dir/mock_data.cpp.o
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/init_hw2.dir/build.make test/rom/CMakeFiles/init_hw2.dir/mock_data.cpp.o
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/test_iifx_exp1.dir/build.make test/rom/CMakeFiles/test_iifx_exp1.dir/mock_data.cpp.o
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/get_model_id.dir/build.make test/rom/CMakeFiles/get_model_id.dir/mock_data.cpp.o
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/write_modem_integer.dir/build.make test/rom/CMakeFiles/write_modem_integer.dir/mock_data.cpp.o
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/play_asc3.dir/build.make test/rom/CMakeFiles/play_asc3.dir/mock_data.cpp.o
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/ram_check.dir/build.make test/rom/CMakeFiles/ram_check.dir/mock_data.cpp.o
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/wait_until_easc_fifo_half.dir/build.make test/rom/CMakeFiles/wait_until_easc_fifo_half.dir/mock_data.cpp.o
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/test_model_id.dir/build.make test/rom/CMakeFiles/test_model_id.dir/mock_data.cpp.o
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/read_modem_cmd_dword.dir/build.make test/rom/CMakeFiles/read_modem_cmd_dword.dir/mock_data.cpp.o
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/easc_beep.dir/build.make test/rom/CMakeFiles/easc_beep.dir/mock_data.cpp.o
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/get_hw_info2.dir/build.make test/rom/CMakeFiles/get_hw_info2.dir/mock_data.cpp.o
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/check_easc_fifo_half.dir/build.make test/rom/CMakeFiles/check_easc_fifo_half.dir/mock_data.cpp.o
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/test_iop.dir/build.make test/rom/CMakeFiles/test_iop.dir/mock_data.cpp.o
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/send_to_pb_dword.dir/build.make test/rom/CMakeFiles/send_to_pb_dword.dir/mock_data.cpp.o
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/reset_via.dir/build.make test/rom/CMakeFiles/reset_via.dir/mock_data.cpp.o
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/check_easc_fifo_empty.dir/build.make test/rom/CMakeFiles/check_easc_fifo_empty.dir/mock_data.cpp.o
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/get_scc_addr.dir/build.make test/rom/CMakeFiles/get_scc_addr.dir/mock_data.cpp.o
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/read_modem_port.dir/build.make test/rom/CMakeFiles/read_modem_port.dir/mock_data.cpp.o
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/init_mmu.dir/build.make test/rom/CMakeFiles/init_mmu.dir/mock_data.cpp.o
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/easc_is_sonora.dir/build.make test/rom/CMakeFiles/easc_is_sonora.dir/mock_data.cpp.o
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/write_modem_port_byte.dir/build.make test/rom/CMakeFiles/write_modem_port_byte.dir/mock_data.cpp.o
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/write_modem_port_cstr.dir/build.make test/rom/CMakeFiles/write_modem_port_cstr.dir/mock_data.cpp.o
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/from_ascii.dir/build.make test/rom/CMakeFiles/from_ascii.dir/mock_data.cpp.o
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/comm_modem_port.dir/build.make test/rom/CMakeFiles/comm_modem_port.dir/mock_data.cpp.o
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/recv_from_pb.dir/build.make test/rom/CMakeFiles/recv_from_pb.dir/mock_data.cpp.o
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/check_simm.dir/build.make test/rom/CMakeFiles/check_simm.dir/mock_data.cpp.o
-.PHONY : mock_data.cpp.o
-
-mock_data.i: mock_data.cpp.i
-
-.PHONY : mock_data.i
-
-# target to preprocess a source file
-mock_data.cpp.i:
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/play_easc.dir/build.make test/rom/CMakeFiles/play_easc.dir/mock_data.cpp.i
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/play_chime_4.dir/build.make test/rom/CMakeFiles/play_chime_4.dir/mock_data.cpp.i
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/play_asc.dir/build.make test/rom/CMakeFiles/play_asc.dir/mock_data.cpp.i
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/play_asc5.dir/build.make test/rom/CMakeFiles/play_asc5.dir/mock_data.cpp.i
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/has_rbv.dir/build.make test/rom/CMakeFiles/has_rbv.dir/mock_data.cpp.i
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/to_ascii.dir/build.make test/rom/CMakeFiles/to_ascii.dir/mock_data.cpp.i
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/read_id_from_via.dir/build.make test/rom/CMakeFiles/read_id_from_via.dir/mock_data.cpp.i
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/has_ether.dir/build.make test/rom/CMakeFiles/has_ether.dir/mock_data.cpp.i
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/init_scc_iop_fw.dir/build.make test/rom/CMakeFiles/init_scc_iop_fw.dir/mock_data.cpp.i
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/init_pb_duo.dir/build.make test/rom/CMakeFiles/init_pb_duo.dir/mock_data.cpp.i
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/boot.dir/build.make test/rom/CMakeFiles/boot.dir/mock_data.cpp.i
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/read_modem_cmd1.dir/build.make test/rom/CMakeFiles/read_modem_cmd1.dir/mock_data.cpp.i
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/check_flag.dir/build.make test/rom/CMakeFiles/check_flag.dir/mock_data.cpp.i
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/send_to_pb_byte.dir/build.make test/rom/CMakeFiles/send_to_pb_byte.dir/mock_data.cpp.i
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/init_hw.dir/build.make test/rom/CMakeFiles/init_hw.dir/mock_data.cpp.i
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/play_easc_run.dir/build.make test/rom/CMakeFiles/play_easc_run.dir/mock_data.cpp.i
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/test_scsi.dir/build.make test/rom/CMakeFiles/test_scsi.dir/mock_data.cpp.i
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/send_to_pb_key.dir/build.make test/rom/CMakeFiles/send_to_pb_key.dir/mock_data.cpp.i
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/test_scsi_cmd.dir/build.make test/rom/CMakeFiles/test_scsi_cmd.dir/mock_data.cpp.i
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/init_modem_port.dir/build.make test/rom/CMakeFiles/init_modem_port.dir/mock_data.cpp.i
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/init_hw3.dir/build.make test/rom/CMakeFiles/init_hw3.dir/mock_data.cpp.i
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/test_scsi_io.dir/build.make test/rom/CMakeFiles/test_scsi_io.dir/mock_data.cpp.i
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/modem_port_send1.dir/build.make test/rom/CMakeFiles/modem_port_send1.dir/mock_data.cpp.i
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/has_via.dir/build.make test/rom/CMakeFiles/has_via.dir/mock_data.cpp.i
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/check_simm_size.dir/build.make test/rom/CMakeFiles/check_simm_size.dir/mock_data.cpp.i
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/play_chime_1.dir/build.make test/rom/CMakeFiles/play_chime_1.dir/mock_data.cpp.i
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/has_lowmem1.dir/build.make test/rom/CMakeFiles/has_lowmem1.dir/mock_data.cpp.i
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/check_easc_fifo_done.dir/build.make test/rom/CMakeFiles/check_easc_fifo_done.dir/mock_data.cpp.i
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/has_fpu.dir/build.make test/rom/CMakeFiles/has_fpu.dir/mock_data.cpp.i
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/play_asc2.dir/build.make test/rom/CMakeFiles/play_asc2.dir/mock_data.cpp.i
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/init_hw2.dir/build.make test/rom/CMakeFiles/init_hw2.dir/mock_data.cpp.i
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/test_iifx_exp1.dir/build.make test/rom/CMakeFiles/test_iifx_exp1.dir/mock_data.cpp.i
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/get_model_id.dir/build.make test/rom/CMakeFiles/get_model_id.dir/mock_data.cpp.i
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/write_modem_integer.dir/build.make test/rom/CMakeFiles/write_modem_integer.dir/mock_data.cpp.i
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/play_asc3.dir/build.make test/rom/CMakeFiles/play_asc3.dir/mock_data.cpp.i
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/ram_check.dir/build.make test/rom/CMakeFiles/ram_check.dir/mock_data.cpp.i
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/wait_until_easc_fifo_half.dir/build.make test/rom/CMakeFiles/wait_until_easc_fifo_half.dir/mock_data.cpp.i
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/test_model_id.dir/build.make test/rom/CMakeFiles/test_model_id.dir/mock_data.cpp.i
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/read_modem_cmd_dword.dir/build.make test/rom/CMakeFiles/read_modem_cmd_dword.dir/mock_data.cpp.i
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/easc_beep.dir/build.make test/rom/CMakeFiles/easc_beep.dir/mock_data.cpp.i
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/get_hw_info2.dir/build.make test/rom/CMakeFiles/get_hw_info2.dir/mock_data.cpp.i
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/check_easc_fifo_half.dir/build.make test/rom/CMakeFiles/check_easc_fifo_half.dir/mock_data.cpp.i
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/test_iop.dir/build.make test/rom/CMakeFiles/test_iop.dir/mock_data.cpp.i
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/send_to_pb_dword.dir/build.make test/rom/CMakeFiles/send_to_pb_dword.dir/mock_data.cpp.i
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/reset_via.dir/build.make test/rom/CMakeFiles/reset_via.dir/mock_data.cpp.i
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/check_easc_fifo_empty.dir/build.make test/rom/CMakeFiles/check_easc_fifo_empty.dir/mock_data.cpp.i
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/get_scc_addr.dir/build.make test/rom/CMakeFiles/get_scc_addr.dir/mock_data.cpp.i
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/read_modem_port.dir/build.make test/rom/CMakeFiles/read_modem_port.dir/mock_data.cpp.i
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/init_mmu.dir/build.make test/rom/CMakeFiles/init_mmu.dir/mock_data.cpp.i
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/easc_is_sonora.dir/build.make test/rom/CMakeFiles/easc_is_sonora.dir/mock_data.cpp.i
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/write_modem_port_byte.dir/build.make test/rom/CMakeFiles/write_modem_port_byte.dir/mock_data.cpp.i
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/write_modem_port_cstr.dir/build.make test/rom/CMakeFiles/write_modem_port_cstr.dir/mock_data.cpp.i
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/from_ascii.dir/build.make test/rom/CMakeFiles/from_ascii.dir/mock_data.cpp.i
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/comm_modem_port.dir/build.make test/rom/CMakeFiles/comm_modem_port.dir/mock_data.cpp.i
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/recv_from_pb.dir/build.make test/rom/CMakeFiles/recv_from_pb.dir/mock_data.cpp.i
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/check_simm.dir/build.make test/rom/CMakeFiles/check_simm.dir/mock_data.cpp.i
-.PHONY : mock_data.cpp.i
-
-mock_data.s: mock_data.cpp.s
-
-.PHONY : mock_data.s
-
-# target to generate assembly for a file
-mock_data.cpp.s:
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/play_easc.dir/build.make test/rom/CMakeFiles/play_easc.dir/mock_data.cpp.s
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/play_chime_4.dir/build.make test/rom/CMakeFiles/play_chime_4.dir/mock_data.cpp.s
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/play_asc.dir/build.make test/rom/CMakeFiles/play_asc.dir/mock_data.cpp.s
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/play_asc5.dir/build.make test/rom/CMakeFiles/play_asc5.dir/mock_data.cpp.s
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/has_rbv.dir/build.make test/rom/CMakeFiles/has_rbv.dir/mock_data.cpp.s
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/to_ascii.dir/build.make test/rom/CMakeFiles/to_ascii.dir/mock_data.cpp.s
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/read_id_from_via.dir/build.make test/rom/CMakeFiles/read_id_from_via.dir/mock_data.cpp.s
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/has_ether.dir/build.make test/rom/CMakeFiles/has_ether.dir/mock_data.cpp.s
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/init_scc_iop_fw.dir/build.make test/rom/CMakeFiles/init_scc_iop_fw.dir/mock_data.cpp.s
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/init_pb_duo.dir/build.make test/rom/CMakeFiles/init_pb_duo.dir/mock_data.cpp.s
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/boot.dir/build.make test/rom/CMakeFiles/boot.dir/mock_data.cpp.s
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/read_modem_cmd1.dir/build.make test/rom/CMakeFiles/read_modem_cmd1.dir/mock_data.cpp.s
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/check_flag.dir/build.make test/rom/CMakeFiles/check_flag.dir/mock_data.cpp.s
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/send_to_pb_byte.dir/build.make test/rom/CMakeFiles/send_to_pb_byte.dir/mock_data.cpp.s
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/init_hw.dir/build.make test/rom/CMakeFiles/init_hw.dir/mock_data.cpp.s
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/play_easc_run.dir/build.make test/rom/CMakeFiles/play_easc_run.dir/mock_data.cpp.s
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/test_scsi.dir/build.make test/rom/CMakeFiles/test_scsi.dir/mock_data.cpp.s
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/send_to_pb_key.dir/build.make test/rom/CMakeFiles/send_to_pb_key.dir/mock_data.cpp.s
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/test_scsi_cmd.dir/build.make test/rom/CMakeFiles/test_scsi_cmd.dir/mock_data.cpp.s
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/init_modem_port.dir/build.make test/rom/CMakeFiles/init_modem_port.dir/mock_data.cpp.s
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/init_hw3.dir/build.make test/rom/CMakeFiles/init_hw3.dir/mock_data.cpp.s
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/test_scsi_io.dir/build.make test/rom/CMakeFiles/test_scsi_io.dir/mock_data.cpp.s
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/modem_port_send1.dir/build.make test/rom/CMakeFiles/modem_port_send1.dir/mock_data.cpp.s
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/has_via.dir/build.make test/rom/CMakeFiles/has_via.dir/mock_data.cpp.s
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/check_simm_size.dir/build.make test/rom/CMakeFiles/check_simm_size.dir/mock_data.cpp.s
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/play_chime_1.dir/build.make test/rom/CMakeFiles/play_chime_1.dir/mock_data.cpp.s
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/has_lowmem1.dir/build.make test/rom/CMakeFiles/has_lowmem1.dir/mock_data.cpp.s
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/check_easc_fifo_done.dir/build.make test/rom/CMakeFiles/check_easc_fifo_done.dir/mock_data.cpp.s
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/has_fpu.dir/build.make test/rom/CMakeFiles/has_fpu.dir/mock_data.cpp.s
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/play_asc2.dir/build.make test/rom/CMakeFiles/play_asc2.dir/mock_data.cpp.s
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/init_hw2.dir/build.make test/rom/CMakeFiles/init_hw2.dir/mock_data.cpp.s
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/test_iifx_exp1.dir/build.make test/rom/CMakeFiles/test_iifx_exp1.dir/mock_data.cpp.s
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/get_model_id.dir/build.make test/rom/CMakeFiles/get_model_id.dir/mock_data.cpp.s
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/write_modem_integer.dir/build.make test/rom/CMakeFiles/write_modem_integer.dir/mock_data.cpp.s
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/play_asc3.dir/build.make test/rom/CMakeFiles/play_asc3.dir/mock_data.cpp.s
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/ram_check.dir/build.make test/rom/CMakeFiles/ram_check.dir/mock_data.cpp.s
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/wait_until_easc_fifo_half.dir/build.make test/rom/CMakeFiles/wait_until_easc_fifo_half.dir/mock_data.cpp.s
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/test_model_id.dir/build.make test/rom/CMakeFiles/test_model_id.dir/mock_data.cpp.s
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/read_modem_cmd_dword.dir/build.make test/rom/CMakeFiles/read_modem_cmd_dword.dir/mock_data.cpp.s
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/easc_beep.dir/build.make test/rom/CMakeFiles/easc_beep.dir/mock_data.cpp.s
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/get_hw_info2.dir/build.make test/rom/CMakeFiles/get_hw_info2.dir/mock_data.cpp.s
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/check_easc_fifo_half.dir/build.make test/rom/CMakeFiles/check_easc_fifo_half.dir/mock_data.cpp.s
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/test_iop.dir/build.make test/rom/CMakeFiles/test_iop.dir/mock_data.cpp.s
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/send_to_pb_dword.dir/build.make test/rom/CMakeFiles/send_to_pb_dword.dir/mock_data.cpp.s
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/reset_via.dir/build.make test/rom/CMakeFiles/reset_via.dir/mock_data.cpp.s
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/check_easc_fifo_empty.dir/build.make test/rom/CMakeFiles/check_easc_fifo_empty.dir/mock_data.cpp.s
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/get_scc_addr.dir/build.make test/rom/CMakeFiles/get_scc_addr.dir/mock_data.cpp.s
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/read_modem_port.dir/build.make test/rom/CMakeFiles/read_modem_port.dir/mock_data.cpp.s
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/init_mmu.dir/build.make test/rom/CMakeFiles/init_mmu.dir/mock_data.cpp.s
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/easc_is_sonora.dir/build.make test/rom/CMakeFiles/easc_is_sonora.dir/mock_data.cpp.s
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/write_modem_port_byte.dir/build.make test/rom/CMakeFiles/write_modem_port_byte.dir/mock_data.cpp.s
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/write_modem_port_cstr.dir/build.make test/rom/CMakeFiles/write_modem_port_cstr.dir/mock_data.cpp.s
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/from_ascii.dir/build.make test/rom/CMakeFiles/from_ascii.dir/mock_data.cpp.s
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/comm_modem_port.dir/build.make test/rom/CMakeFiles/comm_modem_port.dir/mock_data.cpp.s
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/recv_from_pb.dir/build.make test/rom/CMakeFiles/recv_from_pb.dir/mock_data.cpp.s
-	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/check_simm.dir/build.make test/rom/CMakeFiles/check_simm.dir/mock_data.cpp.s
-.PHONY : mock_data.cpp.s
-
 modem_port_send1.o: modem_port_send1.cpp.o
 
 .PHONY : modem_port_send1.o
@@ -2167,6 +2083,33 @@ modem_port_send1.s: modem_port_send1.cpp.s
 modem_port_send1.cpp.s:
 	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/modem_port_send1.dir/build.make test/rom/CMakeFiles/modem_port_send1.dir/modem_port_send1.cpp.s
 .PHONY : modem_port_send1.cpp.s
+
+pb_handler52.o: pb_handler52.cpp.o
+
+.PHONY : pb_handler52.o
+
+# target to build an object file
+pb_handler52.cpp.o:
+	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/pb_handler52.dir/build.make test/rom/CMakeFiles/pb_handler52.dir/pb_handler52.cpp.o
+.PHONY : pb_handler52.cpp.o
+
+pb_handler52.i: pb_handler52.cpp.i
+
+.PHONY : pb_handler52.i
+
+# target to preprocess a source file
+pb_handler52.cpp.i:
+	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/pb_handler52.dir/build.make test/rom/CMakeFiles/pb_handler52.dir/pb_handler52.cpp.i
+.PHONY : pb_handler52.cpp.i
+
+pb_handler52.s: pb_handler52.cpp.s
+
+.PHONY : pb_handler52.s
+
+# target to generate assembly for a file
+pb_handler52.cpp.s:
+	cd /home/michiaki/Document/macemu/macemu/BasiliskII/src && $(MAKE) -f test/rom/CMakeFiles/pb_handler52.dir/build.make test/rom/CMakeFiles/pb_handler52.dir/pb_handler52.cpp.s
+.PHONY : pb_handler52.cpp.s
 
 play_asc.o: play_asc.cpp.o
 
@@ -2958,6 +2901,8 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... rebuild_cache"
+	@echo "... edit_cache"
+	@echo "... init_adb"
 	@echo "... play_easc"
 	@echo "... play_chime_4"
 	@echo "... play_asc"
@@ -2979,6 +2924,7 @@ help:
 	@echo "... send_to_pb_key"
 	@echo "... test_scsi_cmd"
 	@echo "... init_modem_port"
+	@echo "... check_simm_slots"
 	@echo "... init_hw3"
 	@echo "... test_scsi_io"
 	@echo "... modem_port_send1"
@@ -2989,7 +2935,6 @@ help:
 	@echo "... check_easc_fifo_done"
 	@echo "... has_fpu"
 	@echo "... play_asc2"
-	@echo "... init_hw2"
 	@echo "... test_iifx_exp1"
 	@echo "... get_model_id"
 	@echo "... write_modem_integer"
@@ -2997,12 +2942,14 @@ help:
 	@echo "... ram_check"
 	@echo "... wait_until_easc_fifo_half"
 	@echo "... test_model_id"
+	@echo "... init_powerbook"
 	@echo "... read_modem_cmd_dword"
 	@echo "... easc_beep"
 	@echo "... get_hw_info2"
 	@echo "... check_easc_fifo_half"
 	@echo "... test_iop"
 	@echo "... send_to_pb_dword"
+	@echo "... pb_handler52"
 	@echo "... check_mb"
 	@echo "... reset_via"
 	@echo "... check_easc_fifo_empty"
@@ -3016,7 +2963,6 @@ help:
 	@echo "... comm_modem_port"
 	@echo "... recv_from_pb"
 	@echo "... check_simm"
-	@echo "... edit_cache"
 	@echo "... boot.o"
 	@echo "... boot.i"
 	@echo "... boot.s"
@@ -3041,6 +2987,9 @@ help:
 	@echo "... check_simm_size.o"
 	@echo "... check_simm_size.i"
 	@echo "... check_simm_size.s"
+	@echo "... check_simm_slots.o"
+	@echo "... check_simm_slots.i"
+	@echo "... check_simm_slots.s"
 	@echo "... cmake_pch.hxx.gch"
 	@echo "... cmake_pch.hxx.i"
 	@echo "... cmake_pch.hxx.s"
@@ -3086,12 +3035,12 @@ help:
 	@echo "... has_via.o"
 	@echo "... has_via.i"
 	@echo "... has_via.s"
+	@echo "... init_adb.o"
+	@echo "... init_adb.i"
+	@echo "... init_adb.s"
 	@echo "... init_hw.o"
 	@echo "... init_hw.i"
 	@echo "... init_hw.s"
-	@echo "... init_hw2.o"
-	@echo "... init_hw2.i"
-	@echo "... init_hw2.s"
 	@echo "... init_hw3.o"
 	@echo "... init_hw3.i"
 	@echo "... init_hw3.s"
@@ -3104,15 +3053,18 @@ help:
 	@echo "... init_pb_duo.o"
 	@echo "... init_pb_duo.i"
 	@echo "... init_pb_duo.s"
+	@echo "... init_powerbook.o"
+	@echo "... init_powerbook.i"
+	@echo "... init_powerbook.s"
 	@echo "... init_scc_iop_fw.o"
 	@echo "... init_scc_iop_fw.i"
 	@echo "... init_scc_iop_fw.s"
-	@echo "... mock_data.o"
-	@echo "... mock_data.i"
-	@echo "... mock_data.s"
 	@echo "... modem_port_send1.o"
 	@echo "... modem_port_send1.i"
 	@echo "... modem_port_send1.s"
+	@echo "... pb_handler52.o"
+	@echo "... pb_handler52.i"
+	@echo "... pb_handler52.s"
 	@echo "... play_asc.o"
 	@echo "... play_asc.i"
 	@echo "... play_asc.s"

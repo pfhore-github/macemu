@@ -1,260 +1,802 @@
-<!DOCTYPE html>
-<html lang="ja">
-  <head>
-	<meta charset="UTF-8" />
-	<title>M68K macintosh hardware reference SCC</title>
-	<link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
-	<h1 id="scc">SCC</h1>
-	<p>see also <a href="rs422.html">serial port</a>.</p>
-	<h2>Pin</h2>
-	<dl>
-	  <dt>TxD(出力)</dt><dd>出力データ</dd>
-	  <dt>RTS(出力)</dt><dd>データ出力の有効化</dd>
-	  <dt>RTxC(入力)</dt><dd>VIA1.3が1の時は3.672MHz clock、それ以外はGPiA信号</dd>
-	  <dt>CTS(入力)</dt><dt>TRxC(入力)</dt><dd>HSKiA(ハンドシェイク・入力)信号</dd>
-	  <dt>DCD(入力)</dt><dd>GPi信号</dd>
-	  <dt>DTR(出力)</dt><dd>HSKoA(ハンドシェイク・出力)信号</dd>
-	  <dt>REQ(出力：ターゲットはVIA1)</dt><dd>SCC wait/request</dd>
-	  <dt>SYNC</dt><dd>Macintoshでは未実装</dd>
-	</dl>
-	<h2>外部レジスタ</h2>
-	<dl>
-	  <dt>#00</dt><dd>プリンタポートコマンド</dd>
-	  <dt>#02</dt><dd>モデムポートコマンド</dd>
-	  <dt>#04</dt><dd>プリンタポートデータ(WR8/RR8と同じ)</dd>
-	  <dt>#06</dt><dd>モデムポートデータ(WR8/RR8と同じ)</dd>
-	</table>
-	<h2>割り込み</h2>
-	<p>割り込みではすべてのポートA（モデムポート）割り込みがポートB（プリンタポート）に優先される。</p>
-	<p>同じポートでは、以下の順で優先される</p>
-	<dl>
-	  <dt>1.受信割り込み</dt>
-	  <dd>
-		<p>すべて、割り込みの起こったデータを読み出すと、割り込みフラグは解除される</p>
-		<table>
-		  <tr><th>フラグ</th><th>割り込み条件</th><th>補足</th></tr>
-		  <tr><th>受信完了</th><td>下記参照</td><td>他の受信割り込みとはベクタの値が違う</td></tr>
-		  <tr><th>オーバーラン</th><td>受信FIFOが溢れた</td><td class ="na"></td></tr>
-		  <tr><th>フレーミングエラー</th><td>正しくデータが終端していない</td><td><a href="#async">非同期モード</a>のみ</td></tr>
-		  <tr><th>フレーム終了</th><td>SDLCのフレームが終端した</td><td><a href="#sdlc">SDLCモード</a>のみ</td></tr>
-		  <tr><th>パリティエラー</th><td>パリティビットが一致しない</td><td><a href="#parity">W2.2</a>が有効の場合のみ</td></tr>
-		</table>
-	  </dd>
-	  <dt>2.送信割り込み</dt>
-	  <dd><p>WR1.1が有効のときのみ送信割り込みが発生する。これは送信が完了してバッファが空になるたびに割り込みが発生する。CRC計算完了後にも割り込みが発生する。バッファに値を書き込むか、<a href="#reset_tx_int">Reset Tx Int</a>を発行すると、割り込みフラグが解除される</p></dd>
-	  <dt>3.特殊割り込み</dt>
-	  <dd>
-		<p>すべての特殊割り込みはWR1.0が1でなければ無効である。また、WR15の各ビットが0の場合は、対応する割り込みは発生しない。割り込みが発生すると、RR0のうち、WR15が立っているビットはラッチされ、リセットされるまで、割り込み時の値を保持し続ける。</p>
-		<table>
-		  <tr><th>割り込み</th><th>発生</th><th>解除</th><th>備考</th></tr>
-		  <tr><th>ブレーク(非同期モードのみ)</th><td>ブレーク(NULL+framing error)を受信</td><td>ビット1を受信</td><td  rowspan="2">他の割込中でも強制的にラッチされる。</td></tr>
-		  <tr><th>アボート(SDLCモードのみ)</th><td>アボート(7つ以上のビット1)を受信</td><td>ビット0を受信</td></tr>
-		  <tr><th>転送アンダーラン・転送終了</th><td>送信バッファが空になった時、送信中止コマンドが送信された時</td><td>リセットコマンド送信時</td><td class="na"></td></tr>
-		  <tr><th>CTS</th><td>HSKiA信号がHIGHになった時</td><td>HSKiA信号がLOWになった時</td><td class="na"></td></tr>
-		  <tr><th>Sync(非同期・外部同期モード)</th><td>SYNC信号がHIGHになった時</td><td>SYNC信号がLOWになった時</td><td><em>macintoshでは未実装</em></td></tr>
-		  <tr><th>Hunt(同期モード)</th><td>データ検索開始時（コマンド実行・アボート時）</td><td>データ検索完了時</td><td>フラグ変更時に自動でラッチされる。（解除時も）</td></tr>
-		  <tr><th>DTD</th><td>GPi信号がHIGHになった時</td><td>GPi信号がLOWになった時</td><td class="na"></td></tr>
-		  <tr><th>ゼロカウント</th><td>ボー・ジェネレータカウンタが0になったとき</td><td>カウンタが初期化された時</td><td class="na"></td></tr>
-		</table>
-	  </dd>
-	</dl>
-	<h2>通信プロトコル</h2>
-	<h3>データ形式</h3>
-	<p>送信時は、ビット数が6以上の場合は、WR8レジスタの下位Nビットが送信される。ビット数が5の場合には、実際のビット数は以下の表で決定される</p>
-	<table>
-	  <tr><th>データ形式</th><th>ビッド数</th></tr>
-	  <tr><th>1111000X</th><td>1</td></tr>
-	  <tr><th>111000XX</th><td>2</td></tr>
-	  <tr><th>11000XXX</th><td>3</td></tr>
-	  <tr><th>1000XXXX</th><td>4</td></tr>
-	  <tr><th>000XXXXX</th><td>5</td></tr>
-	</table>
-	<p>受信時は、非同期モードの場合、非更新ビットは1で埋められ、同期モードの場合は、未定義である。</p>
-	<p>以下は各モードで送信されるビット列である。ここで、各データは１〜８ビットのLSBファーストのデータ＋オプションのパリティビットの最大9ビットである</p>
-	<dl>
-	<dt>非同期モード</dt>
-	<dd> [start bit(0)] [data] [ stop bit(1;1/1.5/2 clock) ]</dd>
-	<dt>同期モード</dt>
-	<dd> [sync char(6/8/12/16 bit) ] [data]* [ CRC ] </dd>
-	<dt>SDLCモード</dt>
-	<dd> [ begin flag($7E) ] [ address (8bit) ] [ ctl (8bit) ] [data]* [ CRC ] [ end flag( $7E ) ]</dd>
-	<h2>内部レジスタ</h2>
-	<table><caption>書き込み</caption>
-	  <tr>
-		<th>番号</th><th>名前</th>
-		<th >7(#80)</th><th >6(#40)</th><th >5(#20)</th><th >4(#10)</th>
-		<th >3(#08)</th><th >2(#04)</th><th >1(#02)</th><th >0(#01)</th>
-	  </tr>
-	  <tr><th>0</th><th>コマンドレジスタ</th>
-		<td colspan="2">
-		  <table><caption>CRC初期化</caption>
-			<tr><th>00</th><td>何もしない</td></tr>
-			<tr><th>01</th><td>受信CRC</td></tr>
-			<tr><th>10</th><td>送信CRC</td></tr>
-			<tr><th>11</th><td>メッセージ終了ラッチ</td></tr>
-		  </table>
-		</td>
-		<td colspan="3">
-		  <table><caption>汎用コマンド</caption>
-			<tr><th>000</th><td>レジスタ番号として0-7を選択する</td></tr>
-			<tr><th>001</th><td>レジスタ番号として8-15を選択する</td></tr>
-			<tr><th>010</th><td>外部割り込みのラッチを解放する</td></tr>
-			<tr><th>011</th><td>SDLCアボートを送信して、メッセージを終了する</td></tr>
-			<tr><th>100</th><td id="reset_next_char">先頭文字状態初期化</td></tr>
-			<tr><th>101</th><td id="reset_tx_int">送信終了。これ以降、送信バッファが空になっても割り込みを発生させない</td></tr>
-			<tr><th>110</th><td>エラーのラッチを解放する</td></tr>
-			<tr><th>111</th><td>処理中の割り込み状態を初期化して低位の割り込みを検知できるようにする</td></tr>
-		  </table>
-		</td>
-		<td colspan="3">レジスタ番号</td>
-	  </tr>
-	  <tr><th>1</th><th>割り込み有効フラグ</th>
-		<td>WAIT/DMA要求有効</td>
-		<td>
-		  <table><caption>W/REQがLowになるタイミング</caption>
-			<tr><th>0</th><td>準備完了前にデータを送受信しようとするとき</td></tr>
-			<tr><th>1</th><td>準備完了時</td></tr>
-		  </table>
-		</td>
-		<td>
-		  <table><caption>W/REQピン送受信フラグ</caption>
-			<tr><th>0</th><td>送信バッファの状態</td></tr>
-			<tr><th>1</th><td>受信バッファの状態</td></tr>
-		  </table>
-		</td>
-		<td colspan="2">
-		  <table><caption>受信割り込みモード</caption>
-			<tr><th>00</th><td>無効</td></tr>
-			<tr><th>01</th><td>受信完了以外の特殊状態と<a href="#reset_next_char">先頭文字</a>受信</td></tr>
-			<tr><th>10</th><td>受信完了以外の特殊状態と文字受信のたびに</td></tr>
-			<tr><th>11</th><td>受信完了以外の特殊状態</td></tr>
-		  </table>
-		</td>
-		<td>パリティ異常時にデータエラーにする</td>
-		<td>送信割り込み有効</td>
-		<td>外部割り込み有効</td>
-	  </tr>
-	  <tr><th>2</th><th>割り込みベクタ(2ポート共通)</th><td colspan="8">初期割り込みベクタ</td></tr>
-	  <tr><th>3</th><th>受信パラメータ</th>
-		<td colspan="2">
-		  <p>キャラクタあたりの受信ビット数</p>
-		  <table>
-			<tr><th>00</th><td>5</td></tr>
-			<tr><th>01</th><td>7</td></tr>
-			<tr><th>10</th><td>6</td></tr>
-			<tr><th>11</th><td>8</td></tr>
-		  </table>
-		</td>
-		<td>CTS（送信）/DCD（受信）を受信すると、自動で送受信を開始する</td>
-		<td>値1を書き込むと同期モードの探索が開始する</td>
-		<td>CRCチェク有効</td>
-		<td>SDLCモード有効</td>
-		<td>SYNC文字をFIFOへのキューとCRC計算から除外する</td>
-		<td>受信有効化</td>
-	  </tr>
-	  <tr><th>4</th><th>送受信パラメータ</th>
-		<td colspan="2">
-		  <p>クロック倍率キャラクタあたりの受信ビット数</p>
-		  <table>
-			<tr><th>00</th><td>1倍</td></tr>
-			<tr><th>01</th><td>16倍</td></tr>
-			<tr><th>10</th><td>32倍</td></tr>
-			<tr><th>11</th><td>64倍</td></tr>
-		  </table>
-		</td>
-		<td colspan="2">
-		  <table><caption>SYNCモード</caption>
-			<tr><th>00</th><td>8bitSYNC</td></tr>
-			<tr><th>01</th><td>16bitSYNC</td></tr>
-			<tr><th>10</th><td>SDLCモード</td></tr>
-			<tr><th>11</th><td>外部SYNC</td></tr>
-		  </table>
-		</td>
-		<td colspan="2">
-		  <table><caption>ASYNCモード</caption>
-			<tr><th>00</th><td>ASYNC無効(Syncモード)</td></tr>
-			<tr><th>01</th><td>1クロック停止ビット</td></tr>
-			<tr><th>10</th><td>1.5クロック停止ビット</td></tr>
-			<tr><th>11</th><td>2クロック停止ビット</td></tr>
-		  </table>
-		</td>
-		<td>偶数パリティモード</td>
-		<td>パリティ有効</td>	
-	  </tr>
-	  <tr><th>5</th><th>送信パラメータ</th>
-		<td>DTRピン送信</td>
-		<td colspan="2">
-		  <p>キャラクタあたりの送信ビット数</p>
-		  <table>
-			<tr><th>00</th><td>5以下</td></tr>
-			<tr><th>01</th><td>7</td></tr>
-			<tr><th>10</th><td>6</td></tr>
-			<tr><th>11</th><td>8</td></tr>
-		  </table>
-		</td>
-		<td>1=強制ブレーク送信</td>
-		<td>送信有効化</td>
-		<td>CRC-16使用フラグ</td>
-		<td>RTSピンビット</td>
-		<td>CRC有効フラグ</td>
-	  </tr>		
-	  <tr><th>6</th><th>Sync文字1/ SDLCアドレス</th>
-		<td colspan="8">
-		  <table>
-			<tr><th>6bit</th><td>送信用8bit Sync（下位6bitが使われる。上位2bitは下位2bitのコピー)</td></tr>
-			<tr><th>8bit</th><td>送信用8bit Sync</td></tr>
-			<tr><th>12bit</th><td>共用16bit Sync下位(上位4bitのみ、下位4bitは1固定)</td></tr>
-			<tr><th>16bit</th><td>共用16bit Sync下位</td></tr>
-			<tr><th>SDLC</th><td>アドレスフィールド</td></tr>
-		  </table>
-		</td>
-	  </tr>
-	  <tr><th>7</th><th>Sync文字2/ SDLCフラグ</th>
-		<td colspan="8">
-		  <table>
-			<tr><th>6bit</th><td>受信用8bit Sync（<strong>上位</strong>6bitが使われる。)</td></tr>
-			<tr><th>8bit</th><td>受信用8bit Sync</td></tr>
-			<tr><th>12bit</th><td  rowspan="2">共用16bit Sync上位</td></tr>
-			<tr><th>16bit</th></tr>
-			<tr><th>SDLC</th><td>01111110固定</td></tr>
-		  </table>
-		</td>
-	  </tr>
-	  <tr><th>8</th><th>送信バッファ</th><td colspan="8">送信データ</td></tr>
-	  <tr><th>9</th><th>マスター割り込み制御（2ポート共通)</th>
-		<td colspan="2">
-		  <table>
-			<tr><th>00</th><td>何もしない</td></tr>
-			<tr><th>01</th><td>プリンタポートリセット</td></tr>
-			<tr><th>10</th><td>モデムポートリセット</td></tr>
-			<tr><th>11</th><td>SCC全リセット</td></tr>
-		  </table>
-		</td>
-		<td class="na"></td>
-		<td>RR2変更位置(1=低位)</td>
-		<td>割り込みマスター</td>
-		<td>下位割り込み停止</td>
-		<td>割り込み応答なし</td>
-		<td>割り込み応答にステータスを付加しない</td>
-	  </tr>
-	  <tr><th>10</th><th>雑多制御</th>
-		<td>CRC初期ビット</td>
-		<td colspan="2">
-		  <table><caption>信号線制御</caption>
-			<tr><th>00</th><td>NRZ(HIGH=1,LOW=0)</td></tr>
-			<tr><th>01</th><td>NRZI(stay=1,flip=0)</td></tr>
-			<tr><th>10</th><td>FM1(edge=1,no-edge=0)</td></tr>
-			<tr><th>11</th><td>FM0(no-edge=1, edge=0)</td></tr>
-		  </table>
-		</td>
-		<td>SDLCループモードで$7E送信時にもう1ビット送信する(stub)</td>
-		<td>SDLCがアイドル時に1を流す</td>
-		<td>SDLCがバッファアンダーランの時にアボート信号を流す</td>
-		<td>SDLCループモード</td>
-		<td>Syncを6bitにする</td>
-	  </tr>
-	</table>
-  </body>
-</html>
+<p><link href="style.css" rel="stylesheet"></link>
+<title> M68K macintosh hardware reference SCC</title></p>
+
+<h2>SCC</h2>
+
+<p><a href="rs422.html">シリアルポート</a>も見よ</p>
+
+<h2>ピン一覧</h2>
+
+<p><img src="scc_pin.png" alt="SCC pin" /></p>
+
+<h2>外部レジスタ</h2>
+
+<table>
+<thead>
+<tr>
+<th>アドレス</th>
+<th>機能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>#00</td>
+<td> プリンタポートコマンド</td>
+</tr>
+<tr>
+<td>#02</td>
+<td> モデムポートコマンド</td>
+</tr>
+<tr>
+<td>#04</td>
+<td> プリンタポートデータ(WR8/RR8と同じ)</td>
+</tr>
+<tr>
+<td>#06</td>
+<td>モデムポートデータ(WR8/RR8と同じ)</td>
+</tr>
+</tbody>
+</table>
+
+
+<h2>割り込み</h2>
+
+<p>割り込みではすべてのポートA（モデムポート）割り込みがポートB（プリンタポート）に優先される。</p>
+
+<p>同じポートでは、以下の順で優先される</p>
+
+<h3>1. 受信割り込み</h3>
+
+<p>すべて、割り込みの起こったデータを読み出すと、割り込みフラグは解除される</p>
+
+<table>
+<thead>
+<tr>
+<th>フラグ</th>
+<th>割り込み条件</th>
+<th>補足</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>受信完了</td>
+<td>下記参照</td>
+<td>他の受信割り込みとはベクタの値が違う</td>
+</tr>
+<tr>
+<td>オーバーラン</td>
+<td>受信FIFOが溢れた</td>
+<td></td>
+</tr>
+<tr>
+<td>フレーミングエラー</td>
+<td>非同期モードで正しくデータが終端していない</td>
+<td></td>
+</tr>
+<tr>
+<td>フレーム終了</td>
+<td>SDLCのフレームが終端した</td>
+<td></td>
+</tr>
+<tr>
+<td>パリティエラー</td>
+<td>パリティビットが一致しない</td>
+<td>W2.2が有効の場合のみ</td>
+</tr>
+</tbody>
+</table>
+
+
+<h3><a id="trans_int">2. 送信割り込み</a></h3>
+
+<p>送信が完了してバッファが空になるたびに割り込みが発生する。CRC計算完了後にも割り込みが発生する。バッファに値を書き込むか、<a href="#reset_tx_int">Reset Tx Int</a>を発行すると、割り込みフラグが解除される</p>
+
+<h3><a id="special_int">3.特殊割り込み</a></h3>
+
+<p>WR15の各ビットが0の場合は、対応する割り込みは発生しない。割り込みが発生すると、RR0のうち、WR15が立っているビットはラッチされ、リセットされるまで、割り込み時の値を保持し続ける。</p>
+
+<table>
+<thead>
+<tr>
+<th> 割り込み </th>
+<th> 発生     </th>
+<th> 解除     </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td> ブレーク(非同期モードのみ)<sup id="fnref:1"><a href="#fn:1" rel="footnote">1</a></sup>      </td>
+<td> ブレーク(NULL+framing error)を受信   </td>
+<td> ビット1を受信         </td>
+</tr>
+<tr>
+<td> アボート(SDLCモードのみ)<sup id="fnref:2"><a href="#fn:2" rel="footnote">2</a></sup>        </td>
+<td> アボート(7つ以上のビット1)を受信     </td>
+<td> ビット0を受信     </td>
+</tr>
+<tr>
+<td> 転送アンダーラン・転送終了</td>
+<td> 送信バッファが空になった時、送信中止コマンドが送信された時 </td>
+<td> リセットコマンド送信時</td>
+</tr>
+<tr>
+<td> CTS</td>
+<td> HSKiA信号がHIGHになった時                </td>
+<td> HSKiA信号がLOWになった時</td>
+</tr>
+<tr>
+<td> Sync(非同期・外部同期モード)<sup id="fnref:3"><a href="#fn:3" rel="footnote">3</a></sup> </td>
+<td> SYNC信号がHIGHになった時</td>
+<td>SYNC信号がLOWになった時   </td>
+</tr>
+<tr>
+<td> Hunt(同期モード)<sup id="fnref:4"><a href="#fn:4" rel="footnote">4</a></sup></td>
+<td>データ検索開始時（コマンド実行・アボート時）</td>
+<td>データ検索完了時</td>
+</tr>
+<tr>
+<td>DTD</td>
+<td>GPi信号がHIGHになった時</td>
+<td>GPi信号がLOWになった時</td>
+</tr>
+<tr>
+<td>ゼロカウント</td>
+<td>ボー・ジェネレータカウンタが0になったとき</td>
+<td>カウンタが初期化された時</td>
+</tr>
+</tbody>
+</table>
+
+
+<h2>通信プロトコル</h2>
+
+<h3>データ形式</h3>
+
+<p>送信時は、ビット数が6以上の場合は、WR8レジスタの下位Nビットが送信される。ビット数が5の場合には、実際のビット数は以下の表で決定される</p>
+
+<table>
+<thead>
+<tr>
+<th>データ形式</th>
+<th>ビット数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1111000X</td>
+<td>1</td>
+</tr>
+<tr>
+<td>111000XX</td>
+<td>2</td>
+</tr>
+<tr>
+<td>11000XXX</td>
+<td>3</td>
+</tr>
+<tr>
+<td>1000XXXX</td>
+<td>4</td>
+</tr>
+<tr>
+<td>000XXXXX</td>
+<td>5</td>
+</tr>
+</tbody>
+</table>
+
+
+<p>受信時は、非同期モードの場合、非更新ビットは1で埋められ、同期モードの場合は、未定義である。</p>
+
+<p>以下は各モードで送信されるビット列である。ここで、各データは１〜８ビットのLSBファーストのデータ＋オプションのパリティビットの最大9ビットである</p>
+
+<ul>
+<li>非同期モード : [start bit(0)] [data] [ stop bit(1;1/1.5/2 clock) ]</li>
+<li>同期モード : [sync char(6/8/12/16 bit) ] [data]* [ CRC ]</li>
+<li>SDLCモード : [ begin flag($7E) ] [ address (8bit) ] [ ctl (8bit) ] [data]* [ CRC ] [ end flag( $7E ) ]</li>
+</ul>
+
+
+<h2>内部レジスタ</h2>
+
+<h3><a id="wr0">WR0 コマンドレジスタ</a></h3>
+
+<h4>BIT 7,6 CRC初期化 (#A0)</h4>
+
+<table>
+<thead>
+<tr>
+<th style="text-align:right;">値</th>
+<th style="text-align:center;">機能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;"> <code>00</code></td>
+<td style="text-align:center;"> 何もしない</td>
+</tr>
+<tr>
+<td style="text-align:right;"> <code>01</code></td>
+<td style="text-align:center;"> 受信CRCリセット</td>
+</tr>
+<tr>
+<td style="text-align:right;"> <code>10</code></td>
+<td style="text-align:center;"> 送信CRCリセット</td>
+</tr>
+<tr>
+<td style="text-align:right;"><code>11</code></td>
+<td style="text-align:center;"> メッセージ終了ラッチリセット</td>
+</tr>
+</tbody>
+</table>
+
+
+<h4>BIT 5,4,3 汎用コマンド (#38)</h4>
+
+<table>
+<thead>
+<tr>
+<th style="text-align:right;">値</th>
+<th style="text-align:center;">機能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;"><code>000</code></td>
+<td style="text-align:center;">レジスタ番号として0-7を選択する</td>
+</tr>
+<tr>
+<td style="text-align:right;"><code>001</code></td>
+<td style="text-align:center;">レジスタ番号として8-15を選択する</td>
+</tr>
+<tr>
+<td style="text-align:right;"><code>010</code></td>
+<td style="text-align:center;">外部割り込みのラッチを解放する</td>
+</tr>
+<tr>
+<td style="text-align:right;"><code>011</code></td>
+<td style="text-align:center;">SDLCアボートを送信して、メッセージを終了する</td>
+</tr>
+<tr>
+<td style="text-align:right;"><code>100</code></td>
+<td style="text-align:center;"><a id="reset_next_char">先頭文字状態初期化</a></td>
+</tr>
+<tr>
+<td style="text-align:right;"><code>101</code></td>
+<td style="text-align:center;"><a id="reset_tx_int">送信終了</a>。これ以降、送信バッファが空になっても割り込みを発生させない</td>
+</tr>
+<tr>
+<td style="text-align:right;"><code>110</code></td>
+<td style="text-align:center;">エラーのラッチを解放する</td></tr></td>
+</tr>
+<tr>
+<td style="text-align:right;"><code>111</code></td>
+<td style="text-align:center;">処理中の割り込み状態を初期化して低位の割り込みを検知できるようにする</td>
+</tr>
+</tbody>
+</table>
+
+
+<h4>BIT 2,1,0 レジスタ番号 (#7)</h4>
+
+<p>これを指定する場合には、通常コマンドを<code>0</code>か<code>1</code>にする</p>
+
+<h3><a id="wr1">WR1 割り込み有効フラグ</a></h3>
+
+<h4>BIT 7 W/REQ有効化 (#80)</h4>
+
+<p>W/REQピンの有効・無効化</p>
+
+<h4>BIT 6 W/REQ機能 (#40)</h4>
+
+<p>W/REQがLowになるタイミング</p>
+
+<table>
+<thead>
+<tr>
+<th style="text-align:right;">値</th>
+<th style="text-align:center;">タイミング</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;"><code>0</code></td>
+<td style="text-align:center;">準備完了前にデータを送受信しようとするとき</td>
+</tr>
+<tr>
+<td style="text-align:right;"><code>1</code></td>
+<td style="text-align:center;">準備完了時</td>
+</tr>
+</tbody>
+</table>
+
+
+<h4>BIT 5 W/REQピン送受信フラグ　(#20)</h4>
+
+<table>
+<thead>
+<tr>
+<th style="text-align:right;">値</th>
+<th style="text-align:center;">送/受信</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;"><code>0</code></td>
+<td style="text-align:center;">送信</td>
+</tr>
+<tr>
+<td style="text-align:right;"><code>1</code></td>
+<td style="text-align:center;">受信</td>
+</tr>
+</tbody>
+</table>
+
+
+<h4>BIT 4,3 受信割り込みモード (#18)</h4>
+
+<table>
+<thead>
+<tr>
+<th style="text-align:right;">値</th>
+<th style="text-align:center;">割り込みタイミング</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;"><code>00</code></td>
+<td style="text-align:center;">無効</td></tr></td>
+</tr>
+<tr>
+<td style="text-align:right;"><code>01</code></td>
+<td style="text-align:center;">受信完了以外の特殊状態と<a href="#reset_next_char">先頭文字</a>受信</td>
+</tr>
+<tr>
+<td style="text-align:right;"><code>10</code></td>
+<td style="text-align:center;">受信完了以外の特殊状態と文字受信のたびに</td>
+</tr>
+<tr>
+<td style="text-align:right;"><code>11</code></td>
+<td style="text-align:center;">受信完了以外の特殊状態</td>
+</tr>
+</tbody>
+</table>
+
+
+<h4>BIT 2 パリティ異常フラグ (#4)</h4>
+
+<p>パリティ異常時にデータエラーにするかどうか</p>
+
+<h4>BIT 1 送信割り込み有効 (#2)</h4>
+
+<p><a href="#trans_int">送信割り込み</a>の有効・無効フラグ</p>
+
+<h4>BIT 0 外部割り込み有効 (#1)</h4>
+
+<p><a href="#special_int">外部割り込み</a>の有効・無効フラグ</p>
+
+<h3><a id="wr2">WR2 割り込みベクタ(2ポート共通)</a></h3>
+
+<p>初期割り込みベクタ。両方のポートで共用されている。</p>
+
+<h3><a id="wr3">WR3 受信制御パラメータ</a></h3>
+
+<h4>BIT 7,6 キャラクタあたりの受信ビット数 (#C0)</h4>
+
+<table>
+<thead>
+<tr>
+<th style="text-align:right;">値</th>
+<th>ビット数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;"><code>00</code></td>
+<td>5</td>
+</tr>
+<tr>
+<td style="text-align:right;"><code>01</code></td>
+<td>7</td>
+</tr>
+<tr>
+<td style="text-align:right;"><code>10</code></td>
+<td>6</td>
+</tr>
+<tr>
+<td style="text-align:right;"><code>11</code></td>
+<td>8</td>
+</tr>
+</tbody>
+</table>
+
+
+<h4>BIT 5 自動有効化 (#20)</h4>
+
+<p>CTS（送信）/DCD（受信）を受信すると、自動で送受信を開始する。</p>
+
+<h4>BIT 4 Huntモード起動 (#10)</h4>
+
+<p>値1を書き込むと同期モードの探索が開始する</p>
+
+<h4>BIT 3 受信CRC有効化 (#8)</h4>
+
+<p>同期モードで受信された文字をCRCチェッカに通す</p>
+
+<h4>BIT 2 SDLC アドレス検索有効化 (#4)</h4>
+
+<p>SDLCモードでアドレスが不一致のデータを読み飛ばす</p>
+
+<h4>BIT 1 SYNC文字ロード抑止 (#2)</h4>
+
+<p>受信された文字がWR6と一致すると、データがスキップされる</p>
+
+<h4>BIT 0 受信有効化 (#1)</h4>
+
+<p>受信処理を有効化する</p>
+
+<h3><a id="wr4">WR4 送受信制御パラメータ2</a></h3>
+
+<h4>BIT 7,6 クロック倍率 (#C0)</h4>
+
+<table>
+<thead>
+<tr>
+<th style="text-align:right;">値</th>
+<th>倍率</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;"><code>00</code></td>
+<td>1倍</td>
+</tr>
+<tr>
+<td style="text-align:right;"><code>01</code></td>
+<td>16倍</td>
+</tr>
+<tr>
+<td style="text-align:right;"><code>10</code></td>
+<td>32倍</td>
+</tr>
+<tr>
+<td style="text-align:right;"><code>11</code></td>
+<td>64倍</td>
+</tr>
+</tbody>
+</table>
+
+
+<h4>BIT 5,4 SYNCモード (#30)</h4>
+
+<table>
+<thead>
+<tr>
+<th style="text-align:right;">値</th>
+<th>モード</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;"><code>00</code></td>
+<td>8bitSYNC</td>
+</tr>
+<tr>
+<td style="text-align:right;"><code>01</code></td>
+<td>16bitSYNC</td>
+</tr>
+<tr>
+<td style="text-align:right;"><code>10</code></td>
+<td>SDLCモード</td>
+</tr>
+<tr>
+<td style="text-align:right;"><code>11</code></td>
+<td>外部SYNC</td>
+</tr>
+</tbody>
+</table>
+
+
+<h4>BIT 3,2 ASYNCモード (#C)</h4>
+
+<table>
+<thead>
+<tr>
+<th style="text-align:right;">値</th>
+<th>モード</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;"><code>00</code></td>
+<td>ASYNC無効(Syncモード)</td>
+</tr>
+<tr>
+<td style="text-align:right;"><code>01</code></td>
+<td>1クロック停止ビット</td>
+</tr>
+<tr>
+<td style="text-align:right;"><code>10</code></td>
+<td>1.5クロック停止ビット</td>
+</tr>
+<tr>
+<td style="text-align:right;"><code>11</code></td>
+<td>2クロック停止ビット</td>
+</tr>
+</tbody>
+</table>
+
+
+<h4>BIT 1 偶数パリティモード (#2)</h4>
+
+<table>
+<thead>
+<tr>
+<th style="text-align:right;">値</th>
+<th>パリティモード</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;"><code>0</code></td>
+<td>奇数パリティ</td>
+</tr>
+<tr>
+<td style="text-align:right;"><code>1</code></td>
+<td>偶数パリティ</td>
+</tr>
+</tbody>
+</table>
+
+
+<h4>BIT 0 パリティチェック有効 (#1)</h4>
+
+<p>パリティの送受信をするかを決定する</p>
+
+<h3><a id="wr5">WR5 送信制御パラメータ</a></h3>
+
+<h4>BIT 7 DTRピン送信 (#80)</h4>
+
+<h4>BIT 6, 5 キャラクタあたりの送信ビット数 (#60)</h4>
+
+<table>
+<thead>
+<tr>
+<th style="text-align:right;">値</th>
+<th>ビット数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;"><code>00</code></td>
+<td>5以下</td>
+</tr>
+<tr>
+<td style="text-align:right;"><code>01</code></td>
+<td>7</td>
+</tr>
+<tr>
+<td style="text-align:right;"><code>10</code></td>
+<td>6</td>
+</tr>
+<tr>
+<td style="text-align:right;"><code>11</code></td>
+<td>8</td>
+</tr>
+</tbody>
+</table>
+
+
+<h4>BIT 4 Break送信 (#10)</h4>
+
+<p>1にするとブレークが送信される</p>
+
+<h4>BIT 3 送信有効化 (#8)</h4>
+
+<p>0の間は送信が保留される</p>
+
+<h4>BIT 2 CRC-16使用フラグ (#4)</h4>
+
+<p>0ならばCRC-CTTITが使われる。1ならばCRC-IBMが使われる</p>
+
+<h4>BIT 1 RTSピン (#2)</h4>
+
+<p>RTSピンにこの値が送られる</p>
+
+<h4>BIT 0 CRC有効化　(#1)</h4>
+
+<p>1ならば送信の最後にCRCチェックサムが送信される</p>
+
+<h3><a id="wr6">WR6 Sync文字1 / SDLCアドレス</a></h3>
+
+<table>
+<thead>
+<tr>
+<th>Syncモード</th>
+<th style="text-align:center;">値</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>6bit Sync</td>
+<td style="text-align:center;">送信用8bit Sync（下位6bitが使われる。上位2bitは下位2bitのコピー</td>
+</tr>
+<tr>
+<td>8bit Sync</td>
+<td style="text-align:center;">送信用8bit Sync</td>
+</tr>
+<tr>
+<td>12bit Sync</td>
+<td style="text-align:center;">共用16bit Sync下位(上位4bitのみ、下位4bitは1固定)</td>
+</tr>
+<tr>
+<td>16bit Sync</td>
+<td style="text-align:center;">共用16bit Sync下位</td>
+</tr>
+<tr>
+<td>SDLC</td>
+<td style="text-align:center;">アドレスフィールド</td>
+</tr>
+</tbody>
+</table>
+
+
+<h3><a id="wr7">WR7 Sync文字2 / SDLCフラグ</a></h3>
+
+<table>
+<thead>
+<tr>
+<th>Syncモード</th>
+<th style="text-align:center;">値</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>6bit Sync</td>
+<td style="text-align:center;">受信用8bit Sync（<strong>上位</strong>6bitが使われる。)</td>
+</tr>
+<tr>
+<td>8bit Sync</td>
+<td style="text-align:center;">受信用8bit Sync</td>
+</tr>
+<tr>
+<td>12bit/16biyt Sync</td>
+<td style="text-align:center;">共用16bit Sync上位</td>
+</tr>
+<tr>
+<td>SDLC</td>
+<td style="text-align:center;"><code>01111110</code>固定</td>
+</tr>
+</tbody>
+</table>
+
+
+<h3><a id="wr8">WR8 送信バッファ</a></h3>
+
+<p>送信データ</p>
+
+<h3><a id="wr9">WR9 マスター割り込み制御（2ポート共通)</h3>
+
+<h4>BIT 7,6 ポートリセット (#C0)</h4>
+
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th style="text-align:center;">コマンド</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>00</code></td>
+<td style="text-align:center;">何もしない</td>
+</tr>
+<tr>
+<td><code>01</code></td>
+<td style="text-align:center;">プリンタポートリセット</td>
+</tr>
+<tr>
+<td><code>10</code></td>
+<td style="text-align:center;">モデムポートリセット</td>
+</tr>
+<tr>
+<td><code>11</code></td>
+<td style="text-align:center;">SCC全リセット</td>
+</tr>
+</tbody>
+</table>
+
+
+<h4>BIT 5 未使用 (#20)</h4>
+
+<h4>BIT 4 割り込みベクタ変更位置 (#10)</h4>
+
+<p><a href="#rr2">割り込みベクタ</a>の反映位置を決定する</p>
+
+<h4>BIT 3 割り込みマスター有効化 (#8)</h4>
+
+<p>0の場合、全割り込みが無効になる</p>
+
+<h4>BIT 2 下位割り込み停止 (#4)</h4>
+
+<p>1の場合、モデムポート受信以外の割り込みが無効になる</p>
+
+<h4>BIT 2 割り込み応答なし (#2)</h4>
+
+<p>1の場合、割り込みに応答しない</p>
+
+<h4>BIT 1 応答結果付与 (#1)</h4>
+
+<p>1の場合、割り込み応答に結果コードを付与する</p>
+
+<h3><a id="wr10">WR9 雑多制御</h3>
+
+<h4>BIT 7 CRC初期ビット(#80)</h4>
+
+<p>1の場合、CRCの初期ベクタが#FFFFになる</p>
+
+<h4>BIT 6,5 信号符号化方法 (#30)</h4>
+
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th style="text-align:center;">符号化方式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>00</code></td>
+<td style="text-align:center;">NRZ(HIGH=1,LOW=0)</td>
+</tr>
+<tr>
+<td><code>01</code></td>
+<td style="text-align:center;">NRZI(stay=1,flip=0)</td>
+</tr>
+<tr>
+<td><code>10</code></td>
+<td style="text-align:center;">FM1(edge=1,no-edge=0)</td>
+</tr>
+<tr>
+<td><code>11</code></td>
+<td style="text-align:center;">FM0(no-edge=1, edge=0)</td>
+</tr>
+</tbody>
+</table>
+
+
+<h4>BIT 4 SDLCループ、Go-Active-On-Poll制御 (#10)</h4>
+
+<p>TBD</p>
+
+<p>SDLCループモードで$7E送信時にもう1ビット送信する</p>
+
+<h4>BIT 3 SDLCアイドルビット制御 (#8)</h4>
+
+<p>SDLCがアイドル時に1を流す</p>
+
+<p>TBD</p>
+
+<h4>BIT 2 SDLCアボート制御 (#4)</h4>
+
+<p>SDLCがバッファアンダーランの時にアボート信号を流す</p>
+
+<h4>BIT 1 SDLCループモード (#2)</h4>
+
+<h4>BIT 0 SYNC 6bit (#1)</h4>
+
+<p>Syncを6/12bitにする</p>
+<div class="footnotes">
+<hr/>
+<ol>
+<li id="fn:1">
+他の割込中でも強制的にラッチされる。<a href="#fnref:1" rev="footnote">&#8617;</a></li>
+<li id="fn:2">
+他の割込中でも強制的にラッチされる。<a href="#fnref:2" rev="footnote">&#8617;</a></li>
+<li id="fn:3">
+<em>Macintoshでは未実装</em><a href="#fnref:3" rev="footnote">&#8617;</a></li>
+<li id="fn:4">
+フラグ変更時に自動でラッチされる。（解除時も）<a href="#fnref:4" rev="footnote">&#8617;</a></li>
+</ol>
+</div>
+

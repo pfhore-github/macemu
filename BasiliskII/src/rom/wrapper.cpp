@@ -3,8 +3,9 @@
 #include "prototype.hpp"
 #include "data.hpp"
 #include "wrapper.hpp"
+#include "machine.hpp"
+#include "glu.hpp"
 namespace ROM {
-extern MB_TYPE mb_type;
 }
 namespace ROMWrapper {
 using namespace ROM;
@@ -87,8 +88,7 @@ void init_rom_routines() {
 
 #endif
 	// TODO: set preference
-	init_machine(MB_TYPE::GLU);
+	machine = std::make_unique<GLU>( GLU::MODEL::IIx, SIMM30_SIZE::SIZE_64MB, SIMM30_SIZE::SIZE_64MB );
 	machine->model_id = 0xa55a0000;
-	ROM::mb_type = MB_TYPE::MCU;
 	//set_machine("");
 }

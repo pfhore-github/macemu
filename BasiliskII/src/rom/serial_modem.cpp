@@ -8,7 +8,6 @@
 void emul_reset(uint32_t* d, uint32_t* a);
 extern uint8_t *RAMBaseHost;
 namespace ROM {
-bool _4BAC0() { return ram_check(); }
 void _BA2CE() {}
 void _BA578();
 void _B9A2A(uint8_t d0, uint32_t d6);
@@ -57,7 +56,7 @@ static void run_comm_T0(int d0 ) {
 	case 0 : // $BA26A
 	{
 		cpu.USP = AR(6);
-		bool z = _4BAC0();
+		bool z = ram_check(); // $4BAC0
 		DR(7) = z ? 0 : -1;
 		if( z ) {
 			DR(6) = read_l( AR(7) );
@@ -332,7 +331,7 @@ void comm_modem_port(uint32_t d6) {
 			case 'N':			// $B9DC2
 			{
 				addr = arg;
-				cpu.Z = _4BAC0();
+				cpu.Z = ram_check(); // $4BAC0
 				AR(1) = read_l(AR(7));
 				AR(1) = read_l(AR(1));
 				_BA2CE();
@@ -449,7 +448,7 @@ void _B9A2A(uint8_t d0, uint32_t d6) {
 // $B9A46
 void _B9A46( uint16_t dv, uint32_t c1) {
 	write_modem_port_byte(dv ); // $B9FDA	
-	DR(4) = modem_port_send1(DR(4), c1);
+	DR(4) = modem_port_send1(DR(4), c1); // $B9A4E
 }
 
 // $B9A4E

@@ -11,8 +11,10 @@ enum RBV_REG_t {
 	SIER,
 	IER,
 	RA = SIFR,
-	MSC_RBV_X16 = 16,
-	PB_RBV_X33 = 33,
+	RBV_4 = 8,
+	RBV_5 = 9,
+	MSC_RBV_X16 = MONP, // powerbook reuse this flag?
+	PB_RBV_X33 = 9,
 };
 }
 class RBV : public Via_Lite {
@@ -25,6 +27,7 @@ public:
 	void set_monp(uint8_t v);
 };
 class SonorRBV : public RBV {
+public:
 //	uint8_t read(int addr) override;
 	void write(int addr, uint8_t v) override;
 };

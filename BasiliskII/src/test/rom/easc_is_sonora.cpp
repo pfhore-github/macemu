@@ -1,11 +1,17 @@
 #define BOOST_TEST_DYN_LINK
 #include "test_common.hpp"
-void prepare(MB_TYPE m) {
-	fixture f(m);
+#include "glu.hpp"
+#include "sonora.hpp"
+void prepare(bool is_sonora) {
+	if( is_sonora ) {
+		fixture f(std::make_unique<Sonora>());
+	} else {
+		fixture f(std::make_unique<GLU>());
+	}
 }
 namespace bdata = boost::unit_test::data;
 BOOST_DATA_TEST_CASE( BD43A, bdata::xrange(2), is_sonora ) {
-	prepare( is_sonora ? MB_TYPE::SONORA : MB_TYPE::GLU );
+	prepare( is_sonora );
 	AR(6) = 0x50F14000;
 	if( rom ) {
 		test_rom( 0x408BD43A, 0x40845C7C );
@@ -17,7 +23,7 @@ BOOST_DATA_TEST_CASE( BD43A, bdata::xrange(2), is_sonora ) {
 }
 
 BOOST_DATA_TEST_CASE( BD44C, bdata::xrange(2), is_sonora ) {
-	prepare( is_sonora ? MB_TYPE::SONORA : MB_TYPE::GLU );
+	prepare( is_sonora );
 	AR(6) = 0x50F14000;
 	if( rom ) {
 		test_rom( 0x408BD44C, 0x40845CAE );
@@ -29,7 +35,7 @@ BOOST_DATA_TEST_CASE( BD44C, bdata::xrange(2), is_sonora ) {
 }
 
 BOOST_DATA_TEST_CASE( BD45E, bdata::xrange(2), is_sonora ) {
-	prepare( is_sonora ? MB_TYPE::SONORA : MB_TYPE::GLU );
+	prepare( is_sonora );
 	AR(6) = 0x50F14000;
 	if( rom ) {
 		test_rom( 0x408BD45E, 0x40845D36 );
@@ -41,7 +47,7 @@ BOOST_DATA_TEST_CASE( BD45E, bdata::xrange(2), is_sonora ) {
 }
 
 BOOST_DATA_TEST_CASE( BD470, bdata::xrange(2), is_sonora ) {
-	prepare( is_sonora ? MB_TYPE::SONORA : MB_TYPE::GLU );
+	prepare( is_sonora );
 	AR(6) = 0x50F14000;
 	if( rom ) {
 		test_rom( 0x408BD470, 0x40845E0E );
@@ -53,7 +59,7 @@ BOOST_DATA_TEST_CASE( BD470, bdata::xrange(2), is_sonora ) {
 }
 
 BOOST_DATA_TEST_CASE( BD482, bdata::xrange(2), is_sonora ) {
-	prepare( is_sonora ? MB_TYPE::SONORA : MB_TYPE::GLU );
+	prepare( is_sonora );
 	AR(6) = 0x50F14000;
 	if( rom ) {
 		test_rom( 0x408BD482, 0x40845E2C );

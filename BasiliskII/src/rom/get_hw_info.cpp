@@ -62,9 +62,7 @@ static void mb_check() {
 			return;
 		}
 	}
-	for(;;) {
-		SDL_Delay(100000);
-	}
+	SDL_assert( false );
 }
 
 // $2FE4
@@ -99,8 +97,8 @@ static void update_init_flag() {
 			INIT_HW_FLG.reset( INIT_HW_FLG_T::IOP_SCC );
 		} else {
 			// has SCC IOP
-			INIT_HW_FLG.reset( INIT_HW_FLG_T::IIFX_1 );
-			INIT_HW_FLG.reset( INIT_HW_FLG_T::IIFX_2 );
+			INIT_HW_FLG.reset( INIT_HW_FLG_T::NON_IIFX_1 );
+			INIT_HW_FLG.reset( INIT_HW_FLG_T::NON_IIFX_2 );
 		}
 	}
 	if( INIT_HW_FLG.test(INIT_HW_FLG_T::SCSI_DMA ) ) {
@@ -109,9 +107,9 @@ static void update_init_flag() {
 			INIT_HW_FLG.reset( INIT_HW_FLG_T::SCSI_DMA );
 		} else {
 			// has "true" SCSI DMA
-			INIT_HW_FLG.reset( 8 );
-			INIT_HW_FLG.reset( 9 );
-			INIT_HW_FLG.reset( 10 );
+			INIT_HW_FLG.reset( INIT_HW_FLG_T::PSUEDO_DMA_1 );
+			INIT_HW_FLG.reset( INIT_HW_FLG_T::PSUEDO_DMA_2 );
+			INIT_HW_FLG.reset( INIT_HW_FLG_T::PSUEDO_DMA_3 );
 		}
 	}
 	test_scsi();				// $04A96

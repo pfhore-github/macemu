@@ -31,9 +31,9 @@ public:
 
 struct OSS : public Machine {	
 	bool is_scsi_addr(uint32_t addr) {
-		return (( addr>>13) & 0x1f) >= 4 && ((addr>>13) & 0x1f) <= 7;
+		return (( addr>>13) & 0x1f) >= 4 && ((addr>>13) & 0x1f) <= 6;
 	}
-	OSS();
+	OSS(bool is_iifx = true, SIMM30_SIZE bankA = SIMM30_SIZE::SIZE_64MB, SIMM30_SIZE bankB = SIMM30_SIZE::SIZE_64MB);
 	std::shared_ptr<IO_BASE> get_io(uint32_t base) override;
 	uint8_t io_read_b(uint32_t addr, int attr) override;
 	void io_write_b(uint32_t addr, uint8_t v, int attr) override;
@@ -41,5 +41,8 @@ struct OSS : public Machine {
 	uint32_t io_read_l(uint32_t addr, int attr) override;
     void io_write_w(uint32_t addr, uint16_t v, int attr) override;
     void io_write_l(uint32_t addr, uint32_t v, int attr) override;
+	void* get_ram_addr(uint32_t addr, int attr) override;
+private:
+	uint32_t bank_size[2];
 };
 

@@ -1,29 +1,10 @@
 #pragma once
-#include <vector>
 #include <memory>
-#include <variant>
+#include <deque>
 class SCC_impl;
-struct data_async {
-	uint8_t value;
-	bool parity;
-	data_async(uint8_t v) :value(v), parity(__builtin_parity(v)) {}
-	data_async(uint8_t v, bool p) :value(v), parity(p) {}
-};
-struct data_sync {
-	uint16_t sync;
-	std::vector<uint8_t> values;
-	uint16_t crc;
-};
-struct data_sdlc {
-	uint8_t begin;
-	std::vector<uint8_t> values;
-	uint16_t crc;
-	uint8_t end;
-};
-
-struct data_break {};
-struct data_eom {};
-using stream_t = std::variant<std::monostate, data_async, data_sync, data_sdlc, data_break, data_eom>;
+constexpr uint32_t ASYNC_STOP_1 = 0x80;
+constexpr uint32_t ASYNC_STOP_1_HALF = 0xC0;
+constexpr uint32_t ASYNC_STOP_2 = 0xE0;
 class SerialDevice {
 	friend class SCC;
 	friend std::shared_ptr<SCC_impl> which(SerialDevice& t) {
@@ -35,9 +16,9 @@ public:
     // handshake output
 	virtual void hsk_o() {}
     // data output
-	virtual void transmit_xd(const stream_t& out ) {}
+	virtual void transmit_xd(uint8_t out ) {}
 	virtual ~SerialDevice() {}
-	void recieve_xd(const stream_t& in);
+	void recieve_xd(const std::deque<uint8_t>& in);
 	void hsk_i(bool v);
 	void gp_i(bool v);
 	virtual void run(SCC_impl&) { }

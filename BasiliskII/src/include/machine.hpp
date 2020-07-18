@@ -7,20 +7,6 @@
 
 /* machine.hpp */
 /* machine specific data */
-enum class MB_TYPE {
-	GLU,
-	MDU,
-	OSS,
-	V8,
-	MCU,
-	JAWS,
-	MSC,
-	SONORA,
-	NIAGARA,
-	MEMCjr,
-	F108,
-	ARDBEG
-};
 class IO_BASE;
 class VIA;
 class VIA1;
@@ -31,15 +17,8 @@ class IO_OSS;
 class Ncr5380;
 class IOP;
 class SWIM;
-class MSC_REG;
-enum class MODEL {
-	// 68020/68030
-	IIx, IIcx, IIci, IIfx, IIsi, IIvi, IIvx, SE30,
-	// 680LC40
-	LC, LC2, LC3, LC3p, LC475, LC520, LC560, LC575, LC630, LC580,
-	// 68040
-	Q700, Q900, Q950, Q610, Q650, Q605, Q800, Q660AV, Q840AV
-};
+class PB_EX_REG;
+class F108_REG;
 class IO_NONE : public IO_BASE {
 public:
 	static std::shared_ptr<IO_BASE> SELF;
@@ -56,18 +35,24 @@ struct NuBus {
 	void (*write_w)(uint32_t, uint16_t);
 	void (*write_l)(uint32_t, uint32_t);
 };
+enum class SIMM30_SIZE {
+	NONE,
+	SIZE_1MB,
+	SIZE_4MB,
+	SIZE_16MB,
+	SIZE_64MB
+};
 struct Machine {
 	Machine();
 	uint32_t model_id = 0;
 	bool model_map[4] = { false, false, false, false };
 	bool model_map2 = false;
 	bool rom_mirror = true;
-	std::shared_ptr<ADB_Bus> adb_bus;
 
 	std::shared_ptr<VIA1> via1;
 	std::shared_ptr<ASC> asc;
 	std::shared_ptr<SCC> scc;
-	std::shared_ptr<Ncr5380> scsi;
+	std::shared_ptr<IO_BASE> scsi;
 	std::shared_ptr<SWIM> floppy;
 	// not required
 	std::shared_ptr<IO_BASE> via2;
@@ -76,7 +61,7 @@ struct Machine {
 	std::shared_ptr<IO_BASE> vdac;
 	std::shared_ptr<IO_BASE> ether;
 	// machine specific
-	std::shared_ptr<MSC_REG> msc;
+	std::shared_ptr<PB_EX_REG> pb_ex;
 	std::shared_ptr<IO_BASE> oss;
 	std::shared_ptr<IO_BASE> exp0;
 	std::shared_ptr<IO_BASE> exp1;
@@ -85,9 +70,11 @@ struct Machine {
 	std::shared_ptr<IO_BASE> mcu;
 	std::shared_ptr<IO_BASE> reg1;
 	std::shared_ptr<IO_BASE> reg2;
+	std::shared_ptr<IO_BASE> f108_reg;
 	NuBus* nubus[6];
 public:
 	std::shared_ptr<IO_BASE> get_via2();
+	virtual void* get_ram_addr(uint32_t addr, int attr);
 	virtual std::shared_ptr<IO_BASE> get_io(uint32_t base) = 0;
 	virtual uint8_t io_read_b(uint32_t addr, int attr) = 0;
 	virtual uint16_t io_read_w(uint32_t addr, int attr) {
@@ -118,20 +105,20 @@ public:
 	uint8_t read(int addr) override { return reg[addr&0xff]; }
 	void write(int addr, uint8_t v) override { reg[addr&0xff] = v; }
 };
-void init_machine(MB_TYPE type);
+//void init_machine(MB_TYPE type, int model = -1);
 extern std::unique_ptr<Machine> machine;
-class MDU : public Machine {
-public:
-	MDU();	
-	std::shared_ptr<IO_BASE> get_io(uint32_t base) override;
-	uint8_t io_read_b(uint32_t addr, int attr) override;
-	void io_write_b(uint32_t addr, uint8_t v, int attr) override;
-};
 
-class Sonora : public Machine {
-public:
-	Sonora();	
-	std::shared_ptr<IO_BASE> get_io(uint32_t base) override;
-	uint8_t io_read_b(uint32_t addr, int attr) override;
-	void io_write_b(uint32_t addr, uint8_t v, int attr) override;
+
+
+struct SIMM {
+	uint32_t sz;
+	uint8_t bit;
+	uint8_t id;
 };
+extern const SIMM simm30[4];
+extern const SIMM simm30_l[3];
+extern const SIMM simm64[3];
+extern const SIMM simm72[8];
+
+extern const uint32_t simm30_table[5];
+template<class T> T* machine_is() { return dynamic_cast<T*>(machine.get()); } 

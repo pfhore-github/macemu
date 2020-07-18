@@ -15,11 +15,7 @@ void bus_error(uint32_t addr, int attr) {
 }
 template<typename T>
 T* ram_addr(uint32_t addr, int attr) {
-	if( addr < RAMSize ) {
-		return static_cast<T*>(static_cast<void*>(&RAMBaseHost[addr]));
-	} else {
-		return nullptr;
-	}
+	return static_cast<T*>(machine->get_ram_addr(addr, attr));
 }
 template<typename T>
 T* rom_addr(uint32_t addr, int attr) {
@@ -79,16 +75,16 @@ static uint8_t pread_b(uint32_t addr, int attr) {
 	case 0xD :
 	case 0xE :
 		// NuBus super
-		if( machine->nubus[high-9] ) {
-			return machine->nubus[high-9]->read_b(addr);
+		if( machine->nubus[high-9] && machine->nubus[high-9]->read_b ) {
+			return machine->nubus[high-9]->read_b(addr & 0xfffffff);
 		} else {
 			bus_error(addr, attr);
 		}
 	case 0xF : {
 		// NuBus std
 		int slot = addr >> 24 & 0xf;
-		if( slot >= 9 && slot <= 0xe ) {
-			return machine->nubus[slot-9]->read_b(addr);
+		if( slot >= 9 && slot <= 0xe && machine->nubus[slot-9] && machine->nubus[slot-9]->read_b ) {
+			return machine->nubus[slot-9]->read_b(addr & 0xffffff);
 		} else {
 			bus_error(addr, attr);
 		}
@@ -137,16 +133,16 @@ static uint16_t pread_w(uint32_t addr, int attr) {
 		case 0xD :
 		case 0xE :
 			// NuBus super
-			if( machine->nubus[high-9] ) {
-				return machine->nubus[high-9]->read_w(addr);
+			if( machine->nubus[high-9] && machine->nubus[high-9]->read_w ) {
+				return machine->nubus[high-9]->read_w(addr & 0xfffffff);
 			} else {
 				bus_error(addr, attr);
 			}
 		case 0xF : {
 			// NuBus std
 			int slot = addr >> 24 & 0xf;
-			if( slot >= 9 && slot <= 0xe ) {
-				return machine->nubus[slot-9]->read_w(addr);
+			if( slot >= 9 && slot <= 0xe && machine->nubus[slot-9] && machine->nubus[slot-9]->read_w) {
+				return machine->nubus[slot-9]->read_w(addr & 0xffffff);
 			} else {
 				bus_error(addr, attr);
 			}
@@ -220,16 +216,16 @@ static uint32_t pread_l(uint32_t addr, int attr) {
 		case 0xD :
 		case 0xE :
 			// NuBus super
-			if( machine->nubus[high-9] ) {
-				return machine->nubus[high-9]->read_l(addr);
+			if( machine->nubus[high-9] && machine->nubus[high-9]->read_l ) {
+				return machine->nubus[high-9]->read_l(addr & 0xfffffff);
 			} else {
 				bus_error(addr, attr);
 			}
 		case 0xF : {
 			// NuBus std
 			int slot = addr >> 24 & 0xf;
-			if( slot >= 9 && slot <= 0xe ) {
-				return machine->nubus[slot-9]->read_l(addr);
+			if( slot >= 9 && slot <= 0xe && machine->nubus[slot-9] && machine->nubus[slot-9]->read_l ) {
+				return machine->nubus[slot-9]->read_l(addr & 0xffffff);
 			} else {
 				bus_error(addr, attr);
 			}
@@ -303,8 +299,8 @@ static void pwrite_b(uint32_t addr, int attr, uint8_t b) {
 	case 0xD :
 	case 0xE :
 		// NuBus super
-		if( machine->nubus[high-9] ) {
-			machine->nubus[high-9]->write_b(addr, b);
+		if( machine->nubus[high-9] && machine->nubus[high-9]->write_b ) {
+			machine->nubus[high-9]->write_b(addr & 0xfffffff, b);
 			return;
 		} else {
 			bus_error(addr, attr);
@@ -312,8 +308,8 @@ static void pwrite_b(uint32_t addr, int attr, uint8_t b) {
 	case 0xF : {
 		// NuBus std
 		int slot = addr >> 24 & 0xf;
-		if( slot >= 9 && slot <= 0xe ) {
-			machine->nubus[slot-9]->write_b(addr, b);
+		if( slot >= 9 && slot <= 0xe && machine->nubus[slot-9] && machine->nubus[slot-9]->write_b ) {
+			machine->nubus[slot-9]->write_b(addr & 0xffffff, b);
 			return;
 		} else {
 			bus_error(addr, attr);
@@ -365,8 +361,8 @@ static void pwrite_w(uint32_t addr, int attr, uint16_t w) {
 		case 0xD :
 		case 0xE :
 			// NuBus super
-			if( machine->nubus[high-9] ) {
-				machine->nubus[high-9]->write_w(addr, w);
+			if( machine->nubus[high-9] && machine->nubus[high-9]->write_w ) {
+				machine->nubus[high-9]->write_w(addr & 0xfffffff, w);
 				return;
 			} else {
 				bus_error(addr, attr);
@@ -374,8 +370,8 @@ static void pwrite_w(uint32_t addr, int attr, uint16_t w) {
 		case 0xF : {
 			// NuBus std
 			int slot = addr >> 24 & 0xf;
-			if( slot >= 9 && slot <= 0xe ) {
-				machine->nubus[slot-9]->write_w(addr, w);
+			if( slot >= 9 && slot <= 0xe && machine->nubus[slot-9] && machine->nubus[slot-9]->write_w ) {
+				machine->nubus[slot-9]->write_w(addr & 0xffffff, w);
 				return;
 			} else {
 				bus_error(addr, attr);
@@ -445,7 +441,7 @@ static void pwrite_l(uint32_t addr, int attr, uint32_t l) {
 		case 0xE :
 			// NuBus super
 			if( machine->nubus[high-9] ) {
-				machine->nubus[high-9]->write_l(addr, l);
+				machine->nubus[high-9]->write_l(addr & 0xfffffff, l);
 				return;
 			} else {
 				bus_error(addr, attr);
@@ -453,8 +449,8 @@ static void pwrite_l(uint32_t addr, int attr, uint32_t l) {
 		case 0xF : {
 			// NuBus std
 			int slot = addr >> 24 & 0xf;
-			if( slot >= 9 && slot <= 0xe ) {
-				machine->nubus[slot-9]->write_w(addr, l);
+			if( slot >= 9 && slot <= 0xe && machine->nubus[slot-9] && machine->nubus[slot-9]->write_l ) {
+				machine->nubus[slot-9]->write_l(addr & 0xffffff, l);
 				return;
 			} else {
 				bus_error(addr, attr);

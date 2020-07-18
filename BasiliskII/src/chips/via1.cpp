@@ -10,27 +10,43 @@
 #include "scc.hpp"
 #include "glu.hpp"
 extern bool adb_interrupt;
-
+constexpr uint8_t ADB_CMD = 0;
+constexpr uint8_t ADB_DATA_EVEN = 1;
+constexpr uint8_t ADB_DATA_ODD = 2;
+constexpr uint8_t ADB_IDLE = 3;
+uint8_t VIA1::read(int n) {
+	if( n == VIA_REG::SR && adb->st == ADB_IDLE ) {
+		adb_int.store(true);
+		return 0;
+	} else {
+		return VIA::read(n);
+	}
+}
 VIA1::VIA1(int i) :VIA(i), sync(false), fd_head(false) {
+	adb = std::make_unique<ADBController>();
 }
 bool VIA1::readA(int n) {
 	switch(n) {
-	case 0 : return true;
 	case 1 : return machine->model_map[0];
 	case 2 : return machine->model_map[1];
-	case 3 : return sync;
 	case 4 : return machine->model_map[2];
-	case 5 : return fd_head;
 	case 6 : return machine->model_map[3];
 	case 7 : return scc_wr_req.exchange(true);
+	default : return false;
 	}
 	return false;
 }
 bool VIA1::readB(int n) {
 	switch(n) {
+		// RTC DATA
 	case 0 : return rtc.read();
-		// ADB is always data in
-	case 3 : return bool(adb_bus);
+		// ADB INT
+	case 3 :
+		if( adb->st == ADB_IDLE ) {
+			return true;
+		} else {
+			return adb_int.exchange( false );
+		}
 	default : return false;
 	}
 	return false;
@@ -49,73 +65,47 @@ void VIA1::writeA(int n, bool v) {
 	default : return;
 	}
 }
-constexpr uint8_t ADB_CMD = 0;
-constexpr uint8_t ADB_DATA_EVEN = 1;
-constexpr uint8_t ADB_DATA_ODD = 2;
-constexpr uint8_t ADB_IDLE = 3;
-void VIA1::cb2_out( bool v) {	
-	out_buf = (out_buf << 1 | v);
-	if( out_pos++ == 8 ) {
-		adb_bus->send_to(out_buf);
-		out_pos = 0;
-		out_buf = 0;
-	}
+void VIA1::cb2_out(uint8_t v) {
+	adb_v = v;
 }
-#if 0
-bool VIA1::cb2_in_pull() {
-	bool v = in_buf & 1;
-	in_buf >>= 1;
-	if( in_pos == 8 ) {
-		in_buf = adb_bus->get_from();
-		in_pos = 0;
-	}
-	return v;
-}
-#endif
+
 void VIA1::adb_set_state(int b) {
 	switch(b) {
 	case ADB_CMD: 
-		adb_bus->cmd(sr);
+		adb->cmd(adb_v);
 		break;
 	case ADB_IDLE :
-		adb_bus->state = b;
-		// resend
-		adb_bus->cmd(sr);
+		adb->st = b;
 		break;
 	case ADB_DATA_EVEN:
 	case ADB_DATA_ODD:
-		if( adb_bus->state != b ) {
+		if( std::exchange(adb->st, b) != b ) {
 			if( a_ctl.SR_OUT ) {
 				// send to ADB
-				adb_bus->send_to(sr);
+				adb->data(adb_v, b);
 			} else {
 				// recieve from ADB
-				sr = adb_bus->get_from();
+				adb_v = adb->read();
+				machine->via1->cb2_in_push_byte(adb_v);
 			}
 		}
-		adb_bus->state = b;
 		break;
 	}
 }
+
 void VIA1::writeB(int n, bool v) {
-	static uint8_t adb_state = 0;
 	switch(n) {
 	case 0 : rtc.write(v); return ;
 	case 1 : rtc.clock(v); return ;
 	case 2 : rtc_enable = v; return ;
 	case 4 : 
-		if( adb_bus ) {
-			// ST0
-			adb_state = ((adb_state &~ 1) | v);
-			adb_set_state(adb_state);
-		}
+		// ST0
+		adb_state = ((adb_state &~ 1) | v);
 		return;
 	case 5 :
-		if( adb_bus ) {
-			// ST1
-			adb_set_state(adb_state | v<<1);
-			adb_set_state(adb_state);
-		}		
+		// ST1
+		adb_state = (adb_state&~2) | v<<1;
+		adb_set_state(adb_state);
 		return;
 	default : return;
 	}

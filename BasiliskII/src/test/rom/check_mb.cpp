@@ -1,13 +1,17 @@
 #define BOOST_TEST_DYN_LINK
 #include "test_common.hpp"
+#include "glu.hpp"
 #include "rbv.hpp"
 #include "oss.hpp"
 #include "mcu.hpp"
+#include "mdu.hpp"
+#include "v8.hpp"
 #include "jaws.hpp"
 #include "mem.hpp"
 using namespace ROM;
-void init(MB_TYPE t) {
-	fixture f(t);
+template<class T>
+void init() {
+	fixture f(std::make_unique<T>());
 	set_sr( 0x2700 );
 	rom_base = 0x40800000;
 	cpu.VBR = 0x40803DD8;
@@ -32,7 +36,7 @@ bool has_via(uint32_t v1, uint32_t v2) { return MOCK::get<bool(uint32_t, uint32_
 namespace bdata = boost::unit_test::data;
 struct glu_fixture {
 	glu_fixture() {
-		init(MB_TYPE::GLU);
+		init<GLU>();
 		AR(0) = rom_base | ROM::motherboards[0].BASE;
 	}
 };
@@ -51,7 +55,7 @@ BOOST_AUTO_TEST_CASE( failure )  {
 BOOST_AUTO_TEST_SUITE_END();
 struct mdu_fixture {
 	mdu_fixture() {
-		init(MB_TYPE::MDU);
+		init<MDU>();
 		AR(0) = rom_base | ROM::motherboards[1].BASE;
 	}
 };
@@ -97,7 +101,7 @@ BOOST_AUTO_TEST_CASE( failure4 )  {
 BOOST_AUTO_TEST_SUITE_END();
 struct oss_fixture {
 	oss_fixture() {
-		init(MB_TYPE::OSS);
+		init<OSS>();
 		AR(0) = rom_base | ROM::motherboards[2].BASE;
 	}
 };
@@ -135,7 +139,7 @@ BOOST_AUTO_TEST_CASE( failure3 )  {
 BOOST_AUTO_TEST_SUITE_END();
 struct v8_fixture {
 	v8_fixture() {
-		init(MB_TYPE::V8);
+		init<V8>();
 		AR(0) = rom_base | ROM::motherboards[3].BASE;
 	}
 };
@@ -182,7 +186,7 @@ BOOST_AUTO_TEST_CASE( failure4 )  {
 BOOST_AUTO_TEST_SUITE_END();
 struct mcu_fixture {
 	mcu_fixture() {
-		init(MB_TYPE::MCU);
+		init<MCU>();
 		AR(0) = rom_base | ROM::motherboards[4].BASE;
 	}
 };
@@ -199,7 +203,7 @@ BOOST_AUTO_TEST_CASE( failure )  {
 BOOST_AUTO_TEST_SUITE_END();
 struct jaws_fixture {
 	jaws_fixture() {
-		init(MB_TYPE::JAWS);
+		init<JAWS>();
 		AR(0) = rom_base | ROM::motherboards[5].BASE;
 	}
 };
@@ -243,7 +247,7 @@ BOOST_AUTO_TEST_CASE( failure4 )  {
 BOOST_AUTO_TEST_SUITE_END();
 struct niagara_fixture {
 	niagara_fixture() {
-		init(MB_TYPE::NIAGARA);
+		init<Niagara>();
 		AR(0) = rom_base | ROM::motherboards[8].BASE;
 	}
 };

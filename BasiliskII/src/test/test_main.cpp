@@ -20,7 +20,9 @@ MMU* mmu;
 bool rom;
 bool dump_cpu;
 using boost::unit_test::framework::master_test_suite;
+uint8_t* rom2;
 #define ROM_PATH "/home/michiaki/Document/macemu/macemu/BasiliskII/src/quadra630.rom"
+#define ROM_PATH2 "/home/michiaki/Document/macemu/macemu/BasiliskII/src/quadra650.rom"
 // initialization function:
 bool init_unit_test()
 {
@@ -33,7 +35,13 @@ bool init_unit_test()
 	int romp = open(ROM_PATH, O_RDONLY);
 	if( romp == -1 )
 		return false;
+	int romp2 = open(ROM_PATH2, O_RDONLY);
+	if( romp2 == -1 )
+		return false;
 	ROMBaseHost = (uint8_t*)mmap(nullptr, ROMSize, PROT_READ, MAP_SHARED, romp, 0);
+	rom2 = (uint8_t*)mmap(nullptr, ROMSize, PROT_READ, MAP_SHARED, romp2, 0);
+//	close(romp);
+//	close(romp2);
 	for(int i = 1; i < master_test_suite().argc; ++ i ) {
 		const char* arg = master_test_suite().argv[i];
 		if( strcmp(arg, "--dump") == 0 ) {

@@ -3,6 +3,7 @@
 #include "devices/serial.hpp"
 #include <memory>
 #include <atomic>
+#include <vector>
 /* SCC (Z8530) */
 class SCC_impl;
 namespace SCC_REG {

@@ -13,6 +13,7 @@
 #include "sonic.hpp"
 #include "scc.hpp"
 #include "mcu.hpp"
+#include "sonic.hpp"
 #include "swim.hpp"
 #include <assert.h>
 template<class T>
@@ -25,7 +26,6 @@ bool check_chip(const std::shared_ptr<T>& p, int offset = 0) {
 	return true;
 }
 namespace ROM {
-MB_TYPE mb_type;
 
 // $30AC(GLU); II/IIx/IIcx/SE30; VIA1 is mirrored at $20000
 bool check_glu() {
@@ -93,7 +93,7 @@ bool check_mcu() {
 	return true;
 }
 
-//$31AE(jaws); PowerBook
+//$31AE(jaws); PowerBook 170
 /* mirror at $100000 but neither $80000 nor $40000 and special register $50F80000 */
 bool check_jaws() {
 	uint32_t base = motherboard->via1_addr + 0x1c00; /* vIER */
@@ -113,7 +113,7 @@ bool check_jaws() {
 }
 
 // $31F2(Niagara); powerbook 16x/180
-// no mirror $80000/$40000 and special register $50F80000
+// no mirror $80000/$40000/error on $50100000 and special register $50F80000
 bool check_niagara() {
 	uint32_t base = motherboard->via1_addr + 0x1c00; /* vIER */
 	if( has_via( base, 0xFF200000 ) ) { // $046AC
@@ -174,8 +174,12 @@ bool test_iifx_exp1(uint32_t base) {
 // $46AA(offset=0)
 // $46AC; Z=1 iff w/ VIA @A2(D2)
 bool has_via(uint32_t base, uint32_t offset) {
-	return test_machine_register(machine->via1, base ) &&
-		test_machine_register(machine->via1, base + offset );
+	if( test_machine_register(machine->via1, base ) ) {
+		return test_machine_register(machine->via1, base + offset );
+	} else if( test_machine_register(machine->via2, base ) ) {
+		return test_machine_register(machine->via2, base + offset );
+	}
+	return false;
 }
 // $46D8(A2=addr); Z=1 iff w/ RBV @A2
 bool has_rbv(uint32_t base) {
@@ -183,7 +187,11 @@ bool has_rbv(uint32_t base) {
 }
 // $4700
 bool test_scsi_io(uint32_t base) {	
-	return test_machine_register(machine->scsi, base );
+	if( test_machine_register(machine->scsi, base ) ) {
+		return !!std::dynamic_pointer_cast<Ncr5380>(machine->scsi);
+	}
+	return false;
+
 }
 // $04708
 bool test_scsi_cmd(uint32_t scsi_base) {
@@ -203,7 +211,10 @@ bool test_iop(uint32_t base) {
 }
 // $47B0
 bool has_ether(uint32_t base) {
-	return test_machine_register(machine->ether, base );
+	if( test_machine_register(machine->ether, base )) {
+		return !!std::dynamic_pointer_cast<SONIC>(machine->ether);
+	}
+	return false;
 }
 
 // $47BA(); I don't know about this routine, undocument low memory global?

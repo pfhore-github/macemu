@@ -14,6 +14,7 @@
 #include "wrapper.hpp"
 #include "mock.hpp"
 #include <deque>
+#include <unordered_set>
 #define FPU_R (*(M68040_FPU*)fpu)
 extern uint8_t *RAMBaseHost;
 struct conds {
@@ -77,7 +78,8 @@ uint32_t test_ea_l(CPU& cpu, const std::vector<uint16_t>& v,
 extern bool dump_;
 extern bool rom;
 struct fixture {
-	fixture(MB_TYPE m = MB_TYPE::GLU);
+	fixture(std::unique_ptr<Machine>&& m);
+	fixture();
 };
 
 inline std::string to_string(const std::vector<uint8_t>& v) {
@@ -86,16 +88,16 @@ inline std::string to_string(const std::vector<uint8_t>& v) {
 
 class STREAM_TEST {
 	std::string name;
-	std::deque<bool> out_;
-	std::deque<bool> in_;
+	std::deque<uint8_t> out_;
+	std::deque<uint8_t> in_;
 public:
 	STREAM_TEST(std::string_view s)	:name(s) {}
-	void set_read_data(const std::vector<bool>& s) { in_.assign(s.begin(), s.end() ); }
-	void verify(const std::vector<bool>& s) {
+	void set_read_data(const std::vector<uint8_t>& s) { in_.assign(s.begin(), s.end() ); }
+	void verify(const std::vector<uint8_t>& s) {
 		BOOST_CHECK_EQUAL_COLLECTIONS(out_.begin(), out_.end(), s.begin(), s.end() );
 	}
-	void out(bool c) { out_.push_back( c ); }
-	bool in();
+	void out(uint8_t c) { out_.push_back( c ); }
+	uint8_t in();
 	void reset() { out_.clear(); }
 };
 class IO_TEST_IMPL {
@@ -109,20 +111,55 @@ public:
 };
 template<typename Base>
 struct IO_TEST : public Base, private IO_TEST_IMPL {
+	std::unordered_set<uint32_t> watched;
 	template<typename... Args>
 	IO_TEST(Args... args) :Base(args...) {}
 public:
+	void watch(uint32_t addr) {
+		watched.insert( addr );
+	}
 	void set_read_data(uint32_t addr, const std::vector<uint8_t>& data) {
 		IO_TEST_IMPL::set_read_data(addr, data);
+		watched.insert( addr );
 	}
 	void write(int addr, uint8_t v) override {
-		IO_TEST_IMPL::write(addr, v);
+		if( watched.count( addr ) ) {
+			IO_TEST_IMPL::write(addr, v);
+		} else {
+			Base::write(addr, v);
+		}
 	}
 	uint8_t read(int addr) override {
-		return IO_TEST_IMPL::read(addr);
+		if( watched.count( addr ) ) {
+			return IO_TEST_IMPL::read(addr);
+		} else {
+			return Base::read(addr);
+		}
 	}
 	void verify(uint32_t addr, const std::vector<uint8_t>& expected) {
 		IO_TEST_IMPL::verify(addr, expected);
+	}
+	void verify16(uint32_t addr, const std::vector<uint16_t>& expected) {
+		std::vector<uint8_t> e[2];
+		for( uint16_t v : expected ) {
+			for(int i = 0; i < 2; ++i ) {
+				e[i].push_back( v >> 8*(1-i) );
+			}
+		}
+		for(int i = 0; i < 2; ++i ) {
+			IO_TEST_IMPL::verify(addr+i, e[i]);
+		}
+	}
+	void verify32(uint32_t addr, const std::vector<uint32_t>& expected) {
+		std::vector<uint8_t> e[4];
+		for( uint32_t v : expected ) {
+			for(int i = 0; i < 4; ++i ) {
+				e[i].push_back( v >> 8*(3-i) );
+			}
+		}
+		for(int i = 0; i < 4; ++i ) {
+			IO_TEST_IMPL::verify(addr+i, e[i]);
+		}
 	}
 };
 void test_cpu(const std::vector<uint16_t>& c);
@@ -143,3 +180,5 @@ void clear_global();
 		BOOST_REQUIRE_EQUAL( cpu.PC, 0x408##end_ );	\
 	}
 
+
+void run_rom_as_650(uint32_t addr);

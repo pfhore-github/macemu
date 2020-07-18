@@ -18,10 +18,10 @@ add_subdirectory(test)
 # CPU emuration library
 add_library(new_cpu STATIC  new_cpu/common.cpp new_cpu/exceptions.cpp new_cpu/inst.cpp new_cpu/mem.cpp   new_cpu/op_arith.cpp new_cpu/op_bcd.cpp new_cpu/op_bits.cpp new_cpu/op_move.cpp new_cpu/fpu/common.cpp new_cpu/fpu/core.cpp new_cpu/fpu/packed_decimal.cpp new_cpu/mmu/mmu.cpp )
 # Hardware Emuration library
-add_library(mac_hw  SHARED  machine.cpp io.cpp adb.cpp rtc.cpp chips/asc.cpp chips/glu.cpp chips/iop.cpp chips/jaws.cpp  chips/msc.cpp chips/lc.cpp chips/mcu.cpp chips/memcjr.cpp chips/ncr5380.cpp chips/oss.cpp chips/rbv.cpp chips/scc.cpp chips/sonic.cpp chips/via.cpp chips/via1.cpp chips/via2.cpp chips/swim.cpp chips/z8530.cpp)
+add_library(mac_hw  SHARED  machine.cpp io.cpp adb.cpp rtc.cpp chips/asc.cpp chips/powerbook.cpp chips/glu.cpp chips/iop.cpp chips/jaws.cpp  chips/msc.cpp chips/lc.cpp chips/mcu.cpp chips/memcjr.cpp chips/ncr5380.cpp chips/oss.cpp chips/rbv.cpp chips/scc.cpp chips/sonic.cpp chips/via.cpp chips/via1.cpp chips/via2.cpp chips/swim.cpp chips/z8530.cpp chips/v8.cpp chips/mdu.cpp chips/sonora.cpp chips/ardbeg.cpp chips/f108.cpp )
 
 # ROM emuration library
-add_library(mac_rom SHARED rom/data.cpp rom/wrapper.cpp rom/boot.cpp rom/init_hw.cpp rom/via.cpp rom/get_hw_info.cpp   rom/init_mmu.cpp rom/test_hw.cpp  rom/init_hw2.cpp rom/init_hw3.cpp  rom/remap_rom.cpp rom/check_flag.cpp rom/test_model_id.cpp rom/get_model_id.cpp rom/asc.cpp rom/easc.cpp rom/get_hw_info2.cpp rom/powerbook.cpp  rom/init_scc_iop_fw.cpp rom/sad_mac.cpp rom/serial_modem.cpp rom/get_scc_addr.cpp rom/simm_test.cpp)
+add_library(mac_rom SHARED rom/data.cpp rom/wrapper.cpp rom/boot.cpp rom/init_hw.cpp rom/via.cpp rom/get_hw_info.cpp  rom/test_hw.cpp  rom/init_hw2.cpp rom/init_hw3.cpp  rom/remap_rom.cpp rom/check_flag.cpp rom/test_model_id.cpp rom/get_model_id.cpp rom/asc.cpp rom/easc.cpp rom/get_hw_info2.cpp rom/powerbook.cpp  rom/init_scc_iop_fw.cpp rom/sad_mac.cpp rom/serial_modem.cpp rom/get_scc_addr.cpp rom/simm_test.cpp)
 target_precompile_headers(mac_rom PRIVATE ${PROJECT_SOURCE_DIR}/include/include.hpp)
 
 if(WIN32)

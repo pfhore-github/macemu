@@ -75,7 +75,7 @@ protected:
 	// WR4
 	bool parity_enable;
 	bool parity_even;
-	bool async_mode;
+	uint8_t async_mode; // terminate char; #80/#C0/E0
 	bool sdlc_mode;
 	SYNC_SIZE sync_size;
 	// WR5
@@ -103,7 +103,7 @@ protected:
 	void interrupt(SCC_INT i);
 public:
 	// data read
-	void recieve_xd(const stream_t& in);
+	void recieve_xd(const std::deque<uint8_t>& in);
 	// handshake input
 	void hsk_i(bool v);
 	// GP input
@@ -134,11 +134,12 @@ private:
 	boost::crc_16_type recv_crc16;
 	boost::crc_ccitt_type recv_crc_ccitt;
 	bool sync_sending;
-	data_sync sync_data;
-	data_sdlc sdlc_data;
-	uint16_t recieved_crc;
 	void int_external(RR0);
 	void sync_done();
+
+	void recieve_async(std::deque<uint8_t>& in);
+	void recieve_sync(std::deque<uint8_t>& in);
+	void recieve_sdlc(std::deque<uint8_t>& in);
 };
 // NMOS
 class Z8530 : public SCC_impl {

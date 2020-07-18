@@ -23,7 +23,7 @@ uint8_t MEMCjr_REG2::read(int addr) {
 void MEMCjr_REG2::write(int addr, uint8_t v) {
 }
 
-MEMCjr::MEMCjr() {
+MEMCjr::MEMCjr(MODEL model) {
 	via1 = std::make_shared<VIA1>();
 	via2 = std::make_shared<VIA2>();
 	asc = newPlaneASC();
@@ -31,6 +31,88 @@ MEMCjr::MEMCjr() {
 	reg1 = std::make_shared<MEMCjr_REG1>();
 	reg2 = std::make_shared<MEMCjr_REG2>();
 	ether = std::make_shared<SONIC>();
+	switch(model) {
+	case MODEL::Q605_20 : model_id = 0xA55A2224; break;
+	case MODEL::Q605_25 : model_id = 0xA55A2225; break;
+	case MODEL::Q605_33 : model_id = 0xA55A2226; break;
+	case MODEL::UNUSED1 : model_id = 0xA55A2231; break;
+	case MODEL::UNUSED2 : model_id = 0xA55A2232; break;
+	case MODEL::UNUSED3 :
+		model_id = 0xA55A2BAD;
+		model_map[0] = true;
+		model_map[1] = false;
+		model_map[2] = false;
+		model_map[3] = true;
+		break;
+	case MODEL::C650 :
+		model_id = 0xA55A2BAD;
+		model_map[0] = true;
+		model_map[1] = true;
+		model_map[2] = false;
+		model_map[3] = true;
+		break;
+	case MODEL::Q800 :
+		model_id = 0xA55A2BAD;
+		model_map[0] = true;
+		model_map[1] = false;
+		model_map[2] = true;
+		model_map[3] = false;
+		break;
+	case MODEL::Q650 :
+		model_id = 0xA55A2BAD;
+		model_map[0] = true;
+		model_map[1] = false;
+		model_map[2] = true;
+		model_map[3] = true;
+		break;
+	case MODEL::UNUSED4 :
+		model_id = 0xA55A2BAD;
+		model_map[0] = true;
+		model_map[1] = true;
+		model_map[2] = true;
+		model_map[3] = true;
+		break;
+	case MODEL::UNUSED5 :
+		model_id = 0xA55A2BAD;
+		model_map[0] = true;
+		model_map[1] = true;
+		model_map[2] = true;
+		model_map[3] = false;
+		break;
+	case MODEL::C610 :
+		model_id = 0xA55A2BAD;
+		model_map[0] = false;
+		model_map[1] = false;
+		model_map[2] = false;
+		model_map[3] = true;
+		break;
+	case MODEL::Q610 :
+		model_id = 0xA55A2BAD;
+		model_map[0] = false;
+		model_map[1] = true;
+		model_map[2] = false;
+		model_map[3] = true;
+		break;
+	case MODEL::UNUSED6 :
+		model_id = 0xA55A2BAD;
+		model_map[0] = false;
+		model_map[1] = true;
+		model_map[2] = false;
+		model_map[3] = false;
+		break;
+	case MODEL::UNUSED7 :
+		model_id = 0xA55A2BAD;
+		model_map[0] = false;
+		model_map[1] = false;
+		model_map[2] = true;
+		model_map[3] = true;
+		break;
+	}
+	RAMBaseHost[0x78] = 'r';
+	RAMBaseHost[0x79] = 'o';
+	RAMBaseHost[0x7A] = 'm';
+	RAMBaseHost[0x7B] = 'p';
+
 }
 
 std::shared_ptr<IO_BASE> MEMCjr::get_io(uint32_t base) {

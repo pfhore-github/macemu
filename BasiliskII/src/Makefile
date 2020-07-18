@@ -189,6 +189,19 @@ hw_via1/fast:
 .PHONY : hw_via1/fast
 
 #=============================================================================
+# Target rules for targets named hw_msc
+
+# Build rule for target.
+hw_msc: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 hw_msc
+.PHONY : hw_msc
+
+# fast build rule for target.
+hw_msc/fast:
+	$(MAKE) -f test/CMakeFiles/hw_msc.dir/build.make test/CMakeFiles/hw_msc.dir/build
+.PHONY : hw_msc/fast
+
+#=============================================================================
 # Target rules for targets named hw_rbv
 
 # Build rule for target.
@@ -291,6 +304,19 @@ test_common: cmake_check_build_system
 test_common/fast:
 	$(MAKE) -f test/CMakeFiles/test_common.dir/build.make test/CMakeFiles/test_common.dir/build
 .PHONY : test_common/fast
+
+#=============================================================================
+# Target rules for targets named init_adb
+
+# Build rule for target.
+init_adb: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 init_adb
+.PHONY : init_adb
+
+# fast build rule for target.
+init_adb/fast:
+	$(MAKE) -f test/rom/CMakeFiles/init_adb.dir/build.make test/rom/CMakeFiles/init_adb.dir/build
+.PHONY : init_adb/fast
 
 #=============================================================================
 # Target rules for targets named play_easc
@@ -566,6 +592,19 @@ init_modem_port/fast:
 .PHONY : init_modem_port/fast
 
 #=============================================================================
+# Target rules for targets named check_simm_slots
+
+# Build rule for target.
+check_simm_slots: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 check_simm_slots
+.PHONY : check_simm_slots
+
+# fast build rule for target.
+check_simm_slots/fast:
+	$(MAKE) -f test/rom/CMakeFiles/check_simm_slots.dir/build.make test/rom/CMakeFiles/check_simm_slots.dir/build
+.PHONY : check_simm_slots/fast
+
+#=============================================================================
 # Target rules for targets named init_hw3
 
 # Build rule for target.
@@ -696,19 +735,6 @@ play_asc2/fast:
 .PHONY : play_asc2/fast
 
 #=============================================================================
-# Target rules for targets named init_hw2
-
-# Build rule for target.
-init_hw2: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 init_hw2
-.PHONY : init_hw2
-
-# fast build rule for target.
-init_hw2/fast:
-	$(MAKE) -f test/rom/CMakeFiles/init_hw2.dir/build.make test/rom/CMakeFiles/init_hw2.dir/build
-.PHONY : init_hw2/fast
-
-#=============================================================================
 # Target rules for targets named test_iifx_exp1
 
 # Build rule for target.
@@ -800,6 +826,19 @@ test_model_id/fast:
 .PHONY : test_model_id/fast
 
 #=============================================================================
+# Target rules for targets named init_powerbook
+
+# Build rule for target.
+init_powerbook: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 init_powerbook
+.PHONY : init_powerbook
+
+# fast build rule for target.
+init_powerbook/fast:
+	$(MAKE) -f test/rom/CMakeFiles/init_powerbook.dir/build.make test/rom/CMakeFiles/init_powerbook.dir/build
+.PHONY : init_powerbook/fast
+
+#=============================================================================
 # Target rules for targets named read_modem_cmd_dword
 
 # Build rule for target.
@@ -876,6 +915,19 @@ send_to_pb_dword: cmake_check_build_system
 send_to_pb_dword/fast:
 	$(MAKE) -f test/rom/CMakeFiles/send_to_pb_dword.dir/build.make test/rom/CMakeFiles/send_to_pb_dword.dir/build
 .PHONY : send_to_pb_dword/fast
+
+#=============================================================================
+# Target rules for targets named pb_handler52
+
+# Build rule for target.
+pb_handler52: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 pb_handler52
+.PHONY : pb_handler52
+
+# fast build rule for target.
+pb_handler52/fast:
+	$(MAKE) -f test/rom/CMakeFiles/pb_handler52.dir/build.make test/rom/CMakeFiles/pb_handler52.dir/build
+.PHONY : pb_handler52/fast
 
 #=============================================================================
 # Target rules for targets named check_mb
@@ -1670,6 +1722,33 @@ cdrom.cpp.s:
 	$(MAKE) -f CMakeFiles/BasiliskII.dir/build.make CMakeFiles/BasiliskII.dir/cdrom.cpp.s
 .PHONY : cdrom.cpp.s
 
+chips/ardbeg.o: chips/ardbeg.cpp.o
+
+.PHONY : chips/ardbeg.o
+
+# target to build an object file
+chips/ardbeg.cpp.o:
+	$(MAKE) -f CMakeFiles/mac_hw.dir/build.make CMakeFiles/mac_hw.dir/chips/ardbeg.cpp.o
+.PHONY : chips/ardbeg.cpp.o
+
+chips/ardbeg.i: chips/ardbeg.cpp.i
+
+.PHONY : chips/ardbeg.i
+
+# target to preprocess a source file
+chips/ardbeg.cpp.i:
+	$(MAKE) -f CMakeFiles/mac_hw.dir/build.make CMakeFiles/mac_hw.dir/chips/ardbeg.cpp.i
+.PHONY : chips/ardbeg.cpp.i
+
+chips/ardbeg.s: chips/ardbeg.cpp.s
+
+.PHONY : chips/ardbeg.s
+
+# target to generate assembly for a file
+chips/ardbeg.cpp.s:
+	$(MAKE) -f CMakeFiles/mac_hw.dir/build.make CMakeFiles/mac_hw.dir/chips/ardbeg.cpp.s
+.PHONY : chips/ardbeg.cpp.s
+
 chips/asc.o: chips/asc.cpp.o
 
 .PHONY : chips/asc.o
@@ -1696,6 +1775,33 @@ chips/asc.s: chips/asc.cpp.s
 chips/asc.cpp.s:
 	$(MAKE) -f CMakeFiles/mac_hw.dir/build.make CMakeFiles/mac_hw.dir/chips/asc.cpp.s
 .PHONY : chips/asc.cpp.s
+
+chips/f108.o: chips/f108.cpp.o
+
+.PHONY : chips/f108.o
+
+# target to build an object file
+chips/f108.cpp.o:
+	$(MAKE) -f CMakeFiles/mac_hw.dir/build.make CMakeFiles/mac_hw.dir/chips/f108.cpp.o
+.PHONY : chips/f108.cpp.o
+
+chips/f108.i: chips/f108.cpp.i
+
+.PHONY : chips/f108.i
+
+# target to preprocess a source file
+chips/f108.cpp.i:
+	$(MAKE) -f CMakeFiles/mac_hw.dir/build.make CMakeFiles/mac_hw.dir/chips/f108.cpp.i
+.PHONY : chips/f108.cpp.i
+
+chips/f108.s: chips/f108.cpp.s
+
+.PHONY : chips/f108.s
+
+# target to generate assembly for a file
+chips/f108.cpp.s:
+	$(MAKE) -f CMakeFiles/mac_hw.dir/build.make CMakeFiles/mac_hw.dir/chips/f108.cpp.s
+.PHONY : chips/f108.cpp.s
 
 chips/glu.o: chips/glu.cpp.o
 
@@ -1832,6 +1938,33 @@ chips/mcu.cpp.s:
 	$(MAKE) -f CMakeFiles/mac_hw.dir/build.make CMakeFiles/mac_hw.dir/chips/mcu.cpp.s
 .PHONY : chips/mcu.cpp.s
 
+chips/mdu.o: chips/mdu.cpp.o
+
+.PHONY : chips/mdu.o
+
+# target to build an object file
+chips/mdu.cpp.o:
+	$(MAKE) -f CMakeFiles/mac_hw.dir/build.make CMakeFiles/mac_hw.dir/chips/mdu.cpp.o
+.PHONY : chips/mdu.cpp.o
+
+chips/mdu.i: chips/mdu.cpp.i
+
+.PHONY : chips/mdu.i
+
+# target to preprocess a source file
+chips/mdu.cpp.i:
+	$(MAKE) -f CMakeFiles/mac_hw.dir/build.make CMakeFiles/mac_hw.dir/chips/mdu.cpp.i
+.PHONY : chips/mdu.cpp.i
+
+chips/mdu.s: chips/mdu.cpp.s
+
+.PHONY : chips/mdu.s
+
+# target to generate assembly for a file
+chips/mdu.cpp.s:
+	$(MAKE) -f CMakeFiles/mac_hw.dir/build.make CMakeFiles/mac_hw.dir/chips/mdu.cpp.s
+.PHONY : chips/mdu.cpp.s
+
 chips/memcjr.o: chips/memcjr.cpp.o
 
 .PHONY : chips/memcjr.o
@@ -1940,6 +2073,33 @@ chips/oss.cpp.s:
 	$(MAKE) -f CMakeFiles/mac_hw.dir/build.make CMakeFiles/mac_hw.dir/chips/oss.cpp.s
 .PHONY : chips/oss.cpp.s
 
+chips/powerbook.o: chips/powerbook.cpp.o
+
+.PHONY : chips/powerbook.o
+
+# target to build an object file
+chips/powerbook.cpp.o:
+	$(MAKE) -f CMakeFiles/mac_hw.dir/build.make CMakeFiles/mac_hw.dir/chips/powerbook.cpp.o
+.PHONY : chips/powerbook.cpp.o
+
+chips/powerbook.i: chips/powerbook.cpp.i
+
+.PHONY : chips/powerbook.i
+
+# target to preprocess a source file
+chips/powerbook.cpp.i:
+	$(MAKE) -f CMakeFiles/mac_hw.dir/build.make CMakeFiles/mac_hw.dir/chips/powerbook.cpp.i
+.PHONY : chips/powerbook.cpp.i
+
+chips/powerbook.s: chips/powerbook.cpp.s
+
+.PHONY : chips/powerbook.s
+
+# target to generate assembly for a file
+chips/powerbook.cpp.s:
+	$(MAKE) -f CMakeFiles/mac_hw.dir/build.make CMakeFiles/mac_hw.dir/chips/powerbook.cpp.s
+.PHONY : chips/powerbook.cpp.s
+
 chips/rbv.o: chips/rbv.cpp.o
 
 .PHONY : chips/rbv.o
@@ -2021,6 +2181,33 @@ chips/sonic.cpp.s:
 	$(MAKE) -f CMakeFiles/mac_hw.dir/build.make CMakeFiles/mac_hw.dir/chips/sonic.cpp.s
 .PHONY : chips/sonic.cpp.s
 
+chips/sonora.o: chips/sonora.cpp.o
+
+.PHONY : chips/sonora.o
+
+# target to build an object file
+chips/sonora.cpp.o:
+	$(MAKE) -f CMakeFiles/mac_hw.dir/build.make CMakeFiles/mac_hw.dir/chips/sonora.cpp.o
+.PHONY : chips/sonora.cpp.o
+
+chips/sonora.i: chips/sonora.cpp.i
+
+.PHONY : chips/sonora.i
+
+# target to preprocess a source file
+chips/sonora.cpp.i:
+	$(MAKE) -f CMakeFiles/mac_hw.dir/build.make CMakeFiles/mac_hw.dir/chips/sonora.cpp.i
+.PHONY : chips/sonora.cpp.i
+
+chips/sonora.s: chips/sonora.cpp.s
+
+.PHONY : chips/sonora.s
+
+# target to generate assembly for a file
+chips/sonora.cpp.s:
+	$(MAKE) -f CMakeFiles/mac_hw.dir/build.make CMakeFiles/mac_hw.dir/chips/sonora.cpp.s
+.PHONY : chips/sonora.cpp.s
+
 chips/swim.o: chips/swim.cpp.o
 
 .PHONY : chips/swim.o
@@ -2047,6 +2234,33 @@ chips/swim.s: chips/swim.cpp.s
 chips/swim.cpp.s:
 	$(MAKE) -f CMakeFiles/mac_hw.dir/build.make CMakeFiles/mac_hw.dir/chips/swim.cpp.s
 .PHONY : chips/swim.cpp.s
+
+chips/v8.o: chips/v8.cpp.o
+
+.PHONY : chips/v8.o
+
+# target to build an object file
+chips/v8.cpp.o:
+	$(MAKE) -f CMakeFiles/mac_hw.dir/build.make CMakeFiles/mac_hw.dir/chips/v8.cpp.o
+.PHONY : chips/v8.cpp.o
+
+chips/v8.i: chips/v8.cpp.i
+
+.PHONY : chips/v8.i
+
+# target to preprocess a source file
+chips/v8.cpp.i:
+	$(MAKE) -f CMakeFiles/mac_hw.dir/build.make CMakeFiles/mac_hw.dir/chips/v8.cpp.i
+.PHONY : chips/v8.cpp.i
+
+chips/v8.s: chips/v8.cpp.s
+
+.PHONY : chips/v8.s
+
+# target to generate assembly for a file
+chips/v8.cpp.s:
+	$(MAKE) -f CMakeFiles/mac_hw.dir/build.make CMakeFiles/mac_hw.dir/chips/v8.cpp.s
+.PHONY : chips/v8.cpp.s
 
 chips/via.o: chips/via.cpp.o
 
@@ -3149,33 +3363,6 @@ rom/init_hw3.cpp.s:
 	$(MAKE) -f CMakeFiles/mac_rom.dir/build.make CMakeFiles/mac_rom.dir/rom/init_hw3.cpp.s
 .PHONY : rom/init_hw3.cpp.s
 
-rom/init_mmu.o: rom/init_mmu.cpp.o
-
-.PHONY : rom/init_mmu.o
-
-# target to build an object file
-rom/init_mmu.cpp.o:
-	$(MAKE) -f CMakeFiles/mac_rom.dir/build.make CMakeFiles/mac_rom.dir/rom/init_mmu.cpp.o
-.PHONY : rom/init_mmu.cpp.o
-
-rom/init_mmu.i: rom/init_mmu.cpp.i
-
-.PHONY : rom/init_mmu.i
-
-# target to preprocess a source file
-rom/init_mmu.cpp.i:
-	$(MAKE) -f CMakeFiles/mac_rom.dir/build.make CMakeFiles/mac_rom.dir/rom/init_mmu.cpp.i
-.PHONY : rom/init_mmu.cpp.i
-
-rom/init_mmu.s: rom/init_mmu.cpp.s
-
-.PHONY : rom/init_mmu.s
-
-# target to generate assembly for a file
-rom/init_mmu.cpp.s:
-	$(MAKE) -f CMakeFiles/mac_rom.dir/build.make CMakeFiles/mac_rom.dir/rom/init_mmu.cpp.s
-.PHONY : rom/init_mmu.cpp.s
-
 rom/init_scc_iop_fw.o: rom/init_scc_iop_fw.cpp.o
 
 .PHONY : rom/init_scc_iop_fw.o
@@ -4246,6 +4433,7 @@ help:
 	@echo "... new_cpu"
 	@echo "... hw_scc"
 	@echo "... hw_via1"
+	@echo "... hw_msc"
 	@echo "... hw_rbv"
 	@echo "... hw_oss"
 	@echo "... hw_via"
@@ -4254,6 +4442,7 @@ help:
 	@echo "... hw_asc"
 	@echo "... test_cpu"
 	@echo "... test_common"
+	@echo "... init_adb"
 	@echo "... play_easc"
 	@echo "... play_chime_4"
 	@echo "... play_asc"
@@ -4275,6 +4464,7 @@ help:
 	@echo "... send_to_pb_key"
 	@echo "... test_scsi_cmd"
 	@echo "... init_modem_port"
+	@echo "... check_simm_slots"
 	@echo "... init_hw3"
 	@echo "... test_scsi_io"
 	@echo "... modem_port_send1"
@@ -4285,7 +4475,6 @@ help:
 	@echo "... check_easc_fifo_done"
 	@echo "... has_fpu"
 	@echo "... play_asc2"
-	@echo "... init_hw2"
 	@echo "... test_iifx_exp1"
 	@echo "... get_model_id"
 	@echo "... write_modem_integer"
@@ -4293,12 +4482,14 @@ help:
 	@echo "... ram_check"
 	@echo "... wait_until_easc_fifo_half"
 	@echo "... test_model_id"
+	@echo "... init_powerbook"
 	@echo "... read_modem_cmd_dword"
 	@echo "... easc_beep"
 	@echo "... get_hw_info2"
 	@echo "... check_easc_fifo_half"
 	@echo "... test_iop"
 	@echo "... send_to_pb_dword"
+	@echo "... pb_handler52"
 	@echo "... check_mb"
 	@echo "... reset_via"
 	@echo "... check_easc_fifo_empty"
@@ -4381,9 +4572,15 @@ help:
 	@echo "... cdrom.o"
 	@echo "... cdrom.i"
 	@echo "... cdrom.s"
+	@echo "... chips/ardbeg.o"
+	@echo "... chips/ardbeg.i"
+	@echo "... chips/ardbeg.s"
 	@echo "... chips/asc.o"
 	@echo "... chips/asc.i"
 	@echo "... chips/asc.s"
+	@echo "... chips/f108.o"
+	@echo "... chips/f108.i"
+	@echo "... chips/f108.s"
 	@echo "... chips/glu.o"
 	@echo "... chips/glu.i"
 	@echo "... chips/glu.s"
@@ -4399,6 +4596,9 @@ help:
 	@echo "... chips/mcu.o"
 	@echo "... chips/mcu.i"
 	@echo "... chips/mcu.s"
+	@echo "... chips/mdu.o"
+	@echo "... chips/mdu.i"
+	@echo "... chips/mdu.s"
 	@echo "... chips/memcjr.o"
 	@echo "... chips/memcjr.i"
 	@echo "... chips/memcjr.s"
@@ -4411,6 +4611,9 @@ help:
 	@echo "... chips/oss.o"
 	@echo "... chips/oss.i"
 	@echo "... chips/oss.s"
+	@echo "... chips/powerbook.o"
+	@echo "... chips/powerbook.i"
+	@echo "... chips/powerbook.s"
 	@echo "... chips/rbv.o"
 	@echo "... chips/rbv.i"
 	@echo "... chips/rbv.s"
@@ -4420,9 +4623,15 @@ help:
 	@echo "... chips/sonic.o"
 	@echo "... chips/sonic.i"
 	@echo "... chips/sonic.s"
+	@echo "... chips/sonora.o"
+	@echo "... chips/sonora.i"
+	@echo "... chips/sonora.s"
 	@echo "... chips/swim.o"
 	@echo "... chips/swim.i"
 	@echo "... chips/swim.s"
+	@echo "... chips/v8.o"
+	@echo "... chips/v8.i"
+	@echo "... chips/v8.s"
 	@echo "... chips/via.o"
 	@echo "... chips/via.i"
 	@echo "... chips/via.s"
@@ -4546,9 +4755,6 @@ help:
 	@echo "... rom/init_hw3.o"
 	@echo "... rom/init_hw3.i"
 	@echo "... rom/init_hw3.s"
-	@echo "... rom/init_mmu.o"
-	@echo "... rom/init_mmu.i"
-	@echo "... rom/init_mmu.s"
 	@echo "... rom/init_scc_iop_fw.o"
 	@echo "... rom/init_scc_iop_fw.i"
 	@echo "... rom/init_scc_iop_fw.s"

@@ -46,6 +46,12 @@ void _4AA98();
 bool _AA0E0();
 // $47EF6
 int test_scc_iop() {
+	if( ! std::dynamic_cast<IOP*>(&*machine->scc) ) {
+		return 1;
+	} else {
+		return 0;
+	}
+#if 0
 	auto scc_iop = get_machine_register<IOP>(AR(3));
 	scc_iop->write( IOP_REG::CTRL, IOP_INT0 | IOP_INT1 | IOP_AUTOINC );
 	scc_iop->write( IOP_REG::ADDR_HI, scc_data.addr >> 8 );
@@ -62,29 +68,12 @@ int test_scc_iop() {
 	}
 	scc_iop->write( IOP_REG::CTRL, IOP_INT0 | IOP_INT1 | IOP_AUTOINC | IOP_RUN);
 	return 0;
+#endif
 }
 
 
-// $85714
-void init_adb() {
-	// reset ADB to idle
-	adb_set_state(ADB_IDLE);
 
-	// reset SHIFT REGISTER
-	machine->via1->read(vSR);
-	
-	// change mode to transfer (odd)
-	adb_set_state(ADB_DATA_ODD);
-	// skip data
-	machine->via1->read(vSR);
-	// $8575E
 
-	// reset to idle
-	adb_set_state(ADB_IDLE);
-	machine->via1->read(vSR);
-
-	return;
-}
 void _478A4();
 // $A9FFC
 void init_adb2(uint16_t r0_1, uint16_t r0_2, int r1, int r2);
@@ -211,44 +200,40 @@ bool ex_handler(int vec) {
 // $4727A
 void boot_second() {
 	AR(7) = 0x2600;
-	uint32_t a1 = self+10+read_rom16(self+10);
-	uint32_t a5 = 0x40800000 + self+14+read_rom16(self+14);
-	if( (uint32_t)read_rom32(a1+4) != a5 ) {
-		a1 = self+24+read_rom16(self+24);
-	}
+	uint32_t a1 = rom_base == 0x40A00000 ? 0x46FF0 : 0x470F;
 	// vbr_ptr2
-	cpu.VBR = 0x40800000 + a1;
+	cpu.VBR = rom_base | a1;
 	getHWInfo2(0);				// $47752
 	// $472A4
 	if( INIT_HW_FLG.test( INIT_HW_FLG_T::MASTER2 )) {
-		// TODO
-		uint32_t a1 = motherboard->secret;
-		uint32_t a0 = read_l(a1+4);
-		if( read_l(a1) == 0xaaaa5555 ) {
-			cpu.R[8+3] = 0x40800000 + read_rom32(self+0x4e)+self+0x4c;
-			run_rom(a0);
-			// $470DA
-			getHWInfo2(0);
-		}
+		try {
+			// TODO
+			uint32_t a1 = motherboard->secret;
+			uint32_t d3 = read_l(a1);
+			uint32_t a0 = read_l(a1+4);
+			if( d3 == 0xaaaa5555 ) {
+				AR(3) = 0x40800000 + 0xBAA4E;
+				run_rom(a0);
+				// $470DA
+				getHWInfo2(0);
+			}
+		} catch( ... ) {}
 	}
 	
-	// $472DC
+	// $472E0
 	if( INIT_HW_FLG.test( INIT_HW_FLG_T::IOP_SCC) ) {
-		get_scc_addr();			// $B9F46
 		if( test_scc_iop() ) {				  // $47EF6
-			short retry = DR(4);
-			INIT_FLAGS |= 18;
-			sad_mac(retry, DR(6), 18);
-			DR(4) = retry;
-			return;
+			// $4AA98
+			return sad_mac(0);
 		}
 	}
 	// $47304
 	getHWInfo2(0);
-	switch( INIT_HW_FLG[25] << 1 | INIT_HW_FLG[24] ) {
-	case 1:
-	case 2:
-		// $47358
+	uint8_t f = (ROM_FLG.to_ulong() >> 24) & 7;
+	switch( f ) {
+	case 1 :
+	case 2 :
+		// $47358 (unknown machine?)
 		run_rom(0x14C50);
 		cpu.R[0] = 1;
 		cpu.R[1] = 0;
@@ -262,9 +247,9 @@ void boot_second() {
 		}
 		break;
 	case 3:
-		// $47330
+		// $47330; Cuda ADB?
 		init_adb();  // $85714
-		init_adb2(0x0026,0001, 1, 1);
+		init_adb2(0x0026,0x0001, 1, 1);
 		break;
 	}
 	// $47398
@@ -552,41 +537,6 @@ void _AA182() {
 }
 void _A9FFC() {
 	init_adb2(cpu.R[0] >> 16, cpu.R[0], cpu.R[1], cpu.R[2]);
-}
-void init_adb2(uint16_t r0_1, uint16_t r0_2, int r1, int r2) {
-	uint16_t d4[] = { 0x2000, 0x0100 };
-	if( state != 3 ) {
-		// initialize ADB state
-		adb_set_state(3);
-		machine->via1->read(vSR);
-	}
-	// $AA01C
-	cpu.R[4] = d4[1] | d4[0] << 16;
-
-	talk_adb(r0_1);
-	uint32_t r1_x = r1;
-	if( r2-- <= 3 ) {
-		do {
-			talk_adb(r1_x);
-			r1_x >>= 8;
-		} while( r2-- >= 0 );
-	}
-	machine->via1->clear(vACR, 4);
-	adb_set_state(3);
-	skip_sr();
-	adb_set_state(1);
-	uint16_t low = read_adb1();
-	uint16_t high = read_adb1();
-	uint32_t tp = high << 16 | low;
-	read_adb1();
-	adb_set_state(3);
-	machine->via1->read(vSR);
-	cpu.R[0] = tp;
-	if( cpu.R[0] != 2 ) {
-		cpu.R[0] = 0;
-	}
-	return;				
-}
 }
 
 namespace ROMWrapper {

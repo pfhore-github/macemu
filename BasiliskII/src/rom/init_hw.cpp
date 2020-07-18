@@ -22,16 +22,15 @@ namespace ROM {
 void init_hw() {
 
 	AR(7) = 0x2600;
-	for( uint32_t base : vbr_table ) {
-		if( rom_base == ( base & 0xffff0000 ) ) {
-			cpu.VBR = base;
+	for( unsigned int i = 0; i < 4; ++i ) {
+		if( rom_base == ( vbr_table[i] & 0xffff0000 ) ) {
+			cpu.VBR =  vbr_table[i] - 4*i+4;
 			break;
 		}
 	}
-
-	do { 
-		getHWInfo(0);			// $2F64
-	} while( ! INIT_HW_FLG.test( INIT_HW_FLG_T::MASTER ) );
+	
+	getHWInfo(0);			// $2F64
+	SDL_assert( INIT_HW_FLG.test( INIT_HW_FLG_T::MASTER ) );
 	
 	uint32_t v = remap_rom(rom_base);				// $04AFE
 	DR(3) = v;
@@ -40,12 +39,10 @@ void init_hw() {
 	
 	
 	if( INIT_HW_FLG.test( INIT_HW_FLG_T::OSS ) ) {
-		assert( test_machine_register( machine->oss, motherboard->oss_addr ) );
 		machine->oss->write( 0x14, 0x0D); // ROM CTRL
 	}
 	
 	if( INIT_HW_FLG.test( INIT_HW_FLG_T::IIFX_EXP0) ) {
-		assert( test_machine_register( machine->exp0, motherboard->iifx_exp0_addr ) );
 		uint16_t p = 0xf3ff;
 		for(int i = 0; i < 16; ++i, p >>= 1 ) {
 			machine->exp0->write(0, (uint8_t)p);
@@ -56,7 +53,9 @@ void init_hw() {
 }
 // $A06E6
 uint32_t get_memory_size(uint16_t sc, uint32_t value);
-static bool X_A01C6(const RAM_SLOT_T* ram_slots, uint32_t& sum_size, uint32_t& mem_size) {
+// $A01C0
+ram_result check_simm_slots(const RAM_SLOT_T* ram_slots) {
+	ram_result result = { 0, 0, false };
 	std::bitset<32> simm_err_flg = 0;	// %D6
 	constexpr uint32_t CHECK_DATA = 0x54696E61;
 	int i = -4;
@@ -67,8 +66,8 @@ static bool X_A01C6(const RAM_SLOT_T* ram_slots, uint32_t& sum_size, uint32_t& m
 		if( ret.none() ) {
 			// memory OK; $A0208
 			auto [ size, s ] = check_simm_size(base, end, CHECK_DATA, ram_slots->unit); // $A0242
-			sum_size += size;
-			mem_size |= size ? ( 32-__builtin_clz(size/ram_slots->unit) ) << i : 0;
+			result.sum_size += size;
+			result.mem_size |= size ? ( 32-__builtin_clz(size/ram_slots->unit) ) << i : 0;
 		} else if( ! ret.all() ) {
 			for(int j = 0; j < 4; ++j ) {
 				simm_err_flg[i+j] = ret[j];
@@ -77,7 +76,8 @@ static bool X_A01C6(const RAM_SLOT_T* ram_slots, uint32_t& sum_size, uint32_t& m
 	}
 	AR(7) = 0x2600;
 	getHWInfo(0);
-	return ! simm_err_flg.any();
+	result.ok = ! simm_err_flg.any();
+	return result;
 }
 uint32_t _A04DC(uint32_t mem_size, uint32_t unit) {
 	uint32_t ret = 0;
@@ -95,46 +95,48 @@ std::tuple<bool, uint32_t, uint32_t> _A0760(const std::vector<std::pair<uint32_t
 bool ram_check() {
 	static const uint8_t VIA_RAMSIZE[] = { 0xff, 0x3f, 0xff, 0x7f, 0xff, 0xbf, 0xff, 0xff }; // $A0326
 	std::vector<uint32_t> simm_size_cnt; // %D5
-	uint32_t sum_size = 0;
-	uint32_t mem_size = 0;
-
+	ram_result ret ;
+			
 	getHWInfo(0);
 	const RAM_SLOT_T* ram_slots = &ram_tables[model->ram_id];
 	int offset = 20;
+	uint32_t base = ram_slots->ranges[0].first;
 	bool check_rom2 = true;
 	switch( GEN ) {
 	case 4 : 
 		// GLUE;  $A0040
 		machine->via2->write( VIA_REG::RA, machine->via2->read( VIA_REG::RA ) | 0xC0 );
-		if( ! X_A01C6(ram_slots, sum_size, mem_size) ) {
+		if( ! ( ret = check_simm_slots(ram_slots)) ) {
 			return false;
 		}
 		// $A030A
 		machine->via2->write( VIA_REG::RA, machine->via2->read( VIA_REG::RA )
-							  & VIA_RAMSIZE[ mem_size & 0xf ] );
+							  & VIA_RAMSIZE[ ret.mem_size & 0xf ] );
 		offset = 28;
 		break;
 	case 6 : {
 		// OSS;  $A004E
+		// XXXXXX
 		uint16_t d2 = 0xF3EF;
 		for(int i =0 ; i < 16; ++i, d2 >>= 1 ) { 
 			machine->exp0->write( 0, d2 );
 		}
 		machine->exp0->write( 0x10, d2 );
-		if( ! X_A01C6(ram_slots, sum_size, mem_size) )
+		if( ! ( ret = check_simm_slots(ram_slots)) ) {
 			return false;
+		}
 		// $A0368
 		uint16_t exp0_c = INIT_HW_FLG.test( INIT_HW_FLG_T::IIFX_EXP1 ) ? 0xF3FF : 0xF3EF;
-		if( (mem_size & 0xf) == 0 ) {
-			AR(1) += 8;
-			mem_size >>= 4;
-		}
 		static const uint8_t OSS_RAMSIZE[] = { 0xff, 0xff, 0xff, 0x3f, 0x7f, 0xbf, 0xff, 0xff }; // $A039E
-		exp0_c &= ( 0xff00 | OSS_RAMSIZE[ mem_size & 0xf ] );
+		exp0_c &= ( 0xff00 | OSS_RAMSIZE[ ret.mem_size & 0xf ] );
 		for(int i = 0; i < 16; ++i, exp0_c >>= 1 ) {
 			machine->exp0->write( 0, exp0_c );
 		}
 		machine->exp0->write( 0x10, 0xff );
+		if( (ret.mem_size & 0xf) == 0 ) {
+			base = ram_slots->ranges[1].first;
+			ret.mem_size >>= 4;
+		}
 		offset = 28;
 		break;
 	}
@@ -145,14 +147,14 @@ bool ram_check() {
 			machine->mcu->write32( i*4, d2 );
 		}
 		machine->mcu->write32( 0xA0, d2 );
-		if( ! X_A01C6(ram_slots, sum_size, mem_size) )
+		if( ! ( ret = check_simm_slots(ram_slots)) ) {
 			return false;
-
+		}
 		// $A03A6
 		uint32_t size = 0;
 		for(unsigned int i = 0; i < ram_slots->ranges.size()-1; ++i ) {
 			// $A03E6
-			size += get_memory_size( mem_size >> (4*i) & 0xf, ram_slots->unit );
+			size += get_memory_size( ret.mem_size >> (4*i) & 0xf, ram_slots->unit );
 			int addr = i * 6*4;
 			uint32_t d1 = size >> 22;
 			for(int j = 0; j < 5; ++j ) {
@@ -168,9 +170,11 @@ bool ram_check() {
 	{
 		// V8
 		// $A0086
+		// disable external SIMM
 		machine->rbv->write( RBV_REG::EXP, machine->rbv->read( RBV_REG::EXP) & 0x1f );
 		write_l( 0x1FFFFE, 0x50616E44 );
 		if( read_l( 0x1FFFFE ) == 0x50616E44 ) {
+			// LC2(4MB+x)
 			machine->rbv->write( RBV_REG::EXP, machine->rbv->read( RBV_REG::EXP) |  0xC0 );
  			ram_slots = &ram_tables[2];
 			auto [ size, end ] = check_simm_size(0, 0x800000, 0x54696E61, ram_tables[2].unit);
@@ -182,14 +186,16 @@ bool ram_check() {
 				machine->rbv->write( RBV_REG::EXP, machine->rbv->read( RBV_REG::EXP) & 0x9f );
 			}
 		} else {
+			// LC(2MB+x)
 			machine->rbv->write( RBV_REG::EXP, machine->rbv->read( RBV_REG::EXP) |  0xE0 );
 			ram_slots = &ram_tables[1];
 		}
-		if( ! X_A01C6(ram_slots, sum_size, mem_size) )
+		if( ! ( ret = check_simm_slots(ram_slots)) ) {
 			return false;
+		}
 		// $A0458
 		static uint8_t V8_RAMSIZE[] = { 0x00, 0xff, 0x40, 0x80, 0xc0, 0, 0x78, 0x00 };
-		uint8_t d1 = V8_RAMSIZE[ mem_size & 0xf ];
+		uint8_t d1 = V8_RAMSIZE[ ret.mem_size & 0xf ];
 		machine->rbv->write( RBV_REG::EXP, machine->rbv->read( RBV_REG::EXP) & 0x3f );
 		machine->rbv->write( RBV_REG::EXP, machine->rbv->read( RBV_REG::EXP) | d1 );
 		if( machine->rbv->bit( RBV_REG::EXP, 5 ) ) {
@@ -205,17 +211,18 @@ bool ram_check() {
 		machine->pb->write( 0x10000, 0 );
 		machine->pb->write( 0x12000, 0 );
 		machine->pb->write( 0x14000, 0 );
- 		if( ! X_A01C6(ram_slots, sum_size, mem_size) )
+		if( ! ( ret = check_simm_slots(ram_slots)) ) {
 			return false;
+		}
 		// $A048A
 		DR(4) = 0;
-		if( mem_size == 3 ) {
+		if( ret.mem_size == 3 ) {
 			DR(4) = 0;			
 		} else {
-			if( mem_size == 0x30000 ) {
+			if( ret.mem_size == 0x30000 ) {
 				DR(4) = 32;
 			} else {
-				uint32_t x = _A04DC(mem_size, ram_slots->unit);
+				uint32_t x = _A04DC(ret.mem_size, ram_slots->unit);
 				DR(4) = ((x << 13) & 0xffff) >> 13;
 			}
 		}
@@ -238,11 +245,12 @@ bool ram_check() {
 	{
 		// MSC; $A0118
 		machine->rbv->write( RBV_REG::MSC_RBV_X16, machine->rbv->read( RBV_REG::MSC_RBV_X16) | 0xf0 );
- 		if( ! X_A01C6(ram_slots, sum_size, mem_size) )
+		if( ! ( ret = check_simm_slots(ram_slots)) ) {
 			return false;
+		}
 		// $A0548
-		int d1 = (((mem_size ? 32 - __builtin_clz(mem_size) : 0) << 3) & 0xff) | 0x1f;
-		uint32_t d0 = ((0xf0000 & mem_size) >> 16) - 3;
+		int d1 = (((ret.mem_size ? 32 - __builtin_clz(ret.mem_size) : 0) << 3) & 0xff) | 0x1f;
+		uint32_t d0 = ((0xf0000 & ret.mem_size) >> 16) - 3;
 		if( d0  ) {
 			d1 &= ~(1 << 4);
 		}
@@ -253,12 +261,13 @@ bool ram_check() {
 	case 11 : {
 		// SONOR; $A013E
 		machine->rbv->write( RBV_REG::EXP, machine->rbv->read( RBV_REG::EXP) | 0x7f );
- 		if( ! X_A01C6(ram_slots, sum_size, mem_size) )
+		if( ! ( ret = check_simm_slots(ram_slots)) ) {
 			return false;
+		}
 		// $A040C
 		AR(5) = ram_slots->unit;
 		uint8_t d6 = 0x40;
-		uint32_t mem_v = mem_size; // %D1
+		uint32_t mem_v = ret.mem_size; // %D1
 		if( (INIT_HW_FLG.to_ulong() & 0xf) == 0){
 			d6 &= ~(1<<6);
 		}
@@ -279,39 +288,57 @@ bool ram_check() {
 	}
 	case 13 :
 		// MEMCJr; $A014A
- 		if( ! X_A01C6(ram_slots, sum_size, mem_size) )
+		if( machine->model_id != 0x2BAD ) {
+			
+		} else {
+			// $A0184
+		}
+		if( ! ( ret = check_simm_slots(ram_slots)) ) {
 			return false;
+		}
 		// $A0576
+		if( machine->model_id != 0x2BAD ) { // Quadra 610/650/800?
+			DR(4) = 4;
+			DR(0) = ret.mem_size & 0xf;
+			ret.mem_size = ROR(ret.mem_size, 4);
+			if( DR(0) == 15 ) {
+				DR(0) = machine->reg1->read32(4);
+				SWAP( DR(0) );
+			}				
+		}
+		// $A0642
 		break;
 	case 5 :
 	{
 		// MDU; $A01C0
- 		if( ! X_A01C6(ram_slots, sum_size, mem_size) )
+		if( ! ( ret = check_simm_slots(ram_slots)) ) {
 			return false;
+		}
 		// $A032E
 		uint32_t base = 0;
 		for( int i = 1; i >= 0; --i ) {
-			uint32_t sz = get_memory_size((mem_size >> (4*i) & 0xf), ram_slots->unit);
-			if( base == 0 ) {
-				base = sz + ram_slots->ranges[i].first;
-				write_l( base -= 4, 0 ); 
-				write_l( base -= 4, 0 ); 
-				write_l( base -= 4, 0xffffffff );
+			uint32_t sz = get_memory_size((ret.mem_size >> (4*i) & 0xf), ram_slots->unit);
+			if( sz ) {
+				if( base == 0 ) {
+					base = sz + ram_slots->ranges[i].first;
+					write_l( base -= 4, 0 ); 
+					write_l( base -= 4, 0 ); 
+					write_l( base -= 4, 0xffffffff );
+				}
+				write_l( base -= 4, sz ); 
+				write_l( base -= 4, ram_slots->ranges[i].first ); 
 			}
-			write_l( base -= 4, sz ); 
-			write_l( base -= 4, ram_slots->ranges[i].first ); 
 		}
 		check_rom2 = false;
 	}
 	}
 	// $A06F4
-	uint32_t base = ram_slots->ranges[0].first;
-	uint32_t a5 = base + sum_size - offset;
+	uint32_t a5 = base + ret.sum_size - offset;
 	uint32_t mem_addr = a5 - 4;
 	std::vector<std::pair<uint32_t, uint32_t>> ram_results;
 	if( check_rom2 ) {
-		for(int i = 0; i < 32 && (mem_size >> i) & 0xf; i += 4 ) {
-			uint32_t size = get_memory_size((mem_size >> i) & 0xf, ram_slots->unit);  // $A06E6
+		for(int i = 0; i < 32 && (ret.mem_size >> i) & 0xf; i += 4 ) {
+			uint32_t size = get_memory_size((ret.mem_size >> i) & 0xf, ram_slots->unit);  // $A06E6
 			// $A0700
 			if( size ) {
 				// has SIMM
@@ -325,7 +352,7 @@ bool ram_check() {
 		while( mem_addr & 0xffff ) {
 			write_l( mem_addr += 4, 0 );
 		}
-	}
+	} 
 	// $A072A
 	AR(7) = ram_slots->ranges[0].first + 0x8000;
 	write_l( AR(7) -= 4, a5 );
@@ -368,7 +395,7 @@ void run_02E00() {
 	uint32_t ret = AR(6);
 	INIT_FLAGS = DR(7) >> 16;
 	init_hw();
-	cpu.PC = ret;
+	cpu.PC = rom_base | ret;
 	AR(0) = rom_base | motherboard->BASE;
 	AR(1) = rom_base | model->BASE;
 	DR(0) = INIT_HW_FLG.to_ulong();
@@ -379,6 +406,32 @@ void run_A0000() {
 	uint32_t fp = AR(6);
 	cpu.Z = ram_check();
 	cpu.PC = fp;
+}
+static void run_A01CX(uint32_t base) {
+	RAM_SLOT_T slot;
+	uint32_t ret = AR(2);
+	uint32_t v = 0;
+	slot.unit = read_rom32(base);
+	for(v = 0, base += 4; (v = read_rom32(base)) != 0xffffffff; base += 4 ) {
+		uint32_t w = read_rom32(base += 4);
+		slot.ranges.push_back( { v, w } );
+	}
+	auto [ sum, mem, ok ] = check_simm_slots(&slot);
+	DR(0) = sum;
+	DR(5) = mem;
+	cpu.Z = ok;
+	if( ok ) {
+		cpu.PC = rom_base | 0xA02BA;
+	} else {
+		cpu.PC = ret;
+	}
+}
+void run_A01C6() {
+	return run_A01CX( AR(5) );
+}
+void run_A01C0() {	
+	uint32_t mb = AR(1);
+	return run_A01CX( mb+read_rom32(mb+4) );
 }
 
 

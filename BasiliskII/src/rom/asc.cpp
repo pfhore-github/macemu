@@ -3,7 +3,6 @@
 #include "via1.hpp"
 #include "prototype.hpp"
 #include <assert.h>
-void nanosleep_x(double ns);
 namespace ROM {
 // $7058
 void play_asc_2() {
@@ -91,7 +90,7 @@ void play_asc(const ASC_param& p) {
 		machine->asc->write(a0+0x200, d4x);
 		machine->asc->write(a0, d4x);
 		// reset IEQ
-		nanosleep_x(p.wait*1500);
+		SDL_Delay(p.wait*1.5/1000);
 		machine->via1->read(VIA_REG::IER);
 	} 
 	

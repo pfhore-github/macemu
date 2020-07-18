@@ -1,9 +1,10 @@
 #define BOOST_TEST_DYN_LINK
 #include "test_common.hpp"
 #include "asc.hpp"
+#include "sonora.hpp"
 using namespace ROM;
 std::shared_ptr<IO_TEST<ASC>> prepare() {
-	fixture f(MB_TYPE::SONORA);
+	fixture f(std::make_unique<Sonora>());
 	rom_base = 0x40800000;
 	AR(6) = 0x50F14000;
 	auto asc = std::make_shared<IO_TEST<ASC>>(0xbc);

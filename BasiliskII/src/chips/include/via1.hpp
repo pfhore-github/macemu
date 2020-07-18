@@ -1,7 +1,9 @@
 #pragma once
 #include "adb.h"
+#include "devices/adb.hpp"
 #include "rtc.hpp"
 #include "via.hpp"
+#include "machine.hpp"
 namespace VIA1_PORT_A {
 enum {
 	UNUSED = 0,
@@ -29,33 +31,29 @@ enum {
 	SOUND_ENABLE
 };
 }
-class ADB_VIA : public ADB_Bus {
-public:
-	std::weak_ptr<VIA> via;
-};
+class ADB_VIA;
 class VIA1 : public VIA {
 	// reg A
 	bool sync;
 	bool fd_head;
-	uint8_t adb_state;
 	uint8_t last_cmd;
 	// reg B
 	VIA_RTC rtc;
 	bool rtc_enable;
 	// SR
-	uint8_t in_buf = 0;
-	uint8_t in_pos = 0;
-	uint8_t out_buf = 0;
-	uint8_t out_pos = 0;
+	uint8_t adb_v = 0;
+	uint8_t adb_state = 0;
 	void adb_set_state(int b);
 protected:
 	bool readA(int n) override;
 	bool readB(int n) override;
 	void writeA(int n, bool v) override; 
 	void writeB(int n, bool v) override;
-	void cb2_out(bool v) override;
-public:	
-	std::shared_ptr<ADB_VIA> adb_bus;
+	void cb2_out(uint8_t v) override;
+public:
+	uint8_t read(int n) override ;
+	std::unique_ptr<ADBController> adb;
+	std::atomic<bool> adb_int;
 	std::atomic<bool> scc_wr_req;
 	VIA1(int i = 1);
 };

@@ -3,14 +3,10 @@
 #include <atomic>
 #include "via.hpp"
 #include "via_test.hpp"
-uint32_t mac_model_id;
-bool model_map[4];
-bool model_map2;
 
 
 namespace bdata = boost::unit_test::data;
 
-BOOST_AUTO_TEST_SUITE(via);
 
 BOOST_AUTO_TEST_CASE( orb_read_no_latch )  {
 	VIA_TEST v;
@@ -136,15 +132,15 @@ BOOST_AUTO_TEST_CASE( ora_dir )  {
 	}
 }
 
-BOOST_DATA_TEST_CASE( timer1, bdata::xrange(2), irq)  {
+BOOST_AUTO_TEST_CASE( timer1 )  {
 	VIA_TEST v;
 	v.write(VIA_REG::ACR, 0x20);
-	v.write(VIA_REG::IER, IRQ_FLAG::TIMER1 | (irq << 7) );
+	v.write(VIA_REG::IER, 0x80 | IRQ_FLAG::TIMER1 );
 	// about 40ms
 	v.write(VIA_REG::TIMER1_L, 0);
 	v.write(VIA_REG::TIMER1_H, 0x80 );
+	BOOST_CHECK( !( v.read(VIA_REG::IFR) & IRQ_FLAG::TIMER1 ));
 	SDL_Delay(45);
-	BOOST_TEST( v.irq_cnt == (irq ? 1 : 0));
 	BOOST_TEST( v.read(VIA_REG::IFR) & IRQ_FLAG::TIMER1 );
 }
 
@@ -158,19 +154,16 @@ BOOST_AUTO_TEST_CASE( timer1_pb7)  {
 	v.b[7].verify( { false, true } );
 }
 
-BOOST_DATA_TEST_CASE( timer1_freerun, bdata::xrange(2), irq)  {
+BOOST_AUTO_TEST_CASE( timer1_freerun )  {
 	VIA_TEST v;
 	v.write(VIA_REG::ACR, 0x60);
-	v.write(VIA_REG::IER, IRQ_FLAG::TIMER1 | (irq << 7) );
+	v.write(VIA_REG::IER, IRQ_FLAG::TIMER1 | 0x80 );
 	// about 4ms
-	v.write(VIA_REG::TIMER1_L, 0);
-	v.write(VIA_REG::TIMER1_H, 0x8 );
+	v.write(VIA_REG::TIMER1_L, 0x40);
+	v.write(VIA_REG::TIMER1_H, 0xC );
 	SDL_Delay(100);
-	if( irq ) {
-		BOOST_TEST( v.irq_cnt > 24);
-	} else {
-		BOOST_TEST( v.irq_cnt == 0);
-	}
+	BOOST_TEST( v.irq_cnt > 22);
+	BOOST_TEST( v.irq_cnt < 26);
 	BOOST_TEST( v.read(13) & IRQ_FLAG::TIMER1 );
 	v.write(VIA_REG::ACR, 0x20);
 }
@@ -220,12 +213,11 @@ BOOST_DATA_TEST_CASE( timer2_counter, bdata::xrange(2), irq)  {
 
 BOOST_AUTO_TEST_CASE( sr_in ) {
 	VIA_TEST v;
+	v.write( VIA_REG::IER, 0x80 | IRQ_FLAG::SREG );
 	v.write(VIA_REG::ACR, 0xC);
-	for(int i = 0; i < 4; ++i ) {
-		v.cb2_in_push( true );
-		v.cb2_in_push( false );
-	}
-	BOOST_TEST( v.read(VIA_REG::SR) == 0xAA );
+	v.cb2_in_push_byte( 0xAA );
+	BOOST_CHECK( v.read( VIA_REG::IFR) & IRQ_FLAG::SREG );
+	BOOST_CHECK_EQUAL( v.read(VIA_REG::SR), 0xAA );
 	
 }
 
@@ -233,71 +225,25 @@ BOOST_AUTO_TEST_CASE( sr_out ) {
 	VIA_TEST v;
 	v.write(VIA_REG::ACR, 0x1C);
 	v.write(VIA_REG::SR, 0xAA );
-	v.cb2.verify( { true, false, true, false,
-					true, false, true, false
-		} );
+	v.cb2.verify( { 0xAA } );
 }
 
-BOOST_AUTO_TEST_CASE( handshake_r ) {
-	VIA_TEST v;
-	v.write(VIA_REG::PCR, 0x8);
-	for(int i = 0; i < 8; ++i ) {
-		v.a[i].set_read_data( { false } );
-	}
-	v.read( VIA_REG::RA_H );
-	v.ca2.verify( { false } );
-	v.reset_written();
-	v.ca1_in(true);
-	v.ca1_in(false);
-	v.ca2.verify( { true } );
-}
-
-BOOST_AUTO_TEST_CASE( handshake_r_pulse ) {
-	VIA_TEST v;
-	v.write(VIA_REG::PCR, 0xA);
-	for(int i = 0; i < 8; ++i ) {
-		v.a[i].set_read_data( { false } );
-	}
-	v.read( VIA_REG::RA_H );
-	v.ca2.verify( { false, true } );
-}
-
-BOOST_AUTO_TEST_CASE( handshake_w_a ) {
-	VIA_TEST v;
-	v.write(VIA_REG::PCR, 0x8);
-	v.write( VIA_REG::RA_H, 0 );
-	v.ca2.verify( { false } );
-	v.reset_written();
-	v.ca1_in(true);
-	v.ca1_in(false);
-	v.ca2.verify( { true } );
-}
-
-BOOST_AUTO_TEST_CASE( handshake_w_b ) {
-	VIA_TEST v;
-	v.write(VIA_REG::PCR, 0x80);
-	v.write( VIA_REG::RB, 0 );
-	v.cb2.verify( { false } );
-	v.reset_written();
-	v.cb1_in(true);
-	v.cb1_in(false);
-	v.cb2.verify( { true } );
-}
 
 BOOST_AUTO_TEST_CASE( pcr_ca1_negative ) {
 	VIA_TEST v;
 	v.write( VIA_REG::PCR, 0x8 );
 	v.write( VIA_REG::RA_H, 0 );
+	v.write( VIA_REG::IER, 0x80 | IRQ_FLAG::CA1 );
 	v.reset_written();
 	v.ca1_in( false );
 	v.ca1_in( false );
-	v.ca2.verify( {} );
+	BOOST_CHECK( ! ( v.read( VIA_REG::IFR) & IRQ_FLAG::CA1 ) );
 	v.ca1_in( true );
-	v.ca2.verify( {} );
+	BOOST_CHECK( ! ( v.read( VIA_REG::IFR) & IRQ_FLAG::CA1 ) );
 	v.ca1_in( true );
-	v.ca2.verify( {} );
+	BOOST_CHECK( ! ( v.read( VIA_REG::IFR) & IRQ_FLAG::CA1 ) );
 	v.ca1_in( false );
-	v.ca2.verify( { true} );
+	BOOST_CHECK( ( v.read( VIA_REG::IFR) & IRQ_FLAG::CA1 ) );
 }
 
 BOOST_AUTO_TEST_CASE( pcr_ca1_positive ) {
@@ -307,13 +253,13 @@ BOOST_AUTO_TEST_CASE( pcr_ca1_positive ) {
 	v.write( VIA_REG::RA_H, 0 );
 	v.reset_written();
 	v.ca1_in( true );
-	v.ca2.verify( {} );
+	BOOST_CHECK( ! ( v.read( VIA_REG::IFR) & IRQ_FLAG::CA1 ) );
 	v.ca1_in( false );
-	v.ca2.verify( {} );
+	BOOST_CHECK( ! ( v.read( VIA_REG::IFR) & IRQ_FLAG::CA1 ) );
 	v.ca1_in( false );
-	v.ca2.verify( {} );
+	BOOST_CHECK( ! ( v.read( VIA_REG::IFR) & IRQ_FLAG::CA1 ) );
 	v.ca1_in( true );
-	v.ca2.verify( { true} );
+	BOOST_CHECK(  v.read( VIA_REG::IFR) & IRQ_FLAG::CA1 );
 }
 
 BOOST_AUTO_TEST_CASE( pcr_ca2_input_negative ) {
@@ -398,17 +344,6 @@ BOOST_AUTO_TEST_CASE( pcr_ca2_independent_positive ) {
 	BOOST_TEST( v.read( VIA_REG::IFR) & IRQ_FLAG::CA2 );
 }
 
-BOOST_AUTO_TEST_CASE( pcr_ca2_manual_low ) {
-	VIA_TEST v;
-	v.write( VIA_REG::PCR, 0xC );
-	v.ca2.verify( { false } );
-}
-
-BOOST_AUTO_TEST_CASE( pcr_ca2_manual_high ) {
-	VIA_TEST v;
-	v.write( VIA_REG::PCR, 0xE );
-	v.ca2.verify( { true } );
-}
 
 BOOST_AUTO_TEST_CASE( pcr_cb1_negative ) {
 	VIA_TEST v;
@@ -417,13 +352,13 @@ BOOST_AUTO_TEST_CASE( pcr_cb1_negative ) {
 	v.reset_written();
 	v.cb1_in( false );
 	v.cb1_in( false );
-	v.cb2.verify( {} );
+	BOOST_CHECK_EQUAL( v.irq_cnt, 0 );
 	v.cb1_in( true );
-	v.cb2.verify( {} );
+	BOOST_CHECK_EQUAL( v.irq_cnt, 0 );
 	v.cb1_in( true );
-	v.cb2.verify( {} );
+	BOOST_CHECK_EQUAL( v.irq_cnt, 0 );
 	v.cb1_in( false );
-	v.cb2.verify( { true} );
+	BOOST_CHECK_EQUAL( v.irq_cnt, 1 );
 }
 BOOST_AUTO_TEST_CASE( pcr_cb1_positive ) {
 	VIA_TEST v;
@@ -432,13 +367,13 @@ BOOST_AUTO_TEST_CASE( pcr_cb1_positive ) {
 	v.write( VIA_REG::RB, 0 );
 	v.reset_written();
 	v.cb1_in( true );
-	v.cb2.verify( {} );
+	BOOST_CHECK_EQUAL( v.irq_cnt, 0 );
 	v.cb1_in( false );
-	v.cb2.verify( {} );
+	BOOST_CHECK_EQUAL( v.irq_cnt, 0 );
 	v.cb1_in( false );
-	v.cb2.verify( {} );
+	BOOST_CHECK_EQUAL( v.irq_cnt, 0 );
 	v.cb1_in( true );
-	v.cb2.verify( { true} );
+	BOOST_CHECK_EQUAL( v.irq_cnt, 1 );
 }
 
 BOOST_AUTO_TEST_CASE( pcr_cb2_input_negative ) {
@@ -525,17 +460,7 @@ BOOST_AUTO_TEST_CASE( pcr_cb2_independent_positive ) {
 	BOOST_TEST( v.read( VIA_REG::IFR) & IRQ_FLAG::CB2 );
 }
 
-BOOST_AUTO_TEST_CASE( pcr_cb2_manual_low ) {
-	VIA_TEST v;
-	v.write( VIA_REG::PCR, 0xC0 );
-	v.cb2.verify( { false } );
-}
 
-BOOST_AUTO_TEST_CASE( pcr_cb2_manual_high ) {
-	VIA_TEST v;
-	v.write( VIA_REG::PCR, 0xE0 );
-	v.cb2.verify( { true } );
-}
 // taken from ROM$46AA
 BOOST_AUTO_TEST_CASE( works )  {
 	VIA_TEST v;
@@ -553,4 +478,3 @@ BOOST_AUTO_TEST_CASE( works )  {
 	v.write(VIA_REG::IER, x);
 	BOOST_TEST( l == 0 );
 }
-BOOST_AUTO_TEST_SUITE_END();

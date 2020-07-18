@@ -82,77 +82,122 @@ void SCC_impl::ch_reset() {
 	write_reg_impl(15, 0xF8);
 	residue_codes = 3;
 	end_of_frame = false;
-}	
-struct RecieveVisiter {
-	SCC_impl* impl;
-	void operator()(std::monostate) {}
-	void operator()(const data_async& recv) {
-		impl->current_rr0 &= uint8_t(RR0::BREAK_ABORT) ^ 0xff;
-		if( ! impl->async_mode ) {
-			// framing error
-			impl->read_buffers.push( 0x4000 );
-			return;
-		}
-		uint16_t v = recv.value;
-		bool parity = (! impl->parity_even) ^ __builtin_parity(v);
-		if( parity != recv.parity ) {
+}
+// ASYNC: [data] [SSSxxxxP](S=stop;P=parity)
+void SCC_impl::recieve_async(std::deque<uint8_t>& src) {
+	if( src.empty() ) {
+		// break
+		read_buffers.push( 0x0000 );
+		int_external( RR0::BREAK_ABORT );
+		return;
+	}
+	current_rr0 &= uint8_t(RR0::BREAK_ABORT) ^ 0xff;
+	if( src.size() != 2 || (src[1] & 0xE0) != async_mode ) {
+		// framing error
+		read_buffers.push( 0x4000 );
+		return;
+	}
+	uint16_t v = src[0];
+	if( recv_sync_char_load_inhibit && sync_size != SYNC_SIZE::SIZE_12 && v == sync_char[0] ) {
+		return;
+	}
+	if( parity_enable ) {
+		bool parity = (! parity_even) ^ __builtin_parity(v);
+		if( parity != (src[1] & 1) ) {
 			v |= 0x1000;
 		}
-		switch( impl->recv_size ) {
-		case 5 : v |= 0xE0; break;
-		case 6 : v |= 0xC0; break;
-		case 7 : v |= 0x80; break;
+		if( recv_size != 8 ) {
+			v |= (src[1] & 1) << recv_size;
 		}
-		impl->read_buffers.push( v );
-		impl->current_rr0 |= uint8_t(RR0::RX_CHAR_AVAILABLE);
 	}
-	void operator()(const data_sync& recv) {
-		impl->current_rr0 &= uint8_t(RR0::BREAK_ABORT) ^ 0xff;
-		if( impl->async_mode ) {
-			// CRC error
-			impl->read_buffers.push( 0x4000 );
+	switch( recv_size + parity_enable ) {
+	case 5 : v |= 0xE0; break;
+	case 6 : v |= 0xC0; break;
+	case 7 : v |= 0x80; break;
+	}
+	read_buffers.push( v );
+	current_rr0 |= uint8_t(RR0::RX_CHAR_AVAILABLE);
+	return;		
+}
+// [sync1] [sync2]? [data]*
+void SCC_impl::recieve_sync(std::deque<uint8_t>& src) {
+	if( src.empty() ) {
+		return;
+	}
+	current_rr0 &= uint8_t(RR0::BREAK_ABORT) ^ 0xff;
+	uint16_t sync_v = 0;
+	uint16_t recv_sync_v = 0;
+	switch( sync_size ) {
+	case SYNC_SIZE::SIZE_6 :
+		sync_v = sync_char[1] & 0x3f;
+		recv_sync_v = src[0] & 0x3f;
+		break;
+	case SYNC_SIZE::SIZE_8 :
+		sync_v = sync_char[1];
+		recv_sync_v = src[0];
+		break;
+	case SYNC_SIZE::SIZE_12 :
+		sync_v = (sync_char[1] << 4) | (sync_char[0] >> 4);
+		recv_sync_v = src[0] << 8 | src[1];
+		break;
+	case SYNC_SIZE::SIZE_16 :
+		sync_v = sync_char[1] << 8 | sync_char[0];
+		recv_sync_v = src[0] << 8 | src[1];
+		break;
+	case SYNC_SIZE::EXTERNAL :
+		/* */
+		break;
+	}
+	if( recv_sync_char_load_inhibit && sync_size != SYNC_SIZE::SIZE_12 && src[0] == sync_char[0] ) {
+		src.pop_front();
+	}
+	
+	if( recv_hunt_mode ) {
+		if( recv_sync_v != sync_v ) {
+			// skip data
 			return;
+		} else {
+			recv_hunt_mode = false;
+			recv_crc16.reset( crc_init ? 0xffff : 0);
+			recv_crc_ccitt.reset( crc_init ? 0xffff : 0);
+			int_external(RR0::SYNC_HUNT);
 		}
-		uint16_t sync_v = 0;
-		switch( impl->sync_size ) {
-		case SYNC_SIZE::SIZE_6 : sync_v = impl->sync_char[1] & 0x3f; break;
-		case SYNC_SIZE::SIZE_8 : sync_v = impl->sync_char[1]; break;
-		case SYNC_SIZE::SIZE_12 : sync_v = (impl->sync_char[1] << 4) | ( (impl->sync_char[0] & 0xf0)>> 4); break;
-		case SYNC_SIZE::SIZE_16 : sync_v = impl->sync_char[1] << 8 | impl->sync_char[0]; break;
-		case SYNC_SIZE::EXTERNAL :
-			/* */
-			break;
-		}
-		if( impl->recv_hunt_mode ) {
-			if( recv.sync != sync_v ) {
-				// skip data
+	}
+	for(uint8_t v : src ) {
+		uint16_t vx = v & ((1 << recv_size) - 1);
+		read_buffers.push( vx );
+	}
+	current_rr0 |= uint8_t(RR0::RX_CHAR_AVAILABLE);
+}
+// [ $7E ] [ addr ] [ ctl ] [data]* [crc16] 
+void SCC_impl::recieve_sdlc(std::deque<uint8_t>& src) {
+	if( src.empty() || src[0] != 0x7E ) {
+		return;
+	}
+	src.pop_front();
+	uint8_t addr = src[0]; src.pop_front();
+	if( addr != 0xff ) {
+		if( recv_sync_char_load_inhibit ) {
+			if( (addr & 0xf0) != (sync_char[0] & 0xf0) ) {
 				return;
-			} else {
-				impl->recv_hunt_mode = false;
-				impl->recv_crc16.reset( impl->crc_init ? 0xffff : 0);
-				impl->recv_crc_ccitt.reset( impl->crc_init ? 0xffff : 0);
-				impl->int_external(RR0::SYNC_HUNT);
+			}
+		} else {
+			if( addr != sync_char[0] ) {
+				return;
 			}
 		}
-		if( impl->sync_size == SYNC_SIZE::SIZE_8 && ! impl->recv_sync_char_load_inhibit ) {
-			impl->read_buffers.push( sync_v );
-		}
-		for(unsigned int i = 0; i < recv.values.size(); ++i ) {
-			uint16_t v = recv.values[i] & ((1 << impl->recv_size) - 1);
-			impl->read_buffers.push( v );
-		}
-		impl->recieved_crc = recv.crc;
-		impl->current_rr0 |= uint8_t(RR0::RX_CHAR_AVAILABLE);
 	}
-	void operator()(const data_sdlc&) {}
-	void operator()(data_break) {
-		impl->read_buffers.push( 0x0000 );
-		impl->int_external( RR0::BREAK_ABORT );
+	uint16_t vx = addr & ((1 << recv_size) - 1);
+	read_buffers.push( vx );
+	for(uint8_t v : src ) {
+		uint16_t vx = v & ((1 << recv_size) - 1);
+		read_buffers.push( vx );
 	}
-	void operator()(data_eom) {}
-};
+	current_rr0 |= uint8_t(RR0::RX_CHAR_AVAILABLE);
+}
+
 // Data Recieve
-void SCC_impl::recieve_xd( const stream_t& in) {
+void SCC_impl::recieve_xd( const std::deque<uint8_t>& in) {
 	if( ! recv_enable ) {
 		return;
 	}
@@ -162,7 +207,14 @@ void SCC_impl::recieve_xd( const stream_t& in) {
 	}
 	interrupt( SCC_INT::RECV_AVAIL );
 	current_rr0 &= uint8_t(RR0::RX_CHAR_AVAILABLE) ^ 0xff;
-	std::visit( RecieveVisiter { this }, in );
+	std::deque<uint8_t> src = in;
+	if( async_mode ) {
+		recieve_async(src);
+	} else if( ! sdlc_mode ) {
+		recieve_sync(src);
+	} else {
+		recieve_sdlc(src);
+	}
 }
 void SCC_impl::hsk_i(bool v) {
 	if( v && !( current_rr0 & uint8_t(RR0::CTS) )) {
@@ -194,12 +246,12 @@ uint8_t SCC_impl::read_data() {
 		if( enable_crc ) {
 			if( crc_is_16 ) {
 				recv_crc16.process_byte( recv_data );
-				if( recv_crc16.checksum() != recieved_crc ) {
+				if( recv_crc16.checksum() != 0 ) {
 					v |= 0x4000;
 				}
 			} else {
 				recv_crc_ccitt.process_byte( recv_data );
-				if( recv_crc_ccitt.checksum() != recieved_crc ) {
+				if( recv_crc_ccitt.checksum() != 0 ) {
 					v |= 0x4000;
 				}
 			}
@@ -219,7 +271,7 @@ uint8_t SCC_impl::read_data() {
 	}
 	if( read_buffers.empty() ) {
 		// transmission done; calc CRC
-		if( recieved_crc != crc_is_16 ? recv_crc16.checksum() : recv_crc16.checksum() ) {
+		if( 0 != crc_is_16 ? recv_crc16.checksum() : recv_crc_ccitt.checksum() ) {
 			// CRC ERROR
 			top_error |= 0x4000;
 			interrupt( SCC_INT::RECV_SPECIAL);
@@ -259,22 +311,25 @@ void SCC_impl::write_data() {
 		if( ! rts ) {
 			return;
 		}
-		device->transmit_xd(data_async(val));
+		device->transmit_xd( val );
+		bool parity = __builtin_parity(val) ^ ! parity_even;
+		device->transmit_xd( async_mode | ( parity_enable ? parity : 0) );
 	} else if( ! sdlc_mode ) {
 		if( ! std::exchange(sync_sending, true) ) {
 			switch( sync_size ) {
-			case SYNC_SIZE::SIZE_6 : sync_data.sync = sync_char[0] & 0x3f; break;
-			case SYNC_SIZE::SIZE_8 : sync_data.sync = sync_char[0]; break;
+			case SYNC_SIZE::SIZE_6 : device->transmit_xd( sync_char[0] & 0x3f ); break;
+			case SYNC_SIZE::SIZE_8 :  device->transmit_xd( sync_char[0] ); break;
 			case SYNC_SIZE::SIZE_12 : /* no 12bit sync char for send*/
 			case SYNC_SIZE::SIZE_16 :
-				sync_data.sync = sync_char[1] << 8 | sync_char[0];
+				device->transmit_xd( sync_char[0] );
+				device->transmit_xd( sync_char[1] );
 				break;
 			case SYNC_SIZE::EXTERNAL :
 				/* TODO: external sync mode */
 				break;
 			}
 		}
-		sync_data.values.push_back( val );
+		device->transmit_xd( val );
 		if( enable_crc ) {
 			if( crc_is_16 ) {
 				send_crc16.process_byte( val );
@@ -285,9 +340,9 @@ void SCC_impl::write_data() {
 	} else {
 		if( ! std::exchange(sync_sending, true) ) {
 			// SDLC
-			sdlc_data.begin = 0x7E;
+			device->transmit_xd( 0x7E );
 		}
-		sdlc_data.values.push_back( val );
+		device->transmit_xd( val );
 		if( enable_crc ) {
 			send_crc_ccitt.process_byte( val );
 		}
@@ -400,7 +455,8 @@ void SCC_impl::write_reg0(uint8_t v) {
 		break;
 	case 3 :		
 		// SEND Abort SDLC
-		device->transmit_xd( data_eom {} );
+		device->transmit_xd( 0xff );
+		device->transmit_xd( 0xff );
 		int_external(RR0::TX_OVERRUN_EOM);
 		break;
 	case 4 :
@@ -510,7 +566,12 @@ void SCC_impl::write_reg_impl(int n, uint8_t v) {
 	{
 		parity_enable = v & 1;
 		parity_even = v >> 1 & 1;
-		async_mode = ((v >> 2) & 3) != 0;
+		switch( (v >> 2) & 3 ) {
+		case 0 : async_mode = 0; break;
+		case 1 : async_mode = ASYNC_STOP_1; break;
+		case 2 : async_mode = ASYNC_STOP_1_HALF; break;
+		case 3 : async_mode = ASYNC_STOP_2; break;
+		}
 		if( async_mode ) {
 			current_rr0 |= uint8_t(RR0::TX_OVERRUN_EOM);
 		}
@@ -535,7 +596,8 @@ void SCC_impl::write_reg_impl(int n, uint8_t v) {
 		case 3 : send_size = 8; break;
 		}
 		if( v & 1 << 4 ) {
-			device->transmit_xd(data_break {});
+			device->transmit_xd( 0x00);
+			device->transmit_xd( 0x00);
 			return;
 		}
 		send_enable = v >> 3 & 1;
@@ -580,7 +642,7 @@ void SCC_impl::write_reg_impl(int n, uint8_t v) {
 	}
 }
 
-void SerialDevice::recieve_xd(const stream_t& v) {
+void SerialDevice::recieve_xd(const std::deque<uint8_t>& v) {
 	connected_to.lock()->recieve_xd(v);
 }
 void SerialDevice::hsk_i(bool v) {
@@ -699,9 +761,9 @@ uint8_t SCC::read_reg(bool is_modem, int reg) {
 	}		
 }
 void SCC_impl::sync_done() {
-	sync_data.crc = crc_is_16 ? send_crc16.checksum() : send_crc_ccitt.checksum();
-	device->transmit_xd(sync_data);
-	sync_data.values.clear();
+	uint16_t crc = crc_is_16 ? send_crc16.checksum() : send_crc_ccitt.checksum();
+	device->transmit_xd( crc >> 8);
+	device->transmit_xd( crc);
 	sync_sending = false;
 }
 // DMA/Sync mode

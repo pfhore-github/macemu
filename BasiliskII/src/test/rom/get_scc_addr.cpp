@@ -2,6 +2,7 @@
 #include "test_common.hpp"
 #include "scc.hpp"
 #include "glu.hpp"
+#include "oss.hpp"
 #include "scc_impl.hpp"
 #include <memory>
 std::function<void()> get_hw_info2_wrapper;
@@ -11,15 +12,16 @@ void getHWInfo2(uint8_t) {
 	get_hw_info2_wrapper();
 }
 }
-void prepare(MB_TYPE m) {
+template<class T>
+void prepare() {
 	clear_global();
-	fixture f(m);	
+	fixture f(std::make_unique<T>());	
 	rom_base = 0x40800000;
 	DEFINE_ROM(47752);
 }
 using namespace ROM;
 BOOST_AUTO_TEST_CASE( glu ) {
-	prepare(MB_TYPE::GLU);
+	prepare<GLU>();
 	AR(6) = 0;
 	get_hw_info2_wrapper = 
 		[]() {	
@@ -39,7 +41,7 @@ BOOST_AUTO_TEST_CASE( glu ) {
 }
 
 BOOST_AUTO_TEST_CASE( oss ) {
-	prepare(MB_TYPE::OSS);
+	prepare<OSS>();
 	AR(6) = 0;
 	get_hw_info2_wrapper = 
 		[]() {	

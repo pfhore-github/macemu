@@ -2,7 +2,8 @@
 #include "test_common.hpp"
 #include "machine.hpp"
 #include "asc.hpp"
-
+#include "v8.hpp"
+#include "sonora.hpp"
 using namespace ROM;
 #include <time.h>
 namespace ROM {
@@ -14,8 +15,8 @@ void easc_beep(uint16_t v1, uint16_t v2, uint16_t v3,
 	MOCK::invoke<void>("easc_beep", v1, v2, v3, v4, v5);
 }
 }
-void prepare(MB_TYPE m) {
-	fixture f(m);
+void prepare(std::unique_ptr<Machine>&& m) {
+	fixture f(std::move(m));
 	MOCK::reset_all();
 	MOCK::make<bool()>("easc_is_sonora");
 	MOCK::make<void()>("wait_until_easc_fifo_half")->always_do( []() {});
@@ -33,7 +34,7 @@ void prepare(MB_TYPE m) {
 	DEFINE_ROM( BD494 );		// check_easc_fifo_done
 }
 BOOST_AUTO_TEST_CASE( sonora_beep0 ) {
-	prepare(MB_TYPE::SONORA);
+	prepare(std::make_unique<Sonora>());
 	MOCK::get<bool()>("easc_is_sonora")->always( true );
 	auto easc_beep_mock = MOCK::get<void(uint16_t, uint16_t, uint16_t, uint16_t, int16_t)>("easc_beep");
 	for(int i = 0; i < 0x21; ++i ) {
@@ -91,7 +92,7 @@ BOOST_AUTO_TEST_CASE( sonora_beep0 ) {
 	asc->verify( 0x403, vb );
 }
 BOOST_AUTO_TEST_CASE( non_sonora ) {
-	prepare(MB_TYPE::V8);
+	prepare(std::make_unique<V8>());
 	MOCK::get<bool()>("easc_is_sonora")->always( false );
 	auto easc_beep_mock = MOCK::get<void(uint16_t, uint16_t, uint16_t, uint16_t, int16_t)>("easc_beep");
 	for(int i = 0; i < 0x21; ++i ) {
@@ -115,7 +116,7 @@ BOOST_AUTO_TEST_CASE( non_sonora ) {
 
 
 BOOST_AUTO_TEST_CASE( beep1 ) {
-	prepare(MB_TYPE::SONORA);
+	prepare(std::make_unique<Sonora>());
 	MOCK::get<bool()>("easc_is_sonora")->always( true );
 	auto easc_beep_mock = MOCK::get<void(uint16_t, uint16_t, uint16_t, uint16_t, int16_t)>("easc_beep");
 	for(int i = 0; i < 8; ++i ) {

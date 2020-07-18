@@ -1,13 +1,16 @@
 #define BOOST_TEST_DYN_LINK
 #include "test_common.hpp"
 #include "asc.hpp"
+#include "sonora.hpp"
+#include "glu.hpp"
 using namespace ROM;
-void prepare(MB_TYPE m) {
-	fixture f(m);
+template<class T>
+void prepare() {
+	fixture f(std::make_unique<T>());
 	rom_base = 0x40800000;
 }
 BOOST_AUTO_TEST_CASE( sonora_ok ) {
-	prepare(MB_TYPE::SONORA);
+	prepare<Sonora>();
 	auto asc = std::make_shared<IO_TEST<ASC>>(0xbc);
 	machine->asc = asc;
 	AR(6) = 0x50F14000;
@@ -24,7 +27,7 @@ BOOST_AUTO_TEST_CASE( sonora_ok ) {
 }
 
 BOOST_AUTO_TEST_CASE( sonora_ng ) {
-	prepare(MB_TYPE::SONORA);
+	prepare<Sonora>();
 	auto asc = std::make_shared<IO_TEST<ASC>>(0xbc);
 	machine->asc = asc;
 	AR(6) = 0x50F14000;
@@ -40,7 +43,8 @@ BOOST_AUTO_TEST_CASE( sonora_ng ) {
 }
 
 BOOST_AUTO_TEST_CASE( ardbeg_ok ) {
-	prepare(MB_TYPE::ARDBEG);
+//	prepare<Ardbeg>();
+	prepare<Sonora>();
 	auto asc = std::make_shared<IO_TEST<ASC>>(0xbb);
 	machine->asc = asc;
 	AR(6) = 0x50F14000;
@@ -57,7 +61,8 @@ BOOST_AUTO_TEST_CASE( ardbeg_ok ) {
 }
 
 BOOST_AUTO_TEST_CASE( ardbeg_ng ) {
-	prepare(MB_TYPE::ARDBEG);
+	prepare<Sonora>();
+//	prepare<Ardbeg>();
 	auto asc = std::make_shared<IO_TEST<ASC>>(0xbb);
 	machine->asc = asc;
 	AR(6) = 0x50F14000;
@@ -73,7 +78,7 @@ BOOST_AUTO_TEST_CASE( ardbeg_ng ) {
 }
 
 BOOST_AUTO_TEST_CASE( glu ) {
-	prepare(MB_TYPE::GLU);
+	prepare<GLU>();
 	auto asc = std::make_shared<IO_TEST<ASC>>(0x80);
 	machine->asc = asc;
 	AR(6) = 0x50F14000;

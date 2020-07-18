@@ -9,6 +9,7 @@
 #include "ncr5380.hpp"
 #include "asc.hpp"
 #include "z8530.hpp"
+#include "swim.hpp"
 #include "intel.h"
 void QuitEmulator();
 namespace OSS_IRQ {
@@ -29,9 +30,10 @@ std::shared_ptr<IO_BASE> OSS::get_io(uint32_t base) {
 	case 2 : return scc;
 	case 4 :
 	case 5 :
-	case 6 :
-	case 7 : return scsi;
+	case 6 :return scsi;
+//	case 7 : 
 	case 8 : return asc;
+	case 9 : return floppy;
 	case 13 : return oss;
 	case 14 : return exp0;
 	case 15 : return exp1;
@@ -45,9 +47,10 @@ uint8_t OSS::io_read_b(uint32_t addr, int attr) {
 	case 2  : return scc->read(addr>>1&0x1f);
 	case 4 :
 	case 5 :
-	case 6 :
-	case 7 : return scsi->read(addr);
+	case 6 : return scsi->read(addr);
+//	case 7 : 
 	case 8 : return asc->read(addr&0xffff);
+	case 9 : return floppy->read((addr&0x1ff)>>1);
 	case 13 : return oss->read((addr&0xf)|(addr>>5&0x10));
 	case 14 : return exp0->read(addr & 0x1fff);
 	case 15 : return exp1->read(addr & 0x1fff);
@@ -55,7 +58,7 @@ uint8_t OSS::io_read_b(uint32_t addr, int attr) {
 	}
 }
 
-OSS::OSS() {
+OSS::OSS(bool is_iifx, SIMM30_SIZE bankA, SIMM30_SIZE bankB) {
 	via1 = std::make_shared<VIA1>(1);
 	// TODO
 	oss = std::make_shared<OSS_REG>();
@@ -64,16 +67,29 @@ OSS::OSS() {
 	scsi = std::make_shared<Ncr5380Ext>();
 	exp0 = std::make_shared<IIFX_exp0>();
 	exp1 = std::make_shared<IIFX_exp1>();
+	floppy = std::make_shared<SWIM_IOP>();
+	bank_size[0] = simm30_table[ int(bankA) ];
+	bank_size[1] = simm30_table[ int(bankB) ];
+
+
+	if( is_iifx ) {
+		model_map[0] = true;
+		model_map[1] = false;
+		model_map[2] = true;
+		model_map[3] = true;
+	}
+	model_id = 0;
 }
 void OSS::io_write_b(uint32_t addr, uint8_t v, int attr) {
 	switch((addr>>13) & 0x1f) {
-	case 0 : via1->write(addr >> 9 & 7,0xf); break;
+	case 0 : via1->write(addr >> 9 & 0xf, v); break;
 	case 2  : scc->write(addr>>1&0x1f,v); break;
 	case 4 :
 	case 5 :
-	case 6 :
-	case 7 : scsi->write(addr,v); break;
+	case 6 : scsi->write(addr,v); break;
+//	case 7 : 
 	case 8 : asc->write(addr&0xffff,v); break;
+	case 9 : floppy->write((addr&0x1ff)>>1,v); break;
 	case 13 : oss->write((addr&0xf)|(addr>>5&0x10),v); break;
 	case 14 : exp0->write(addr & 0x1fff,v); break;
 	case 15 : exp1->write(addr & 0x1fff,v); break;
@@ -217,3 +233,12 @@ void IIFX_exp1::write(int addr, uint8_t v) {
 		break;
 	}
 }	
+
+void* OSS::get_ram_addr(uint32_t addr, int attr) {
+	uint32_t bankA_sz = bank_size[0] + bank_size[1];
+	if( addr < bankA_sz ) {
+		return &RAMBaseHost[addr];
+	} else {
+		return nullptr;
+	}
+}

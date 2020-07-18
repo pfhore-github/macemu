@@ -90,6 +90,18 @@ struct check_simm_size_t {
 	uint32_t size;
 	uint32_t end;
 };
+struct ram_result {
+	uint32_t sum_size;
+	uint32_t mem_size;
+	bool ok;
+	operator bool() { return ok; }
+};
+struct RAM_SLOT_T {
+	uint32_t unit;
+	std::vector<std::pair<uint32_t, uint32_t>> ranges;
+};
+
+ram_result check_simm_slots(const RAM_SLOT_T* ram_slots) ATTR_WEAK; // $A01C6
 check_simm_size_t check_simm_size(uint32_t base, uint32_t end, uint32_t data, uint32_t unit) ATTR_WEAK; // $A0242
 std::bitset<4> check_simm(uint32_t base, uint32_t check) ATTR_WEAK; // $A0286
 uint32_t get_memory_size(uint16_t sc, uint32_t value) ATTR_WEAK; // $A06E6

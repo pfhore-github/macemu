@@ -41,6 +41,7 @@
 #include <unordered_map>
 #include <deque>
 #include "via.hpp"
+#include "via1.hpp"
 #ifdef POWERPC_ROM
 #include "thunks.h"
 #endif
@@ -48,89 +49,25 @@
 #define DEBUG 0
 #include "debug.h"
 #include <queue>
-void ADB_Bus::send_to(uint8_t c) {
-	switch( listen_state ) {
-	case WAIT :
-		// do nothing
-		break;
-	case DATA_SIZE:
-		listen_data.push_back(c);
-		listen_left = c;
-		listen_state = DATA;
-		break;
-	case DATA:
-		listen_data.push_back(c);
-		if( --listen_left == 0 ) {
-			listen_state = WAIT;
-			devices[listen_dev]->listen(listen_cmd & 3, listen_data );
-			listen_data.clear();
-			listen_cmd = 0;
-		}
-		break;
-	}
-}
+#include "devices/adb.hpp"
 			
-void ADB_Bus::cmd(uint8_t c) {
-	int target = c >> 4;
-	switch( c & 0xf ) {
-	case 0 :
-		for( auto& dev : devices ) {
-			if( dev )
-				dev->reset();
-		}
-		break;
-	case 1 :
-		if( devices[target] ) {
-			devices[target]->flush();
-		}
-		break;
-	case 8 :
-	case 9 :
-	case 10 :
-	case 11 :  		
-		// LISTEN 
-		if( devices[target] ) {
-			listen_cmd = c & 3;
-			listen_dev = target;
-			state = DATA_SIZE;
-		}
-		break;
-	case 12 :
-	case 13 :
-	case 14 :
-	case 15 : 
-		// TALK
-		adb_talk(c);
-		break;
-	}
-}
-void ADB_device::talk(int r) {
-	lock();
-	std::vector<uint8_t> data;
+std::vector<uint8_t> ADBDevice::talk(int r) {
 	switch(r) {
 	case 0:
-		data = talk0();
-		break;
+		return talk0();
 	case 1:
-		data = talk1();
-		break;
+		return talk1();
 	case 2:
-		data = talk2();
-		break;
+		return talk2();
 	case 3 :
-		data = { 2, uint8_t( (reg[3] >> 8 & 0xf0) | (rand() & 0xf) ),
+		return { uint8_t( reg[3] >> 8),
 				 uint8_t( reg[3] ) };
-		break;
 	}
-	unlock();
-	for( uint8_t d : data ) {
-		bus->talk_data.push( d );
-	}
+	return {};
 }
 
 
-void ADB_device::listen(int r, const std::vector<uint8_t>& data) {
-	lock();
+void ADBDevice::listen(uint8_t r, uint16_t data) {
 	switch(r) {
 	case 0 :
 		listen0(data);
@@ -142,77 +79,25 @@ void ADB_device::listen(int r, const std::vector<uint8_t>& data) {
 		listen2(data);
 		break;		
 	case 3: {
-		uint8_t high = data[0];
-		uint8_t low = data[1];
+		uint8_t high = data >> 8;
+		uint8_t low = data & 0xff;
+		int i = high & 0x0f;
 		if( low == 0xfe ) {
-			int i = high & 0x0f;
 			reg[3] = (reg[3] & 0xf0ff) | (i << 8);
-			change(i);
+			controller->devices[i] = controller->devices[mid];
+			controller->devices[mid].reset();
+			mid = i;
 		} else if( low == 1 || low == 2 || low == 4 ) {
 			reg[3] = (reg[3] & 0xff00) | low;
-		} else if( low == 0 ) {
+		} else if( low == 0 ) {			
 			reg[3] = (reg[3] & 0xd0ff) | ((high & 0x2f) << 8);
-			change(high & 0x0f);
+			controller->devices[i] = controller->devices[mid];
+			controller->devices[mid].reset();
+			mid = i;
 		}
 	}
 	}
-	unlock();
 }
-void ADB_device::change(int i) {
-	bus->devices[i] = this;
-	bus->devices[c] = nullptr;
-	c = i;
-}
-class ADB_Mouse : public ADB_device {
-	union reg0_t {
-		uint16_t v;
-		struct {
-			int8_t xv: 7;
-			bool : 1;
-			int8_t yv: 7;
-			bool btn : 1;
-		};
-	};
-public:	
-	ADB_Mouse() { c = 3; }
-	void handle_event(SDL_Event* e) {
-		lock();
-		switch(e->type) {
-		case SDL_MOUSEMOTION : {
-			reg0_t t = { reg[0] };
-			t.xv = t.xv + e->motion.xrel;
-			t.yv = t.yv + e->motion.yrel;
-			reg[0] = t.v;
-			break;
-		}
-		case SDL_MOUSEBUTTONDOWN :
-			// STUB multi button support
-			reg[0] &= 0x7fff;
-			break;
-		case SDL_MOUSEBUTTONUP :
-			// STUB multi button support
-			reg[0] |= 0x8000;
-			break;
-		}
-		unlock();
-	}
-	void reset() {
-		lock();
-		reg[0] = 0x8080;
-		reg[3] = 0x6301;
-		unlock();
-	}
-	// 300dpi
-	std::vector<uint8_t> talk1() override {
-		return { 9,
-				 // Identifier				 
-				 'a', 'p', 'p', 'l',
-				 // Resolution(dpi)
-				 uint8_t(300 >> 8), uint8_t(300 & 0xff),
-				 1, 3
-		};
-	}
-};
 
 class ADB_keyboard : public ADB_device {
 	std::deque<uint8_t> keys;
@@ -292,11 +177,11 @@ std::unordered_map<SDL_Scancode, uint8_t> ADB_keyboard::keymaps;
 /*
  *  Initialize ADB emulation
  */
-ADB_keyboard* kbd;
-ADB_Mouse* mouse;
 void ADBInit(void)
 {
-
+//	machine->via1->adb->devices[2] = 
+	machine->via1->adb->devices[3] = std::make_shared<ADBMouse>(machine->via1->adb.get(), 3 );
+	/*
 	machine->adb_bus->devices[2] = kbd = new ADB_keyboard();	 
 	machine->adb_bus->devices[3] = mouse = new ADB_Mouse();
 
@@ -406,20 +291,11 @@ void ADBInit(void)
 		{ SDL_SCANCODE_KP_0,             0x52 },
 		{ SDL_SCANCODE_KP_PERIOD,        0x41 },
 	};
+	*/
 }
 
 void handle_adb(SDL_Event* e) {
-	switch(e->type) {
-	case SDL_MOUSEMOTION :
-	case SDL_MOUSEBUTTONDOWN :
-	case SDL_MOUSEBUTTONUP :
-		mouse->handle_event(e);
-		break;
-	case SDL_KEYDOWN:
-	case SDL_KEYUP:
-		kbd->handle_event(e);
-		break;
-	}
+
 }
 
 
@@ -429,11 +305,6 @@ void handle_adb(SDL_Event* e) {
 
 void ADBExit(void)
 {
-	delete machine->adb_bus->devices[2];
-	delete machine->adb_bus->devices[3];
-	machine->adb_bus->devices[2] = kbd = nullptr;
-	machine->adb_bus->devices[3] = mouse = nullptr;
-	
 }
 
 
@@ -748,24 +619,112 @@ void ADBInterrupt(void)
 	WriteMacInt32(tmp_data + 4, 0);
 #endif
 }
-std::atomic<uint8_t> state = 0;
-std::atomic<bool> adb_interrupt = false;
 
 
-void adb_talk(uint8_t v) {
-	int target = v >> 4;
-	if( machine->adb_bus->devices[target] ) {
-		machine->adb_bus->devices[target]->talk(v & 3);
+enum ADB_STATE {
+	ADB_IDLE,
+	ADB_TALK_SIZE,
+	ADB_TALK_DATA,
+};
+
+void ADBController::cmd(uint8_t c) {
+	int target = c >> 4;
+	switch( c & 0xf ) {
+	case 0 :
+		for( auto& dev : devices ) {
+			if( dev )
+				dev->reset();
+		}
+		break;
+	case 1 :
+		if( devices[target] ) {
+			devices[target]->flush();
+		}
+			break;
+	case 8 :
+	case 9 :
+	case 10 :
+	case 11 :  		
+		// LISTEN 
+		if( devices[target] ) {
+			cmd_target = target;
+			cmd_reg = c & 3;
+			size = 2;
+		}
+		break;
+	case 12 :
+	case 13 :
+	case 14 :
+	case 15 : 
+		// TALK
+		if( devices[target] ) {
+			cmd_target = target;
+			bufs.clear();
+			auto tmp = devices[target]->talk(c&3);
+			bufs.insert( bufs.end(), tmp.cbegin(), tmp.cend() );
+			machine->via1->adb_int.store(true);
+			state = ADB_TALK_SIZE;
+		}
+		break;
+	}
+}
+constexpr uint8_t ADB_ST_CMD = 0;
+constexpr uint8_t ADB_ST_DATA_EVEN = 1;
+constexpr uint8_t ADB_ST_DATA_ODD = 2;
+constexpr uint8_t ADB_ST_IDLE = 3;
+void ADBController::data(uint8_t c, int adb_st) {
+	if( size ) {
+		if( adb_st == ADB_ST_DATA_EVEN ) {
+			listen_v = (listen_v & 0xff) | c << 8;
+		} else {
+			listen_v = (listen_v & 0xff00) | c;
+		}
+		if( --size == 0 ) {
+			devices[cmd_target]->listen( cmd_reg, listen_v );
+		}
+		state = ADB_ST_IDLE;
 	}
 }
 
-uint8_t adb_read() {
-	return machine->adb_bus->get_from();
+uint8_t ADBController::read() {
+	if( state == ADB_TALK_SIZE ) {
+		state = ADB_TALK_DATA;
+		return bufs.size();
+	} else {
+		uint8_t v = 0;
+		if( ! bufs.empty() ) {
+			v = bufs.front();
+			bufs.pop_front();
+			if( ! bufs.empty() ) {
+				machine->via1->adb_int.store(true);
+			}
+		} else {
+			state = ADB_IDLE;
+		}			   
+		return v;
+	}
 }
 
-void adb_write(uint8_t v) {
-	machine->adb_bus->send_to(v);
+
+std::vector<uint8_t> ADBMouse::talk0() {
+	std::vector<uint8_t> ret = { 0, 0x80};
+	int x, y;
+	uint32_t w = SDL_GetMouseState(&x, &y);
+	ret[0] = !(w & SDL_BUTTON(SDL_BUTTON_LEFT)) << 7;
+	ret[0] |= (( y - old_y) & 0x7f);
+	ret[1] |= (( x - old_x) & 0x7f);
+	old_x = x;
+	old_y = y;
+	return ret;
 }
 
-	
-ADB_device* adb_devices[16];
+// 300dpi
+std::vector<uint8_t> ADBMouse::talk1()  {
+	return {
+			 // Identifier				 
+			 'a', 'p', 'p', 'l',
+			 // Resolution(dpi)
+			 uint8_t(300 >> 8), uint8_t(300 & 0xff),
+			 1, 3
+	};
+}

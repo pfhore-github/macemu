@@ -11,18 +11,37 @@
 #include "ncr5380.hpp"
 #include "asc.hpp"
 #include "z8530.hpp"
-GLU::GLU() {
+#include "mem.hpp"
+const uint32_t simm30_table[5] = { 0, 1*1024*1024, 4*1024*1024, 16*1024*1024, 64*1024*1024 };
+
+GLU::GLU(MODEL model, SIMM30_SIZE bankA, SIMM30_SIZE bankB) {
+	
 	via1 = std::make_shared<VIA1>();
-	auto adb_via_bus = std::make_shared<ADB_VIA>();
-	adb_bus = adb_via_bus;
 	via2 = std::make_shared<VIA2>();
 	asc = newPlaneASC();
 	scc = newZ8530();
 	scsi = std::make_shared<Ncr5380>();
-	// connect VIA1 <-> ADB
-	via1->adb_bus = adb_via_bus;
-	adb_via_bus->via = via1;		
+	model_map[0] = model_map[1] = model_map[2] = false;
+	model_id = 0;
 
+	bank_size[0] = simm30_table[ int(bankA) ] ;
+	bank_size[1] = simm30_table[ int(bankB) ] ;
+
+	switch( model ) {
+	case MODEL::IIx :
+		model_map[3] = false;
+		model_map2 = false;
+		break;
+	case MODEL::SE30 :
+		model_map[3] = true;
+		model_map2 = false;
+		break;		
+	case MODEL::IIcx :
+		model_map[3] = true;
+		model_map2 = true;
+		break;
+	}
+	bankA_size = 0;
 }
 std::shared_ptr<IO_BASE> GLU::get_io(uint32_t base) {
 	switch((base>>13) & 0xf) {
@@ -57,3 +76,11 @@ void GLU::io_write_b(uint32_t addr, uint8_t v, int attr) {
 	}
 }
 	
+void* GLU::get_ram_addr(uint32_t addr, int attr) {
+	uint32_t bankA_sz = simm30_table[ bankA_size+1 ];
+	if( addr < bankA_sz + bank_size[1]) {
+		return &RAMBaseHost[addr];
+	} else {
+		return nullptr;
+	}
+}

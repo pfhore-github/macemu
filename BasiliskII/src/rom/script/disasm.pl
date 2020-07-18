@@ -10,10 +10,10 @@ if( $ARGV[1] ) {
 	push @OPT, "--stop-address=$ARGV[1]";
   }
 
-open PIPE, "-|", $CMD, @OPT, or die;
+open my $PIPE, "-|", $CMD, @OPT, or die;
 my @A = 0;
 my $call = 0;
-while(<PIPE>) {
+while(<$PIPE>) {
   if( $. < 8 ) {
 	next;
   }
@@ -48,4 +48,4 @@ while(<PIPE>) {
   print "\t" x ((38-length($asm))/8);
   print "; $code\n";
 }
-close PIPE or die;
+close $PIPE or die;

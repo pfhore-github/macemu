@@ -39,8 +39,9 @@ sub split_bit {
   my ($v, $n) = @_;
   return map { ($v >> ($n-$_-1)) & 1; } ( 0 .. $n-1);
 }
-our $TABLE1 = 0x3260;
-our $TABLE2 = 0xA79C0;
+#our $TABLE1 = 0x3260;
+#our $TABLE2 = 0xA79C0;
+our $TABLE2 = 0xD2800;
 
 sub dump_model {
   my $addr = $_[0];

@@ -13,13 +13,13 @@ void init_hw3() {
 	if( rom_flg.test( ROM_FLG_T::SONOR_F108) ) {
 		// Sonora/F108
 		uint32_t mc_v = machine->model_id;
-		machine->rbv->write(4, 0);	// rMonP
-		machine->rbv->write(1, 0x40); // rEXP?
-		machine->rbv->write(5, 0x3);	 // rChpT?
+		machine->rbv->write(RBV_REG::RBV_4, 0);
+		machine->rbv->write(RBV_REG::EXP, 0x40); 
+		machine->rbv->write(RBV_REG::RBV_5, 0x3);
 		if((mc_v & 0xff00) < 0x2000 &&
 		   ( (mc_v & 0x07ff) != 3) ) {
 			// not LCIII+
-			machine->rbv->write(5, 0x2); 
+			machine->rbv->write(RBV_REG::RBV_5, 0x2); 
 		}
 	}
 	// Quadra 700/900/950(MCU); $48BC; init NuBus?
@@ -84,7 +84,8 @@ void init_hw3() {
 			}
 		} else {
 			// Quadra/Centris 610/650/800 ?
-			// $49C4
+			// LC630's ROM is dead code. instead Q650 ROM 
+			// $493C@Q650-ROM
 			machine->via1->write(VIA_REG::DDRA, 0x28);
 			// get CPUID
 			uint8_t cpu_id = 0x14 &	machine->via1->read(VIA_REG::RA);
@@ -94,18 +95,51 @@ void init_hw3() {
 			}
 			cpu_id &= 3;
 			// D3 = PA4|PA2
+#if 0
 			static machine_map_t machine_map2[4] = {
-				{ 0x0101, 0x011D, 1, 0x0280 }, // Centris 610?
-				{ 0x001A, 0x016B, 1, 0x01E0 }, // Quadra 610, Centris (25Mhz) 650 
-				{ 0x00A3, 0x01E7, 0, 0x00D5 }, // Quadra 800, Quadra (33Mhz) 650 
+				{ 0x0101, 0x011D, 1, 0x0280 }, // Centris 610
+				{ 0x001A, 0x016B, 1, 0x01E0 }, // Quadra 610, Centris 650 
+				{ 0x00A3, 0x01E7, 0, 0x00D5 }, // Quadra 800, Quadra 650 
 				{ 0x02F4, 0x0255, 0, 0x0000 }, // ???
 			};
-			machine->reg1->write32(0x30, 0xa55a0000 | machine_map2[cpu_id].d0);
-			machine->reg1->write32(0x34, 0xa55a0000 | machine_map2[cpu_id].d1);
-			uint32_t v = machine->reg2->read32(0);
-			machine->reg2->write32(0, (v & 0xfffffff7)	| machine_map2[cpu_id].d2);
-			machine->reg2->write32(0x600, (v & 0xffff0000) | machine_map2[cpu_id].d3);			
-		
+			uint32_t head = 0xa55a000;
+#else
+			uint8_t cpu_id2 = 0x56 & machine->via1->read(VIA_REG::RA);
+			struct machine_map_r_t {
+				uint8_t d0, d1;
+			};
+			static const machine_map_r_t machine_mapr[] = {
+				{ 0, 0x42 },	// unknwon 650
+				{ 1, 0x52 },	// Q650
+				{ 0, 0x40 },	// C610
+				{ 0, 0x42 },	// unknwon 650(dup)
+				{ 1, 0x44 },	// Q610
+				{ 0, 0x46 },	// C650
+				{ 1, 0x50 },	// unused
+				{ 1, 0x54 },	// usused
+				{ 1, 0x56 }		// unused
+			};
+			bool a3 = true;
+			for( auto [ k1, k2 ] : machine_mapr ) {
+				if( cpu_id2 == k2 && ! k1 ) {
+					a3 = false;
+					break;
+				}
+			}
+			machine_map_t machine_map2[4] = {
+				// 49C0/49F0, 49C8, 49D0, 49D4
+				{ 0x0101, 0x011D, 1, 0x0280 }, // Centris 610, unused 650                  
+				{ 0x001A, 0x016B, 1, 0x01E0 }, // Quadra 610, Centris 650 
+				{ uint16_t(a3 ? 0x00FB : 0x00A3), 0x01E7, 0, 0x00D5 }, // Quadra 650 /800 
+				{ uint16_t(a3 ? 0x02FC : 0x02F4), 0x0255, 0, 0x0000 }, // ???                             
+			};
+			uint32_t head = 0;
+#endif
+			machine->reg1->write32(0x30, head | machine_map2[cpu_id].d0);
+			machine->reg1->write32(0x34, head | machine_map2[cpu_id].d1);
+			uint32_t d0 = machine->reg2->read32( 0 );
+			machine->reg2->write32( 0, (d0 & 0xfffffff7) | machine_map2[cpu_id].d2 );
+			machine->reg2->write32( 0x600, (d0&0xffff0000) | machine_map2[cpu_id].d3 );
 		}
 		// $04A3C
 		if( rom_flg.test(ROM_FLG_T::F108_Ardbeg) ) { // LCxxx?

@@ -4,73 +4,50 @@
 #include "machine.hpp"
 #include <stdint.h>
 #include "rbv.hpp"
-// pfc / fq < ns / 1000000000
-void nanosleep_x(double ns){
-	uint64_t left = ns * SDL_GetPerformanceFrequency() / 1000000000;
-	if( left > 10000000 ) {
-		SDL_Delay(left/10000000*10);
-		left %= 1000000;
-	}
-	uint64_t deadline = SDL_GetPerformanceCounter() + left;
-	while( SDL_GetPerformanceCounter() <= deadline ) {
-		__builtin_ia32_pause();
-	}
+static inline uint64_t CLOCK() {
+	return SDL_GetPerformanceCounter() * 7833600
+		/ SDL_GetPerformanceFrequency();
 }
-
 class via_timer {
 	const int c;
-	VIA* via;	
+	VIA* via;
+	SDL_TimerID timer;
 	uint16_t base = 0;
 	uint16_t begin = 0;
 	const bool isTimer1;
 	bool pulse = false;
-	std::atomic<bool> running = false;
+	bool repeat;
 public:
+	friend uint32_t timer_exec(uint32_t i, void* p);
 	void latch(uint16_t v, bool repeat);
 	uint16_t now() const { return begin - (CLOCK() - base); }
-	void stop() { running = false; }
+	void stop() { SDL_RemoveTimer(timer); }
 	~via_timer() { stop(); SDL_Delay(1); }
-	friend int timer_repeat(void*);
-	friend int timer_once(void*);
 	void alarm() { via->do_irq(c); }
 	via_timer(VIA* v, int c, bool is1) :c(c), via(v), isTimer1(is1) {}
 };
 
-
-int timer_repeat(void* p) {
+uint32_t timer_exec(uint32_t i, void* p) {
 	via_timer* self = static_cast<via_timer*>(p);
-	self->pulse = false;
-	while( self->running ) {
-		nanosleep_x( self->begin * 1276.552287582 );
-		if( self->running ) {			
-			self->alarm();
-			if( self->isTimer1 && self->via->a_ctl.T1_PB7 ) {
-				self->pulse = ! self->pulse;
-				self->via->writeB(7, self->pulse);
-			}
-		}
+	self->alarm();
+	if( self->isTimer1 && self->via->a_ctl.T1_PB7 ) {
+		self->via->writeB(7, std::exchange(self->pulse, ! self->pulse));
 	}
-	return 0;
+	if( self->repeat ) {
+		self->base = CLOCK();
+		return i;
+	} else {
+		return 0;
+	}		
 }
-int timer_once(void* p) {
-	via_timer* self = static_cast<via_timer*>(p);
-	nanosleep_x( self->begin * 1276.552287582 );
-	if( self->running   ) {
-		if( self->isTimer1 && self->via->a_ctl.T1_PB7) {
-			self->via->writeB(7, true);
-		}
-		self->alarm();
-	}
-	return 0;
-}	
-void via_timer::latch(uint16_t t, bool repeat) {
-	running = false;
+
+void via_timer::latch(uint16_t t, bool rep) {
+	stop();
 	begin = t;
 	base = CLOCK();
-	running = true;
-	SDL_Thread* timer = SDL_CreateThread(repeat ? timer_repeat : timer_once,
-										"CLOCK", this);
-	SDL_DetachThread(timer);
+	repeat = rep;
+	pulse = true;
+	timer = SDL_AddTimer( begin * 1.2766 / 1000.0, timer_exec, this );
 }
 
 
@@ -82,52 +59,38 @@ VIA::VIA(uint8_t irq)
 }
 
 void VIA::ca1_in(bool v) {
+	bool old = std::exchange(ca1_old, v);
 	if( p_ctl.CA1 ) {
-		if( ca1_old || ! v ) {
-			ca1_old = v;
+		if( old || ! v ) {
 			return;
 		}
 	} else {
-		if( !ca1_old || v ) {
-			ca1_old = v;
+		if( !old || v ) {
 			return;
 		}
 	}
-	ca1_old = v;
 	do_irq(IRQ_FLAG::CA1);
-	if( ! handshake ) {
-		irA = 0;
-		for(int i = 0; i < 8; ++i ) {
-			irA |= readA(i) << i;
-		}
-	} else {
-		handshake = false;
-		ca2_out(true);
+	irA = 0;
+	for(int i = 0; i < 8; ++i ) {
+		irA |= readA(i) << i;
 	}
 }
 
 void VIA::cb1_in(bool v) {
+	bool old = std::exchange(cb1_old, v);
 	if( p_ctl.CB1 ) {
-		if( cb1_old || ! v ) {
-			cb1_old = v;
+		if( old || ! v ) {
 			return;
 		}
 	} else {
-		if( !cb1_old || v ) {
-			cb1_old = v;
+		if( !old || v ) {
 			return;
 		}
 	}
-	cb1_old = v;
 	do_irq(IRQ_FLAG::CB1);
-	if( ! handshake ) {
-		irB = 0;
-		for(int i = 0; i < 8; ++i ) {
-			irB |= readB(i) << i;
-		}
-	} else {
-		handshake = false;
-		cb2_out(true);
+	irB = 0;
+	for(int i = 0; i < 8; ++i ) {
+		irB |= readB(i) << i;
 	}
 }
 
@@ -154,6 +117,7 @@ void VIA::set_timer2() {
 	if( ! a_ctl.T2_CTL ) {
 		timer2->latch( timer2_latch.value, false );
 	} else {
+		timer2->stop();
 		t2_counter = timer2_latch.value;
 		t2_running = true;
 	}
@@ -161,48 +125,53 @@ void VIA::set_timer2() {
 }
 
 void VIA::ca2_in_push(bool v) {
+	bool old = std::exchange(ca2_old, v);
 	switch( p_ctl.CA2 ) {
 	case PCR_MODE::INPUT_NEGATIVE :
 	case PCR_MODE::INDEPENDENT_NEGATIVE :
-		if( ca2_old && ! v ) {
+		if( old && ! v ) {
 			do_irq( IRQ_FLAG::CA2 );
 		}
 		break;
 	case PCR_MODE::INPUT_POSITIVE :
 	case PCR_MODE::INDEPENDENT_POSITIVE :
-		if( ! ca2_old && v ) {
+		if( ! old && v ) {
 			do_irq( IRQ_FLAG::CA2 );
 		}
 		break;
 	default :
 		break;
 	}
-	ca2_old = v;
 }
 
+void VIA::cb2_in_push_byte(uint8_t v) {
+	for(int i = 0; i < 8; ++i ) {
+		cb2_in_push( v >> (7-i) & 1 );
+	}
+}
 void VIA::cb2_in_push(bool v) {
 	sr = sr << 1 | v;
-	if( ++sr_c >= 8 ) {
-		do_irq( IRQ_FLAG::SREG );
+	if( ++sr_c == 8 ) {
 		sr_c = 0;
+		do_irq( IRQ_FLAG::SREG );
 	}
+	bool old = std::exchange(cb2_old, v);
 	switch( p_ctl.CB2 ) {
 	case PCR_MODE::INPUT_NEGATIVE :
 	case PCR_MODE::INDEPENDENT_NEGATIVE :
-		if( cb2_old && ! v ) {
+		if( old && ! v) {
 			do_irq( IRQ_FLAG::CB2 );
 		}
 		break;
 	case PCR_MODE::INPUT_POSITIVE :
 	case PCR_MODE::INDEPENDENT_POSITIVE :
-		if( ! cb2_old && v ) {
+		if( ! old && v) {
 			do_irq( IRQ_FLAG::CB2 );
 		}
 		break;
 	default :
 		break;
 	}
-	cb2_old = v;
 }
 
 uint8_t VIA::read(int n) {
@@ -255,7 +224,7 @@ uint8_t VIA::read(int n) {
 	case VIA_REG::PCR : return p_ctl.val;
 	case VIA_REG::IFR : return irq_flg;
 	case VIA_REG::IER :
-		nanosleep_x(1400);
+		SDL_Delay(1);
 		return irq_enable | 0x80; /* Apple-VIA's IER always returns high bit */
 	case VIA_REG::RA :
 		if( a_ctl.PA_LATCH ) {
@@ -281,12 +250,8 @@ uint8_t VIA::read(int n) {
 			irq_flg &= ~IRQ_FLAG::CA2;
 			break;
 		case PCR_MODE::HANDSHAKE:
-			handshake = true;
-			ca2_out(false);
-			break;
 		case PCR_MODE::PULSE:
-			ca2_out(false);
-			ca2_out(true);
+			// not implemented
 			break;
 		default :
 			break;
@@ -324,12 +289,8 @@ void VIA::write(int n, uint8_t v) {
 			irq_flg &= ~IRQ_FLAG::CB2;
 			return;
 		case PCR_MODE::HANDSHAKE:
-			handshake = true;
-			cb2_out(false);
-			return;
 		case PCR_MODE::PULSE:
-			cb2_out(false);
-			cb2_out(true);
+			// not implemented
 			return;
 		default:
 			return;
@@ -375,9 +336,7 @@ void VIA::write(int n, uint8_t v) {
 		sr = v;
 		if( a_ctl.SR_OUT ) {
 			// immidiate shift out everything
-			for(int i = 7; i >= 0; --i ) {
-				cb2_out(v >> i & 1);
-			}
+			cb2_out(v);
 			do_irq(IRQ_FLAG::SREG);
 		}
 		return;
@@ -389,20 +348,7 @@ void VIA::write(int n, uint8_t v) {
 		t2_running = false;
 		return;
 	case VIA_REG::PCR :
-		p_ctl.val = v;
-		if( p_ctl.CB2 == PCR_MODE::MANUAL_LOW ) {
-			cb2_out(false);
-		}
-		if( p_ctl.CB2 == PCR_MODE::MANUAL_HIGH ) {
-			cb2_out(true);
-		}
-		if( p_ctl.CA2 == PCR_MODE::MANUAL_LOW ) {
-			ca2_out(false);
-		}
-		if( p_ctl.CA2 == PCR_MODE::MANUAL_HIGH ) {
-			ca2_out(true);
-		}
-		
+		p_ctl.val = v;		
 		return;
 	case VIA_REG::IFR :	irq_flg = v; return;
 	case VIA_REG::IER : 
@@ -413,6 +359,7 @@ void VIA::write(int n, uint8_t v) {
 		}
 		return;
 	case VIA_REG::RA_H :
+	case VIA_REG::RA :
 		orA = v;
 		for(int i = 0; i < 8; ++i ) {
 			if( dirA & 1 << i ) {
@@ -428,31 +375,12 @@ void VIA::write(int n, uint8_t v) {
 			irq_flg &= ~IRQ_FLAG::CA2;
 			return;
 		case PCR_MODE::HANDSHAKE:
-			handshake = true;
-			ca2_out(false);
-			return;
 		case PCR_MODE::PULSE:
-			ca2_out(false);
-			ca2_out(true);
+			// not implemented
 			return;
 		default :
 			return;
 		}
-	case VIA_REG::RA :
-		orA = v;
-		for(int i = 0; i < 8; ++i ) {
-			if( dirA & 1 << i ) {
-				writeA(i, orA & (1<<i));
-			}
-		}
-		if( ! p_ctl.CA1 ) {
-			irq_flg &= ~IRQ_FLAG::CA1;
-		}
-		if( p_ctl.CA2 == PCR_MODE::INPUT_NEGATIVE ||
-			p_ctl.CA2 == PCR_MODE::INPUT_POSITIVE ) {
-			irq_flg &= ~IRQ_FLAG::CA2;
-		}
-		break;		
 	}
 }
 
@@ -462,7 +390,6 @@ void VIA::reset() {
 	p_ctl.val = a_ctl.val = 0;
 	irq_flg = 0;
 	irq_enable = 0x7f;
-	handshake = false;
 	cb1_old = ca1_old = false;
 	cb2_old = ca2_old = false;
 }

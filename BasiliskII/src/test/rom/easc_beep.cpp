@@ -1,6 +1,7 @@
 #define BOOST_TEST_DYN_LINK
 #include "test_common.hpp"
 #include "asc.hpp"
+#include "sonora.hpp"
 #include <memory>
 #include <stdio.h>
 #include <boost/test/tools/output_test_stream.hpp>
@@ -25,7 +26,7 @@ int check_easc_fifo_empty() { return MOCK::invoke<int>("check_easc_fifo_empty");
 using namespace ROM;
 void prepare() {
 	static int n = 0;
-	fixture f(MB_TYPE::SONORA);
+	fixture f(std::make_unique<Sonora>());
 	MOCK::make<int()>("check_easc_fifo_empty")
 		->always_do( []() { return (++n) % 400 == 0 ? 1 : 0; } );
 	DEFINE_ROM( BD3EC );

@@ -6,44 +6,49 @@
 #include "mcu.hpp"
 #include "jaws.hpp"
 #include "memcjr.hpp"
+#include "sonora.hpp"
+#include "f108.hpp"
 #include <memory>
 namespace bdata = boost::unit_test::data;
 extern uint32_t mac_model_id;
 using namespace ROM;
 
-void prepare(MB_TYPE mb_t, const MOTHERBOARD_TABLE_T* mb, const MACHINE_TABLE_T* mc) {
+void prepare(std::unique_ptr<Machine>&& m) {
 	clear_global();
-	fixture f(mb_t);
+	fixture f(std::move(m));
 	set_sr( 0x2700 );
-	DR(0) = mc->init_flg.to_ulong();
-	AR(0) = rom_base | mb->BASE;
-	AR(1) = rom_base | mc->BASE;
+	DR(2) = 0;
+	ROMWrapper::run_04A5E();
 }
 BOOST_AUTO_TEST_CASE( rbv_lciii_p )  {
-	prepare(MB_TYPE::SONORA, &motherboards[7], &new_machines[5]);
-	machine->model_id = 0xA55A0003;
+	prepare(std::make_unique<Sonora>(Sonora::MODEL::LCIII_p));
 	auto rbv = std::make_shared<IO_TEST<SonorRBV>>();
 	machine->rbv = rbv;
+	rbv->watch(RBV_REG::EXP);
+	rbv->watch(RBV_REG::RBV_4);
+	rbv->watch(RBV_REG::RBV_5);
 	TEST_ROM( 04866 );
-	rbv->verify(1, { 0x40 });
-	rbv->verify(4, { 0 });
-	rbv->verify(5, { 3 });
+	rbv->verify(RBV_REG::EXP, { 0x40 });
+	rbv->verify(RBV_REG::RBV_4, { 0 });
+	rbv->verify(RBV_REG::RBV_5, { 3 });
 
 }
 BOOST_AUTO_TEST_CASE( rbv_lciii )  {
-	prepare(MB_TYPE::SONORA, &motherboards[7], &new_machines[4]);
+	prepare(std::make_unique<Sonora>(Sonora::MODEL::LCIII));
 	machine->model_id = 0xA55A0002;
 	auto rbv = std::make_shared<IO_TEST<SonorRBV>>();
 	machine->rbv = rbv;
+	rbv->watch(RBV_REG::EXP);
+	rbv->watch(RBV_REG::RBV_4);
+	rbv->watch(RBV_REG::RBV_5);
 	TEST_ROM( 04866 );
-	rbv->verify(1, { 0x40 });
-	rbv->verify(4, { 0 });
-	rbv->verify(5, { 3, 2 });
+	rbv->verify(RBV_REG::EXP, { 0x40 });
+	rbv->verify(RBV_REG::RBV_4, { 0 });
+	rbv->verify(RBV_REG::RBV_5, { 3, 2 });
 }
 
-
 BOOST_DATA_TEST_CASE( mcu, bdata::xrange(2), tf )  {
-	prepare(MB_TYPE::MCU, &motherboards[4], &old_machines[8]);   
+	prepare(std::make_unique<MCU>());   
 	auto via2 = std::make_shared<IO_TEST<VIA2>>();
 	via2->set_read_data(0, { uint8_t(tf ? 0x20 : 0) } );
 	via2->set_read_data(2, { 0 } );
@@ -54,289 +59,258 @@ BOOST_DATA_TEST_CASE( mcu, bdata::xrange(2), tf )  {
 	mcu->set_read_data(0x4B, { 0 } );
 	machine->via2 = via2;
 	machine->mcu = mcu;
+	for(int i = 0; i < 0xbc ; ++i ) {
+		mcu->watch( i );
+	}
 	TEST_ROM( 04866 );
 	uint32_t val = tf ? 0x138b0810 : 0x124f0810;
 	for(int i = 0; i < 32 ; ++i ) {
 		uint32_t x = val >> i;
-		mcu->verify( i*4, { uint8_t( x >> 24 ) });
-		mcu->verify( i*4+1, { uint8_t( x >> 16 ) });
-		mcu->verify( i*4+2, { uint8_t( x >> 8 ) });
-		mcu->verify( i*4+3, { uint8_t( x ) });
+		mcu->verify32( i*4, { x });
 	}
 	for( int i = 0x80; i < 0x87; ++i ) {
 		mcu->verify( i , { 0 });
 	}
 	mcu->verify( 0x87, { 1 });
 	for(int i = 0xa0; i < 0xbc; i += 4 ) { 
-		mcu->verify( i, { 0 });
-		mcu->verify( i+1, { 0 });
-		mcu->verify( i+2, { 0xff });
-		mcu->verify( i+3, { 0xff });
+		mcu->verify32( i, { 0xffff });
 	}
 }
 
 
 BOOST_AUTO_TEST_CASE( jaws )  {
-	prepare(MB_TYPE::JAWS, &motherboards[5], &old_machines[11]);
+	prepare(std::make_unique<JAWS>());
 
 	machine->model_id = 0xA55A0002;
 	auto pb = std::make_shared<IO_TEST<JAWS_REG>>();
 	auto pb2 = std::make_shared<IO_TEST<JAWS_REG2>>();
 	pb2->set_read_data(0, { 0xffU });
+	pb->watch( 0 );
 	machine->pb = pb;
 	machine->pb2 = pb2;
 	TEST_ROM( 04866 );
 	pb->verify( 0, { 1 } );
 }
 
-BOOST_AUTO_TEST_CASE( memcjr_quadra605_20Mhz )  {
-	prepare(MB_TYPE::MEMCjr, &motherboards[9], &new_machines[10]);
-	machine->model_id = 0xa55a2224;
+BOOST_AUTO_TEST_SUITE( memcjr )
+
+BOOST_AUTO_TEST_CASE( quadra605_20Mhz )  {
+	prepare(std::make_unique<MEMCjr>( MEMCjr::MODEL::Q605_20));
 	auto k1 = std::make_shared<IO_TEST<MEMCjr_REG1>>();
 	auto k2 = std::make_shared<IO_TEST<MEMCjr_REG2>>();
 	machine->reg1 = k1;
 	machine->reg2 = k2;
+	for(int i = 0x30; i < 0x38; ++i ) {
+		k1->watch( i );
+	}
+	for(int i = 0x7c; i < 0x80; ++i ) {
+		k1->watch( i );
+	}
+	k2->watch( 0 );
+	k2->watch( 0x600 );
+	k2->watch( 0x601 );
 	TEST_ROM( 04866 );
-	k1->verify(0x30, { 0xA5 } );
-	k1->verify(0x31, { 0x5A });
-	k1->verify(0x32, { 0x01 });
-	k1->verify(0x33, { 0x01 });
-	k1->verify(0x34, { 0xA5 });
-	k1->verify(0x35, { 0x5A });
-	k1->verify(0x36, { 0x01 });
-	k1->verify(0x37, { 0x1D });
-	k1->verify(0x7C, { 0x06, 0x76 });
-	k1->verify(0x7D, { 0x95, 0x95 });
-	k1->verify(0x7E, { 0x68, 0x68 });
-	k1->verify(0x7F, { 0x04, 0x04 });
+	k1->verify32(0x30, { 0xA55A0101 } );
+	k1->verify32(0x34, { 0xA55A011D });
+	k1->verify32(0x7C, { 0x06956804, 0x76956804 });
 	k2->verify( 0, { 1 } );
-	k2->verify( 0x600, { 0x02 } );
-	k2->verify( 0x601, { 0x80 } );
+	k2->verify16( 0x600, { 0x0280 } );
 }
 
-BOOST_AUTO_TEST_CASE( memcjr_quadra605_25Mhz )  {
-	prepare(MB_TYPE::MEMCjr, &motherboards[9], &new_machines[11]);
-	machine->model_id = 0xa55a2225;
+
+
+BOOST_AUTO_TEST_CASE( quadra605_25Mhz )  {
+	prepare(std::make_unique<MEMCjr>( MEMCjr::MODEL::Q605_25));
 	auto k1 = std::make_shared<IO_TEST<MEMCjr_REG1>>();
 	auto k2 = std::make_shared<IO_TEST<MEMCjr_REG2>>();
 	machine->reg1 = k1;
 	machine->reg2 = k2;
+	for(int i = 0x30; i < 0x38; ++i ) {
+		k1->watch( i );
+	}
+	for(int i = 0x7c; i < 0x80; ++i ) {
+		k1->watch( i );
+	}
+	k2->watch( 0 );
+	k2->watch( 0x600 );
+	k2->watch( 0x601 );
 	TEST_ROM( 04866 );
-	k1->verify( 0x30, { 0xA5 } );
-	k1->verify(0x31, { 0x5A });
-	k1->verify(0x32, { 0x00 });
-	k1->verify(0x33, { 0x1A });
-	k1->verify(0x34, { 0xA5 });
-	k1->verify(0x35, { 0x5A });
-	k1->verify(0x36, { 0x01 });
-	k1->verify(0x37, { 0x6B });
-	k1->verify(0x7C, { 0x6A, 0xAE });
-	k1->verify(0x7D, { 0x95, 0x95 });
-	k1->verify(0x7E, { 0x68, 0x68 });
-	k1->verify(0x7F, { 0x00, 0x05 });
+	k1->verify32( 0x30, { 0xA55A001A } );
+	k1->verify32(0x34, { 0xA55A016B });
+	k1->verify32(0x7C, { 0x6A956800, 0xAE956805 });
 	k2->verify( 0, { 1 } );
-	k2->verify(0x600, { 0x01 });
-	k2->verify(0x601, { 0xE0 });
+	k2->verify16(0x600, { 0x01E0 });
 }
 
-BOOST_AUTO_TEST_CASE( memcjr_quadra605_33Mhz )  {
-	prepare(MB_TYPE::MEMCjr, &motherboards[9], &new_machines[12]);
-	machine->model_id = 0xa55a2226;
+BOOST_AUTO_TEST_CASE( quadra605_33Mhz )  {
+	prepare(std::make_unique<MEMCjr>( MEMCjr::MODEL::Q605_33));
 	auto k1 = std::make_shared<IO_TEST<MEMCjr_REG1>>();
 	auto k2 = std::make_shared<IO_TEST<MEMCjr_REG2>>();
 	machine->reg1 = k1;
 	machine->reg2 = k2;
+	for(int i = 0x30; i < 0x38; ++i ) {
+		k1->watch( i );
+	}
+	for(int i = 0x7c; i < 0x80; ++i ) {
+		k1->watch( i );
+	}
+	k2->watch( 0 );
+	k2->watch( 0x600 );
+	k2->watch( 0x601 );
 	TEST_ROM( 04866 );
-	k1->verify(0x30, { 0xA5 });
-	k1->verify(0x31, { 0x5A });
-	k1->verify(0x32, { 0x00 });
-	k1->verify(0x33, { 0xDC });
-	k1->verify(0x34, { 0xA5 });
-	k1->verify(0x35, { 0x5A });
-	k1->verify(0x36, { 0x01 });
-	k1->verify(0x37, { 0xE7 });
-	k1->verify(0x7C, { 0x72, 0x9E });
-	k1->verify(0x7D, { 0x95, 0x95 });
-	k1->verify(0x7E, { 0x68, 0x68 });
-	k1->verify(0x7F, { 0x03, 0x07 });
+	k1->verify32(0x30, { 0xA55A00DC });
+	k1->verify32(0x34, { 0xA55A01E7 });
+	k1->verify32(0x7C, { 0x72956803, 0x9E956807 });
 	k2->verify( 0, { 0 } );
-	k2->verify(0x600, { 0x00 });
-	k2->verify(0x601, { 0xD5 });
+	k2->verify16(0x600, { 0x00D5 });
 }
 
-BOOST_AUTO_TEST_CASE( memcjr_LC630_2)  {
-	prepare(MB_TYPE::MEMCjr, &motherboards[10], &new_machines[18]);
-	machine->model_id = 0xa55a2253;
-	auto k1 = std::make_shared<IO_TEST<MEMCjr_REG1>>();
-	auto k2 = std::make_shared<IO_TEST<MEMCjr_REG2>>();
-	machine->reg1 = k1;
-	machine->reg2 = k2;
-	TEST_ROM( 04866 );
-	k1->verify(0x30, { 0xA5 });
-	k1->verify(0x31, { 0x5A });
-	k1->verify(0x32, { 0x02 });
-	k1->verify(0x33, { 0xDC });
-	k1->verify(0x34, { 0xA5 });
-	k1->verify(0x35, { 0x5A });
-	k1->verify(0x36, { 0x02 });
-	k1->verify(0x37, { 0x55 });
-	k1->verify(0x7C, { 0x72, 0x56 });
-	k1->verify(0x7D, { 0x95, 0x95 });
-	k1->verify(0x7E, { 0x68, 0x68 });
-	k1->verify(0x7F, { 0x0B, 0x09 });
-	k2->verify( 0, { 0 } );
-	k2->verify(0x500, { 0x90 });
-	k2->verify(0x501, { 0xB7 });
-	k2->verify(0x600, { 0x00 });
-	k2->verify(0x601, { 0x00 });
-}
-
-BOOST_AUTO_TEST_CASE( memcjr_unreleased)  {
-	prepare(MB_TYPE::MEMCjr, &motherboards[9], &new_machines[15]);
-	machine->model_id = 0xa55a2231;
+BOOST_AUTO_TEST_CASE( unreleased )  {
+	prepare(std::make_unique<MEMCjr>(MEMCjr::MODEL::UNUSED1));
 	auto k1 = std::make_shared<IO_TEST<MEMCjr_REG1>>();
 	auto k2 = std::make_shared<IO_TEST<MEMCjr_REG2>>();
 	k2->set_read_data( 0, { 1 } );
 	k2->set_read_data( 0x100, { 0 } );
 	machine->reg1 = k1;
 	machine->reg2 = k2;
+	k2->watch( 0 );
+	k2->watch( 0x100 );
+	k2->watch( 0x600 );
+	k2->watch( 0x601 );
 	TEST_ROM( 04866 );
 	k2->verify( 0, { 1, 0x11 } );
 	k2->verify( 0x100, { 0x08 } );
-	k2->verify( 0x600, { 0x01 } );
-	k2->verify( 0x601, { 0xE0 } );
+	k2->verify16( 0x600, { 0x01E0 } );
 }
 
-BOOST_AUTO_TEST_CASE( memcjr_centris610)  {
-	prepare(MB_TYPE::MEMCjr, &motherboards[9], &new_machines[15]);
-	machine->model_id = 0xa55a2bad;
-	auto via = std::make_shared<IO_TEST<VIA1>>();
-	via->set_read_data(15, { 0x40 });
+struct DJ_MEMCR {
+	MEMCjr::MODEL model;
+	uint32_t v_30;
+	uint32_t v_34;
+	uint32_t v_0;
+	uint32_t v_600;
+};
+std::ostream& operator<<(std::ostream& os, const DJ_MEMCR& i) {
+	switch(i.model) {
+	case MEMCjr::MODEL::UNUSED3 : return os << "unused 650"; 
+	case MEMCjr::MODEL::C650 : return os << "Centris 650"; 
+	case MEMCjr::MODEL::Q800 : return os << "Quadra 800"; 
+	case MEMCjr::MODEL::Q650 : return os << "Quadra 650"; 
+	case MEMCjr::MODEL::UNUSED4 : return os << "unknown #4";
+	case MEMCjr::MODEL::UNUSED5 : return os << "unknown #5";
+	case MEMCjr::MODEL::C610 : return os << "Centris 610";
+	case MEMCjr::MODEL::Q610 : return os << "Quadra 610";
+	case MEMCjr::MODEL::UNUSED6 : return os << "unknown #6";
+	case MEMCjr::MODEL::UNUSED7 : return os << "unknown #7";
+	default : return os;
+	}
+}
+const std::vector<DJ_MEMCR> djmemc_tbl = {
+	{ MEMCjr::MODEL::UNUSED3, 0x101, 0x11D, 1, 0x0280 }, // unused 650
+	{ MEMCjr::MODEL::C650, 0x01A, 0x16B, 1, 0x01E0 }, // Centris 650
+	{ MEMCjr::MODEL::Q800, 0x0FB, 0x1E7, 0, 0x00D5 }, // Quadra 800
+	{ MEMCjr::MODEL::Q650, 0x0FB, 0x1E7, 0, 0x00D5 }, // Quadra 650
+	{ MEMCjr::MODEL::UNUSED4, 0x2FC, 0x255, 0, 0x0000 }, // ???
+	{ MEMCjr::MODEL::UNUSED5, 0x2FC, 0x255, 0, 0x0000 }, // ???
+	{ MEMCjr::MODEL::C610, 0x0101, 0x011D, 1, 0x0280 }, // Centris 610
+	{ MEMCjr::MODEL::Q610, 0x001A, 0x016B, 1, 0x01E0 }, // Quadra 610
+	{ MEMCjr::MODEL::UNUSED6, 0x01A, 0x16B, 1, 0x01E0 }, // ???
+	{ MEMCjr::MODEL::UNUSED7, 0x0FB, 0x1E7, 0, 0x00D5 }, // ???
+};
+BOOST_DATA_TEST_CASE( djMEMC, djmemc_tbl, model )  {
+	clear_global();
+	fixture f(std::make_unique<MEMCjr>(model.model));
+	set_sr( 0x2700 );
+	DR(2) = 0;
+	ROMWrapper::run_04A5E();
+	
 	auto k1 = std::make_shared<IO_TEST<MEMCjr_REG1>>();
 	auto k2 = std::make_shared<IO_TEST<MEMCjr_REG2>>();
 	k2->set_read_data(0, { 0xab } );
 	k2->set_read_data(1, { 0xcd } );
 	k2->set_read_data(2, { 0xef } );
 	k2->set_read_data(3, { 0x98 } );
-	machine->via1 = via;
+	for(int i = 0x30; i < 0x38; ++i ) {
+		k1->watch( i );
+	}
+	for(int i = 0; i < 4; ++i ) {
+		k2->watch( i );
+		k2->watch( 0x600+i );
+	}
 	machine->reg1 = k1;
 	machine->reg2 = k2;
-	TEST_ROM( 04866 );
-	k1->verify(0x30, { 0xa5 });
-	k1->verify(0x31, { 0x5a });
-	k1->verify(0x32, { 0x01 });
-	k1->verify(0x33, { 0x01 });
-	k1->verify(0x34, { 0xa5 });
-	k1->verify(0x35, { 0x5a });
-	k1->verify(0x36, { 0x01 });
-	k1->verify(0x37, { 0x1D });
-	k2->verify(0x0, { 0xab });
-	k2->verify(0x1, { 0xcd });
-	k2->verify(0x2, { 0xef });
-	k2->verify(0x3, { 0x91 });
-	k2->verify(0x600, { 0xab });
-	k2->verify(0x601, { 0xcd });
-	k2->verify(0x602, { 0x02 });
-	k2->verify(0x603, { 0x80 });
+	if( rom ) {
+		run_rom_as_650( 0x40804862 );
+	} else {
+		ROMWrapper::run_04866();
+	}
+	k1->verify32(0x30, { model.v_30 });
+	k1->verify32(0x34, { model.v_34 });
+	k2->verify32(0x0, { 0xabcdef90 | model.v_0 });
+	k2->verify32(0x600, { 0xabcd0000 | model.v_600 });
 }
 
-BOOST_AUTO_TEST_CASE( memcjr_quadra610)  {
-	prepare(MB_TYPE::MEMCjr, &motherboards[9], &new_machines[15]);
-	machine->model_id = 0xa55a2bad;
-	auto via = std::make_shared<IO_TEST<VIA1>>();
-	via->set_read_data(15, { 0x4 });
+
+BOOST_AUTO_TEST_CASE( centris610)  {
+	clear_global();
+	fixture f(std::make_unique<MEMCjr>(MEMCjr::MODEL::C610));
+	set_sr( 0x2700 );
+	DR(2) = 0;
+	ROMWrapper::run_04A5E();
+	
 	auto k1 = std::make_shared<IO_TEST<MEMCjr_REG1>>();
 	auto k2 = std::make_shared<IO_TEST<MEMCjr_REG2>>();
 	k2->set_read_data(0, { 0xab } );
 	k2->set_read_data(1, { 0xcd } );
 	k2->set_read_data(2, { 0xef } );
 	k2->set_read_data(3, { 0x98 } );
-	machine->via1 = via;
+	for(int i = 0x30; i < 0x38; ++i ) {
+		k1->watch( i );
+	}
+	for(int i = 0; i < 4; ++i ) {
+		k2->watch( i );
+		k2->watch( 0x600+i );
+	}
 	machine->reg1 = k1;
 	machine->reg2 = k2;
-	TEST_ROM( 04866 );
-	k1->verify(0x30, { 0xa5 });
-	k1->verify(0x31, { 0x5a });
-	k1->verify(0x32, { 0x00 });
-	k1->verify(0x33, { 0x1a });
-	k1->verify(0x34, { 0xa5 });
-	k1->verify(0x35, { 0x5a });
-	k1->verify(0x36, { 0x01 });
-	k1->verify(0x37, { 0x6b });
-	k2->verify(0x0, { 0xab });
-	k2->verify(0x1, { 0xcd });
-	k2->verify(0x2, { 0xef });
-	k2->verify(0x3, { 0x91 });
-	k2->verify(0x600, { 0xab });
-	k2->verify(0x601, { 0xcd });
-	k2->verify(0x602, { 0x01 });
-	k2->verify(0x603, { 0xe0 });
+	if( rom ) {
+		run_rom_as_650( 0x40804862 );
+	} else {
+		ROMWrapper::run_04866();
+	}
+	k1->verify32(0x30, { 0x00000101 });
+	k1->verify32(0x34, { 0x0000011d });
+	k2->verify32(0x0, { 0xabcdef91 });
+	k2->verify32(0x600, { 0xabcd0280 });
 }
 
-BOOST_AUTO_TEST_CASE( memcjr_quadra650)  {
-	prepare(MB_TYPE::MEMCjr, &motherboards[9], &new_machines[15]);
-	machine->model_id = 0xa55a2bad;
-	auto via = std::make_shared<IO_TEST<VIA1>>();
-	via->set_read_data(15, { 0x10 } );
+BOOST_AUTO_TEST_SUITE_END(  );
+BOOST_AUTO_TEST_SUITE( f108 )
+
+BOOST_AUTO_TEST_CASE( LC630_2)  {
+	prepare(std::make_unique<F108>(F108::MODEL::LC630_2));
 	auto k1 = std::make_shared<IO_TEST<MEMCjr_REG1>>();
 	auto k2 = std::make_shared<IO_TEST<MEMCjr_REG2>>();
-	k2->set_read_data(0, { 0xab } );
-	k2->set_read_data(1, { 0xcd } );
-	k2->set_read_data(2, { 0xef } );
-	k2->set_read_data(3, { 0x98 } );
-	machine->via1 = via;
 	machine->reg1 = k1;
 	machine->reg2 = k2;
+	for(int i = 0x30; i < 0x38; ++i ) {
+		k1->watch( i );
+	}
+	for(int i = 0x7c; i < 0x80; ++i ) {
+		k1->watch( i );
+	}
+	k2->watch( 0 );
+	k2->watch( 0x500 );
+	k2->watch( 0x501 );
+	k2->watch( 0x600 );
+	k2->watch( 0x601 );
 	TEST_ROM( 04866 );
-	k1->verify(0x30, { 0xa5 });
-	k1->verify(0x31, { 0x5a });
-	k1->verify(0x32, { 0x00 });
-	k1->verify(0x33, { 0xa3 });
-	k1->verify(0x34, { 0xa5 });
-	k1->verify(0x35, { 0x5a });
-	k1->verify(0x36, { 0x01 });
-	k1->verify(0x37, { 0xe7 });
-	k2->verify(0x0, { 0xab });
-	k2->verify(0x1, { 0xcd });
-	k2->verify(0x2, { 0xef });
-	k2->verify(0x3, { 0x90 });
-	k2->verify(0x600, { 0xab });
-	k2->verify(0x601, { 0xcd });
-	k2->verify(0x602, { 0x00 });
-	k2->verify(0x603, { 0xd5 });
+	k1->verify32(0x30, { 0xA55A02DC });
+	k1->verify32(0x34, { 0xA55A0255 });
+	k1->verify32(0x7C, { 0x7295680B, 0x56956809 });
+	k2->verify( 0, { 0 } );
+	k2->verify16(0x500, { 0x90B7 });
+	k2->verify16(0x600, { 0x0000 });
 }
 
-BOOST_AUTO_TEST_CASE( memcjr_unknown_quadra)  {
-	prepare(MB_TYPE::MEMCjr, &motherboards[9], &new_machines[15]);
-	machine->model_id = 0xa55a2bad;
-	auto via = std::make_shared<IO_TEST<VIA1>>();
-	via->set_read_data( 15, { 0x14 } );
-	auto k1 = std::make_shared<IO_TEST<MEMCjr_REG1>>();
-	auto k2 = std::make_shared<IO_TEST<MEMCjr_REG2>>();
-	k2->set_read_data(0, { 0xab } );
-	k2->set_read_data(1, { 0xcd } );
-	k2->set_read_data(2, { 0xef } );
-	k2->set_read_data(3, { 0x98 } );
-	machine->via1 = via;
-	machine->reg1 = k1;
-	machine->reg2 = k2;
-	TEST_ROM( 04866 );
-	k1->verify(0x30, { 0xa5 });
-	k1->verify(0x31, { 0x5a });
-	k1->verify(0x32, { 0x02 });
-	k1->verify(0x33, { 0xf4 });
-	k1->verify(0x34, { 0xa5 });
-	k1->verify(0x35, { 0x5a });
-	k1->verify(0x36, { 0x02 });
-	k1->verify(0x37, { 0x55 });
-	k2->verify(0x0, { 0xab });
-	k2->verify(0x1, { 0xcd });
-	k2->verify(0x2, { 0xef });
-	k2->verify(0x3, { 0x90 });
-	k2->verify(0x600, { 0xab });
-	k2->verify(0x601, { 0xcd });
-	k2->verify(0x602, { 0x00 });
-	k2->verify(0x603, { 0x00 });
-}
-
-
+BOOST_AUTO_TEST_SUITE_END(  );
