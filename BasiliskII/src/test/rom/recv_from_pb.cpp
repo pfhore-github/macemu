@@ -36,41 +36,22 @@ BOOST_AUTO_TEST_CASE( msc_ok ) {
 	BOOST_CHECK( cpu.Z );
 }
 
-BOOST_AUTO_TEST_CASE( not_yet ) {
-	prepare<MSC>();
-	auto pb_ex_ut = std::make_shared<PB_EX_REG_TEST>();
-	machine->pb_ex = pb_ex_ut; 
-	AR(0) = 0x408A8234;
-	AR(2) = 0x50f00000;
-	AR(3) = 0x50F26000;
-	AR(5) = 0;
-	ROMWrapper::run_47928();
-	BOOST_CHECK_EQUAL( DR(6), 2 );
-	BOOST_CHECK( ! cpu.Z );
-}
-
 
 BOOST_AUTO_TEST_CASE( jaws ) {
 	prepare<JAWS>();
 	auto pb_ex_ut = std::make_shared<PB_EX_REG_TEST>();
 	machine->pb_ex = pb_ex_ut; 
-	pb_ex_ut->UT_PUSH_OUT( 0xab );
+	machine->via2->write( VIA_REG::DDRB, 0xbd );
 	machine->via2->clear( VIA_REG::RB, 2);
+	pb_ex_ut->UT_PUSH_OUT( 0xab );
 	AR(0) = 0x40803608;
 	AR(2) = 0x50f00000;
 	AR(3) = 0x50f02000;
 	AR(5) = 0;
-	ROMWrapper::run_47928();
+	TEST_ROM ( 47928 );
 	BOOST_CHECK( !( DR(4) & 0x80000000) );
+	BOOST_CHECK_EQUAL( DR(3), 0xab );
+	BOOST_CHECK_EQUAL( DR(6), 0 );
+	BOOST_CHECK( cpu.Z );
 }
 
-BOOST_AUTO_TEST_CASE( non_pb ) {
-	prepare<GLU>();
-	AR(0) = 0x408A8234;
-	AR(2) = 0x50f00000;
-	AR(3) = 0x50F26000;
-	AR(5) = 0;
-	ROMWrapper::run_47928();
-	BOOST_CHECK_EQUAL( DR(6), 2 );
-	BOOST_CHECK( ! cpu.Z );
-}

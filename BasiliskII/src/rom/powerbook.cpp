@@ -69,15 +69,15 @@ bool send_to_pb_byte(uint8_t data, bool* is_msc) {
 		via2->write( VIA_REG::RA_H, data );
 	}
 	bool ret = false;
-	via2->clear( VIA_REG::RB, PB_TRANS_READ_MODE );
+	via2->clear( VIA_REG::RB, PB_TRANS_ENABLE );
 	if( ! via2->bit( VIA_REG::RB, PB_TRANS_READY ) ) {
-		via2->set( VIA_REG::RB, PB_TRANS_READ_MODE );
+		via2->set( VIA_REG::RB, PB_TRANS_ENABLE );
 		if( via2->bit( VIA_REG::RB, PB_TRANS_READY ) ) {
 			ret = true;
 		}
 	}
 	// $47918
-	via2->set( VIA_REG::RB, PB_TRANS_READ_MODE );
+	via2->set( VIA_REG::RB, PB_TRANS_ENABLE );
 	
 	if( ! msc ) {
 		via2->write( VIA_REG::DDRA, 0 );
@@ -96,18 +96,25 @@ std::optional<uint8_t> recv_from_pb(bool* is_msc) {
 	if( msc ) {
 		machine->via1->clear( VIA_REG::ACR, 4 ); // SR is shift in mode
 		machine->via1->read( VIA_REG::SR ); // skip old value
-		via2->clear( VIA_REG::RB, PB_TRANS_READ_MODE ); // disable read mode
+		via2->clear( VIA_REG::RB, PB_TRANS_ENABLE );
 		if( ! via2->bit( VIA_REG::RB, PB_TRANS_READY ) ) {
-			via2->set( VIA_REG::RB, PB_TRANS_READ_MODE ); // set read mode
+			via2->set( VIA_REG::RB, PB_TRANS_ENABLE );
 			if( via2->bit( VIA_REG::RB, PB_TRANS_READY ) ) {
 				ret = machine->via1->read( VIA_REG::SR );
 			}
 		}
 	} else {
 		// $47976
-//		via2->write( VIA_REG::DDRA, 0xff ); // all bits are write
-//		via2->write( VIA_REG::RA_H, data );
+		via2->write( VIA_REG::DDRA, 0x00 ); // all bits are read
+		if( ! via2->bit( VIA_REG::RB, PB_TRANS_READY ) ) {
+			via2->clear( VIA_REG::RB, PB_TRANS_ENABLE ); // set read mode
+			ret = via2->read( VIA_REG::RA_H );
+			if( ! via2->bit( VIA_REG::RB, PB_TRANS_READY ) ) {
+				ret = {};
+			}
+		}
 	}
+	via2->set( VIA_REG::RB, PB_TRANS_ENABLE );
 	return ret;
 }
 uint16_t _B35EC(uint16_t v) {

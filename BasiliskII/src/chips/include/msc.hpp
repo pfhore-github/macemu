@@ -19,7 +19,6 @@ public:
 
 class MSCRbv : public RBV {
 	MSC* base;
-	bool tran_mode = false;
 protected:	
 	bool readB(int n) override;
 	void writeB(int n, bool v) override;

@@ -102,23 +102,26 @@ bool MSCRbv::readB(int n) {
 }
 void MSCRbv::writeB(int n, bool v) {
 	switch( n ) {
-	case PB_TRANS_READ_MODE : // transport mode
+	case PB_TRANS_ENABLE : // transport mode
 		if( v ) {
-			if( ! std::exchange(tran_mode, v) ) {
+			if( machine->via1->bit( VIA_REG::ACR, 4 ) ) {
+				// write
+				if( base->pb_ex->c_in ) {
+					base->pb_ex->cmd( *base->pb_ex->c_in ) ;
+					base->pb_ex->c_in = {};
+					base->ready = true;
+				} else {
+					base->ready = false;
+				}
+			} else {				
 				// read
 				if( auto v2 = base->pb_ex->pop_out() ) {
 					machine->via1->cb2_in_push_byte(*v2);
+					base->ready = true;
+				} else {
+					base->ready = false;
 				}
 			} 
-			base->ready = true;
-		} else {
-			tran_mode = v;
-			base->ready = false;
-			// write
-			if( base->pb_ex->c_in ) {
-				base->pb_ex->cmd( *base->pb_ex->c_in ) ;
-				base->pb_ex->c_in = {};
-			}
 		}
 		break;
 	default:

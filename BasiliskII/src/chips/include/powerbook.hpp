@@ -20,4 +20,4 @@ public:
 	virtual unsigned int arg_size(uint8_t cmd);
 };
 static constexpr int PB_TRANS_READY = 1;
-static constexpr int PB_TRANS_READ_MODE = 2;
+static constexpr int PB_TRANS_ENABLE = 2;

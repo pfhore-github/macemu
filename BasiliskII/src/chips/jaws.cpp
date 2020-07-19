@@ -31,7 +31,6 @@ class JawsVia2 : public VIA2 {
 	friend uint8_t UT_get_JawsVia2(const std::shared_ptr<IO_BASE>& via);
 	friend void UT_get_sawsVia2(const std::shared_ptr<IO_BASE>& via, uint8_t v);
 	uint8_t val = 0;
-	bool tran_mode = false;
 	bool ready;
 protected:	
 	bool readA(int n) override {
@@ -57,22 +56,23 @@ protected:
 	}
 	void writeB(int n, bool v) override {
 		switch( n ) {
-		case PB_TRANS_READ_MODE : // transport mode
+		case PB_TRANS_ENABLE : // transport mode
 			if( v ) {
-				if( ! std::exchange(tran_mode, v) ) {
-					// read
-					if( auto v2 = machine->pb_ex->pop_out() ) {
-						val = *v2;
-					}
-				} 
-				ready = true;
-			} else {
-				tran_mode = v;
-				ready = false;
 				// write
 				if( machine->pb_ex->c_in ) {
 					machine->pb_ex->cmd( *machine->pb_ex->c_in ) ;
 					machine->pb_ex->c_in = {};
+					ready = true;
+				} else {
+					ready = false;
+				}
+			} else { 
+				// read
+				if( auto v2 = machine->pb_ex->pop_out() ) {
+					val = *v2;
+					ready = true;
+				} else {
+					ready = false;
 				}
 			}
 			break;
