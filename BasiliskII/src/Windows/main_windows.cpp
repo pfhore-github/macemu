@@ -98,11 +98,14 @@ uint8 *ScratchMem = NULL;			// Scratch memory for Mac ROM writes
 static bool lm_area_mapped = false;	// Flag: Low Memory area mmap()ped
 #endif
 
+static HHOOK keyboard_hook; // Hook for intercepting windows key events
+
 
 // Prototypes
 static int xpram_func(void *arg);
 static int tick_func(void *arg);
 static void one_tick(...);
+static LRESULT CALLBACK low_level_keyboard_hook(int nCode, WPARAM wParam, LPARAM lParam);
 
 
 /*
@@ -283,6 +286,12 @@ int main(int argc, char **argv)
 		QuitEmulator();
 #endif
 
+	// Install keyboard hook to block Windows key if enabled in prefs
+	if (PrefsFindBool("reservewindowskey"))
+	{
+		keyboard_hook = SetWindowsHookEx(WH_KEYBOARD_LL, low_level_keyboard_hook, GetModuleHandle(NULL), 0);
+	}
+
 	// Initialize SDL system
 	int sdl_flags = 0;
 #ifdef USE_SDL_VIDEO
@@ -361,10 +370,10 @@ int main(int argc, char **argv)
 	D(bug("Mac ROM starts at %p (%08x)\n", ROMBaseHost, ROMBaseMac));
 	
 	// Get rom file path from preferences
-	auto rom_path = tstr(PrefsFindString("rom"));
+	const char* rom_path = PrefsFindString("rom");
 
 	// Load Mac ROM
-	HANDLE rom_fh = CreateFile(rom_path ? rom_path.get() : ROM_FILE_NAME,
+	HANDLE rom_fh = CreateFile((rom_path != NULL) ? rom_path : ROM_FILE_NAME,
 							   GENERIC_READ,
 							   FILE_SHARE_READ, NULL,
 							   OPEN_EXISTING,
@@ -710,4 +719,44 @@ bool ChoiceAlert(const char *text, const char *pos, const char *neg)
 {
 	printf(GetString(STR_SHELL_WARNING_PREFIX), text);
 	return false;	//!!
+}
+
+/*
+ *  Low level keyboard hook allowing us to intercept events involving the Windows key
+ */
+static LRESULT CALLBACK low_level_keyboard_hook(int nCode, WPARAM wParam, LPARAM lParam)
+{
+	// Not a relevant event, immediately pass it on
+	if (nCode != HC_ACTION)
+        return CallNextHookEx(keyboard_hook, nCode, wParam, lParam);
+
+	KBDLLHOOKSTRUCT *p = (KBDLLHOOKSTRUCT *)lParam;
+	switch (wParam) {
+		case WM_KEYDOWN:
+		case WM_KEYUP:
+			// Intercept left/right windows keys when we have keyboard focus so Windows doesn't handle them
+			if (p->vkCode == VK_LWIN || p->vkCode == VK_RWIN) {
+				bool intercept_event = false;
+#ifdef USE_SDL_VIDEO
+				if (sdl_window && (SDL_GetWindowFlags(sdl_window) & SDL_WINDOW_INPUT_FOCUS)) {
+					intercept_event = true;
+				}
+#endif
+
+				// If we've determined we should intercept the event, intercept it. But pass the event onto SDL so Basilisk handles it.
+				if (intercept_event) {
+					SDL_Event e;
+					memset(&e, 0, sizeof(e));
+					e.type = (wParam == WM_KEYDOWN) ? SDL_KEYDOWN : SDL_KEYUP;
+					e.key.keysym.sym = (p->vkCode == VK_LWIN) ? SDLK_LGUI : SDLK_RGUI;
+					e.key.keysym.scancode = (p->vkCode == VK_LWIN) ? SDL_SCANCODE_LGUI : SDL_SCANCODE_RGUI;
+					SDL_PushEvent(&e);
+					return 1;
+				}
+			}
+			break;
+	}
+
+	// If we fall here, we weren't supposed to intercept it.
+	return CallNextHookEx(keyboard_hook, nCode, wParam, lParam);
 }

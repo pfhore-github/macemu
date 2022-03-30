@@ -26,6 +26,8 @@
 #include <sys/stat.h>
 #include <gtk/gtk.h>
 
+#include <shellapi.h>
+
 #include "user_strings.h"
 #include "version.h"
 #include "cdrom.h"
@@ -75,6 +77,27 @@ enum {
 /*
  *  Utility functions
  */
+
+gchar * tchar_to_g_utf8(const TCHAR * str) {
+	gchar * out;
+	if (str == NULL)
+		return NULL;
+	int len = _tcslen(str) + 1;
+	#ifdef _UNICODE
+		/* First call just to find what the output size will be */
+		int size = WideCharToMultiByte(CP_UTF8, 0, str, len, NULL, 0, NULL, NULL);
+		if (size == 0)
+			return NULL;
+		out = (gchar *) g_malloc(size);
+		if (out == NULL)
+			return NULL;
+		WideCharToMultiByte(CP_UTF8, 0, str, len, out, size, NULL, NULL);
+	#else /* _UNICODE */
+		out = g_locale_to_utf8(str, -1, NULL, NULL, NULL);
+	#endif /* _UNICODE */
+	return out;
+}
+
 
 struct opt_desc {
 	int label_id;
@@ -672,11 +695,11 @@ static GList *add_cdrom_names(void)
 {
 	GList *glist = NULL;
 
-	char rootdir[4] = "X:\\";
-	for (char letter = 'C'; letter <= 'Z'; letter++) {
+	TCHAR rootdir[4] = TEXT("X:\\");
+	for (TCHAR letter = TEXT('C'); letter <= TEXT('Z'); letter++) {
 		rootdir[0] = letter;
 		if (GetDriveType(rootdir) == DRIVE_CDROM)
-			glist = g_list_append(glist, strdup(rootdir));
+			glist = g_list_append(glist, _tcsdup(rootdir));
 	}
 
 	return glist;
@@ -887,10 +910,11 @@ static void create_jit_pane(GtkWidget *top)
 #endif
 
 	set_jit_sensitive();
-#endif
 
 #ifdef SHEEPSHAVER
 	make_checkbox(box, STR_JIT_68K_CTRL, "jit68k", GTK_SIGNAL_FUNC(tb_jit_68k));
+#endif
+
 #endif
 }
 
@@ -951,30 +975,14 @@ static int dis_width, dis_height;
 // Hide/show graphics widgets
 static void hide_show_graphics_widgets(void)
 {
-	switch (display_type) {
-		case DISPLAY_WINDOW:
-			gtk_widget_show(w_frameskip); gtk_widget_show(l_frameskip);
-			break;
-		case DISPLAY_SCREEN:
-			gtk_widget_hide(w_frameskip); gtk_widget_hide(l_frameskip);
-			break;
-	}
+
 }
 
 // "Window" video type selected
-static void mn_window(...)
-{
-	display_type = DISPLAY_WINDOW;
-	hide_show_graphics_widgets();
-}
+static void mn_window(...) {display_type = DISPLAY_WINDOW;}
 
 // "Fullscreen" video type selected
-static void mn_fullscreen(...)
-{
-	display_type = DISPLAY_SCREEN;
-	hide_show_graphics_widgets();
-	PrefsReplaceInt32("frameskip", 1);
-}
+static void mn_fullscreen(...) {display_type = DISPLAY_SCREEN;}
 
 // "5 Hz".."60Hz" selected
 static void mn_5hz(...) {PrefsReplaceInt32("frameskip", 12);}
@@ -1006,6 +1014,33 @@ static void tb_nosound(GtkWidget *widget)
 	set_graphics_sensitive();
 }
 
+// SDL Graphics
+#ifdef USE_SDL_VIDEO
+// SDL Renderer Render Driver
+enum {
+	RENDER_SOFTWARE = 0,
+	RENDER_OPENGL = 1,
+	RENDER_DIRECT3D = 2
+};
+
+GtkWidget *w_render_driver;
+GtkWidget *l_render_driver;
+static int render_driver;
+static int sdl_vsync;
+
+// Render Driver selected
+static void mn_sdl_software(...) {render_driver = RENDER_SOFTWARE;}
+static void mn_sdl_opengl(...) {render_driver = RENDER_OPENGL;}
+static void mn_sdl_direct3d(...) {render_driver = RENDER_DIRECT3D;}
+
+// SDL Renderer Vertical Sync
+static void tb_sdl_vsync(GtkWidget *widget)
+{
+	PrefsReplaceBool("sdl_vsync", GTK_TOGGLE_BUTTON(widget)->active);
+}
+#endif
+
+
 // Read graphics preferences
 static void parse_graphics_prefs(void)
 {
@@ -1025,6 +1060,40 @@ static void parse_graphics_prefs(void)
 		else if (sscanf(str, "dga/%d/%d", &dis_width, &dis_height) == 2)
 			display_type = DISPLAY_SCREEN;
 	}
+
+	#ifdef USE_SDL_VIDEO
+	render_driver = RENDER_SOFTWARE;
+
+	const char *drv = PrefsFindString("sdlrender");
+	if (drv && drv[0]) {
+		if (strcmp(drv, "software") == 0)
+			render_driver = RENDER_SOFTWARE;
+		else if (strcmp(drv, "opengl") == 0)
+			render_driver = RENDER_OPENGL;
+		else if (strcmp(drv, "direct3d") == 0)
+			render_driver = RENDER_DIRECT3D;
+	}
+	#endif
+}
+
+static void read_SDL_graphics_settings(void)
+{
+	const char *rpref;
+	switch (render_driver) {
+		case RENDER_SOFTWARE:
+			rpref = "software";
+			break;
+		case RENDER_OPENGL:
+			rpref = "opengl";
+			break;
+		case RENDER_DIRECT3D:
+			rpref = "direct3d";
+			break;
+		default:
+			PrefsRemoveItem("sdlrender");
+			return;
+	}
+	PrefsReplaceString("sdlrender", rpref);
 }
 
 // Read settings from widgets and set preferences
@@ -1051,6 +1120,10 @@ static void read_graphics_settings(void)
 			return;
 	}
 	PrefsReplaceString("screen", pref);
+
+	#ifdef USE_SDL_VIDEO
+	read_SDL_graphics_settings();
+	#endif
 }
 
 // Create "Graphics/Sound" pane
@@ -1160,6 +1233,39 @@ static void create_graphics_pane(GtkWidget *top)
 	make_checkbox(box, STR_GFXACCEL_CTRL, "gfxaccel", GTK_SIGNAL_FUNC(tb_gfxaccel));
 #endif
 
+#ifdef USE_SDL_VIDEO
+	make_separator(box);
+
+	table = make_table(box, 2, 5);
+
+	l_render_driver = gtk_label_new(GetString(STR_GRAPHICS_SDL_RENDER_DRIVER_CTRL));
+	gtk_widget_show(l_render_driver);
+	gtk_table_attach(GTK_TABLE(table), l_render_driver, 0, 1, 0, 1, (GtkAttachOptions)0, (GtkAttachOptions)0, 4, 4);
+
+	w_render_driver = gtk_option_menu_new();
+	gtk_widget_show(w_render_driver);
+	menu = gtk_menu_new();
+
+	add_menu_item(menu, STR_SOFTWARE_LAB, GTK_SIGNAL_FUNC(mn_sdl_software));
+	add_menu_item(menu, STR_OPENGL_LAB, GTK_SIGNAL_FUNC(mn_sdl_opengl));
+	add_menu_item(menu, STR_DIRECT3D_LAB, GTK_SIGNAL_FUNC(mn_sdl_direct3d));
+	switch (render_driver) {
+		case RENDER_SOFTWARE:
+			gtk_menu_set_active(GTK_MENU(menu), 0);
+			break;
+		case RENDER_OPENGL:
+			gtk_menu_set_active(GTK_MENU(menu), 1);
+			break;
+		case RENDER_DIRECT3D:
+			gtk_menu_set_active(GTK_MENU(menu), 2);
+			break;
+	}
+	gtk_option_menu_set_menu(GTK_OPTION_MENU(w_render_driver), menu);
+	gtk_table_attach(GTK_TABLE(table), w_render_driver, 1, 2, 0, 1, (GtkAttachOptions)GTK_FILL, (GtkAttachOptions)0, 4, 4);
+
+	opt = make_checkbox(box, STR_GRAPHICS_SDL_VSYNC_CTRL, "sdl_vsync", GTK_SIGNAL_FUNC(tb_sdl_vsync));
+#endif
+
 	make_separator(box);
 	make_checkbox(box, STR_NOSOUND_CTRL, "nosound", GTK_SIGNAL_FUNC(tb_nosound));
 
@@ -1190,6 +1296,12 @@ static void tb_keycodes(GtkWidget *widget)
 {
 	PrefsReplaceBool("keycodes", GTK_TOGGLE_BUTTON(widget)->active);
 	set_input_sensitive();
+}
+
+// "Reserve Windows Key" button toggled
+static void tb_reservewindowskey(GtkWidget *widget)
+{
+	PrefsReplaceBool("reservewindowskey", GTK_TOGGLE_BUTTON(widget)->active);
 }
 
 // "Mouse Wheel Mode" selected
@@ -1238,6 +1350,8 @@ static void create_input_pane(GtkWidget *top)
 	button = make_browse_button(w_keycode_file);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 	g_object_set_data(G_OBJECT(w_keycode_file), "chooser_button", button);
+
+	make_checkbox(box, STR_RESERVE_WINDOWS_KEY_CTRL, "reservewindowskey", GTK_SIGNAL_FUNC(tb_reservewindowskey));
 
 	make_separator(box);
 
@@ -1466,24 +1580,25 @@ static int create_ether_menu(GtkWidget *menu)
 	n_items++;
 
 	// Basilisk II Ethernet Adapter
-	PacketOpenAdapter("", 0);
+	PacketOpenAdapter(TEXT(""), 0);
 	{
 		ULONG sz;
-		char names[1024];
+		TCHAR names[1024];
 		sz = sizeof(names);
 		if (PacketGetAdapterNames(NULL, names, &sz) == ERROR_SUCCESS) {
-			char *p = names;
+			TCHAR *p = names;
 			while (*p) {
-				const char DEVICE_HEADER[] = "\\Device\\B2ether_";
-				if (strnicmp(p, DEVICE_HEADER, sizeof(DEVICE_HEADER) - 1) == 0) {
+				const TCHAR DEVICE_HEADER[] = TEXT("\\Device\\B2ether_");
+				if (_tcsnicmp(p, DEVICE_HEADER, sizeof(DEVICE_HEADER) - 1) == 0) {
 					LPADAPTER fd = PacketOpenAdapter(p + sizeof(DEVICE_HEADER) - 1, 0);
 					if (fd) {
-						char guid[256];
-						sprintf(guid, "%s", p + sizeof(DEVICE_HEADER) - 1);
-						const char *name = ether_guid_to_name(guid);
-						if (name && (name = g_locale_to_utf8(name, -1, NULL, NULL, NULL))) {
-							add_menu_item(menu, name, (GtkSignalFunc)mn_ether_b2ether, strdup(guid));
-							if (etherguid && strcmp(guid, etherguid) == 0 &&
+						TCHAR guid[256];
+						_stprintf(guid, TEXT("%s"), p + sizeof(DEVICE_HEADER) - 1);
+						const gchar *name = tchar_to_g_utf8(ether_guid_to_name(guid));
+						if (name) {
+							std::string str_guid = to_string(guid);
+							add_menu_item(menu, name, (GtkSignalFunc)mn_ether_b2ether, strdup(str_guid.c_str()));
+							if (etherguid && to_tstring(guid).compare(to_tstring(etherguid)) == 0 &&
 								ether && strcmp(ether, "b2ether") == 0)
 								active = n_items;
 							n_items++;
@@ -1491,26 +1606,27 @@ static int create_ether_menu(GtkWidget *menu)
 						PacketCloseAdapter(fd);
 					}
 				}
-				p += strlen(p) + 1;
+				p += _tcslen(p) + 1;
 			}
 		}
 	}
 	PacketCloseAdapter(NULL);
 
 	// TAP-Win32
-	const char *tap_devices;
+	const TCHAR *tap_devices;
 	if ((tap_devices = ether_tap_devices()) != NULL) {
-		const char *guid = tap_devices;
+		const TCHAR *guid = tap_devices;
 		while (*guid) {
-			const char *name = ether_guid_to_name(guid);
-			if (name && (name = g_locale_to_utf8(name, -1, NULL, NULL, NULL))) {
-				add_menu_item(menu, name, (GtkSignalFunc)mn_ether_tap, strdup(guid));
-				if (etherguid && strcmp(guid, etherguid) == 0 &&
+			const gchar *name = tchar_to_g_utf8(ether_guid_to_name(guid));
+			if (name) {
+				std::string str_guid = to_string(guid);
+				add_menu_item(menu, name, (GtkSignalFunc)mn_ether_tap, strdup(str_guid.c_str()));
+				if (etherguid && to_tstring(guid).compare(to_tstring(etherguid)) == 0 &&
 					ether && strcmp(ether, "tap") == 0)
 					active = n_items;
 				n_items++;
 			}
-			guid += strlen(guid) + 1;
+			guid += _tcslen(guid) + 1;
 		}
 		free((char *)tap_devices);
 	}
@@ -1734,21 +1850,66 @@ void SysAddSerialPrefs(void)
  *  Display alerts
  */
 
+static HWND GetMainWindowHandle() {
+	return NULL;
+}
+
 static void display_alert(int title_id, const char *text, int flags)
 {
-	MessageBox(NULL, text, GetString(title_id), MB_OK | flags);
+	HWND hMainWnd = GetMainWindowHandle();
+	MessageBoxA(hMainWnd, text, GetString(title_id), MB_OK | flags);
 }
+#ifdef _UNICODE
+static void display_alert(int title_id, const wchar_t *text, int flags)
+{
+	HWND hMainWnd = GetMainWindowHandle();
+	MessageBoxW(hMainWnd, text, GetStringW(title_id).get(), MB_OK | flags);
+}
+#endif
+
+
+/*
+ *  Display error alert
+ */
 
 void ErrorAlert(const char *text)
 {
+	if (PrefsFindBool("nogui"))
+		return;
+
 	display_alert(STR_ERROR_ALERT_TITLE, text, MB_ICONSTOP);
 }
+#ifdef _UNICODE
+void ErrorAlert(const wchar_t *text)
+{
+	if (PrefsFindBool("nogui"))
+		return;
+
+	display_alert(STR_ERROR_ALERT_TITLE, text, MB_ICONSTOP);
+}
+#endif
+
+
+/*
+ *  Display warning alert
+ */
 
 void WarningAlert(const char *text)
 {
+	if (PrefsFindBool("nogui"))
+		return;
+
 	display_alert(STR_WARNING_ALERT_TITLE, text, MB_ICONSTOP);
 }
+#ifdef _UNICODE
+void WarningAlert(const wchar_t *text)
+{
+	if (PrefsFindBool("nogui"))
+		return;
 
+	display_alert(STR_WARNING_ALERT_TITLE, text, MB_ICONSTOP);
+}
+#endif
 
 /*
  *  Start standalone GUI
@@ -1774,23 +1935,23 @@ int main(int argc, char *argv[])
 
 	// Transfer control to the executable
 	if (start) {
-		char path[_MAX_PATH];
+		TCHAR path[_MAX_PATH];
 		bool ok = GetModuleFileName(NULL, path, sizeof(path)) != 0;
 		if (ok) {
-			char b2_path[_MAX_PATH];
-			char *p = strrchr(path, '\\');
-			*++p = '\0';
+			TCHAR b2_path[_MAX_PATH];
+			TCHAR *p = _tcsrchr(path, TEXT('\\'));
+			*++p = TEXT('\0');
 			SetCurrentDirectory(path);
-			strcpy(b2_path, path);
-			strcat(b2_path, PROGRAM_NAME);
-			strcat(b2_path, ".exe");
-			HINSTANCE h = ShellExecute(GetDesktopWindow(), "open",
-									   b2_path, "", path, SW_SHOWNORMAL);
+			_tcscpy(b2_path, path);
+			_tcscat(b2_path, TEXT(PROGRAM_NAME));
+			_tcscat(b2_path, TEXT(".exe"));
+			HINSTANCE h = ShellExecute(GetDesktopWindow(), TEXT("open"),
+									   b2_path, TEXT(""), path, SW_SHOWNORMAL);
 			if ((int)h <= 32)
 				ok = false;
 		}
 		if (!ok) {
-			ErrorAlert("Coult not start " PROGRAM_NAME " executable");
+			ErrorAlert(TEXT("Could not start ") TEXT(PROGRAM_NAME) TEXT(" executable"));
 			return 1;
 		}
 	}

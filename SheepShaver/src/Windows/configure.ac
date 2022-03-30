@@ -12,9 +12,12 @@ AC_CANONICAL_HOST
 AC_CANONICAL_TARGET
 
 dnl Options.
-AC_ARG_ENABLE(jit,          [  --enable-jit            enable JIT compiler [default=yes]], [WANT_JIT=$enableval], [WANT_JIT=no])
+AC_ARG_ENABLE(jit,          [  --enable-jit            enable JIT compiler [default=yes]], [WANT_JIT=$enableval], [WANT_JIT=yes])
 AC_ARG_WITH(gtk,          [  --with-gtk              use GTK user interface [default=yes]], [WANT_GTK=$withval], [WANT_GTK=yes])
 AC_ARG_ENABLE(vosf,         [  --enable-vosf           enable video on SEGV signals [default=yes]], [WANT_VOSF=$enableval], [WANT_VOSF=yes])
+
+AC_ARG_WITH(bincue,   
+  AS_HELP_STRING([--with-bincue], [Allow cdrom image files in bin/cue mode]))
 
 dnl Checks for programs.
 AC_PROG_CC
@@ -186,10 +189,33 @@ if [[ "x$HAVE_GCC30" = "xyes" ]]; then
   AC_CACHE_CHECK([whether the compiler supports -fno-strict-aliasing],
     ac_cv_gcc_no_strict_aliasing, [
     AC_TRY_COMPILE([],[],
-      [ac_cv_gcc_no_strict_aliasing=yes; AC_SUBST(SLIRP_CFLAGS, "-fno-strict-aliasing")],
+      [ac_cv_gcc_no_strict_aliasing=yes],
       [ac_cv_gcc_no_strict_aliasing=no])
   ])
   CFLAGS="$SAVED_CFLAGS"
+  if test "x$ac_cv_gcc_no_strict_aliasing" = xyes; then
+       AC_SUBST(SLIRP_CFLAGS, "-fno-strict-aliasing")
+  fi
+fi
+
+case $host_os in
+cygwin)
+	CFLAGS="$CFLAGS -mwin32"
+	CXXFLAGS="$CXXFLAGS -mwin32"
+	;;
+esac
+
+dnl BINCUE
+AS_IF([test  "x$with_bincue" = "xyes" ], [have_bincue=yes], [have_bincue=no])
+AS_IF([test  "x$have_bincue" = "xyes" ], [
+   DEFINES="$DEFINES -DBINCUE"
+   CPPFLAGS="$CPPFLAGS -DBINCUE"
+   AC_SUBST(USE_BINCUE, yes)
+], [AC_SUBST(USE_BINCUE, no)])
+
+dnl BINCUE overrides
+if [[ "x$have_bincue" = "xyes" ]]; then
+  EXTRASRCS="$EXTRASRCS bincue.cpp"
 fi
 
 dnl CPU emulator sources
@@ -205,6 +231,7 @@ CPPFLAGS="$CPPFLAGS -I../kpx_cpu/include -I../kpx_cpu/src"
 
 dnl Enable JIT compiler, if possible
 USE_DYNGEN="no"
+USE_PREGENERATED_DYNGEN="no"
 if [[ "x$WANT_JIT" = "xyes" ]]; then
   case $host_cpu in
   i?86)
@@ -216,6 +243,16 @@ if [[ "x$WANT_JIT" = "xyes" ]]; then
     fi
     ;;
   esac
+
+  case $host_os in
+  cygwin)
+	USE_PREGENERATED_DYNGEN="no"
+	;;
+  *)
+	USE_PREGENERATED_DYNGEN="yes"
+	;;
+  esac
+
   USE_DYNGEN="yes"
   DYNGEN_OP_FLAGS="$DYNGEN_OP_FLAGS -finline-limit=10000 -g0"
   if [[ "x$HAVE_GCC30" = "xyes" ]]; then
@@ -238,7 +275,8 @@ dnl Use the dummy prefs file.
 CPUSRCS="$CPUSRCS ../dummy/prefs_dummy.cpp"
 
 dnl We really want SDL for now
-AC_CHECK_TOOL(sdl_config, sdl2-config, [AC_MSG_ERROR([Sorry, you currently need SDL for this port])])
+AC_CHECK_TOOL(sdl_config, sdl2-config, no)
+AS_IF([test "x$sdl_config" = xno], [AC_MSG_ERROR([Sorry, you currently need SDL for this port])])
 SDL_CFLAGS=`$sdl_config --cflags`
 AC_SUBST(SDL_CFLAGS)
 SDL_LIBS=`$sdl_config --static-libs`
@@ -256,9 +294,11 @@ fi
 dnl Generate Makefile.
 AC_SUBST(PERL)
 AC_SUBST(USE_DYNGEN)
+AC_SUBST(USE_PREGENERATED_DYNGEN)
 AC_SUBST(DYNGENSRCS)
 AC_SUBST(DYNGEN_OP_FLAGS)
 AC_SUBST(CPUSRCS)
+AC_SUBST(EXTRASRCS)
 AC_OUTPUT([Makefile])
 
 dnl Print summary.
@@ -267,6 +307,7 @@ echo SheepShaver configuration summary:
 echo
 echo Enable JIT compiler .............. : $WANT_JIT
 echo GTK user interface ............... : $WANT_GTK
+echo BINCUE support ......................... : $have_bincue
 echo Enable VOSF ...................... : $WANT_VOSF
 echo
 echo "Configuration done. Now type \"make\"."

@@ -133,6 +133,9 @@
 
 #ifdef ENABLE_GTK
 #include <gtk/gtk.h>
+#if !defined(GDK_WINDOWING_QUARTZ) && !defined(GDK_WINDOWING_WAYLAND)
+#include <X11/Xlib.h>
+#endif
 #endif
 
 #ifdef ENABLE_XF86_DGA
@@ -167,7 +170,7 @@ const char ROM_FILE_NAME2[] = "Mac OS ROM";
 // FIXME: needs to be >= 0x04000000
 const uintptr RAM_BASE = 0x10000000;		// Base address of RAM
 #endif
-const uintptr ROM_BASE = 0x40800000;		// Base address of ROM
+const uintptr ROM_BASE = 0x50000000;		// Base address of ROM
 #if REAL_ADDRESSING
 const uint32 ROM_ALIGNMENT = 0x100000;		// ROM must be aligned to a 1MB boundary
 #endif
@@ -728,6 +731,9 @@ static bool init_sdl()
 
 int main(int argc, char **argv)
 {
+#if defined(ENABLE_GTK) && !defined(GDK_WINDOWING_QUARTZ) && !defined(GDK_WINDOWING_WAYLAND)
+	XInitThreads();
+#endif
 	char str[256];
 	bool memory_mapped_from_zero, ram_rom_areas_contiguous;
 	const char *vmdir = NULL;
@@ -788,6 +794,13 @@ int main(int argc, char **argv)
 			argv[i++] = NULL;
 			if (i < argc) {
 				gui_connection_path = argv[i];
+				argv[i] = NULL;
+			}
+		} else if (strcmp(argv[i], "--config") == 0) {
+			argv[i++] = NULL;
+			if (i < argc) {
+				extern std::string UserPrefsPath;
+				UserPrefsPath = argv[i];
 				argv[i] = NULL;
 			}
 		} else if (valid_vmdir(argv[i])) {
@@ -2204,6 +2217,7 @@ rti:;
 }
 #endif
 
+extern int vm_init_reserved(void *hostAddress);
 
 /*
  *  Helpers to share 32-bit addressable data with MacOS
@@ -2215,7 +2229,15 @@ bool SheepMem::Init(void)
 	page_size = getpagesize();
 
 	// Allocate SheepShaver globals
+#ifdef NATMEM_OFFSET
+	if (vm_mac_acquire_fixed(ROM_BASE + ROM_AREA_SIZE + SIG_STACK_SIZE, size) < 0)
+		return false;
+	uint8 *adr = Mac2HostAddr(ROM_BASE + ROM_AREA_SIZE + SIG_STACK_SIZE);
+	if (vm_init_reserved(adr + size) < 0)
+		return false;
+#else
 	uint8 *adr = vm_mac_acquire(size);
+#endif
 	if (adr == VM_MAP_FAILED)
 		return false;
 	proc = base = Host2MacAddr(adr);

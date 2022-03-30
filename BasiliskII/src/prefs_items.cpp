@@ -68,15 +68,23 @@ prefs_desc common_prefs_items[] = {
 	{"jitinline", TYPE_BOOLEAN, false,   "enable translation through constant jumps"},
 	{"jitblacklist", TYPE_STRING, false, "blacklist opcodes from translation"},
 	{"keyboardtype", TYPE_INT32, false, "hardware keyboard type"},
-	{"keycodes",TYPE_BOOLEAN,false,"use raw keycode"},
-	{"keycodefile",TYPE_STRING,"Keycode file"},
-	{"mousewheelmode",TYPE_BOOLEAN,"Use WheelMode"},
-	{"mousewheellines",TYPE_INT32,"wheel line nb"},
+	{"keycodes", TYPE_BOOLEAN, false, "use keycodes rather than keysyms to decode keyboard"},
+	{"keycodefile", TYPE_STRING, false, "path of keycode translation file"},
+	{"mousewheelmode", TYPE_INT32, false, "mouse wheel support (0=page up/down, 1=cursor up/down)"},
+	{"mousewheellines", TYPE_INT32, false, "number of lines to scroll in mouse wheel mode 1"},
 	{"hotkey",TYPE_INT32,false,"hotkey modifier"},
 	{"scale_nearest",TYPE_BOOLEAN,false,"nearest neighbor scaling"},
 	{"scale_integer",TYPE_BOOLEAN,false,"integer scaling"},
 	{"yearofs", TYPE_INT32, 0,			"year offset"},
 	{"dayofs", TYPE_INT32, 0,			"day offset"},
+	{"mag_rate", TYPE_INT32, 0,			"rate of magnification"},
+	{"gammaramp", TYPE_STRING, false,	"gamma ramp (on, off or fullscreen)"},
+	{"swap_opt_cmd", TYPE_BOOLEAN, false,	"swap option and command key"},
+	{"ignoresegv", TYPE_BOOLEAN, false,    "ignore illegal memory accesses"},
+	{"host_domain", TYPE_STRING, true,	"handle DNS requests for this domain on the host (slirp only)"},
+	{"title", TYPE_STRING, false,	"window title"},
+	{"sound_buffer", TYPE_INT32, false,	"sound buffer length"},
+	{"name_encoding", TYPE_INT32, false,	"file name encoding"},
 	{NULL, TYPE_END, false, NULL} // End of list
 };
 
@@ -105,7 +113,7 @@ void AddPrefsDefaults(void)
 	
 #if USE_JIT
 	// JIT compiler specific options
-	PrefsAddBool("jit", true);
+//	PrefsAddBool("jit", true);
 	PrefsAddBool("jitfpu", true);
 	PrefsAddBool("jitdebug", false);
 	PrefsAddInt32("jitcachesize", 8192);
@@ -116,4 +124,11 @@ void AddPrefsDefaults(void)
 #endif
 
     PrefsAddInt32("keyboardtype", 5);
+
+#ifdef __APPLE__
+	PrefsAddBool("swap_opt_cmd", false);
+#else
+	PrefsAddBool("swap_opt_cmd", true);
+#endif
+	PrefsAddBool("ignoresegv", true);
 }

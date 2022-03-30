@@ -32,21 +32,6 @@ typedef unsigned long ioctlsockopt_t;
 # include <winsock2.h>
 # include <WS2tcpip.h>
 
-#ifdef __MINGW32__
-char * WSAAPI inet_ntop(
-  INT     Family,
-  PVOID  pAddr,
-  PTSTR  pStringBuf,
-  size_t StringBufSize
-);
-
-INT WSAAPI inet_pton(
-  INT     Family,
-  const char * pszAddrString,
-  PVOID  pAddrBuf
-);
-#endif
-
 # include <sys/timeb.h>
 # include <iphlpapi.h>
 
@@ -384,6 +369,9 @@ u_int8_t tcp_tos _P((struct socket *));
 int tcp_emu _P((struct socket *, struct mbuf *));
 int tcp_ctl _P((struct socket *));
 struct tcpcb *tcp_drop(struct tcpcb *tp, int err);
+
+void load_host_domains();
+void unload_host_domains();
 
 #ifdef USE_PPP
 #define MIN_MRU MINMRU

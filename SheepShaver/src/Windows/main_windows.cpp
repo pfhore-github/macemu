@@ -105,6 +105,8 @@ uintptr SheepMem::base = 0x60000000;		// Address of SheepShaver data
 uintptr SheepMem::proc;						// Bottom address of SheepShave procedures
 uintptr SheepMem::data;						// Top of SheepShaver data (stack like storage)
 
+static HHOOK keyboard_hook;					// Hook for intercepting windows key events
+
 
 // Prototypes
 static bool kernel_data_init(void);
@@ -118,6 +120,7 @@ extern void emul_ppc(uint32 start);
 extern void init_emul_ppc(void);
 extern void exit_emul_ppc(void);
 sigsegv_return_t sigsegv_handler(sigsegv_info_t *sip);
+static LRESULT CALLBACK low_level_keyboard_hook(int nCode, WPARAM wParam, LPARAM lParam);
 
 
 /*
@@ -175,18 +178,25 @@ int main(int argc, char **argv)
 	printf(GetString(STR_ABOUT_TEXT1), VERSION_MAJOR, VERSION_MINOR);
 	printf(" %s\n", GetString(STR_ABOUT_TEXT2));
 
-	// Read preferences
-	PrefsInit(NULL, argc, argv);
-
 	// Parse command line arguments
 	for (int i=1; i<argc; i++) {
 		if (strcmp(argv[i], "--help") == 0) {
 			usage(argv[0]);
+		} else if (strcmp(argv[i], "--config") == 0) {
+			argv[i++] = NULL;
+			if (i < argc) {
+				extern std::string UserPrefsPath; // from prefs_windows.cpp
+				UserPrefsPath = to_tstring(argv[i]);
+				argv[i] = NULL;
+			}
 		} else if (argv[i][0] == '-') {
 			fprintf(stderr, "Unrecognized option '%s'\n", argv[i]);
 			usage(argv[0]);
 		}
 	}
+
+	// Read preferences
+	PrefsInit(NULL, argc, argv);
 
 	// Check we are using a Windows NT kernel >= 4.0
 	OSVERSIONINFO osvi;
@@ -209,6 +219,12 @@ int main(int argc, char **argv)
 
 //	// Load win32 libraries
 //	KernelInit();
+
+	// Install keyboard hook to block Windows key if enabled in prefs
+	if (PrefsFindBool("reservewindowskey"))
+	{
+		keyboard_hook = SetWindowsHookEx(WH_KEYBOARD_LL, low_level_keyboard_hook, GetModuleHandle(NULL), 0);
+	}
 
 	// Initialize SDL system
 	int sdl_flags = 0;
@@ -838,4 +854,44 @@ bool ChoiceAlert(const char *text, const char *pos, const char *neg)
 {
 	printf(GetString(STR_SHELL_WARNING_PREFIX), text);
 	return false;	//!!
+}
+
+/*
+ *  Low level keyboard hook allowing us to intercept events involving the Windows key
+ */
+static LRESULT CALLBACK low_level_keyboard_hook(int nCode, WPARAM wParam, LPARAM lParam)
+{
+	// Not a relevant event, immediately pass it on
+	if (nCode != HC_ACTION)
+        return CallNextHookEx(keyboard_hook, nCode, wParam, lParam);
+
+	KBDLLHOOKSTRUCT *p = (KBDLLHOOKSTRUCT *)lParam;
+	switch (wParam) {
+		case WM_KEYDOWN:
+		case WM_KEYUP:
+			// Intercept left/right windows keys when we have keyboard focus so Windows doesn't handle them
+			if (p->vkCode == VK_LWIN || p->vkCode == VK_RWIN) {
+				bool intercept_event = false;
+#ifdef USE_SDL_VIDEO
+				if (sdl_window && (SDL_GetWindowFlags(sdl_window) & SDL_WINDOW_INPUT_FOCUS)) {
+					intercept_event = true;
+				}
+#endif
+
+				// If we've determined we should intercept the event, intercept it. But pass the event onto SDL so SheepShaver handles it.
+				if (intercept_event) {
+					SDL_Event e;
+					memset(&e, 0, sizeof(e));
+					e.type = (wParam == WM_KEYDOWN) ? SDL_KEYDOWN : SDL_KEYUP;
+					e.key.keysym.sym = (p->vkCode == VK_LWIN) ? SDLK_LGUI : SDLK_RGUI;
+					e.key.keysym.scancode = (p->vkCode == VK_LWIN) ? SDL_SCANCODE_LGUI : SDL_SCANCODE_RGUI;
+					SDL_PushEvent(&e);
+					return 1;
+				}
+			}
+			break;
+	}
+
+	// If we fall here, we weren't supposed to intercept it.
+	return CallNextHookEx(keyboard_hook, nCode, wParam, lParam);
 }

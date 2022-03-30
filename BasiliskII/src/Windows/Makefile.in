@@ -31,6 +31,8 @@ SLIRP_SRCS = \
     ../slirp/ip_input.c  ../slirp/socket.c     ../slirp/udp.c
 SLIRP_OBJS = $(SLIRP_SRCS:../slirp/%.c=$(OBJ_DIR)/slirp-%.o)
 
+USE_BINCUE = @USE_BINCUE@
+
 LN_S = @LN_S@
 WINDRES = @WINDRES@
 CC = @CC@
@@ -42,6 +44,7 @@ DEFS = @DEFS@ @DEFINES@
 LDFLAGS = @LDFLAGS@ -Wl,-Bstatic
 LIBS = @LIBS@ -lws2_32 -lwsock32 -liphlpapi
 CPUSRCS = @CPUSRCS@
+EXTRASRCS = @EXTRASRCS@
 
 HOST_CC = gcc
 HOST_CXX = g++
@@ -68,7 +71,7 @@ SRCS = ../main.cpp main_windows.cpp ../prefs.cpp ../prefs_items.cpp prefs_window
 	../extfs.cpp extfs_windows.cpp ../user_strings.cpp user_strings_windows.cpp \
     vm_alloc.cpp sigsegv.cpp posix_emu.cpp util_windows.cpp \
     ../dummy/prefs_editor_dummy.cpp BasiliskII.rc \
-    $(CDENABLESRCS) $(ROUTERSRCS) $(CPUSRCS) $(SLIRP_OBJS)
+    $(CDENABLESRCS) $(ROUTERSRCS) $(CPUSRCS) $(EXTRASRCS) $(SLIRP_OBJS)
 
 UI_SRCS = ../prefs.cpp prefs_windows.cpp prefs_editor_gtk.cpp xpram_windows.cpp \
 	../prefs_items.cpp ../user_strings.cpp user_strings_windows.cpp util_windows.cpp \
@@ -118,7 +121,7 @@ $(APP): $(XPLATSRCS) $(OBJ_DIR) $(OBJS)
 	$(CXX) -o $@ $(LDFLAGS) $(OBJS) $(LIBS) $(SDL_LIBS)
 
 $(UI_APP): $(XPLATSRCS) $(OBJ_DIR) $(UI_OBJS)
-	$(CXX) -o $@ $(LDFLAGS) $(UI_OBJS) $(LIBS) $(GTK_LIBS) -mwindows -mno-cygwin
+	$(CXX) -o $@ $(LDFLAGS) $(UI_OBJS) $(LIBS) -Wl,-Bdynamic $(GTK_LIBS) -Wl,-Bstatic -mwindows -static-libgcc
 
 mostlyclean:
 	rm -f $(APP) $(UI_APP) $(OBJ_DIR)/* core* *.core *~ *.bak
@@ -149,7 +152,7 @@ $(OBJ_DIR)/%.o : %.cpp
 $(OBJ_DIR)/%.o : %.s
 	$(CC) $(CPPFLAGS) $(DEFS) $(CFLAGS) -c $< -o $@
 $(OBJ_DIR)/prefs_editor_gtk.o: prefs_editor_gtk.cpp
-	$(CXX) -O2 -mno-cygwin -mms-bitfields $(CPPFLAGS) $(DEFS) $(GTK_CFLAGS) -c $< -o $@
+	$(CXX) -O2 -mms-bitfields $(CPPFLAGS) $(DEFS) $(GTK_CFLAGS) -c $< -o $@
 
 # Windows resources
 $(OBJ_DIR)/%.o: %.rc

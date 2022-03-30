@@ -87,7 +87,7 @@ static int get_dns_addr(struct in_addr *pdns_addr)
 static int get_dns_addr(struct in_addr *pdns_addr)
 {
     char buff[512];
-    char buff2[256];
+    char buff2[257];
     FILE *f;
     int found = 0;
     struct in_addr tmp_addr;
@@ -127,12 +127,15 @@ static int get_dns_addr(struct in_addr *pdns_addr)
 void slirp_cleanup(void)
 {
     WSACleanup();
+	unload_host_domains();
 }
 #endif
 
 int slirp_init(void)
 {
     //    debug_init("/tmp/slirp.log", DEBUG_DEFAULT);
+
+	load_host_domains();
     
 #ifdef _WIN32
     {
@@ -427,7 +430,7 @@ void slirp_select_poll(fd_set *readfds, fd_set *writefds, fd_set *xfds)
 			    /* Connected */
 			    so->so_state &= ~SS_ISFCONNECTING;
 			    
-			    ret = send(so->s, &ret, 0, 0);
+			    ret = send(so->s, NULL, 0, 0);
 			    if (ret < 0) {
 			      /* XXXXX Must fix, zero bytes is a NOP */
 			      if (errno == EAGAIN || errno == EWOULDBLOCK ||

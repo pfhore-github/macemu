@@ -1018,6 +1018,15 @@ static bool ix86_skip_instruction(SIGSEGV_REGISTER_TYPE * regs)
 		transfer_size = SIZE_WORD;
 	}
 
+#if defined(__x86_64__) || defined(_M_X64)
+	// Address size override
+	if (*eip == 0x67) {
+		// 32-bit address
+		eip++;
+		len++;
+	}
+#endif
+
 	// REX prefix
 #if defined(__x86_64__) || defined(_M_X64)
 	struct rex_t {
@@ -2499,6 +2508,14 @@ static bool arm_skip_instruction(unsigned long * regs)
 }
 #endif
 
+#ifdef _STRUCT_ARM_THREAD_STATE64
+static bool aarch64_skip_instruction(unsigned long *regs) {
+	_STRUCT_ARM_THREAD_STATE64 *ts = (_STRUCT_ARM_THREAD_STATE64 *)regs;
+	if (!ts->__pc) return false;
+	ts->__pc += 4;
+	return true;
+}
+#endif
 
 // Fallbacks
 #ifndef SIGSEGV_FAULT_ADDRESS_FAST
@@ -2608,8 +2625,14 @@ sigsegv_address_t sigsegv_get_fault_instruction_address(sigsegv_info_t *SIP)
 
 #if defined(__APPLE__) && defined(__x86_64__)
 
-extern uint8_t gZeroPage[0x3000], gKernelData[0x2000];
-extern uint32_t RAMBase, ROMBase, ROMEnd;
+#ifdef CONFIGURE_TEST_SIGSEGV_RECOVERY
+#define EXTERN
+#else
+#define EXTERN extern
+#endif
+
+EXTERN uint8_t gZeroPage[0x3000], gKernelData[0x2000];
+EXTERN uint32_t RAMBase, ROMBase, ROMEnd;
 
 template<typename T> T safeLoad(uint32_t a) {
 	if (a < 0x3000) return *(T *)&gZeroPage[a];
