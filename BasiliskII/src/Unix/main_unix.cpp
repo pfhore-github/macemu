@@ -43,6 +43,10 @@
 # include <sys/mman.h>
 #endif
 
+#if __MACOSX__
+# include "utils_macosx.h"
+#endif
+
 #if !EMULATED_68K && defined(__NetBSD__)
 # include <m68k/sync_icache.h> 
 # include <m68k/frame.h>
@@ -247,11 +251,12 @@ void *vm_acquire_mac(size_t size)
 	return vm_acquire(size, VM_MAP_DEFAULT | VM_MAP_32BIT);
 }
 
+#if REAL_ADDRESSING
 static int vm_acquire_mac_fixed(void *addr, size_t size)
 {
 	return vm_acquire_fixed(addr, size, VM_MAP_DEFAULT | VM_MAP_32BIT);
 }
-
+#endif
 
 /*
  *  SIGSEGV handler
@@ -373,6 +378,16 @@ void cpu_do_check_ticks(void)
 	// Update countdown
 	if (emulated_ticks <= 0)
 		emulated_ticks += emulated_ticks_quantum;
+}
+#else
+uint16 emulated_ticks;
+void cpu_do_check_ticks(void)
+{
+	static int delay = -1;
+	if (delay < 0)
+		delay = PrefsFindInt32("delay");
+	if (delay)
+		usleep(delay);
 }
 #endif
 
@@ -569,7 +584,6 @@ int main(int argc, char **argv)
 	//
 	// HACK: disable these shortcuts, while leaving all other pieces of SDL2's
 	// menu bar in-place.
-	extern void disable_SDL2_macosx_menu_bar_keyboard_shortcuts();
 	disable_SDL2_macosx_menu_bar_keyboard_shortcuts();
 #endif
 	
@@ -1264,7 +1278,7 @@ static void *tick_func(void *arg)
 {
 	uint64 start = GetTicks_usec();
 	int64 ticks = 0;
-	uint64 next = GetTicks_usec();
+	uint64 next = start;
 	while (!tick_thread_cancel) {
 		one_tick();
 		next += 16625;
@@ -1275,8 +1289,10 @@ static void *tick_func(void *arg)
 			next = GetTicks_usec();
 		ticks++;
 	}
+#if DEBUG
 	uint64 end = GetTicks_usec();
 	D(bug("%lld ticks in %lld usec = %f ticks/sec\n", ticks, end - start, ticks * 1000000.0 / (end - start)));
+#endif
 	return NULL;
 }
 #endif

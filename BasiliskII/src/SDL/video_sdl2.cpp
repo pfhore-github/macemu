@@ -150,7 +150,9 @@ static SDL_Texture * sdl_texture = NULL;			// Handle to a GPU texture, with whic
 static SDL_Rect sdl_update_video_rect = {0,0,0,0};  // Union of all rects to update, when updating sdl_texture
 static SDL_mutex * sdl_update_video_mutex = NULL;   // Mutex to protect sdl_update_video_rect
 static int screen_depth;							// Depth of current screen
+#ifdef SHEEPSHAVER
 static SDL_Cursor *sdl_cursor = NULL;				// Copy of Mac cursor
+#endif
 static SDL_Palette *sdl_palette = NULL;				// Color palette to be used as CLUT and gamma table
 static bool sdl_palette_changed = false;			// Flag: Palette changed, redraw thread must set new colors
 static bool toggle_fullscreen = false;
@@ -411,6 +413,7 @@ public:
  *  Utility functions
  */
 
+#ifdef SHEEPSHAVER
 // Find palette size for given color depth
 static int palette_size(int mode)
 {
@@ -424,6 +427,7 @@ static int palette_size(int mode)
 	default: return 0;
 	}
 }
+#endif
 
 // Map video_mode depth ID to numerical depth value
 static int mac_depth_of_video_depth(int video_depth)
@@ -1718,7 +1722,6 @@ static bool is_fullscreen(SDL_Window * window)
 	// involves fullscreen/windowed toggles via window-manager UI controls).
 	// Until it does, or adds a facility to do so, we'll use a platform-specific
 	// code path to detect fullscreen changes.
-	extern bool is_fullscreen_osx(SDL_Window * window);
 	return is_fullscreen_osx(sdl_window);
 #else
 	if (!window) {
@@ -1939,11 +1942,12 @@ int16 video_mode_change(VidLocals *csSave, uint32 ParamPtr)
 }
 #endif
 
-static bool is_cursor_in_mac_screen() {
-
-		int windowX, windowY;
-		int cursorX, cursorY;
-		int deltaX, deltaY;
+#ifdef SHEEPSHAVER
+static bool is_cursor_in_mac_screen()
+{
+	int windowX, windowY;
+	int cursorX, cursorY;
+	int deltaX, deltaY;
 	bool out;
 	
 	// TODO figure out a check for full screen mode
@@ -1970,7 +1974,8 @@ static bool is_cursor_in_mac_screen() {
 
 	return false;
 }
-
+#endif
+	
 void SDL_monitor_desc::switch_to_current_mode(void)
 {
 	// Close and reopen display
@@ -2272,7 +2277,6 @@ static int SDLCALL on_sdl_event_generated(void *userdata, SDL_Event * event)
 						// cursor is near the top of the screen, lest the
 						// guest OS' menu bar be obscured.
 						if (is_full) {
-							extern void set_menu_bar_visible_osx(bool);
 							set_menu_bar_visible_osx(false);
 						}
 #endif
@@ -2805,7 +2809,7 @@ static int redraw_func(void *arg)
 {
 	uint64 start = GetTicks_usec();
 	int64 ticks = 0;
-	uint64 next = GetTicks_usec() + VIDEO_REFRESH_DELAY;
+	uint64 next = start + VIDEO_REFRESH_DELAY;
 
 	while (!redraw_thread_cancel) {
 
@@ -2828,8 +2832,10 @@ static int redraw_func(void *arg)
 		do_video_refresh();
 	}
 
+#if DEBUG
 	uint64 end = GetTicks_usec();
 	D(bug("%lld refreshes in %lld usec = %f refreshes/sec\n", ticks, end - start, ticks * 1000000.0 / (end - start)));
+#endif
 	return 0;
 }
 #endif
