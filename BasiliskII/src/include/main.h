@@ -20,10 +20,9 @@
 
 #ifndef MAIN_H
 #define MAIN_H
-
+#include <atomic>
 // CPU type (0 = 68000, 1 = 68010, 2 = 68020, 3 = 68030, 4 = 68040/060)
 extern int CPUType;
-extern bool CPUIs68060;		// Flag to distinguish 68040 and 68060
 
 // FPU type (0 = no FPU, 1 = 68881, 2 = 68882)
 extern int FPUType;
@@ -58,12 +57,6 @@ extern void WarningAlert(const char *text);				// Display warning alert
 extern void WarningAlert(int string_id);
 extern bool ChoiceAlert(const char *text, const char *pos, const char *neg);	// Display choice alert
 
-// Mutexes (non-recursive)
-struct B2_mutex;
-extern B2_mutex *B2_create_mutex(void);
-extern void B2_lock_mutex(B2_mutex *mutex);
-extern void B2_unlock_mutex(B2_mutex *mutex);
-extern void B2_delete_mutex(B2_mutex *mutex);
 
 // Interrupt flags
 enum {
@@ -77,7 +70,7 @@ enum {
 	INTFLAG_NMI = 128	// NMI
 };
 
-extern uint32 InterruptFlags;									// Currently pending interrupts
+extern std::atomic<uint32_t> InterruptFlags;									// Currently pending interrupts
 extern void SetInterruptFlag(uint32 flag);						// Set/clear interrupt flags
 extern void ClearInterruptFlag(uint32 flag);
 

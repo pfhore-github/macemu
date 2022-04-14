@@ -27,6 +27,7 @@
 #include <stdlib.h>
 
 #include "sysdeps.h"
+#include <mutex>
 #include "cpu_emulation.h"
 #include "emul_op.h"
 #include "main.h"
@@ -34,12 +35,6 @@
 #include "video.h"
 #include "adb.h"
 
-#ifdef POWERPC_ROM
-#include "thunks.h"
-#endif
-
-#define DEBUG 0
-#include "debug.h"
 
 
 // Global variables
@@ -70,7 +65,7 @@ static uint8 key_reg_3[2] = {0x62, 0x05};	// Keyboard ADB register 3
 static uint8 m_keyboard_type = 0x05;
 
 // ADB mouse motion lock (for platforms that use separate input thread)
-static B2_mutex *mouse_lock;
+static std::mutex mouse_lock;
 
 
 /*
@@ -79,7 +74,6 @@ static B2_mutex *mouse_lock;
 
 void ADBInit(void)
 {
-	mouse_lock = B2_create_mutex();
 	m_keyboard_type = (uint8)PrefsFindInt32("keyboardtype");
 	key_reg_3[1] = m_keyboard_type;
 }
@@ -91,10 +85,6 @@ void ADBInit(void)
 
 void ADBExit(void)
 {
-	if (mouse_lock) {
-		B2_delete_mutex(mouse_lock);
-		mouse_lock = NULL;
-	}
 }
 
 
@@ -104,8 +94,6 @@ void ADBExit(void)
 
 void ADBOp(uint8 op, uint8 *data)
 {
-	D(bug("ADBOp op %02x, data %02x %02x %02x\n", op, data[0], data[1], data[2]));
-
 	// ADB reset?
 	if ((op & 0x0f) == 0) {
 		mouse_reg_3[0] = 0x63;
@@ -165,7 +153,6 @@ void ADBOp(uint8 op, uint8 *data)
 					break;
 			}
 		}
-		D(bug(" mouse reg 3 %02x%02x\n", mouse_reg_3[0], mouse_reg_3[1]));
 
 	} else if (adr == (key_reg_3[0] & 0x0f)) {
 
@@ -224,7 +211,6 @@ void ADBOp(uint8 op, uint8 *data)
 					break;
 			}
 		}
-		D(bug(" keyboard reg 3 %02x%02x\n", key_reg_3[0], key_reg_3[1]));
 
 	} else												// Unknown address
 		if (cmd == 3)
@@ -238,13 +224,13 @@ void ADBOp(uint8 op, uint8 *data)
 
 void ADBMouseMoved(int x, int y)
 {
-	B2_lock_mutex(mouse_lock);
+	mouse_lock.lock();
 	if (relative_mouse) {
 		mouse_x += x; mouse_y += y;
 	} else {
 		mouse_x = x; mouse_y = y;
 	}
-	B2_unlock_mutex(mouse_lock);
+	mouse_lock.unlock();
 	SetInterruptFlag(INTFLAG_ADB);
 	TriggerInterrupt();
 }
@@ -348,12 +334,12 @@ void ADBInterrupt(void)
 	uint32 tmp_data = adb_base + 0x163;	// Temporary storage for faked ADB data
 
 	// Get mouse state
-	B2_lock_mutex(mouse_lock);
+	mouse_lock.lock();
 	int mx = mouse_x;
 	int my = mouse_y;
 	if (relative_mouse)
 		mouse_x = mouse_y = 0;
-	B2_unlock_mutex(mouse_lock);
+	mouse_lock.unlock();
 
 	uint32 key_base = adb_base + 4;
 	uint32 mouse_base = adb_base + 16;

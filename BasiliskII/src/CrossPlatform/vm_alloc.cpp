@@ -19,17 +19,15 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifdef HAVE_CONFIG_H
 #include "config.h"
-#endif
 
-#ifdef HAVE_FCNTL_H
 #include <fcntl.h>
-#endif
 
-#ifdef HAVE_WIN32_VM
+#ifdef __WIN32
 #define WIN32_LEAN_AND_MEAN /* avoid including junk */
 #include <windows.h>
+#else
+#include <unistd.h>
 #endif
 
 #include <errno.h>
@@ -59,28 +57,6 @@ typedef UINT_PTR vm_uintptr_t;
 #else
 /* Other systems are sane as they are either ILP32 or LP64 */
 typedef unsigned long vm_uintptr_t;
-#endif
-
-/* We want MAP_32BIT, if available, for SheepShaver and BasiliskII
-   because the emulated target is 32-bit and this helps to allocate
-   memory so that branches could be resolved more easily (32-bit
-   displacement to code in .text), on AMD64 for example.  */
-#if defined(__hpux)
-#define MAP_32BIT MAP_ADDR32
-#endif
-#ifndef MAP_32BIT
-#define MAP_32BIT 0
-#endif
-#ifdef __FreeBSD__
-#define FORCE_MAP_32BIT MAP_FIXED
-#else
-#define FORCE_MAP_32BIT MAP_32BIT
-#endif
-#ifndef MAP_ANON
-#define MAP_ANON 0
-#endif
-#ifndef MAP_ANONYMOUS
-#define MAP_ANONYMOUS 0
 #endif
 
 #define MAP_EXTRA_FLAGS (MAP_32BIT)
@@ -121,8 +97,6 @@ static int translate_map_flags(int vm_flags)
 		flags |= MAP_PRIVATE;
 	if (vm_flags & VM_MAP_FIXED)
 		flags |= MAP_FIXED;
-	if (vm_flags & VM_MAP_32BIT)
-		flags |= FORCE_MAP_32BIT;
 	return flags;
 }
 #endif
@@ -242,61 +216,7 @@ int vm_init_reserved(void *hostAddress) {
 
 void * vm_acquire(size_t size, int options)
 {
-	void * addr;
-	
-	errno = 0;
-
-	// VM_MAP_FIXED are to be used with vm_acquire_fixed() only
-	if (options & VM_MAP_FIXED)
-		return VM_MAP_FAILED;
-
-#ifndef HAVE_VM_WRITE_WATCH
-	if (options & VM_MAP_WRITE_WATCH)
-		return VM_MAP_FAILED;
-#endif
-
-#if defined(HAVE_MACH_VM)
-	// vm_allocate() returns a zero-filled memory region
-	kern_return_t ret_code = vm_allocate(mach_task_self(), (vm_address_t *)&addr, reserved_buf ? size : size + RESERVED_SIZE, TRUE);
-	if (ret_code != KERN_SUCCESS) {
-		errno = vm_error(ret_code);
-		return VM_MAP_FAILED;
-	}
-	if (!reserved_buf)
-		reserved_buf = (char *)addr + size;
-#elif defined(HAVE_MMAP_VM)
-	int fd = zero_fd;
-	int the_map_flags = translate_map_flags(options) | map_flags;
-
-	if ((addr = mmap((caddr_t)next_address, size, VM_PAGE_DEFAULT, the_map_flags, fd, 0)) == (void *)MAP_FAILED)
-		return VM_MAP_FAILED;
-#if USE_JIT
-	// Sanity checks for 64-bit platforms
-	if (sizeof(void *) == 8 && (options & VM_MAP_32BIT) && !((char *)addr <= (char *)0xffffffff))
-		return VM_MAP_FAILED;
-#endif
-	next_address = (char *)addr + size;
-#elif defined(HAVE_WIN32_VM)
-	int alloc_type = MEM_RESERVE | MEM_COMMIT;
-	if (options & VM_MAP_WRITE_WATCH)
-	  alloc_type |= MEM_WRITE_WATCH;
-
-	if ((addr = VirtualAlloc(NULL, size, alloc_type, PAGE_EXECUTE_READWRITE)) == NULL)
-		return VM_MAP_FAILED;
-#else
-	if ((addr = calloc(size, 1)) == 0)
-		return VM_MAP_FAILED;
-	
-	// Omit changes for protections because they are not supported in this mode
-	return addr;
-#endif
-
-	// Explicitely protect the newly mapped region here because on some systems,
-	// say MacOS X, mmap() doesn't honour the requested protection flags.
-	if (vm_protect(addr, size, VM_PAGE_DEFAULT) != 0)
-		return VM_MAP_FAILED;
-	
-	return addr;
+	return malloc(size);
 }
 
 /* Allocate zero-filled memory at exactly ADDR (which must be page-aligned).

@@ -101,11 +101,6 @@
 
 #endif
 
-/* Direct Addressing requires Video on SEGV signals in plain X11 mode */
-#if DIRECT_ADDRESSING && (!ENABLE_VOSF && !USE_SDL_VIDEO)
-# undef  ENABLE_VOSF
-# define ENABLE_VOSF 1
-#endif
 
 /* ExtFS is supported */
 #define SUPPORTS_EXTFS 1

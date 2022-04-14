@@ -58,8 +58,9 @@
 
 #include <sys/wait.h>
 #include <netinet/in.h>
-#include <pthread.h>
-#include <semaphore.h>
+#include <optional>
+#include <SDL_mutex.h>
+#include <thread>
 #include <errno.h>
 #include <stdio.h>
 #include <signal.h>
@@ -129,20 +130,20 @@ extern "C" {
 
 // Constants
 #if ENABLE_TUNTAP
-static const char ETHERCONFIG_FILE_NAME[] = DATADIR "/tunconfig";
+#define DATADIR 
+static const char ETHERCONFIG_FILE_NAME[] =  "./tunconfig";
 #endif
 
 // Global variables
 static int fd = -1;							// fd of sheep_net device
-static pthread_t ether_thread;				// Packet reception thread
-static pthread_attr_t ether_thread_attr;	// Packet reception thread attributes
+static std::optional<std::thread> ether_thread;				// Packet reception thread
 static bool thread_active = false;			// Flag: Packet reception thread installed
-static sem_t int_ack;						// Interrupt acknowledge semaphore
+static SDL_sem* int_ack;						// Interrupt acknowledge semaphore
 static bool udp_tunnel;						// Flag: UDP tunnelling active, fd is the socket descriptor
 static int net_if_type = -1;				// Ethernet device type
 static char *net_if_name = NULL;			// TUN/TAP device name
 static const char *net_if_script = NULL;	// Network config script
-static pthread_t slirp_thread;				// Slirp reception thread
+static std::optional<std::thread> slirp_thread;				// Slirp reception thread
 static bool slirp_thread_active = false;	// Flag: Slirp reception threadinstalled
 static int slirp_output_fd = -1;			// fd of slirp output pipe
 static int slirp_input_fds[2] = { -1, -1 };	// fds of slirp input pipe
@@ -165,8 +166,8 @@ static uint8 packet_buffer[2048];
 static map<uint16, uint32> net_protocols;
 
 // Prototypes
-static void *receive_func(void *arg);
-static void *slirp_receive_func(void *arg);
+static void receive_func();
+static void slirp_receive_func();
 static int16 ether_do_add_multicast(uint8 *addr);
 static int16 ether_do_del_multicast(uint8 *addr);
 static int16 ether_do_write(uint32 arg);
@@ -186,25 +187,15 @@ static int read_packet(void);
 
 static bool start_thread(void)
 {
-	if (sem_init(&int_ack, 0, 0) < 0) {
-		printf("WARNING: Cannot init semaphore");
-		return false;
-	}
+	int_ack = SDL_CreateSemaphore(0);
 
-	Set_pthread_attr(&ether_thread_attr, 1);
-	thread_active = (pthread_create(&ether_thread, &ether_thread_attr, receive_func, NULL) == 0);
-	if (!thread_active) {
-		printf("WARNING: Cannot start Ethernet thread");
-		return false;
-	}
+	ether_thread = std::thread( receive_func );
+	thread_active = true;
 
 #ifdef HAVE_SLIRP
 	if (net_if_type == NET_IF_SLIRP) {
-		slirp_thread_active = (pthread_create(&slirp_thread, NULL, slirp_receive_func, NULL) == 0);
-		if (!slirp_thread_active) {
-			printf("WARNING: Cannot start slirp reception thread\n");
-			return false;
-		}
+		slirp_thread = std::thread( slirp_receive_func );
+		slirp_thread_active = true;
 	}
 #endif
 
@@ -220,20 +211,14 @@ static void stop_thread(void)
 {
 #ifdef HAVE_SLIRP
 	if (slirp_thread_active) {
-#ifdef HAVE_PTHREAD_CANCEL
-		pthread_cancel(slirp_thread);
-#endif
-		pthread_join(slirp_thread, NULL);
+		slirp_thread->join();
 		slirp_thread_active = false;
 	}
 #endif
 
 	if (thread_active) {
-#ifdef HAVE_PTHREAD_CANCEL
-		pthread_cancel(ether_thread);
-#endif
-		pthread_join(ether_thread, NULL);
-		sem_destroy(&int_ack);
+		ether_thread->join();
+		SDL_DestroySemaphore(int_ack);
 		thread_active = false;
 	}
 }
@@ -753,12 +738,10 @@ static void ether_dispatch_packet(uint32 p, uint32 length)
 // Ethernet interrupt
 void EtherInterrupt(void)
 {
-	D(bug("EtherIRQ\n"));
 	ether_do_interrupt();
 
 	// Acknowledge interrupt to reception thread
-	D(bug(" EtherIRQ done\n"));
-	sem_post(&int_ack);
+	SDL_SemPost(int_ack);
 }
 #endif
 
@@ -957,11 +940,11 @@ void slirp_output(const uint8 *packet, int len)
 	write(slirp_output_fd, packet, len);
 }
 
-void *slirp_receive_func(void *arg)
+void slirp_receive_func()
 {
 	const int slirp_input_fd = slirp_input_fds[0];
 
-	for (;;) {
+	while (slirp_thread_active) {
 		// Wait for packets to arrive
 		fd_set rfds, wfds, xfds;
 		int nfds;
@@ -995,13 +978,7 @@ void *slirp_receive_func(void *arg)
 		if (select(nfds + 1, &rfds, &wfds, &xfds, &tv) >= 0)
 			slirp_select_poll(&rfds, &wfds, &xfds);
 
-#ifdef HAVE_PTHREAD_TESTCANCEL
-		// Explicit cancellation point if select() was not covered
-		// This seems to be the case on MacOS X 10.2
-		pthread_testcancel();
-#endif
 	}
-	return NULL;
 }
 #else
 int slirp_can_output(void)
@@ -1019,9 +996,9 @@ void slirp_output(const uint8 *packet, int len)
  *  Packet reception thread
  */
 
-static void *receive_func(void *arg)
+static void receive_func()
 {
-	for (;;) {
+	while (thread_active) {
 
 		// Wait for packets to arrive
 #if USE_POLL
@@ -1035,9 +1012,6 @@ static void *receive_func(void *arg)
 		// even if it is supposed to be a cancellation point [MacOS X]
 		struct timeval tv = { 0, 20000 };
 		int res = select(fd + 1, &rfds, NULL, NULL, &tv);
-#ifdef HAVE_PTHREAD_TESTCANCEL
-		pthread_testcancel();
-#endif
 		if (res == 0 || (res == -1 && errno == EINTR))
 			continue;
 #endif
@@ -1058,11 +1032,10 @@ static void *receive_func(void *arg)
 			TriggerInterrupt();
 
 			// Wait for interrupt acknowledge by EtherInterrupt()
-			sem_wait(&int_ack);
+			SDL_SemWait(int_ack);
 		} else
 			Delay_usec(20000);
 	}
-	return NULL;
 }
 
 
@@ -1121,13 +1094,6 @@ void ether_do_interrupt(void)
 			if (length < 14)
 				break;
 
-#if MONITOR
-			bug("Receiving Ethernet packet:\n");
-			for (int i=0; i<length; i++) {
-				bug("%02x ", ReadMacInt8(packet + i));
-			}
-			bug("\n");
-#endif
 
 			// Pointer to packet data (Ethernet header)
 			uint32 p = packet;
@@ -1165,76 +1131,6 @@ static int get_str_sep(char *buf, int buf_size, const char **pp, int sep)
 	return 0;
 }
 
-// Set up port forwarding for slirp
-static void slirp_add_redirs()
-{
-	int index = 0;
-	const char *str;
-	while ((str = PrefsFindString("redir", index++)) != NULL) {
-		slirp_add_redir(str);
-	}
-}
-
-// Add a port forward/redirection for slirp
-static int slirp_add_redir(const char *redir_str)
-{
-	// code adapted from qemu source
-	struct in_addr guest_addr = {0};
-	int host_port, guest_port;
-	const char *p;
-	char buf[256];
-	int is_udp;
-	char *end;
-	char str[256];
-
-	p = redir_str;
-	if (!p || get_str_sep(buf, sizeof(buf), &p, ':') < 0) {
-		goto fail_syntax;
-	}
-	if (!strcmp(buf, "tcp") || buf[0] == '\0') {
-		is_udp = 0;
-	} else if (!strcmp(buf, "udp")) {
-		is_udp = 1;
-	} else {
-		goto fail_syntax;
-	}
-
-	if (get_str_sep(buf, sizeof(buf), &p, ':') < 0) {
-		goto fail_syntax;
-	}
-	host_port = strtol(buf, &end, 0);
-	if (*end != '\0' || host_port < 1 || host_port > 65535) {
-		goto fail_syntax;
-	}
-
-	if (get_str_sep(buf, sizeof(buf), &p, ':') < 0) {
-		goto fail_syntax;
-	}
-	// 0.0.0.0 doesn't seem to work, so default to a client address
-	// if none is specified
-	if (buf[0] == '\0' ?
-			!inet_aton(CTL_LOCAL, &guest_addr) :
-			!inet_aton(buf, &guest_addr)) {
-		goto fail_syntax;
-	}
-
-	guest_port = strtol(p, &end, 0);
-	if (*end != '\0' || guest_port < 1 || guest_port > 65535) {
-		goto fail_syntax;
-	}
-
-	if (slirp_redir(is_udp, host_port, guest_addr, guest_port) < 0) {
-		sprintf(str, "could not set up host forwarding rule '%s'", redir_str);
-		WarningAlert(str);
-		return -1;
-	}
-	return 0;
-
- fail_syntax:
-	sprintf(str, "invalid host forwarding rule '%s'", redir_str);
-	WarningAlert(str);
-	return -1;
-}
 
 #ifdef ENABLE_MACOSX_ETHERHELPER
 static int get_mac_address(const char* dev, unsigned char *addr)

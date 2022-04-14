@@ -55,7 +55,7 @@ static void mon_write_byte_b2(uintptr adr, uint32 b)
 	WriteMacInt8(adr, b);
 }
 #endif
-
+uint8 *ScratchMem;
 
 /*
  *  Initialize everything, returns false on error
@@ -69,35 +69,7 @@ bool InitAll(const char *vmdir)
 		return false;
 	}
 
-#if EMULATED_68K
-	// Set CPU and FPU type (UAE emulation)
-	switch (ROMVersion) {
-		case ROM_VERSION_64K:
-		case ROM_VERSION_PLUS:
-		case ROM_VERSION_CLASSIC:
-			CPUType = 0;
-			FPUType = 0;
-			TwentyFourBitAddressing = true;
-			break;
-		case ROM_VERSION_II:
-			CPUType = PrefsFindInt32("cpu");
-			if (CPUType < 2) CPUType = 2;
-			if (CPUType > 4) CPUType = 4;
-			FPUType = PrefsFindBool("fpu") ? 1 : 0;
-			if (CPUType == 4) FPUType = 1;	// 68040 always with FPU
-			TwentyFourBitAddressing = true;
-			break;
-		case ROM_VERSION_32:
-			CPUType = PrefsFindInt32("cpu");
-			if (CPUType < 2) CPUType = 2;
-			if (CPUType > 4) CPUType = 4;
-			FPUType = PrefsFindBool("fpu") ? 1 : 0;
-			if (CPUType == 4) FPUType = 1;	// 68040 always with FPU
-			TwentyFourBitAddressing = false;
-			break;
-	}
-	CPUIs68060 = false;
-#endif
+	CPUType = 4;
 
 	// Load XPRAM
 	XPRAMInit(vmdir);

@@ -105,10 +105,7 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 			r->d[0] = ReadMacInt32(ROMBaseMac + UniversalInfo + 0x18);	// AddrMapFlags
 			r->d[1] = ReadMacInt32(ROMBaseMac + UniversalInfo + 0x1c);	// UnivROMFlags
 			r->d[2] = ReadMacInt32(ROMBaseMac + UniversalInfo + 0x10);	// HWCfgFlags/IDs
-			if (FPUType)
-				r->d[2] |= 0x10000000;									// Set FPU flag if FPU present
-			else
-				r->d[2] &= 0xefffffff;									// Clear FPU flag if no FPU present
+			r->d[2] |= 0x10000000;									// Set FPU flag if FPU present
 			r->a[0] = ROMBaseMac + UniversalInfo + ReadMacInt32(ROMBaseMac + UniversalInfo);// AddrMap
 			r->a[1] = ROMBaseMac + UniversalInfo;						// UniversalInfo
 			r->a[6] = boot_globs;										// BootGlobs
@@ -152,7 +149,7 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 					D(bug("Read XPRAM %02x->%02lx\n", reg, r->d[2]));
 				} else {
 					D(bug("Write XPRAM %02x<-%02lx\n", reg, r->d[2] & 0xff));
-					if (reg == 0x8a && !TwentyFourBitAddressing)
+					if (reg == 0x8a )
 						r->d[2] |= 0x05;	// 32bit mode is always enabled if possible
 					XPRAM[reg] = r->d[2];
 				}

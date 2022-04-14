@@ -1490,28 +1490,4 @@ void m68k_disasm (uaecptr addr, uaecptr *nextpc, int cnt)
 
 void m68k_dumpstate (uaecptr *nextpc)
 {
-	int i;
-	for (i = 0; i < 8; i++){
-		printf ("D%d: %08x ", i, m68k_dreg(regs, i));
-		if ((i & 3) == 3) printf ("\n");
-	}
-	for (i = 0; i < 8; i++){
-		printf ("A%d: %08x ", i, m68k_areg(regs, i));
-		if ((i & 3) == 3) printf ("\n");
-	}
-	if (regs.s == 0) regs.usp = m68k_areg(regs, 7);
-	if (regs.s && regs.m) regs.msp = m68k_areg(regs, 7);
-	if (regs.s && regs.m == 0) regs.isp = m68k_areg(regs, 7);
-	printf ("USP=%08x ISP=%08x MSP=%08x VBR=%08x\n",
-			regs.usp,regs.isp,regs.msp,regs.vbr);
-	printf ("T=%d%d S=%d M=%d X=%ld N=%ld Z=%ld V=%ld C=%ld IMASK=%d\n",
-			regs.t1, regs.t0, regs.s, regs.m,
-			GET_XFLG, GET_NFLG, GET_ZFLG, GET_VFLG, GET_CFLG, regs.intmask);
-
-	fpu_dump_registers();
-	fpu_dump_flags();
-
-	m68k_disasm(m68k_getpc (), nextpc, 1);
-	if (nextpc)
-		printf ("next PC: %08x\n", *nextpc);
 }

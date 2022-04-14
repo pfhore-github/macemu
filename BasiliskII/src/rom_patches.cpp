@@ -1038,7 +1038,7 @@ static bool patch_rom_32(void)
 #if defined(USE_SCRATCHMEM_SUBTERFUGE)
 	// Set hardware base addresses to scratch memory area
 	if (PatchHWBases) {
-		extern uint8 *ScratchMem;
+		static uint8 *ScratchMem;
 		const uint32 ScratchMemBase = Host2MacAddr(ScratchMem);
 		
 		D(bug("LMGlob\tOfs/4\tBase\n"));
@@ -1059,11 +1059,6 @@ static bool patch_rom_32(void)
 #endif
 #endif
 
-	// Make FPU optional
-	if (FPUType == 0) {
-		bp = ROMBaseHost + UniversalInfo + 22;	// defaultRSRCs
-		*bp = 4;	// FPU optional
-	}
 
 	// Install special reset opcode and jump (skip hardware detection and tests)
 	wp = (uint16 *)(ROMBaseHost + 0x8c);
@@ -1639,8 +1634,6 @@ static bool patch_rom_32(void)
 
 	// Look for double PACK 4 resources
 	if ((base = find_rom_resource(FOURCC('P','A','C','K'), 4)) == 0) return false;
-	if ((base = find_rom_resource(FOURCC('P','A','C','K'), 4, true)) == 0 && FPUType == 0)
-		printf("WARNING: This ROM seems to require an FPU\n");
 
 	// Patch VIA interrupt handler
 	wp = (uint16 *)(ROMBaseHost + 0x9bc4);	// Level 1 handler

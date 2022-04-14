@@ -217,25 +217,6 @@ gb-- I only tested the following configurations:
 
 /* ---------------------------- Debugging ---------------------------- */
 
-PUBLIC void FFPU fpu_dump_registers(void)
-{
-	for (int i = 0; i < 8; i++){
-		printf ("FP%d: %g ", i, fpu_get_register(i));
-		if ((i & 3) == 3)
-			printf ("\n");
-	}
-}
-
-PUBLIC void FFPU fpu_dump_flags(void)
-{
-	printf ("N=%d Z=%d I=%d NAN=%d\n",
-		(get_fpsr() & FPSR_CCB_NEGATIVE) != 0,
-		(get_fpsr() & FPSR_CCB_ZERO)!= 0,
-		(get_fpsr() & FPSR_CCB_INFINITY) != 0,
-		(get_fpsr() & FPSR_CCB_NAN) != 0);
-}
-
-#include "debug.h"
 
 #if FPU_DEBUG
 #undef __inline__
@@ -425,7 +406,7 @@ PRIVATE __inline__ void FFPU MAKE_NAN (fpu_register & f)
 
 /*
 For single- and double-precision infinities the fraction is a zero.
-For extended-precision infinities, the mantissa’s MSB, the explicit
+For extended-precision infinities, the mantissaï¿½s MSB, the explicit
 integer bit, can be either one or zero.
 */
 PRIVATE __inline__ uae_u32 FFPU IS_INFINITY (fpu_register const & f)
