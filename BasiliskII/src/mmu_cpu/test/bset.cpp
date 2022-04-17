@@ -17,7 +17,7 @@ boost::unit_test::data::xrange(1), value )
     asm_m68k("bset #3, (%A1)");
     m68k_do_execute();
     BOOST_TEST( regs.z != value);
-    BOOST_TEST( (read8(0x10) & 1 << 3));
+    BOOST_TEST( (raw_read8(0x10) & 1 << 3));
 }
 
 BOOST_DATA_TEST_CASE( Long,
@@ -47,7 +47,7 @@ boost::unit_test::data::xrange(1), value )
     asm_m68k("bset %D2, (%A1)");
     m68k_do_execute();
     BOOST_TEST( regs.z != value);
-    BOOST_TEST( (read8(0x10) & 1 << 3));
+    BOOST_TEST( (raw_read8(0x10) & 1 << 3));
 }
 
 BOOST_DATA_TEST_CASE( Long,

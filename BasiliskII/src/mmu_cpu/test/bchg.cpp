@@ -13,11 +13,11 @@ boost::unit_test::data::xrange(1), value )
     regs.pc = 0;
     regs.vbr = 0;
     regs.a[1] = 0x10;
-    write8(0x10, value << 3);
+    raw_write8(0x10, value << 3);
     asm_m68k("bchg #3, (%A1)");
     m68k_do_execute();
     BOOST_TEST( regs.z != value);
-    BOOST_TEST( (read8(0x10) >> 3 & 1) != value);
+    BOOST_TEST( (raw_read8(0x10) >> 3 & 1) != value);
 }
 
 BOOST_DATA_TEST_CASE( Long,
@@ -42,11 +42,11 @@ boost::unit_test::data::xrange(1), value )
     regs.vbr = 0;
     regs.d[2] = 3;
     regs.a[1] = 0x10;
-    write8(0x10, value << 3);
+    raw_write8(0x10, value << 3);
     asm_m68k("bchg %D2, (%A1)");
     m68k_do_execute();
     BOOST_TEST( regs.z != value);
-    BOOST_TEST( (read8(0x10) >> 3 & 1) != value);
+    BOOST_TEST( (raw_read8(0x10) >> 3 & 1) != value);
 }
 
 BOOST_DATA_TEST_CASE( Long,

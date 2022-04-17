@@ -28,7 +28,7 @@ Unix/Linux/scsi_linux.cpp SDL/audio_sdl.cpp
   Unix/main_unix.cpp Unix/prefs_unix.cpp 
 dummy/clip_dummy.cpp
 
-mmu_cpu/basilisk_glue.cpp mmu_cpu/memory.cpp mmu_cpu/newcpu.cpp mmu_cpu/exception.cpp
+mmu_cpu/basilisk_glue.cpp mmu_cpu/memory.cpp mmu_cpu/newcpu.cpp mmu_cpu/exception.cpp  mmu_cpu/ea.cpp 
 #mmu_cpu/fpu/fpu_ieee.cpp 
 #mmu_cpu/compiler/compemu_support.cpp mmu_cpu/compiler/compemu_fpp.cpp compstbl.o cpustbl_nf.o
 
@@ -42,20 +42,27 @@ IF (WIN32)
 ELSE()
   # set stuff for other systems
 ENDIF()
-set(TEST_COMMON  mmu_cpu/test/test_common.cpp mmu_cpu/memory.cpp mmu_cpu/newcpu.cpp mmu_cpu/exception.cpp)
+set(TEST_COMMON mmu_cpu/test/_test_common2.cpp mmu_cpu/test/test_common.cpp mmu_cpu/ea.cpp mmu_cpu/memory.cpp mmu_cpu/newcpu.cpp mmu_cpu/exception.cpp)
 set(TEST_LIB fmt boost_unit_test_framework ${SDL2_LIBRARIES} Threads::Threads )
 add_executable(test_cpu ${TEST_COMMON}
 #mmu_cpu/fpu/fpu_ieee.cpp 
 #mmu_cpu/compiler/compemu_support.cpp mmu_cpu/compiler/compemu_fpp.cpp
 mmu_cpu/test/cpu1.cpp  )
 target_link_libraries(test_cpu ${TEST_LIB})
+file(GLOB TEST_FILE mmu_cpu/test/[!_]*.cpp)
 add_test(NAME test_cpu COMMAND ./test_cpu)
-
+add_custom_command(
+  OUTPUT ../mmu_cpu/test/_test_common2.cpp
+  WORKING_DIRECTORY ../mmu_cpu/test
+  COMMAND perl asm.pl
+  DEPENDS ./mmu_cpu/test/asm.pl ${TEST_FILE}
+  )
 function( cpu_test name)
   add_executable(test_cpu_${name} ${TEST_COMMON} mmu_cpu/test/${name}.cpp )
   target_link_libraries(test_cpu_${name} ${TEST_LIB})
   add_test(NAME test_cpu_${name} COMMAND ./test_cpu_${name})
 endfunction(cpu_test)
+
 
 cpu_test(ori)
 cpu_test(andi)
@@ -71,3 +78,17 @@ cpu_test(eori)
 cpu_test(cas)
 cpu_test(cas2)
 cpu_test(cmpi)
+cpu_test(movep)
+cpu_test(move)
+cpu_test(movea)
+cpu_test(negx)
+cpu_test(clr)
+cpu_test(neg)
+cpu_test(not)
+cpu_test(nbcd)
+cpu_test(link)
+cpu_test(swap)
+cpu_test(pea)
+cpu_test(ext)
+cpu_test(movem)
+cpu_test(tst)

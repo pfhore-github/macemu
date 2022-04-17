@@ -27,7 +27,6 @@
 #include "rom_patches.h"
 #include "timer.h"
 #include "memory.h"
-#include "readcpu.h"
 #include "newcpu.h"
 #include "compiler/compemu.h"
 #include <unordered_map>

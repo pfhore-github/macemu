@@ -67,6 +67,8 @@ struct m68k_reg {
 		bool DE, IE;
 	} CACR;
 	uint32_t i_ea;
+	uint32_t i_eav = 0;
+	int in_movem = -1;
 	// 68040+native FPU
 	fpu_reg fpu;
 	// emulator flag

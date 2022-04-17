@@ -9,3 +9,7 @@ uint32_t raw_read32(uint32_t addr);
 void raw_write8(uint32_t addr, uint8_t v);
 void raw_write16(uint32_t addr, uint16_t v);
 void raw_write32(uint32_t addr, uint32_t v);
+
+struct InitFix {
+    InitFix();
+};

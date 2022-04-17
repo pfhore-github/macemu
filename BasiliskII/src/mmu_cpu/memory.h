@@ -49,11 +49,11 @@ struct ssw_t {
 	}
 };
 struct line { uint8_t value[16]; };
-void* get_real_addr(uint32_t addr, const ssw_t& ssw);
+void* get_real_addr(uint32_t addr, ssw_t&& ssw);
 template<class T>
 void paccess(paddr v, T* p) {
 	ssw_t ssw{ .read = !v.rw, .tt = v.tt, .tm = v.tm, .sz = v.sz };
-	auto p2 = static_cast<T*>(get_real_addr(v.addr, ssw));
+	auto p2 = static_cast<T*>(get_real_addr(v.addr, std::move(ssw)));
 	switch( v.sz) {
 		case SZ::BYTE :
 			if(! v.rw) {

@@ -30,14 +30,14 @@
 #include "video.h"
 
 #include "memory.h"
-#include "readcpu.h"
 #include "newcpu.h"
 #include <vector>
 extern uint8* ROMBaseHost;
 extern std::vector<uint8_t> RAM;
 bool rom_overlay;
 
-void* get_real_addr(uint32_t addr, const ssw_t& ssw) {
+void* get_real_addr(uint32_t addr, ssw_t&& ssw) {
+	ssw.cm = regs.in_movem;
 	uint32_t base = addr & 0xfffffff;
 	switch( addr >> 28 ) {
 	case 0 :

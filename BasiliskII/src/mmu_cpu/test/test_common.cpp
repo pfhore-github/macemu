@@ -16,6 +16,7 @@
 
 #include "newcpu.h"
 #include "fpu/fpu.h"
+#include "test_common.h"
 std::vector<uint8_t> RAM;
 uint8* ROMBaseHost;
 void init_m68k ();
@@ -30,6 +31,12 @@ struct MyGlobalFixture {
   }
 };
 
+InitFix::InitFix() {
+    RAM.clear();
+    RAM.resize(0x100000);
+    memset(regs.r, 0, sizeof(uint32_t)*16);
+    regs.pc = 0;
+}
 BOOST_TEST_GLOBAL_FIXTURE( MyGlobalFixture );
 #include <stdio.h>
 #include <fmt/core.h>
@@ -44,6 +51,7 @@ uint16_t raw_read16(uint32_t addr) {
   auto p = reinterpret_cast<const uint16_t*>( &RAM[addr]);
 	return SDL_SwapBE16(*p);
 }
+
 uint32_t raw_read32(uint32_t addr) {
   auto p = reinterpret_cast<const uint32_t*>( &RAM[addr]);
 	return SDL_SwapBE32(*p);
@@ -59,22 +67,20 @@ void raw_write32(uint32_t addr, uint32_t v) {
   auto p = reinterpret_cast<uint32_t*>( &RAM[addr]);
   *p = SDL_SwapBE32(v);
 }
+extern std::unordered_map<std::string, std::vector<int>> asmcodes;
 int asm_m68k(const char* a, int offset) {
-  char temp1[] = "/tmp/asm_ret1XXXXXX";
-  int i1 = mkstemp(temp1);
-  close(i1);
-  std::string r = fmt::format("m68k-linux-gnu-as -mcpu=68040 -o {}", temp1);
-  FILE* asm_p = popen(r.c_str(), "w");
-  fprintf(asm_p, "%s\n", a);
-  pclose(asm_p);
-  r = fmt::format("m68k-linux-gnu-objcopy -O binary {} /dev/stdout", temp1);
-  asm_p = popen(r.c_str(), "r");
-  int c, sz = 0;
-  while(( c = fgetc(asm_p)) != EOF) {
-    raw_write8(offset++, c);
-    sz++;
+  auto f = asmcodes.find(a);
+  if( f == asmcodes.end() ) {
+    BOOST_FAIL("no test opcodes");
+    return 0;
+  }
+  const auto& ret = f->second;
+  int size = 0;
+  for( uint16_t v : ret ) {
+    raw_write16(offset, v);
+    offset += 2;
+    size += 2;
   } 
-  pclose(asm_p);
-  unlink(temp1);
-  return sz;
+  return size;
 }
+

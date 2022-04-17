@@ -64,7 +64,7 @@ BOOST_AUTO_TEST_CASE( c )
     
     asm_m68k("subib #1, %D1");
     m68k_do_execute();
-    BOOST_TEST( ! regs.c );
+    BOOST_TEST( regs.c );
 }
 
 BOOST_DATA_TEST_CASE( 
@@ -155,7 +155,7 @@ BOOST_AUTO_TEST_CASE( c )
     
     asm_m68k("subiw #1, %D1");
     m68k_do_execute();
-    BOOST_TEST( ! regs.c );
+    BOOST_TEST( regs.c );
 }
 
 
@@ -247,7 +247,7 @@ BOOST_AUTO_TEST_CASE( c )
     
     asm_m68k("subil #1, %D1");
     m68k_do_execute();
-    BOOST_TEST( ! regs.c );
+    BOOST_TEST( regs.c );
 }
 
 

@@ -109,7 +109,7 @@ inline uint32_t DO_ADD_L(uint32_t a, uint32_t b) {
 inline uint8_t DO_SUB_B(uint8_t a, uint8_t b) {
     uint8_t v = a - b;
     regs.v = ( ~b & a & ~v | b & ~a & v) >> 7 & 1;
-    regs.x = regs.c = ( b & ~a | ~v & ~a | v & b) >> 7 & 1;
+    regs.x = regs.c = ( b & ~a | v & ~a | b & v) >> 7 & 1;
     TEST_NZ8(v);
     return v;
 }
@@ -117,7 +117,7 @@ inline uint8_t DO_SUB_B(uint8_t a, uint8_t b) {
 inline uint16_t DO_SUB_W(uint16_t a, uint16_t b) {
     uint16_t v = a - b;
     regs.v = ( ~b & a & ~v | b & ~a & v) >> 15 & 1;
-    regs.x = regs.c = ( b & ~a | ~v & ~a | v & b) >> 15 & 1;
+    regs.x = regs.c = ( b & ~a | v & ~a | b & v) >> 15 & 1;
     TEST_NZ16(v);
     return v;
 }
@@ -125,7 +125,7 @@ inline uint16_t DO_SUB_W(uint16_t a, uint16_t b) {
 inline uint32_t DO_SUB_L(uint32_t a, uint32_t b) {
     uint32_t v = a - b;
     regs.v = ( ~b & a & ~v | b & ~a & v) >> 31 & 1;
-    regs.x = regs.c = ( b & ~a | ~v & ~a | v & b) >> 31 & 1;
+    regs.x = regs.c = ( b & ~a | v & ~a | b & v) >> 31 & 1;
     TEST_NZ32(v);
     return v;
 }
@@ -133,20 +133,44 @@ inline uint32_t DO_SUB_L(uint32_t a, uint32_t b) {
 inline void DO_CMP_B(uint8_t a, uint8_t b) {
     uint8_t v = a - b;
     regs.v = ( ~b & a & ~v | b & ~a & v) >> 7 & 1;
-    regs.c = ( b & ~a | ~v & ~a | v & b) >> 7 & 1;
+    regs.c = ( b & ~a | v & ~a | v & b) >> 7 & 1;
     TEST_NZ8(v);
 }
 
 inline void DO_CMP_W(uint16_t a, uint16_t b) {
     uint16_t v = a - b;
     regs.v = ( ~b & a & ~v | b & ~a & v) >> 15 & 1;
-    regs.c = ( b & ~a | ~v & ~a | v & b) >> 15 & 1;
+    regs.c = ( b & ~a | v & ~a | v & b) >> 15 & 1;
     TEST_NZ16(v);
 }
 
 inline void DO_CMP_L(uint32_t a, uint32_t b) {
     uint32_t v = a - b;
     regs.v = ( ~b & a & ~v | b & ~a & v) >> 31 & 1;
-    regs.c = ( b & ~a | ~v & ~a | v & b) >> 31 & 1;
+    regs.c = ( b & ~a | v & ~a | v & b) >> 31 & 1;
     TEST_NZ32(v);
+}
+
+inline uint8_t DO_NOT_B(uint8_t a) {
+    uint8_t v = ~a;
+    TEST_NZ8(v);
+    regs.v = false;
+    regs.c = false;
+    return v;
+}
+
+inline uint16_t DO_NOT_W(uint16_t a) {
+    uint16_t v = ~a;
+    TEST_NZ16(v);
+    regs.v = false;
+    regs.c = false;
+    return v;
+}
+
+inline uint32_t DO_NOT_L(uint32_t a) {
+    uint32_t v = ~a;
+    TEST_NZ32(v);
+    regs.v = false;
+    regs.c = false;
+    return v;
 }
