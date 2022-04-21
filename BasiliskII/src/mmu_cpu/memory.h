@@ -49,11 +49,11 @@ struct ssw_t {
 	}
 };
 struct line { uint8_t value[16]; };
-void* get_real_addr(uint32_t addr, ssw_t&& ssw);
+void* get_real_addr(uint32_t addr, bool code, ssw_t&& ssw);
 template<class T>
-void paccess(paddr v, T* p) {
+void paccess(paddr v, bool code, T* p) {
 	ssw_t ssw{ .read = !v.rw, .tt = v.tt, .tm = v.tm, .sz = v.sz };
-	auto p2 = static_cast<T*>(get_real_addr(v.addr, std::move(ssw)));
+	auto p2 = static_cast<T*>(get_real_addr(v.addr, code, std::move(ssw)));
 	switch( v.sz) {
 		case SZ::BYTE :
 			if(! v.rw) {
@@ -131,6 +131,12 @@ inline void PUSH16(uint16_t v) {
 }
 inline void PUSH32(uint32_t v) {
 	write32( regs.a[7] -= 4 , v );
+}
+inline uint16_t POP16() {
+	return read16( std::exchange( regs.a[7], regs.a[7] + 2));
+}
+inline uint16_t POP32() {
+	return read32( std::exchange( regs.a[7], regs.a[7] + 4));
 }
 
 #endif /* MEMORY_H */

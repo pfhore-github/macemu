@@ -20,101 +20,114 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include "sysdeps.h"
+#include <SDL.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <SDL.h>
-#include "sysdeps.h"
 
 #include "cpu_emulation.h"
 #include "main.h"
 #include "video.h"
 
+#include "exception.h"
 #include "memory.h"
 #include "newcpu.h"
 #include <vector>
-extern uint8* ROMBaseHost;
+extern uint8 *ROMBaseHost;
 extern std::vector<uint8_t> RAM;
 bool rom_overlay;
 
-void* get_real_addr(uint32_t addr, ssw_t&& ssw) {
-	ssw.cm = regs.in_movem;
-	uint32_t base = addr & 0xfffffff;
-	switch( addr >> 28 ) {
-	case 0 :
-		if( rom_overlay ) {
-			if( ssw.read ) {
-				return &ROMBaseHost[base];
-			} else {
-				BUSERROR(addr, ssw.to_value(), regs.i_ea);
-			}
-		}
-		/* fall through */
-	case 1 :
-	case 2 :
-	case 3 :
-		if( base < RAM.size() ) {
-			return (&RAM[base]);
-		} else {
-			BUSERROR(addr, ssw.to_value(), regs.i_ea);
-		}
-	case 4 :
-		if( ! ssw.read ) {
-			return (&ROMBaseHost[base]);
-		} else {
-			BUSERROR(addr, ssw.to_value(), regs.i_ea);
-		}
-	default :
-		return nullptr;
-	}
+void *get_real_addr(uint32_t addr, bool code, ssw_t &&ssw) {
+    uint32_t base = addr & 0xfffffff;
+    switch(addr >> 28) {
+    case 0:
+        if(rom_overlay) {
+            if(ssw.read) {
+                return &ROMBaseHost[base];
+            } else {
+                goto BUSERR;
+            }
+        }
+        /* fall through */
+    case 1:
+    case 2:
+    case 3:
+        if(base < RAM.size()) {
+            return (&RAM[base]);
+        } else {
+            goto BUSERR;
+        }
+    case 4:
+        if(!ssw.read) {
+            return (&ROMBaseHost[base]);
+        } else {
+            goto BUSERR;
+        }
+    default:
+        return nullptr;
+    }
+BUSERR:
+    if(regs.i_eav != -1) {
+        ssw.cm = true;
+        BUSERROR(addr, code, ssw.to_value(), regs.i_eav);
+    } else {
+        BUSERROR(addr, code, ssw.to_value(), 0);
+    }
 }
 // MMU enabled access
 uint8_t read8(uint32_t addr) {
-	uint8_t v;
-	paccess(paddr{ addr, 0, SZ::BYTE, TT::NORMAL, 
-	regs.S ? TM::SUPER_DATA : TM::USER_DATA, false}, &v);
-	return v;
+    uint8_t v;
+    paccess(paddr{addr, 0, SZ::BYTE, TT::NORMAL,
+                  regs.S ? TM::SUPER_DATA : TM::USER_DATA, false},
+            false, &v);
+    return v;
 }
 uint16_t read16(uint32_t addr) {
-	uint16_t v;
-	paccess(paddr{ addr, 0, SZ::WORD, TT::NORMAL, 	
-		regs.S ? TM::SUPER_DATA : TM::USER_DATA, false}, &v);
-	return v;
+    uint16_t v;
+    paccess(paddr{addr, 0, SZ::WORD, TT::NORMAL,
+                  regs.S ? TM::SUPER_DATA : TM::USER_DATA, false},
+            false, &v);
+    return v;
 }
 
 uint16_t FETCH() {
-	uint16_t v;
-	paccess(paddr{ regs.pc, 0, SZ::WORD, TT::NORMAL, 
-		regs.S ? TM::SUPER_CODE : TM::USER_CODE, false}, &v);
-	regs.pc += 2;
-	return v;
+    uint16_t v;
+    paccess(paddr{regs.pc, 0, SZ::WORD, TT::NORMAL,
+                  regs.S ? TM::SUPER_CODE : TM::USER_CODE, false},
+            true, &v);
+    regs.pc += 2;
+    return v;
 }
 uint32_t read32(uint32_t addr) {
-	uint32_t v;
-	paccess(paddr{ addr, 0, SZ::LONG, TT::NORMAL, 
-	regs.S ? TM::SUPER_DATA : TM::USER_DATA, false}, &v);
-	return v;
+    uint32_t v;
+    paccess(paddr{addr, 0, SZ::LONG, TT::NORMAL,
+                  regs.S ? TM::SUPER_DATA : TM::USER_DATA, false},
+            false, &v);
+    return v;
 }
 uint32_t FETCH32() {
-	uint32_t v;
-	paccess(paddr{ regs.pc, 0, SZ::LONG, TT::NORMAL, 
-		regs.S ? TM::SUPER_CODE : TM::USER_CODE, false}, &v);
-	regs.pc += 4;
-	return v;
+    uint32_t v;
+    paccess(paddr{regs.pc, 0, SZ::LONG, TT::NORMAL,
+                  regs.S ? TM::SUPER_CODE : TM::USER_CODE, false},
+            true, &v);
+    regs.pc += 4;
+    return v;
 }
 void write8(uint32_t addr, uint8_t v) {
-	paccess(paddr{ addr, 0, SZ::BYTE, TT::NORMAL, 
-	regs.S ? TM::SUPER_DATA : TM::USER_DATA, true}, &v);
+    paccess(paddr{addr, 0, SZ::BYTE, TT::NORMAL,
+                  regs.S ? TM::SUPER_DATA : TM::USER_DATA, true},
+            false, &v);
 }
 void write16(uint32_t addr, uint16_t v) {
-	paccess(paddr{ addr, 0, SZ::WORD, TT::NORMAL, 
-	regs.S ? TM::SUPER_DATA : TM::USER_DATA, true}, &v);
+    paccess(paddr{addr, 0, SZ::WORD, TT::NORMAL,
+                  regs.S ? TM::SUPER_DATA : TM::USER_DATA, true},
+            false, &v);
 }
 void write32(uint32_t addr, uint32_t v) {
-	paccess(paddr{ addr, 0, SZ::LONG, TT::NORMAL, 
-	regs.S ? TM::SUPER_DATA : TM::USER_DATA, true}, &v);
+    paccess(paddr{addr, 0, SZ::LONG, TT::NORMAL,
+                  regs.S ? TM::SUPER_DATA : TM::USER_DATA, true},
+            false, &v);
 }
-
-
 
 uint8_t readIO8(uint32_t addr) { return 0; }
 uint16_t readIO16(uint32_t addr) { return 0; }
@@ -122,4 +135,3 @@ uint32_t readIO32(uint32_t addr) { return 0; }
 void writeIO8(uint32_t addr, uint8_t v) {}
 void writeIO16(uint32_t addr, uint16_t v) {}
 void writeIO32(uint32_t addr, uint32_t v) {}
-

@@ -21,29 +21,30 @@
 #ifndef CPU_EMULATION_H
 #define CPU_EMULATION_H
 
+#include <stdint.h>
 #include <string.h>
-
+#include "SDL.h"
 
 /*
  *  Memory system
  */
 
 // RAM and ROM pointers (allocated and set by main_*.cpp)
-extern uint32 RAMBaseMac;		// RAM base (Mac address space), does not include Low Mem when != 0
-extern uint8 *RAMBaseHost;		// RAM base (host address space)
-extern uint32 RAMSize;			// Size of RAM
+extern uint32_t RAMBaseMac;		// RAM base (Mac address space), does not include Low Mem when != 0
+extern uint8_t *RAMBaseHost;		// RAM base (host address space)
+extern uint32_t RAMSize;			// Size of RAM
 
-extern uint32 ROMBaseMac;		// ROM base (Mac address space)
-extern uint8 *ROMBaseHost;		// ROM base (host address space)
-extern uint32 ROMSize;			// Size of ROM
+extern uint32_t ROMBaseMac;		// ROM base (Mac address space)
+extern uint8_t *ROMBaseHost;		// ROM base (host address space)
+extern uint32_t ROMSize;			// Size of ROM
 
 #if !REAL_ADDRESSING && !DIRECT_ADDRESSING
 // If we are not using real or direct addressing, the Mac frame buffer gets
 // mapped to this location. The memory must be allocated by VideoInit().
 // If multiple monitors are used, they must share the frame buffer
-const uint32 MacFrameBaseMac = 0xa0000000;
-extern uint8 *MacFrameBaseHost;	// Frame buffer base (host address space)
-extern uint32 MacFrameSize;		// Size of frame buffer
+const uint32_t MacFrameBaseMac = 0xa0000000;
+extern uint8_t *MacFrameBaseHost;	// Frame buffer base (host address space)
+extern uint32_t MacFrameSize;		// Size of frame buffer
 #endif
 extern int MacFrameLayout;		// Frame buffer layout (see defines below)
 
@@ -58,19 +59,19 @@ enum {
 
 // Mac memory access functions
 #include "memory.h"
-static inline uint32 ReadMacInt32(uint32 addr) {return read32(addr);}
-static inline uint32 ReadMacInt16(uint32 addr) {return read16(addr);}
-static inline uint32 ReadMacInt8(uint32 addr) {return read8(addr);}
-static inline void WriteMacInt32(uint32 addr, uint32 l) {write32(addr, l);}
-static inline void WriteMacInt16(uint32 addr, uint32 w) {write16(addr, w);}
-static inline void WriteMacInt8(uint32 addr, uint32 b) {write8(addr, b);}
-static inline uint8 *Mac2HostAddr(uint32 addr) {return &RAM[addr];}
-static inline uint32 Host2MacAddr(uint8 *addr) {return addr - RAM.data();}
+static inline uint32_t ReadMacInt32(uint32_t addr) {return read32(addr);}
+static inline uint32_t ReadMacInt16(uint32_t addr) {return read16(addr);}
+static inline uint32_t ReadMacInt8(uint32_t addr) {return read8(addr);}
+static inline void WriteMacInt32(uint32_t addr, uint32_t l) {write32(addr, l);}
+static inline void WriteMacInt16(uint32_t addr, uint32_t w) {write16(addr, w);}
+static inline void WriteMacInt8(uint32_t addr, uint32_t b) {write8(addr, b);}
+static inline uint8_t *Mac2HostAddr(uint32_t addr) {return &RAM[addr];}
+static inline uint32_t Host2MacAddr(uint8_t *addr) {return addr - RAM.data();}
 
-static inline void *Mac_memset(uint32 addr, int c, size_t n) {return memset(Mac2HostAddr(addr), c, n);}
-static inline void *Mac2Host_memcpy(void *dest, uint32 src, size_t n) {return memcpy(dest, Mac2HostAddr(src), n);}
-static inline void *Host2Mac_memcpy(uint32 dest, const void *src, size_t n) {return memcpy(Mac2HostAddr(dest), src, n);}
-static inline void *Mac2Mac_memcpy(uint32 dest, uint32 src, size_t n) {return memcpy(Mac2HostAddr(dest), Mac2HostAddr(src), n);}
+static inline void *Mac_memset(uint32_t addr, int c, size_t n) {return memset(Mac2HostAddr(addr), c, n);}
+static inline void *Mac2Host_memcpy(void *dest, uint32_t src, size_t n) {return memcpy(dest, Mac2HostAddr(src), n);}
+static inline void *Host2Mac_memcpy(uint32_t dest, const void *src, size_t n) {return memcpy(Mac2HostAddr(dest), src, n);}
+static inline void *Mac2Mac_memcpy(uint32_t dest, uint32_t src, size_t n) {return memcpy(Mac2HostAddr(dest), Mac2HostAddr(src), n);}
 
 
 /*
@@ -92,8 +93,8 @@ const bool UseJIT = false;
 // 680x0 emulation functions
 struct M68kRegisters;
 extern void Start680x0(void);									// Reset and start 680x0
-extern "C" void Execute68k(uint32 addr, M68kRegisters *r);		// Execute 68k code from EMUL_OP routine
-extern "C" void Execute68kTrap(uint16 trap, M68kRegisters *r);	// Execute MacOS 68k trap from EMUL_OP routine
+extern "C" void Execute68k(uint32_t addr, M68kRegisters *r);		// Execute 68k code from EMUL_OP routine
+extern "C" void Execute68kTrap(uint16_t trap, M68kRegisters *r);	// Execute MacOS 68k trap from EMUL_OP routine
 
 // Interrupt functions
 extern void TriggerInterrupt(void);								// Trigger interrupt level 1 (InterruptFlag must be set first)

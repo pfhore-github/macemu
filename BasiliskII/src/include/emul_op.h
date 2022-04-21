@@ -22,15 +22,15 @@
 #define EMUL_OP_H
 
 // 68k opcodes
-const uint16 M68K_ILLEGAL = 0x4afc;
-const uint16 M68K_NOP = 0x4e71;
-const uint16 M68K_RTS = 0x4e75;
-const uint16 M68K_RTD = 0x4e74;
-const uint16 M68K_RTR = 0x4e77;
-const uint16 M68K_JMP = 0x4ef9;
-const uint16 M68K_JMP_A0 = 0x4ed0;
-const uint16 M68K_JSR = 0x4eb9;
-const uint16 M68K_JSR_A0 = 0x4e90;
+const uint16_t M68K_ILLEGAL = 0x4afc;
+const uint16_t M68K_NOP = 0x4e71;
+const uint16_t M68K_RTS = 0x4e75;
+const uint16_t M68K_RTD = 0x4e74;
+const uint16_t M68K_RTR = 0x4e77;
+const uint16_t M68K_JMP = 0x4ef9;
+const uint16_t M68K_JMP_A0 = 0x4ed0;
+const uint16_t M68K_JSR = 0x4eb9;
+const uint16_t M68K_JSR_A0 = 0x4e90;
 
 // Extended opcodes
 enum {
@@ -95,6 +95,6 @@ enum {
 };
 
 // Functions
-extern void EmulOp(uint16 opcode, struct M68kRegisters *r);	// Execute EMUL_OP opcode (called by 68k emulator or Line-F trap handler)
+extern void EmulOp(uint16_t opcode, struct M68kRegisters *r);	// Execute EMUL_OP opcode (called by 68k emulator or Line-F trap handler)
 
 #endif

@@ -21,4 +21,16 @@ template<class F> void EA_Update32(int type, int reg, const F& f) {
     uint32_t v1 = EA_READ32( type, reg, true );
 	EA_WRITE32(type, reg, f( v1) );
 }
+
+inline void WRITE_D8(int reg, uint8_t v) {
+    regs.d[reg] = regs.d[reg] & 0xffffff00 | v;
+
+}
+inline void WRITE_D16(int reg, uint16_t v) {
+    regs.d[reg] = regs.d[reg] & 0xffff0000 | v;
+}
+inline void WRITE_A16(int reg, int16_t v) {
+    regs.a[reg] = v;
+}
+
 #endif

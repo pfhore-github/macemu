@@ -36,14 +36,19 @@ InitFix::InitFix() {
     RAM.resize(0x100000);
     memset(regs.r, 0, sizeof(uint32_t)*16);
     regs.pc = 0;
+    regs.v = regs.c = regs.n = regs.x = regs.z = false;
+    regs.S = false;
+    
 }
 BOOST_TEST_GLOBAL_FIXTURE( MyGlobalFixture );
 #include <stdio.h>
 #include <fmt/core.h>
 #include <sys/types.h>
 #include <unistd.h>
-
-
+bool done = false;
+void Exit680x0() {
+  done = true;
+}
 uint8_t raw_read8(uint32_t addr) {
   return RAM[addr];
 }
@@ -84,3 +89,4 @@ int asm_m68k(const char* a, int offset) {
   return size;
 }
 
+void EmulOp(uint16 opcode, M68kRegisters *r) {}

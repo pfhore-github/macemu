@@ -20,7 +20,9 @@ PRE
 for( keys %ASM) {
     my $tmp = "/tmp/asm_ret_$$.S";
     open my $pipe1, "| m68k-linux-gnu-as -mcpu=68040 -o $tmp" or die;
-    print $pipe1 "$_\n" or die;
+    my $u = $_;
+    $u =~ s/\\n/\n/g;
+    print $pipe1 "$u\n" or die;
     close $pipe1 or die;
     my $ret = `m68k-linux-gnu-objcopy -O binary $tmp /dev/stdout`;
     my @c = unpack "n*", $ret;

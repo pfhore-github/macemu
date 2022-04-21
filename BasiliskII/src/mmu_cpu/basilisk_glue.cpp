@@ -45,7 +45,7 @@ bool UseJIT = false;
 #endif
 
 // From newcpu.cpp
-extern bool quit_program;
+bool quit_program;
 
 
 /*

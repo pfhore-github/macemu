@@ -22,7 +22,7 @@
 
 #ifndef SPCFLAGS_H
 #define SPCFLAGS_H
-
+#include <stdint.h>
 typedef uint32_t spcflags_t;
 
 enum {
