@@ -15,7 +15,6 @@
 #include "main.h"
 
 #include "newcpu.h"
-#include "fpu/fpu.h"
 #include "test_common.h"
 std::vector<uint8_t> RAM;
 uint8* ROMBaseHost;
@@ -38,6 +37,7 @@ InitFix::InitFix() {
     regs.pc = 0;
     regs.v = regs.c = regs.n = regs.x = regs.z = false;
     regs.S = false;
+    memset(&regs.FPCR, 0, sizeof(regs.FPCR));
     
 }
 BOOST_TEST_GLOBAL_FIXTURE( MyGlobalFixture );
@@ -72,21 +72,38 @@ void raw_write32(uint32_t addr, uint32_t v) {
   auto p = reinterpret_cast<uint32_t*>( &RAM[addr]);
   *p = SDL_SwapBE32(v);
 }
-extern std::unordered_map<std::string, std::vector<int>> asmcodes;
-int asm_m68k(const char* a, int offset) {
+#include <stdio.h>
+#include <unistd.h>
+
+static std::unordered_map<std::string, std::string> asmcodes;
+void asm_m68k(const char* a, int offset) {
   auto f = asmcodes.find(a);
   if( f == asmcodes.end() ) {
-    BOOST_FAIL("no test opcodes");
-    return 0;
+    char tmp[] = "/tmp/asm_ret_XXXXXX";
+    int tmps = mkstemp(tmp);
+    close(tmps);
+    auto p1_f = fmt::format("m68k-linux-gnu-as -mcpu=68040 -o {}", tmp);
+    FILE* p1 = popen(p1_f.c_str(), "w");
+    fprintf(p1, "%s\n", a);
+    if( pclose(p1) ) {
+      BOOST_FAIL( "assemble failure");
+    }
+    p1_f = fmt::format("m68k-linux-gnu-objcopy -O binary {} /dev/stdout", tmp);
+    p1 = popen(p1_f.c_str(), "r");
+    std::string opc;
+    int c;
+    while( (c = getc(p1)) != -1 ) {
+      opc += c;
+    }
+    pclose(p1);
+    asmcodes[a] = opc;
+    unlink(tmp);
+    f = asmcodes.find(a);
   }
   const auto& ret = f->second;
-  int size = 0;
-  for( uint16_t v : ret ) {
-    raw_write16(offset, v);
-    offset += 2;
-    size += 2;
+  for( char c : ret ) {
+    raw_write8(offset++, c);
   } 
-  return size;
 }
 
 void EmulOp(uint16 opcode, M68kRegisters *r) {}

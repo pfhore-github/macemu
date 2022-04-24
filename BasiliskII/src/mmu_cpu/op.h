@@ -224,11 +224,11 @@ OP(ror_ea);
 OP(bftst_d);
 OP(bfchg_d);
 OP(bfclr_d);
-OP(bfsem_d);
+OP(bfset_d);
 OP(bftst_m);
 OP(bfchg_m);
 OP(bfclr_m);
-OP(bfsem_m);
+OP(bfset_m);
 
 OP(asl_b_imm);
 OP(lsl_b_imm);

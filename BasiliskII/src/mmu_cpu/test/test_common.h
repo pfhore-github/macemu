@@ -1,5 +1,5 @@
 #include <vector>
-int asm_m68k(const char* a, int offset = 0);
+void asm_m68k(const char* a, int offset = 0);
 void m68k_do_execute ();
 extern std::vector<uint8_t> RAM;
 

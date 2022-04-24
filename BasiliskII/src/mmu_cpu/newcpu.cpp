@@ -35,7 +35,7 @@
 
 #include "ea.h"
 #include "exception.h"
-#include "fpu/fpu.h"
+#include "fpu/fpu_ieee.h"
 #include "newcpu.h"
 #include "op.h"
 m68k_reg regs;
@@ -296,6 +296,16 @@ static void build_cpufunctbl() {
 
         opc_map[0047100 | i] = op_trap;
 
+        opc_map[0164300 | i] = op_bftst_d;
+        opc_map[0165300 | i] = op_bfchg_d;
+        opc_map[0166300 | i] = op_bfclr_d;
+        opc_map[0167300 | i] = op_bfset_d;
+
+        opc_map[0164700 | i] = op_bfextu_d;
+        opc_map[0165700 | i] = op_bfexts_d;
+        opc_map[0166700 | i] = op_bfffo_d;
+        opc_map[0167700 | i] = op_bfins_d;
+
         for(int cd = 0; cd < 16; ++cd) {
             opc_map[0050300 | cd << 8 | i] = op_scc;
         }
@@ -451,6 +461,16 @@ static void build_cpufunctbl() {
         opc_map[0161700 | i] = op_lsl_ea;
         opc_map[0162700 | i] = op_roxl_ea;
         opc_map[0163700 | i] = op_rol_ea;
+
+        opc_map[0164300 | i] = op_bftst_m;
+        opc_map[0165300 | i] = op_bfchg_m;
+        opc_map[0166300 | i] = op_bfclr_m;
+        opc_map[0167300 | i] = op_bfset_m;
+
+        opc_map[0164700 | i] = op_bfextu_m;
+        opc_map[0165700 | i] = op_bfexts_m;
+        opc_map[0166700 | i] = op_bfffo_m;
+        opc_map[0167700 | i] = op_bfins_m;
 
         for(int dn = 0; dn < 8; ++dn) {
             opc_map[0000400 | dn << 9 | i] = op_btst_b_dm;
@@ -613,15 +633,15 @@ static void build_cpufunctbl() {
     for(int i = 0; i < 0x1000; ++i) {
         opc_map[0xa000 | i] = op_aline;
     }
+
+    init_fpu_opc();
 }
 
 void init_m68k() {
     build_cpufunctbl();
-    //	fpu_init(CPUType == 4);
 }
 
 void exit_m68k(void) {
-    //	fpu_exit ();
 }
 
 int lastint_no;
@@ -702,9 +722,6 @@ void m68k_do_execute() {
         }
     }
 EXCEPTION:
-    // FP POST
-    // TODO
-
     // TRACE
     if(regs.T == 2 || regs.T == 1 && regs.traced) {
         TRACE();

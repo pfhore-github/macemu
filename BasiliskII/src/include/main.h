@@ -30,18 +30,18 @@ extern int FPUType;
 // Flag: 24-bit-addressing?
 extern bool TwentyFourBitAddressing;
 
+template<class T, class U>
+inline T bit_cast(U v) {
+	static_assert(sizeof(T) == sizeof(U));
+	T r;
+	memcpy(&r, &v, sizeof(U));
+	return r;
+}
 // 68k register structure (for Execute68k())
 struct M68kRegisters {
 	uint32_t d[8];
-#ifdef UPDATE_UAE
-	memptr a[8];
-	uint16 sr;
-	memptr usp, isp, msp;
-	memptr pc;
-#else
 	uint32_t a[8];
 	uint16_t sr;
-#endif
 };
 
 // General functions

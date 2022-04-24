@@ -464,3 +464,9 @@ OP(exg_a) {
 OP(exg_da) {
     std::swap( regs.a[reg], regs.d[dm]);
 }
+
+OP(move16_inc_to_imm);
+OP(move16_imm_to_inc);
+OP(move16_addr_to_imm);
+OP(move16_imm_to_addr);
+OP(move16_inc_to_inc);

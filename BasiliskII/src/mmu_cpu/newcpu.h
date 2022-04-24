@@ -29,7 +29,6 @@
 #include <memory>
 #include <setjmp.h>
 #include <stdint.h>
-struct fpu_reg {};
 
 struct m68k_reg {
     uint32_t r[16];
@@ -48,6 +47,41 @@ struct m68k_reg {
     uint32_t msp;
     uint32_t vbr;
     uint8_t sfc, dfc;
+    // FPU
+    double fp[8];
+    struct fpcr_t {
+        uint8_t rnd;
+        uint8_t prec;
+        bool inex1;
+        bool inex2;
+        bool dz;
+        bool unfl;
+        bool ovfl;
+        bool operr;
+        bool snan;
+        bool bsun;
+    } FPCR;
+    struct fpsr_t {
+        bool ac_inex;
+        bool ac_dz;
+        bool ac_unfl;
+        bool ac_ovfl;
+        bool ac_iop;
+        bool inex1;
+        bool inex2;
+        bool dz;
+        bool unfl;
+        bool ovfl;
+        bool operr;
+        bool snan;
+        bool bsun;
+        int8_t qutinent;
+        bool nan;
+        bool i;
+        bool z;
+        bool n;
+    } FPSR;
+    uint32_t fpiar;
     // MMU
     uint32_t urp;
     uint32_t srp;
@@ -75,11 +109,8 @@ struct m68k_reg {
 
     // MOVEM
     uint32_t i_eav = -1;
-    // 68040+native FPU
-    fpu_reg fpu;
     // emulator flag
     std::atomic<uint32_t> spcflags;
-    std::atomic<uint8_t> exception_bit;
     std::atomic<uint8_t> irq;
     bool traced = false;
 };

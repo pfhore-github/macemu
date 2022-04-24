@@ -343,3 +343,6 @@ OP(and_to_ea_l) {
 	uint32_t v2 = regs.d[ dm ];
 	EA_Update32(type, reg, [v2](auto v1) { return DO_AND_L( v1, v2); });
 }
+
+
+

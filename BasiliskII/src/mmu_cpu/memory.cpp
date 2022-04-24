@@ -83,11 +83,15 @@ uint8_t read8(uint32_t addr) {
     return v;
 }
 uint16_t read16(uint32_t addr) {
-    uint16_t v;
-    paccess(paddr{addr, 0, SZ::WORD, TT::NORMAL,
-                  regs.S ? TM::SUPER_DATA : TM::USER_DATA, false},
-            false, &v);
-    return v;
+    if(addr & 1) {
+        return read8(addr) << 8 | read8(addr + 1);
+    } else {
+        uint16_t v;
+        paccess(paddr{addr, 0, SZ::WORD, TT::NORMAL,
+                      regs.S ? TM::SUPER_DATA : TM::USER_DATA, false},
+                false, &v);
+        return v;
+    }
 }
 
 uint16_t FETCH() {
@@ -99,11 +103,17 @@ uint16_t FETCH() {
     return v;
 }
 uint32_t read32(uint32_t addr) {
-    uint32_t v;
-    paccess(paddr{addr, 0, SZ::LONG, TT::NORMAL,
-                  regs.S ? TM::SUPER_DATA : TM::USER_DATA, false},
-            false, &v);
-    return v;
+    if(addr & 1) {
+        return read8(addr) << 24 | read16(addr + 1) << 8 | read8(addr + 3);
+    } else if(addr & 2) {
+        return read16(addr) << 16 | read16(addr + 2);
+    } else {
+        uint32_t v;
+        paccess(paddr{addr, 0, SZ::LONG, TT::NORMAL,
+                      regs.S ? TM::SUPER_DATA : TM::USER_DATA, false},
+                false, &v);
+        return v;
+    }
 }
 uint32_t FETCH32() {
     uint32_t v;
@@ -119,14 +129,29 @@ void write8(uint32_t addr, uint8_t v) {
             false, &v);
 }
 void write16(uint32_t addr, uint16_t v) {
-    paccess(paddr{addr, 0, SZ::WORD, TT::NORMAL,
-                  regs.S ? TM::SUPER_DATA : TM::USER_DATA, true},
-            false, &v);
+    if(addr & 1) {
+        write8(addr, v >> 8);
+        write8(addr + 1, v);
+    } else {
+        paccess(paddr{addr, 0, SZ::WORD, TT::NORMAL,
+                      regs.S ? TM::SUPER_DATA : TM::USER_DATA, true},
+                false, &v);
+    }
 }
 void write32(uint32_t addr, uint32_t v) {
-    paccess(paddr{addr, 0, SZ::LONG, TT::NORMAL,
-                  regs.S ? TM::SUPER_DATA : TM::USER_DATA, true},
-            false, &v);
+    if(addr & 1) {
+        write8(addr, v >> 24);
+        write16(addr + 1, v >> 8);
+        write8(addr + 3, v);
+    } else if(addr & 2) {
+        write16(addr, v >> 16);
+        write16(addr + 2, v);
+
+    } else {
+        paccess(paddr{addr, 0, SZ::LONG, TT::NORMAL,
+                      regs.S ? TM::SUPER_DATA : TM::USER_DATA, true},
+                false, &v);
+    }
 }
 
 uint8_t readIO8(uint32_t addr) { return 0; }
