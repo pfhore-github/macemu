@@ -29,7 +29,7 @@
 #include <memory>
 #include <setjmp.h>
 #include <stdint.h>
-
+#include <future>
 struct m68k_reg {
     uint32_t r[16];
     uint32_t *d = r;
@@ -41,7 +41,6 @@ struct m68k_reg {
     bool M, S;
     uint8_t T;
     bool exception;
-    std::atomic<bool> suspend;
     uint32_t isp;
     uint32_t usp;
     uint32_t msp;
@@ -110,9 +109,13 @@ struct m68k_reg {
     // MOVEM
     uint32_t i_eav = -1;
     // emulator flag
+
+    std::unique_ptr<std::promise<void>> sleep;
+
     std::atomic<uint32_t> spcflags;
     std::atomic<uint8_t> irq;
     bool traced = false;
+
 };
 // no multi cpu
 extern m68k_reg regs;
@@ -125,21 +128,11 @@ inline void JUMP(uint32_t pc) {
     regs.pc = pc;
     regs.traced = true;
 }
-inline uint8_t GET_CCR() {
-    return regs.c | regs.v << 1 | regs.z << 2 | regs.n << 3 | regs.x << 4;
-}
 
-inline uint16_t GET_SR() {
-    return regs.c | regs.v << 1 | regs.z << 2 | regs.n << 3 | regs.x << 4 |
-           regs.IM << 8 | regs.M << 12 | regs.S << 13 | regs.T << 14;
-}
-inline void SET_CCR(uint8_t v) {
-    regs.c = v & 1;
-    regs.v = v >> 1 & 1;
-    regs.z = v >> 2 & 1;
-    regs.n = v >> 3 & 1;
-    regs.x = v >> 4 & 1;
-}
+uint8_t GET_CCR();
+
+uint16_t GET_SR();
+void SET_CCR(uint8_t v);
 void SET_SR(uint16_t sr);
 #define OP(name)                                                               \
     void op_##name(                                                            \

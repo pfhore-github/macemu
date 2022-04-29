@@ -38,17 +38,10 @@ BOOST_AUTO_TEST_CASE( overflow ) {
 
 BOOST_AUTO_TEST_CASE( div0 )
 {    
-    regs.vbr = 0x100;
     regs.d[2] = 1;
     regs.d[1] = 0;
-    
-    regs.a[1] = 0x10;
     asm_m68k("divu.l %D1, %D2");
-    raw_write8(0x10, 0x10);
-    raw_write8(0x11, 0x50);
-    raw_write32(0x100+5*4, 0x12345678);
-    m68k_do_execute();
-    BOOST_TEST( regs.pc == 0x12345678);
+    exception_check(5);
 }
 
 BOOST_AUTO_TEST_CASE( mod ) {

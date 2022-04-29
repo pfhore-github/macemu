@@ -2,62 +2,36 @@
 #include "memory.h"
 #include "newcpu.h"
 #include "test/test_common.h"
-#include <boost/test/data/test_case.hpp>
-#include <boost/test/unit_test.hpp>
 
 BOOST_FIXTURE_TEST_SUITE(ADDI, InitFix)
-BOOST_AUTO_TEST_SUITE(Byte)
-BOOST_AUTO_TEST_CASE(reg) {
+
+BOOST_DATA_TEST_CASE(opc, EA_D(), ea) {
+    BOOST_TEST(opc_map[0003000 | ea] == opc_map[0003000]);
+    BOOST_TEST(opc_map[0003100 | ea] == opc_map[0003100]);
+    BOOST_TEST(opc_map[0003200 | ea] == opc_map[0003200]);
+}
+
+BOOST_AUTO_TEST_CASE(Byte) {
     regs.d[1] = 33;
-    asm_m68k("addib #25, %D1");
+    raw_write16(0, 0003001);
+    raw_write16(2, 25);
     m68k_do_execute();
     BOOST_TEST(regs.d[1] == 58);
 }
 
-BOOST_AUTO_TEST_CASE(mem) {
-    regs.a[1] = 0x10;
-    asm_m68k("addib #25, (%A1)");
-    raw_write8(0x10, 66);
-    m68k_do_execute();
-    BOOST_TEST(raw_read8(0x10) == 91);
-}
-
-BOOST_AUTO_TEST_SUITE_END()
-BOOST_AUTO_TEST_SUITE(Word)
-
-BOOST_AUTO_TEST_CASE(reg) {
+BOOST_AUTO_TEST_CASE(Word) {
     regs.d[1] = 3456;
-    asm_m68k("addiw #1000, %D1");
+    raw_write16(0, 0003101);
+    raw_write16(2, 1000);
     m68k_do_execute();
     BOOST_TEST(regs.d[1] == 4456);
 }
 
-BOOST_AUTO_TEST_CASE(mem) {
-    regs.a[1] = 0x10;
-    asm_m68k("addiw #1000, (%A1)");
-    raw_write16(0x10, 3456);
-    m68k_do_execute();
-    BOOST_TEST(raw_read16(0x10) == 4456);
-}
-
-BOOST_AUTO_TEST_SUITE_END()
-
-BOOST_AUTO_TEST_SUITE(Long)
-
-BOOST_AUTO_TEST_CASE(reg) {
+BOOST_AUTO_TEST_CASE(Long) {
     regs.d[1] = 123456789;
-    asm_m68k("addil #100000000, %D1");
+    raw_write16(0, 0003201);
+    raw_write32(2, 100000000);
     m68k_do_execute();
     BOOST_TEST(regs.d[1] == 223456789);
 }
-
-BOOST_AUTO_TEST_CASE(mem) {
-    regs.a[1] = 0x10;
-    asm_m68k("addil #100000000, (%A1)");
-    raw_write32(0x10, 123456789);
-    m68k_do_execute();
-    BOOST_TEST(raw_read32(0x10) == 223456789);
-}
-
-BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE_END()

@@ -2,73 +2,67 @@
 #include "memory.h"
 #include "newcpu.h"
 #include "test/test_common.h"
-#include <boost/test/data/test_case.hpp>
-#include <boost/test/unit_test.hpp>
 
 BOOST_FIXTURE_TEST_SUITE(ORI, InitFix)
-BOOST_AUTO_TEST_SUITE(Byte)
-BOOST_AUTO_TEST_CASE(reg) {
+BOOST_DATA_TEST_CASE(opc, EA_D(), ea) {
+    BOOST_TEST(opc_map[0000000 | ea] == opc_map[0000000]);
+    BOOST_TEST(opc_map[0000100 | ea] == opc_map[0000100]);
+    BOOST_TEST(opc_map[0000200 | ea] == opc_map[0000200]);
+}
+
+BOOST_AUTO_TEST_CASE(Byte) {
     regs.d[1] = 0x98;
-    asm_m68k("orib #0x2a, %D1");
+    raw_write16(0, 0000001);
+    raw_write16(2, 0x2a);
     m68k_do_execute();
     BOOST_TEST(regs.d[1] == (0x98 | 0x2a));
 }
 
-BOOST_AUTO_TEST_CASE(mem) {
-    regs.a[1] = 0x10;
-    raw_write8(0x10, 0x12);
-    asm_m68k("orib #0x2a, (%A1)");
-    m68k_do_execute();
-    BOOST_TEST(raw_read8(0x10) == (0x12 | 0x2a));
-}
-
-BOOST_AUTO_TEST_CASE(ccr) {
-    regs.pc = 0;
-    regs.vbr = 0;
+BOOST_DATA_TEST_CASE(ccr, BIT *BIT *BIT *BIT *BIT, x1, v1, c1, n1, z1) {
     regs.x = regs.v = regs.c = regs.n = regs.z = false;
-
-    asm_m68k("orib #0xff, %CCR");
+    raw_write16(0, 0000074);
+    raw_write16(2, x1 << 4 | n1 << 3 | z1 << 2 | v1 << 1 | c1);
 
     m68k_do_execute();
-    BOOST_TEST(regs.x == true);
-    BOOST_TEST(regs.v == true);
-    BOOST_TEST(regs.c == true);
-    BOOST_TEST(regs.n == true);
-    BOOST_TEST(regs.z == true);
+    BOOST_TEST(regs.x == x1);
+    BOOST_TEST(regs.n == n1);
+    BOOST_TEST(regs.z == z1);
+    BOOST_TEST(regs.v == v1);
+    BOOST_TEST(regs.c == c1);
 }
-BOOST_AUTO_TEST_SUITE_END()
 
-BOOST_AUTO_TEST_SUITE(Word)
-BOOST_AUTO_TEST_CASE(reg) {
+BOOST_AUTO_TEST_CASE(Word) {
     regs.d[1] = 0x5678;
-    asm_m68k("oriw #0xdead, %D1");
+    raw_write16(0, 0000101);
+    raw_write16(2, 0xdead);
     m68k_do_execute();
     BOOST_TEST(regs.d[1] == (0x5678 | 0xdead));
 }
 
-BOOST_AUTO_TEST_CASE(mem) {
-    regs.a[1] = 0x10;
-    raw_write16(0x10, 0x1234);
-    asm_m68k("oriw #0x2abc, (%A1)");
-    m68k_do_execute();
-    BOOST_TEST(raw_read16(0x10) == (0x1234 | 0x2abc));
+BOOST_AUTO_TEST_CASE(sr_invalid) {
+    regs.S = false;
+    raw_write16(0, 0000174);
+    raw_write16(2, 0xffff);
+    exception_check(8);
 }
-BOOST_AUTO_TEST_SUITE_END()
 
-BOOST_AUTO_TEST_SUITE(Long)
-BOOST_AUTO_TEST_CASE(reg) {
+BOOST_DATA_TEST_CASE(sr_valid, bdata::xrange(8), i) {
+    regs.S = true;
+    regs.M = false;
+    regs.IM = 0;
+    raw_write16(0, 0000174);
+    raw_write16(2, 1 << 12 | i << 8);
+    m68k_do_execute();
+    BOOST_TEST(regs.M);
+    BOOST_TEST(regs.IM == i);
+}
+
+BOOST_AUTO_TEST_CASE(Long) {
     regs.d[1] = 0x12345678;
-    asm_m68k("oril #0xdeadbeaf, %D1");
+    raw_write16(0, 0000201);
+    raw_write32(2, 0xdeadbeaf);
     m68k_do_execute();
     BOOST_TEST(regs.d[1] == (0x12345678 | 0xdeadbeaf));
 }
 
-BOOST_AUTO_TEST_CASE(mem) {
-    regs.a[1] = 0x10;
-    asm_m68k("oril #0x2abc5412, (%A1)");
-    raw_write32(0x10, 0x1234dead);
-    m68k_do_execute();
-    BOOST_TEST(raw_read32(0x10) == (0x2abc5412 | 0x1234dead));
-}
-BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE_END()

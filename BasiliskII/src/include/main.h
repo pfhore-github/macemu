@@ -32,7 +32,7 @@ extern bool TwentyFourBitAddressing;
 
 template<class T, class U>
 inline T bit_cast(U v) {
-	static_assert(sizeof(T) == sizeof(U));
+	static_assert(sizeof(T) == sizeof(U), "operand size mismatch");
 	T r;
 	memcpy(&r, &v, sizeof(U));
 	return r;

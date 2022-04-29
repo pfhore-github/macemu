@@ -19,7 +19,7 @@ struct Ex_Init {
 BOOST_FIXTURE_TEST_SUITE( exception, Ex_Init )
 BOOST_AUTO_TEST_CASE( ACCESS_FAULT )
 {
-    regs.a[2] = 0x4ffffffe;
+    regs.a[2] = 0x3ffffffe;
     regs.isp = regs.a[7] = 0x1000;
     asm_m68k("move.w (%A2), %D1");
     m68k_do_execute();
@@ -29,7 +29,7 @@ BOOST_AUTO_TEST_CASE( ACCESS_FAULT )
     BOOST_TEST( raw_read16( regs.a[7] + 6) == 0x7000 + 4 * 2);
     BOOST_TEST( raw_read32( regs.a[7] + 8) == 0);
     BOOST_TEST( raw_read16( regs.a[7] + 0x0c) == 1 << 8 | 1 << 3 | 2 << 5);
-    BOOST_TEST( raw_read32( regs.a[7] + 0x14) == 0x4ffffffe);
+    BOOST_TEST( raw_read32( regs.a[7] + 0x14) == 0x3ffffffe);
 }
 
 BOOST_AUTO_TEST_CASE( ADDRESS_ERROR )

@@ -14,9 +14,11 @@ BOOST_AUTO_TEST_CASE(ne1) {
     regs.d[4] = 5000;
     regs.a[1] = 0x10;
     regs.a[2] = 0x12;
+    raw_write16(0, 0006374);
+    raw_write16(2, 0110301);
+    raw_write16(4, 0120402);
     raw_write16(0x10, 6000);
     raw_write16(0x12, 7000);
-    asm_m68k("cas2w %D1:%D2, %D3:%D4, (%A1):(%A2)");
     m68k_do_execute();
     BOOST_TEST(raw_read16(0x10) == 6000);
     BOOST_TEST(raw_read16(0x12) == 7000);
@@ -34,7 +36,9 @@ BOOST_AUTO_TEST_CASE(ne2) {
     regs.a[2] = 0x12;
     raw_write16(0x10, 2000);
     raw_write16(0x12, 7000);
-    asm_m68k("cas2w %D1:%D2, %D3:%D4, (%A1):(%A2)");
+    raw_write16(0, 0006374);
+    raw_write16(2, 0110301);
+    raw_write16(4, 0120402);
     m68k_do_execute();
     BOOST_TEST(raw_read16(0x10) == 2000);
     BOOST_TEST(raw_read16(0x12) == 7000);
@@ -52,7 +56,9 @@ BOOST_AUTO_TEST_CASE(eq) {
     regs.a[2] = 0x12;
     raw_write16(0x10, 2000);
     raw_write16(0x12, 3000);
-    asm_m68k("cas2w %D1:%D2, %D3:%D4, (%A1):(%A2)");
+    raw_write16(0, 0006374);
+    raw_write16(2, 0110301);
+    raw_write16(4, 0120402);
     m68k_do_execute();
     BOOST_TEST(raw_read16(0x10) == 4000);
     BOOST_TEST(raw_read16(0x12) == 5000);
@@ -73,7 +79,10 @@ BOOST_AUTO_TEST_CASE(ne1) {
     regs.a[2] = 0x14;
     raw_write32(0x10, 600000);
     raw_write32(0x14, 700000);
-    asm_m68k("cas2l %D1:%D2, %D3:%D4, (%A1):(%A2)");
+    raw_write16(0, 0007374);
+    raw_write16(2, 0110301);
+    raw_write16(4, 0120402);
+
     m68k_do_execute();
     BOOST_TEST(raw_read32(0x10) == 600000);
     BOOST_TEST(raw_read32(0x14) == 700000);
@@ -91,7 +100,9 @@ BOOST_AUTO_TEST_CASE(ne2) {
     regs.a[2] = 0x14;
     raw_write32(0x10, 200000);
     raw_write32(0x14, 700000);
-    asm_m68k("cas2l %D1:%D2, %D3:%D4, (%A1):(%A2)");
+    raw_write16(0, 0007374);
+    raw_write16(2, 0110301);
+    raw_write16(4, 0120402);
     m68k_do_execute();
     BOOST_TEST(raw_read32(0x10) == 200000);
     BOOST_TEST(raw_read32(0x14) == 700000);
@@ -109,7 +120,9 @@ BOOST_AUTO_TEST_CASE(eq) {
     regs.a[2] = 0x14;
     raw_write32(0x10, 200000);
     raw_write32(0x14, 300000);
-    asm_m68k("cas2l %D1:%D2, %D3:%D4, (%A1):(%A2)");
+    raw_write16(0, 0007374);
+    raw_write16(2, 0110301);
+    raw_write16(4, 0120402);
     m68k_do_execute();
     BOOST_TEST(raw_read32(0x10) == 400000);
     BOOST_TEST(raw_read32(0x14) == 500000);

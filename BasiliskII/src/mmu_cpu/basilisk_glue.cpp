@@ -108,6 +108,10 @@ void Start680x0(void)
 
 void TriggerInterrupt(void)
 {
+	regs.irq = 1;
+	if( regs.sleep) {
+		regs.sleep->set_value();
+	}
 	idle_resume();
 	SPCFLAGS_SET( SPCFLAG_INT );
 }

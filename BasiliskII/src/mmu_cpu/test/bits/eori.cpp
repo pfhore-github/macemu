@@ -2,31 +2,26 @@
 #include "memory.h"
 #include "newcpu.h"
 #include "test/test_common.h"
-#include <boost/test/data/test_case.hpp>
-#include <boost/test/unit_test.hpp>
-
-
 
 BOOST_FIXTURE_TEST_SUITE(EORI, InitFix)
-BOOST_AUTO_TEST_SUITE(Byte)
-BOOST_AUTO_TEST_CASE(reg) {
+
+BOOST_DATA_TEST_CASE(opc, EA_D(), ea) {
+    BOOST_TEST(opc_map[0005000 | ea] == opc_map[0005000]);
+    BOOST_TEST(opc_map[0005100 | ea] == opc_map[0005100]);
+    BOOST_TEST(opc_map[0005200 | ea] == opc_map[0005200]);
+}
+
+BOOST_AUTO_TEST_CASE(Byte) {
     regs.d[1] = 0x78;
-    asm_m68k("eorib #0x8a, %D1");
+    raw_write16(0, 0005001);
+    raw_write16(2, 0x8a);
     m68k_do_execute();
     BOOST_TEST(regs.d[1] == (0x78 ^ 0x8a));
 }
 
-BOOST_AUTO_TEST_CASE(mem) {
-    regs.a[1] = 0x10;
-    asm_m68k("eorib #0x2a, (%A1)");
-    raw_write8(0x10, 0x12);
-    m68k_do_execute();
-    BOOST_TEST(raw_read8(0x10) == (0x12 ^ 0x2a));
-}
-
-BOOST_AUTO_TEST_CASE(ccr) {
-    regs.x = regs.v = regs.c = regs.n = regs.z = true;
-    asm_m68k("eorib #ff, %CCR");
+BOOST_DATA_TEST_CASE(ccr, BIT *BIT *BIT *BIT *BIT, x1, v1, c1, n1, z1) {
+    raw_write16(0, 0005074);
+    raw_write16(2, x1 << 4 | n1 << 3 | z1 << 2 | v1 << 1 | c1);
     m68k_do_execute();
     BOOST_TEST(regs.x == false);
     BOOST_TEST(regs.v == false);
@@ -34,41 +29,21 @@ BOOST_AUTO_TEST_CASE(ccr) {
     BOOST_TEST(regs.n == false);
     BOOST_TEST(regs.z == false);
 }
-BOOST_AUTO_TEST_SUITE_END()
 
-BOOST_AUTO_TEST_SUITE(Word)
-BOOST_AUTO_TEST_CASE(reg) {
+BOOST_AUTO_TEST_CASE(Word) {
     regs.d[1] = 0x5678;
-    asm_m68k("eoriw #0xdead, %D1");
+    raw_write16(0, 0005101);
+    raw_write16(2, 0xdead);
     m68k_do_execute();
     BOOST_TEST(regs.d[1] == (0x5678 ^ 0xdead));
 }
 
-BOOST_AUTO_TEST_CASE(mem) {
-    regs.a[1] = 0x10;
-    asm_m68k("eoriw #0x2abc, (%A1)");
-    raw_write16(0x10, 0x1234);
-    m68k_do_execute();
-    BOOST_TEST(raw_read16(0x10) == (0x1234 ^ 0x2abc));
-}
-
-BOOST_AUTO_TEST_SUITE_END()
-
-BOOST_AUTO_TEST_SUITE(Long)
-BOOST_AUTO_TEST_CASE(reg) {
+BOOST_AUTO_TEST_CASE(Long) {
     regs.d[1] = 0x12345678;
-
-    asm_m68k("eoril #0xdeadbeaf, %D1");
+    raw_write16(0, 0005201);
+    raw_write32(2, 0xdeadbeaf);
     m68k_do_execute();
     BOOST_TEST(regs.d[1] == (0x12345678 ^ 0xdeadbeaf));
 }
 
-BOOST_AUTO_TEST_CASE(mem) {
-    regs.a[1] = 0x10;
-    asm_m68k("eoril #0x2abc5412, (%A1)");
-    raw_write32(0x10, 0x1234dead);
-    m68k_do_execute();
-    BOOST_TEST(raw_read32(0x10) == (0x2abc5412 ^ 0x1234dead));
-}
-BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE_END()

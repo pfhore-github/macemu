@@ -8,9 +8,9 @@
 #include <unordered_map>
 #include <vector>
 
-#include "intop.h"
 #include "ea.h"
 #include "exception.h"
+#include "intop.h"
 #include "newcpu.h"
 OP(link_l) {
     int32_t disp = FETCH32();
@@ -51,10 +51,10 @@ OP(stop) {
         return;
     }
     SET_SR(next);
-    regs.suspend.store(true);
-    while(regs.suspend.load()) {
-        SDL_Delay(0);
-    }
+    regs.sleep = std::make_unique<std::promise<void>>();
+    std::future<void> f = regs.sleep->get_future();
+    f.wait();
+
 }
 
 OP(rte) {
@@ -173,6 +173,25 @@ bool cc_test(int cc) {
 OP(scc) {
     int cond = xop >> 8 & 15;
     EA_WRITE8(type, reg, cc_test(cond) ? 0xff : 0);
+}
+
+OP(trapcc) {
+    int cond = xop >> 8 & 15;
+    switch(reg) {
+    case 2:
+        FETCH();
+        break;
+    case 3:
+        FETCH32();
+        break;
+    case 4:
+        break;
+    default:
+        ILLEGAL_INST();
+    }
+    if(cc_test(cond)) {
+        TRPPcc();
+    }
 }
 
 OP(dbcc) {

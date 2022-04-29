@@ -5,7 +5,7 @@
 #include <boost/test/data/test_case.hpp>
 #include <boost/test/unit_test.hpp>
 BOOST_FIXTURE_TEST_SUITE(ABCD, InitFix)
-BOOST_DATA_TEST_CASE(value, boost::unit_test::data::xrange(1), x) {
+BOOST_DATA_TEST_CASE(value, bdata::xrange(1), x) {
     regs.d[1] = 0x51;
 
     regs.d[2] = 0x27;

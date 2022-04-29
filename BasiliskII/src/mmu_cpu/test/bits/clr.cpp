@@ -5,10 +5,15 @@
 #include <boost/test/data/test_case.hpp>
 #include <boost/test/unit_test.hpp>
 BOOST_FIXTURE_TEST_SUITE(CLR, InitFix)
+BOOST_DATA_TEST_CASE(opc, EA_D(), ea) {
+    BOOST_TEST(opc_map[0041000 | ea] == opc_map[0041000]);
+    BOOST_TEST(opc_map[0041100 | ea] == opc_map[0041100]);
+    BOOST_TEST(opc_map[0041200 | ea] == opc_map[0041200]);
+}
 BOOST_AUTO_TEST_CASE(Byte) {
     regs.d[1] = 44;
     regs.x = regs.c = regs.v = regs.n = true;
-    asm_m68k("clrb %D1");
+    raw_write16(0, 0041001);
     m68k_do_execute();
     BOOST_TEST(regs.d[1] == 0);
     BOOST_TEST(!regs.c);
@@ -21,7 +26,7 @@ BOOST_AUTO_TEST_CASE(Byte) {
 BOOST_AUTO_TEST_CASE(Word) {
     regs.d[1] = 4400;
     regs.x = regs.c = regs.v = regs.n = true;
-    asm_m68k("clrw %D1");
+    raw_write16(0, 0041101);
     m68k_do_execute();
     BOOST_TEST(regs.d[1] == 0);
     BOOST_TEST(!regs.c);
@@ -34,7 +39,7 @@ BOOST_AUTO_TEST_CASE(Word) {
 BOOST_AUTO_TEST_CASE(Long) {
     regs.d[1] = 4400000;
     regs.x = regs.c = regs.v = regs.n = true;
-    asm_m68k("clrl %D1");
+    raw_write16(0, 0041201);
     m68k_do_execute();
     BOOST_TEST(regs.d[1] == 0);
     BOOST_TEST(!regs.c);

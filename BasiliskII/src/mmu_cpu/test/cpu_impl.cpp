@@ -5,16 +5,15 @@
 #include "test/test_common.h"
 #include <boost/test/data/test_case.hpp>
 #include <boost/test/unit_test.hpp>
-#include <vector>
 BOOST_FIXTURE_TEST_SUITE(TST, InitFix)
 BOOST_AUTO_TEST_SUITE(Byte)
 
-BOOST_DATA_TEST_CASE(n, boost::unit_test::data::xrange(1), value) {
+BOOST_DATA_TEST_CASE(n, BIT, value) {
     TEST_NZ8(value << 7);
     BOOST_TEST(regs.n == value);
 }
 
-BOOST_DATA_TEST_CASE(z, boost::unit_test::data::xrange(1), value) {
+BOOST_DATA_TEST_CASE(z, BIT, value) {
     TEST_NZ8(!value);
     BOOST_TEST(regs.z == value);
 }
@@ -22,24 +21,24 @@ BOOST_DATA_TEST_CASE(z, boost::unit_test::data::xrange(1), value) {
 BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_AUTO_TEST_SUITE(Word)
-BOOST_DATA_TEST_CASE(n, boost::unit_test::data::xrange(1), value) {
+BOOST_DATA_TEST_CASE(n, BIT, value) {
     TEST_NZ16(value << 15);
     BOOST_TEST(regs.n == value);
 }
 
-BOOST_DATA_TEST_CASE(z, boost::unit_test::data::xrange(1), value) {
+BOOST_DATA_TEST_CASE(z, BIT, value) {
     TEST_NZ16(!value);
     BOOST_TEST(regs.z == value);
 }
 BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_AUTO_TEST_SUITE(Long)
-BOOST_DATA_TEST_CASE(n, boost::unit_test::data::xrange(1), value) {
+BOOST_DATA_TEST_CASE(n, BIT, value) {
     TEST_NZ32(value << 31);
     BOOST_TEST(regs.n == value);
 }
 
-BOOST_DATA_TEST_CASE(z, boost::unit_test::data::xrange(1), value) {
+BOOST_DATA_TEST_CASE(z, BIT, value) {
     TEST_NZ32(!value);
     BOOST_TEST(regs.z == value);
 }
@@ -59,13 +58,13 @@ BOOST_AUTO_TEST_CASE(vcx) {
     BOOST_TEST(regs.x);
 }
 
-BOOST_DATA_TEST_CASE(n, boost::unit_test::data::xrange(1), value) {
+BOOST_DATA_TEST_CASE(n, BIT, value) {
     DO_NOT_B((!value) << 7);
     BOOST_TEST(regs.n == value);
 }
 
-BOOST_DATA_TEST_CASE(z, boost::unit_test::data::xrange(1), value) {
-    DO_NOT_B(value);
+BOOST_DATA_TEST_CASE(z, BIT, value) {
+    DO_NOT_B(value ? 0xff : 0);
     BOOST_TEST(regs.z == value);
 }
 
@@ -83,13 +82,13 @@ BOOST_AUTO_TEST_CASE(vcx) {
     BOOST_TEST(regs.x);
 }
 
-BOOST_DATA_TEST_CASE(n, boost::unit_test::data::xrange(1), value) {
+BOOST_DATA_TEST_CASE(n, BIT, value) {
     DO_NOT_W((!value) << 15);
     BOOST_TEST(regs.n == value);
 }
 
-BOOST_DATA_TEST_CASE(z, boost::unit_test::data::xrange(1), value) {
-    DO_NOT_W(value);
+BOOST_DATA_TEST_CASE(z, BIT, value) {
+    DO_NOT_W(value ? 0xffff : 0);
     BOOST_TEST(regs.z == value);
 }
 BOOST_AUTO_TEST_SUITE_END()
@@ -105,13 +104,13 @@ BOOST_AUTO_TEST_CASE(vcx) {
     BOOST_TEST(regs.x);
 }
 
-BOOST_DATA_TEST_CASE(n, boost::unit_test::data::xrange(1), value) {
+BOOST_DATA_TEST_CASE(n, BIT, value) {
     DO_NOT_L((!value) << 31);
     BOOST_TEST(regs.n == value);
 }
 
-BOOST_DATA_TEST_CASE(z, boost::unit_test::data::xrange(1), value) {
-    DO_NOT_L(value);
+BOOST_DATA_TEST_CASE(z, BIT, value) {
+    DO_NOT_L(value ? 0xffffffff : 0);
     BOOST_TEST(regs.z == value);
 }
 BOOST_AUTO_TEST_SUITE_END()
@@ -132,12 +131,12 @@ BOOST_AUTO_TEST_CASE(vcx) {
     BOOST_TEST(regs.x);
 }
 
-BOOST_DATA_TEST_CASE(n, boost::unit_test::data::xrange(1), value) {
+BOOST_DATA_TEST_CASE(n, BIT, value) {
     DO_OR_B(0, value << 7);
     BOOST_TEST(regs.n == value);
 }
 
-BOOST_DATA_TEST_CASE(z, boost::unit_test::data::xrange(1), value) {
+BOOST_DATA_TEST_CASE(z, BIT, value) {
     DO_OR_B(0, !value);
     BOOST_TEST(regs.z == value);
 }
@@ -156,12 +155,12 @@ BOOST_AUTO_TEST_CASE(vcx) {
     BOOST_TEST(regs.x);
 }
 
-BOOST_DATA_TEST_CASE(n, boost::unit_test::data::xrange(1), value) {
+BOOST_DATA_TEST_CASE(n, BIT, value) {
     DO_OR_W(0, value << 15);
     BOOST_TEST(regs.n == value);
 }
 
-BOOST_DATA_TEST_CASE(z, boost::unit_test::data::xrange(1), value) {
+BOOST_DATA_TEST_CASE(z, BIT, value) {
     DO_OR_W(0, !value);
     BOOST_TEST(regs.z == value);
 }
@@ -180,12 +179,12 @@ BOOST_AUTO_TEST_CASE(vcx) {
     BOOST_TEST(regs.x);
 }
 
-BOOST_DATA_TEST_CASE(n, boost::unit_test::data::xrange(1), value) {
+BOOST_DATA_TEST_CASE(n, BIT, value) {
     DO_OR_L(0, value << 31);
     BOOST_TEST(regs.n == value);
 }
 
-BOOST_DATA_TEST_CASE(z, boost::unit_test::data::xrange(1), value) {
+BOOST_DATA_TEST_CASE(z, BIT, value) {
     DO_OR_L(0, !value);
     BOOST_TEST(regs.z == value);
 }
@@ -207,12 +206,12 @@ BOOST_AUTO_TEST_CASE(vcx) {
     BOOST_TEST(regs.x);
 }
 
-BOOST_DATA_TEST_CASE(n, boost::unit_test::data::xrange(1), value) {
+BOOST_DATA_TEST_CASE(n, BIT, value) {
     DO_AND_B(0x80, value << 7);
     BOOST_TEST(regs.n == value);
 }
 
-BOOST_DATA_TEST_CASE(z, boost::unit_test::data::xrange(1), value) {
+BOOST_DATA_TEST_CASE(z, BIT, value) {
     DO_AND_B(1, !value);
     BOOST_TEST(regs.z == value);
 }
@@ -231,12 +230,12 @@ BOOST_AUTO_TEST_CASE(vcx) {
     BOOST_TEST(regs.x);
 }
 
-BOOST_DATA_TEST_CASE(n, boost::unit_test::data::xrange(1), value) {
+BOOST_DATA_TEST_CASE(n, BIT, value) {
     DO_AND_W(0x8000, value << 15);
     BOOST_TEST(regs.n == value);
 }
 
-BOOST_DATA_TEST_CASE(z, boost::unit_test::data::xrange(1), value) {
+BOOST_DATA_TEST_CASE(z, BIT, value) {
     DO_AND_W(1, !value);
     BOOST_TEST(regs.z == value);
 }
@@ -255,12 +254,12 @@ BOOST_AUTO_TEST_CASE(vcx) {
     BOOST_TEST(regs.x);
 }
 
-BOOST_DATA_TEST_CASE(n, boost::unit_test::data::xrange(1), value) {
+BOOST_DATA_TEST_CASE(n, BIT, value) {
     DO_AND_L(0x80000000, value << 31);
     BOOST_TEST(regs.n == value);
 }
 
-BOOST_DATA_TEST_CASE(z, boost::unit_test::data::xrange(1), value) {
+BOOST_DATA_TEST_CASE(z, BIT, value) {
     DO_AND_L(1, !value);
     BOOST_TEST(regs.z == value);
 }
@@ -281,12 +280,12 @@ BOOST_AUTO_TEST_CASE(vcx) {
     BOOST_TEST(regs.x);
 }
 
-BOOST_DATA_TEST_CASE(n, boost::unit_test::data::xrange(1), value) {
+BOOST_DATA_TEST_CASE(n, BIT, value) {
     DO_EOR_B(0, value << 7);
     BOOST_TEST(regs.n == value);
 }
 
-BOOST_DATA_TEST_CASE(z, boost::unit_test::data::xrange(1), value) {
+BOOST_DATA_TEST_CASE(z, BIT, value) {
     DO_EOR_B(0, !value);
     BOOST_TEST(regs.z == value);
 }
@@ -305,12 +304,12 @@ BOOST_AUTO_TEST_CASE(vcx) {
     BOOST_TEST(regs.x);
 }
 
-BOOST_DATA_TEST_CASE(n, boost::unit_test::data::xrange(1), value) {
+BOOST_DATA_TEST_CASE(n, BIT, value) {
     DO_EOR_W(0, value << 15);
     BOOST_TEST(regs.n == value);
 }
 
-BOOST_DATA_TEST_CASE(z, boost::unit_test::data::xrange(1), value) {
+BOOST_DATA_TEST_CASE(z, BIT, value) {
     DO_EOR_W(0, !value);
     BOOST_TEST(regs.z == value);
 }
@@ -329,12 +328,12 @@ BOOST_AUTO_TEST_CASE(vcx) {
     BOOST_TEST(regs.x);
 }
 
-BOOST_DATA_TEST_CASE(n, boost::unit_test::data::xrange(1), value) {
+BOOST_DATA_TEST_CASE(n, BIT, value) {
     DO_EOR_L(0, value << 31);
     BOOST_TEST(regs.n == value);
 }
 
-BOOST_DATA_TEST_CASE(z, boost::unit_test::data::xrange(1), value) {
+BOOST_DATA_TEST_CASE(z, BIT, value) {
     DO_EOR_L(0, !value);
     BOOST_TEST(regs.z == value);
 }
@@ -923,12 +922,12 @@ BOOST_AUTO_TEST_CASE(value) {
     BOOST_TEST(!regs.x);
 }
 // 0 <- 0xx
-BOOST_DATA_TEST_CASE(v1, boost::unit_test::data::xrange(4), value) {
+BOOST_DATA_TEST_CASE(v1, bdata::xrange(4), value) {
     DO_ASL_B(0x10 | value << 5, 3);
     BOOST_TEST(regs.v == (value != 0));
 }
 // 1 <- 1xx
-BOOST_DATA_TEST_CASE(v2, boost::unit_test::data::xrange(4), value) {
+BOOST_DATA_TEST_CASE(v2, bdata::xrange(4), value) {
     DO_ASL_B(0x90 | value << 5, 3);
     BOOST_TEST(regs.v == (value != 3));
 }
@@ -963,12 +962,12 @@ BOOST_AUTO_TEST_CASE(value) {
     BOOST_TEST(!regs.x);
 }
 // 0 <- 0xx
-BOOST_DATA_TEST_CASE(v1, boost::unit_test::data::xrange(4), value) {
+BOOST_DATA_TEST_CASE(v1, bdata::xrange(4), value) {
     DO_ASL_W(0x1000 | value << 13, 3);
     BOOST_TEST(regs.v == (value != 0));
 }
 // 1 <- 1xx
-BOOST_DATA_TEST_CASE(v2, boost::unit_test::data::xrange(4), value) {
+BOOST_DATA_TEST_CASE(v2, bdata::xrange(4), value) {
     DO_ASL_W(0x9000 | value << 13, 3);
     BOOST_TEST(regs.v == (value != 3));
 }
@@ -1003,12 +1002,12 @@ BOOST_AUTO_TEST_CASE(value) {
     BOOST_TEST(!regs.x);
 }
 // 0 <- 0xx
-BOOST_DATA_TEST_CASE(v1, boost::unit_test::data::xrange(4), value) {
+BOOST_DATA_TEST_CASE(v1, bdata::xrange(4), value) {
     DO_ASL_L(0x10000000 | value << 29, 3);
     BOOST_TEST(regs.v == (value != 0));
 }
 // 1 <- 1xx
-BOOST_DATA_TEST_CASE(v2, boost::unit_test::data::xrange(4), value) {
+BOOST_DATA_TEST_CASE(v2, bdata::xrange(4), value) {
     DO_ASL_L(0x90000000 | value << 29, 3);
     BOOST_TEST(regs.v == (value != 3));
 }
@@ -1224,7 +1223,7 @@ BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_FIXTURE_TEST_SUITE(roxr, InitFix)
 BOOST_AUTO_TEST_SUITE(Byte)
-BOOST_DATA_TEST_CASE(value, boost::unit_test::data::xrange(2), value) {
+BOOST_DATA_TEST_CASE(value, bdata::xrange(2), value) {
     regs.x = value;
     BOOST_TEST(DO_ROXR_B(0x39, 3) == (0x47 | value << 5));
     BOOST_TEST(!regs.v);
@@ -1260,7 +1259,7 @@ BOOST_AUTO_TEST_CASE(z) {
 
 BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE(Word)
-BOOST_DATA_TEST_CASE(value, boost::unit_test::data::xrange(2), value) {
+BOOST_DATA_TEST_CASE(value, bdata::xrange(2), value) {
     regs.x = value;
     BOOST_TEST(DO_ROXR_W(0x3009, 3) == (0x4601 | value << 13));
     BOOST_TEST(!regs.v);
@@ -1297,7 +1296,7 @@ BOOST_AUTO_TEST_CASE(z) {
 BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_AUTO_TEST_SUITE(Long)
-BOOST_DATA_TEST_CASE(value, boost::unit_test::data::xrange(2), value) {
+BOOST_DATA_TEST_CASE(value, bdata::xrange(2), value) {
     regs.x = value;
     BOOST_TEST(DO_ROXR_L(0x30000009, 3) == (0x46000001 | value << 29));
     BOOST_TEST(!regs.v);
@@ -1335,7 +1334,7 @@ BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_FIXTURE_TEST_SUITE(roxl, InitFix)
 BOOST_AUTO_TEST_SUITE(Byte)
-BOOST_DATA_TEST_CASE(value, boost::unit_test::data::xrange(2), value) {
+BOOST_DATA_TEST_CASE(value, bdata::xrange(2), value) {
     regs.x = value;
     BOOST_TEST(DO_ROXL_B(0xc3, 3) == (0x1B | value << 2));
     BOOST_TEST(!regs.v);
@@ -1370,7 +1369,7 @@ BOOST_AUTO_TEST_CASE(z) {
 
 BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE(Word)
-BOOST_DATA_TEST_CASE(value, boost::unit_test::data::xrange(2), value) {
+BOOST_DATA_TEST_CASE(value, bdata::xrange(2), value) {
     regs.x = value;
     BOOST_TEST(DO_ROXL_W(0xc003, 3) == (0x1b | value << 2));
     BOOST_TEST(!regs.v);
@@ -1406,7 +1405,7 @@ BOOST_AUTO_TEST_CASE(z) {
 BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_AUTO_TEST_SUITE(Long)
-BOOST_DATA_TEST_CASE(value, boost::unit_test::data::xrange(2), value) {
+BOOST_DATA_TEST_CASE(value, bdata::xrange(2), value) {
     regs.x = value;
     BOOST_TEST(DO_ROXL_L(0xc0000003, 3) == (0x1b | value << 2));
     BOOST_TEST(!regs.v);

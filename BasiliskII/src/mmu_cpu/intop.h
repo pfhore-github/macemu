@@ -500,3 +500,8 @@ inline uint32_t DO_ROL_L(uint32_t v, uint8_t sc) {
     TEST_NZ32(vv);
     return vv;
 }
+
+inline bool DO_BTST(uint32_t v, uint8_t bn) {
+    return ! (( v >> bn) & 1);
+}
+

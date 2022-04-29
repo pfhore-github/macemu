@@ -1,4 +1,6 @@
 cmake_minimum_required(VERSION 3.23)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON) 
 enable_testing()
 project(Basillisk2 CXX)
 if ( CMAKE_COMPILER_IS_GNUCC )
@@ -22,6 +24,7 @@ pkg_check_modules(GTK REQUIRED gtk+-3.0)
 
 set(CPU_FILE mmu_cpu/memory.cpp 
 mmu_cpu/newcpu.cpp mmu_cpu/exception.cpp  mmu_cpu/ea.cpp 
+mmu_cpu/mbus.cpp
 mmu_cpu/op_move.cpp
 mmu_cpu/op_arithmetic.cpp
 mmu_cpu/op_bits.cpp
@@ -74,9 +77,11 @@ mmu_cpu/test/bits/andi.cpp
 mmu_cpu/test/bits/and.cpp
 mmu_cpu/test/bits/ori.cpp
 mmu_cpu/test/bits/or.cpp
+mmu_cpu/test/bits/eori.cpp
 mmu_cpu/test/bits/eor.cpp
 mmu_cpu/test/bits/clr.cpp
 mmu_cpu/test/bits/not.cpp
+mmu_cpu/test/bits/swap.cpp
 mmu_cpu/test/bits/ext.cpp
 mmu_cpu/test/bits/extb.cpp
 mmu_cpu/test/bits/tst.cpp
@@ -119,6 +124,16 @@ mmu_cpu/test/bcd/sbcd.cpp
 mmu_cpu/test/bcd/abcd.cpp
 mmu_cpu/test/bcd/pack.cpp
 mmu_cpu/test/bcd/unpk.cpp
+
+mmu_cpu/test/move/move.cpp
+mmu_cpu/test/move/movea.cpp
+mmu_cpu/test/move/moves.cpp
+mmu_cpu/test/move/movep.cpp
+mmu_cpu/test/move/move16.cpp
+mmu_cpu/test/move/pea.cpp
+
+mmu_cpu/test/branch/link.cpp
+mmu_cpu/test/branch/bkpt.cpp
  )
 target_link_libraries(test_cpu ${TEST_LIB})
 add_test(NAME test_cpu COMMAND ./test_cpu)
@@ -128,12 +143,7 @@ function( cpu_test name)
   add_test(NAME test_cpu_${name} COMMAND ./test_cpu_${name})
 endfunction(cpu_test)
 
-cpu_test(movep)
-cpu_test(move)
-cpu_test(link)
-cpu_test(swap)
-cpu_test(pea)
-cpu_test(movem)
+#cpu_test(movem)
 cpu_test(unlk)
 cpu_test(rtx)
 cpu_test(jmp)
@@ -157,6 +167,41 @@ mmu_cpu/test/fpu/fatanh.cpp
 mmu_cpu/test/fpu/fsin.cpp
 mmu_cpu/test/fpu/ftan.cpp
 mmu_cpu/test/fpu/fetox.cpp
+mmu_cpu/test/fpu/ftwotox.cpp
+mmu_cpu/test/fpu/ftentox.cpp
+mmu_cpu/test/fpu/flogn.cpp
+mmu_cpu/test/fpu/flog10.cpp
+mmu_cpu/test/fpu/flog2.cpp
+mmu_cpu/test/fpu/fabs.cpp
+mmu_cpu/test/fpu/fcosh.cpp
+mmu_cpu/test/fpu/fneg.cpp
+mmu_cpu/test/fpu/facos.cpp
+mmu_cpu/test/fpu/fcos.cpp
+mmu_cpu/test/fpu/fgetexp.cpp
+mmu_cpu/test/fpu/fgetman.cpp
+mmu_cpu/test/fpu/fdiv.cpp
+mmu_cpu/test/fpu/fmod.cpp
+mmu_cpu/test/fpu/fadd.cpp
+mmu_cpu/test/fpu/fmul.cpp
+mmu_cpu/test/fpu/fsgldiv.cpp
+mmu_cpu/test/fpu/frem.cpp
+mmu_cpu/test/fpu/fscale.cpp
+mmu_cpu/test/fpu/fsglmul.cpp
+mmu_cpu/test/fpu/fsub.cpp
+mmu_cpu/test/fpu/fsincos.cpp
+mmu_cpu/test/fpu/fcmp.cpp
+mmu_cpu/test/fpu/ftst.cpp
+mmu_cpu/test/fpu/fmovem.cpp
+mmu_cpu/test/fpu/fscc.cpp
+mmu_cpu/test/fpu/fdbcc.cpp
+mmu_cpu/test/fpu/fbcc.cpp
  )
 target_link_libraries(test_fpu ${TEST_LIB})
 add_test(NAME test_fpu COMMAND ./test_fpu)
+
+add_executable(test_mmu ${TEST_COMMON}
+mmu_cpu/test/mmu.cpp
+
+ )
+target_link_libraries(test_mmu ${TEST_LIB})
+add_test(NAME test_mmu COMMAND ./test_mmu)

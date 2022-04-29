@@ -93,6 +93,7 @@ OP(div_l);
 OP(movem_from_w);
 OP(movem_from_l);
 OP(trap);
+OP(trapcc);
 OP(link_w);
 OP(unlk);
 OP(move_to_usp);
@@ -267,3 +268,9 @@ OP(bfextu_m);
 OP(bfexts_m);
 OP(bfffo_m);
 OP(bfins_m);
+
+OP(move16_inc_to_imm);
+OP(move16_imm_to_inc);
+OP(move16_addr_to_imm);
+OP(move16_imm_to_addr);
+OP(move16_inc_to_inc);

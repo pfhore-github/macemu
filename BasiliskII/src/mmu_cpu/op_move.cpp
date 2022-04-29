@@ -8,35 +8,54 @@
 #include <unordered_map>
 #include <vector>
 
-#include "intop.h"
 #include "ea.h"
 #include "exception.h"
+#include "intop.h"
+#include "mbus.h"
 #include "newcpu.h"
-
 uint8_t read8s(uint32_t addr) {
     uint8_t v;
-    paccess(paddr{addr, 0, SZ::BYTE, TT::LFC, TM(regs.sfc), false}, false, &v);
+    if(!b_read8(addr, &v)) {
+        paddr pa{addr, 0, SZ::BYTE, TT::LFC, TM(regs.sfc), false};
+        BUSERROR(pa);
+    }
     return v;
 }
 uint16_t read16s(uint32_t addr) {
     uint16_t v;
-    paccess(paddr{addr, 0, SZ::WORD, TT::LFC, TM(regs.sfc), false}, false, &v);
+    if(!b_read16(addr, &v)) {
+        paddr pa{addr, 0, SZ::WORD, TT::LFC, TM(regs.sfc), false};
+        BUSERROR(pa);
+    }
     return v;
 }
 uint32_t read32s(uint32_t addr) {
     uint32_t v;
-    paccess(paddr{addr, 0, SZ::LONG, TT::LFC, TM(regs.sfc), false}, false, &v);
+    if(!b_read32(addr, &v)) {
+        paddr pa{addr, 0, SZ::LONG, TT::LFC, TM(regs.sfc), false};
+        BUSERROR(pa);
+    }
     return v;
 }
 void write8s(uint32_t addr, uint8_t v) {
-    paccess(paddr{addr, 0, SZ::BYTE, TT::LFC, TM(regs.dfc), true}, false, &v);
+    if(!b_write8(addr, &v)) {
+        paddr pa{addr, 0, SZ::BYTE, TT::LFC, TM(regs.dfc), true};
+        BUSERROR(pa);
+    }
 }
 void write16s(uint32_t addr, uint16_t v) {
-    paccess(paddr{addr, 0, SZ::WORD, TT::LFC, TM(regs.dfc), true}, false, &v);
+    if(!b_write16(addr, &v)) {
+        paddr pa{addr, 0, SZ::WORD, TT::LFC, TM(regs.dfc), true};
+        BUSERROR(pa);
+    }
 }
 void write32s(uint32_t addr, uint32_t v) {
-    paccess(paddr{addr, 0, SZ::LONG, TT::LFC, TM(regs.dfc), true}, false, &v);
+    if(!b_write32(addr, &v)) {
+        paddr pa{addr, 0, SZ::LONG, TT::LFC, TM(regs.dfc), true};
+        BUSERROR(pa);
+    }
 }
+
 OP(moves_b) {
     uint16_t op2 = FETCH();
     if(!regs.S) {
@@ -65,7 +84,7 @@ OP(moves_w) {
     if(w) {
         write16s(addr, regs.r[rg2]);
     } else {
-        WRITE_D16(rg2, read8s(addr));
+        WRITE_D16(rg2, read16s(addr));
     }
 }
 
@@ -77,7 +96,7 @@ OP(moves_l) {
     }
     int rg2 = op2 >> 12 & 7;
     bool w = op2 >> 11 & 1;
-    uint32_t addr = EA_Addr(type, reg, 2, true);
+    uint32_t addr = EA_Addr(type, reg, 4, true);
     if(w) {
         write32s(addr, regs.r[rg2]);
     } else {
@@ -446,27 +465,73 @@ OP(movec_to) {
 }
 
 OP(moveq) {
-    uint32_t v = static_cast<int8_t>( xop & 0xff );
+    uint32_t v = static_cast<int8_t>(xop & 0xff);
     TEST_NZ32(v);
     regs.c = false;
     regs.v = false;
     EA_WRITE32(0, dm, v);
 }
 
-OP(exg_d) {
-    std::swap( regs.d[reg], regs.d[dm]);
-}
+OP(exg_d) { std::swap(regs.d[reg], regs.d[dm]); }
 
-OP(exg_a) {
-    std::swap( regs.a[reg], regs.a[dm]);
-}
+OP(exg_a) { std::swap(regs.a[reg], regs.a[dm]); }
 
-OP(exg_da) {
-    std::swap( regs.a[reg], regs.d[dm]);
-}
+OP(exg_da) { std::swap(regs.a[reg], regs.d[dm]); }
 
-OP(move16_inc_to_imm);
-OP(move16_imm_to_inc);
-OP(move16_addr_to_imm);
-OP(move16_imm_to_addr);
-OP(move16_inc_to_inc);
+void read_line(uint32_t addr, uint8_t *dst) {
+    if(!b_readline(addr, dst)) {
+        paddr pe{addr,
+                 0,
+                 SZ::LINE,
+                 TT::MOVE16,
+                 regs.S ? TM::SUPER_DATA : TM::USER_DATA,
+                 false};
+        BUSERROR(pe);
+    }
+}
+void write_line(uint32_t addr, const uint8_t *src) {
+    if(!b_writeline(addr, src)) {
+        paddr pe{addr,
+                 0,
+                 SZ::LINE,
+                 TT::MOVE16,
+                 regs.S ? TM::SUPER_DATA : TM::USER_DATA,
+                 true};
+        BUSERROR(pe);
+    }
+}
+OP(move16_inc_to_imm) {
+    uint8_t buf[16];
+    uint32_t addr = FETCH32();
+    read_line(regs.a[reg], buf);
+    write_line(addr, buf);
+    regs.a[reg] += 16;
+}
+OP(move16_imm_to_inc) {
+    uint8_t buf[16];
+    uint32_t addr = FETCH32();
+    read_line(addr, buf);
+    write_line(regs.a[reg], buf);
+    regs.a[reg] += 16;
+}
+OP(move16_addr_to_imm) {
+    uint8_t buf[16];
+    uint32_t addr = FETCH32();
+    read_line(regs.a[reg], buf);
+    write_line(addr, buf);
+}
+OP(move16_imm_to_addr) {
+    uint8_t buf[16];
+    uint32_t addr = FETCH32();
+    read_line(addr, buf);
+    write_line(regs.a[reg], buf);
+}
+OP(move16_inc_to_inc) {
+    uint8_t buf[16];
+    uint32_t op2 = FETCH();
+    int ay = op2 >> 12 & 7;
+    read_line(regs.a[reg], buf);
+    write_line(regs.a[ay], buf);
+    regs.a[reg] += 16;
+    regs.a[ay] += 16;
+}

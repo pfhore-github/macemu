@@ -6,7 +6,7 @@
 #include <boost/test/data/test_case.hpp>
 #include <boost/test/unit_test.hpp>
 BOOST_FIXTURE_TEST_SUITE(FSINH, InitFix)
-BOOST_DATA_TEST_CASE(zero, boost::unit_test::data::xrange(2), sg) {
+BOOST_DATA_TEST_CASE(zero, bdata::xrange(2), sg) {
     regs.fp[2] = sg ? -0.0 : 0.0;
     asm_m68k("fsinh.x %FP2, %FP3");
     m68k_do_execute();
@@ -14,7 +14,7 @@ BOOST_DATA_TEST_CASE(zero, boost::unit_test::data::xrange(2), sg) {
     BOOST_TEST(regs.fp[3] == 0.0);
 }
 
-BOOST_DATA_TEST_CASE(inf, boost::unit_test::data::xrange(2), sg) {
+BOOST_DATA_TEST_CASE(inf, bdata::xrange(2), sg) {
     regs.fp[2] = sg ? -INFINITY : INFINITY;
     asm_m68k("fsinh.x %FP2, %FP3");
     m68k_do_execute();
@@ -22,11 +22,10 @@ BOOST_DATA_TEST_CASE(inf, boost::unit_test::data::xrange(2), sg) {
     BOOST_TEST(isinf(regs.fp[3]));
 }
 
-BOOST_DATA_TEST_CASE(nan_, boost::unit_test::data::xrange(2), sg) {
-    regs.fp[2] = sg ? -NAN : NAN;
+BOOST_AUTO_TEST_CASE(nan_) {
+    regs.fp[2] = NAN;
     asm_m68k("fsinh.x %FP2, %FP3");
     m68k_do_execute();
-    BOOST_TEST(signbit(regs.fp[3]) == sg);
     BOOST_TEST(isnan(regs.fp[3]));
 }
 

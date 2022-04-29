@@ -57,17 +57,48 @@ void LOAD_SP() {
         regs.a[7] = regs.msp;
     }
 }
-void SET_SR(uint16_t v) {
-    SAVE_SP();
+
+struct sr_t {
+    bool C : 1;
+    bool V : 1;
+    bool Z : 1;
+    bool N : 1;
+    bool X : 1;
+    int : 3;
+    unsigned IM : 3;
+    int : 1;
+    bool M : 1;
+    bool S : 1;
+    unsigned T : 2;
+    unsigned : 16;
+};
+
+
+uint8_t GET_CCR() {
+    return regs.c | regs.v << 1 | regs.z << 2 | regs.n << 3 | regs.x << 4;
+}
+
+void SET_CCR(uint8_t v) {
     regs.c = v & 1;
     regs.v = v >> 1 & 1;
     regs.z = v >> 2 & 1;
     regs.n = v >> 3 & 1;
     regs.x = v >> 4 & 1;
-    regs.IM = v >> 8 & 3;
+}
+
+
+uint16_t GET_SR() {
+    return GET_CCR() |
+    regs.IM << 8 | regs.M << 12 | regs.S << 13 | regs.T << 14;
+}
+
+void SET_SR(uint16_t v) {
+    SAVE_SP();
+    SET_CCR(v);
+    regs.IM = v >> 8 & 7;
     regs.M = v >> 12 & 1;
     regs.S = v >> 13 & 1;
-    regs.T = v >> 15 & 1;
+    regs.T = v >> 14 & 3;
     LOAD_SP();
 }
 
@@ -102,7 +133,7 @@ op_t opc_map[65536];
 static void build_cpufunctbl() {
 
     // EA=DR
-    for(int i = 0; i < 7; ++i) {
+    for(int i = 0; i < 8; ++i) {
         opc_map[0000000 | i] = op_ori_b;
         opc_map[0000100 | i] = op_ori_w;
         opc_map[0000200 | i] = op_ori_l;
@@ -620,6 +651,12 @@ static void build_cpufunctbl() {
         opc_map[0150274 | dn << 9] = op_add_l;
         opc_map[0150374 | dn << 9] = op_adda_w;
         opc_map[0150774 | dn << 9] = op_adda_l;
+
+        for(int cd = 0; cd < 16; ++cd) {
+            opc_map[0050372 | cd << 8 ] = op_trapcc;
+            opc_map[0050373 | cd << 8 ] = op_trapcc;
+            opc_map[0050374 | cd << 8 ] = op_trapcc;
+        }
     }
 
     for(int imm = 0; imm < 256; ++imm) {
@@ -635,6 +672,15 @@ static void build_cpufunctbl() {
     }
 
     init_fpu_opc();
+    init_mmu_opc();
+
+    for(int i = 0; i < 8; ++i ) {
+        opc_map[0173000 | i] = op_move16_inc_to_imm;
+        opc_map[0173010 | i] = op_move16_imm_to_inc;
+        opc_map[0173020 | i] = op_move16_addr_to_imm;
+        opc_map[0173030 | i] = op_move16_imm_to_addr;
+        opc_map[0173040 | i] = op_move16_inc_to_inc;
+    }
 }
 
 void init_m68k() {
@@ -644,7 +690,6 @@ void init_m68k() {
 void exit_m68k(void) {
 }
 
-int lastint_no;
 
 #define get_ibyte_1(o) get_byte(get_virtual_address(regs.pc) + (o) + 1)
 #define get_iword_1(o) get_word(get_virtual_address(regs.pc) + (o))
@@ -715,11 +760,7 @@ void m68k_do_execute() {
             f(opc, opc >> 9 & 7, opc >> 3 & 7, opc & 7);
         } else {
             ILLEGAL_INST();
-        }
-        if(SPCFLAGS_TEST(SPCFLAG_ALL_BUT_EXEC_RETURN)) {
-            //				if (m68k_do_specialties())
-            //					return;
-        }
+        }        
     }
 EXCEPTION:
     // TRACE

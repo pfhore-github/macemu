@@ -3,7 +3,7 @@
 #include "exception.h"
 #include "memory.h"
 #include "ea.h"
-uint32_t get_eaext(uint32_t base) {
+uint32_t get_eaext(uint32_t base, bool pc_relative) {
 	uint16_t nextw = FETCH();
 	bool full = (nextw >> 8 & 1);
 	int reg = nextw >> 12 & 15;
@@ -62,10 +62,10 @@ uint32_t get_eaext(uint32_t base) {
 			if( ! is ) {
 				ret += xn << scale;
 			}
-			uint32_t vx = read32( ret );
+			uint32_t vx = read32( ret, pc_relative );
 			return vx + od;
 		} else {
-			uint32_t vx = read32( ret );
+			uint32_t vx = read32( ret, pc_relative );
 			return vx + (xn << scale) + od;
 		}
 	}
@@ -90,7 +90,7 @@ uint32_t EA_Addr(int type, int reg, int sz, bool w) {
 		ILLEGAL_INST();
 	}
 	case EA_OP::OFFSET : return base + (int16_t)FETCH();
-	case EA_OP::EXT    : return get_eaext(base);
+	case EA_OP::EXT    : return get_eaext(base, false);
 	case EA_OP::EXT2 :
 		switch( reg ) {
 		case 0 : return FETCH();
@@ -102,7 +102,7 @@ uint32_t EA_Addr(int type, int reg, int sz, bool w) {
 			break;
 		case 3 :
 			if( ! w ) {
-				return get_eaext(regs.pc);
+				return get_eaext(regs.pc, true);
 			}
 			break;
 		}

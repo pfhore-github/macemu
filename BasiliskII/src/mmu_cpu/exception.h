@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <setjmp.h>
+#include "memory.h"
 extern jmp_buf ex_jmp;
 inline uint16_t LOW(uint32_t v) { return v & 0xffff; }
 inline uint16_t HIGH(uint32_t v) { return v >> 16; }
@@ -18,7 +19,7 @@ inline void RAISE2(int e, uint32_t addr, bool next_instruction) {
 inline void RAISE3(int e) {
     RAISE(e, 3, {LOW(regs.i_ea), HIGH(regs.i_ea)}, true);
 }
-void BUSERROR(uint32_t addr, bool code, uint16_t ssw, uint32_t ea)
+void BUSERROR(const paddr &v, bool atc = false, bool ma = false) 
     __attribute__((noreturn));
 
 inline void ADDRESS_ERROR() { RAISE2(3, regs.opc - 1, false); }
