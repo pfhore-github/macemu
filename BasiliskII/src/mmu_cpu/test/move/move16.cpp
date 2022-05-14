@@ -2,63 +2,69 @@
 #include "memory.h"
 #include "newcpu.h"
 #include "test/test_common.h"
-#include <boost/test/data/test_case.hpp>
-#include <boost/test/unit_test.hpp>
 BOOST_FIXTURE_TEST_SUITE(MOVE16, InitFix)
 BOOST_AUTO_TEST_CASE(incr_to_imm) {
-    regs.a[2] = 0x100;
+    auto src = rand_ar();
+    regs.a[src] = 0x100;
     for(int i = 0; i < 16; ++i) {
         raw_write8(0x100 + i, 0x20 + i);
     }
-    asm_m68k("move16 (%A2)+, (0x200).L ");
+    raw_write16(0, 0173000 | src);
+    raw_write32(2, 0x200);
     m68k_do_execute();
     for(int i = 0; i < 16; ++i) {
         BOOST_TEST(raw_read8(0x200 + i) == 0x20 + i);
     }
 
-    BOOST_TEST(regs.a[2] == 0x110);
+    BOOST_TEST(regs.a[src] == 0x110);
 }
 
 BOOST_AUTO_TEST_CASE(imm_to_incr) {
-    regs.a[2] = 0x100;
+    auto dst = rand_ar();
+    regs.a[dst] = 0x100;
     for(int i = 0; i < 16; ++i) {
         raw_write8(0x200 + i, 0x20 + i);
     }
-    asm_m68k("move16 (0x200).L, (%A2)+");
+    raw_write16(0, 0173010 | dst);
+    raw_write32(2, 0x200);
     m68k_do_execute();
     for(int i = 0; i < 16; ++i) {
         BOOST_TEST(raw_read8(0x100 + i) == 0x20 + i);
     }
 
-    BOOST_TEST(regs.a[2] == 0x110);
+    BOOST_TEST(regs.a[dst] == 0x110);
 }
 
 BOOST_AUTO_TEST_CASE(reg_to_imm) {
-    regs.a[2] = 0x100;
+    auto src = rand_ar();
+    regs.a[src] = 0x100;
     for(int i = 0; i < 16; ++i) {
         raw_write8(0x100 + i, 0x20 + i);
     }
-    asm_m68k("move16 (%A2), (0x200).L ");
+    raw_write16(0, 0173020 | src);
+    raw_write32(2, 0x200);
     m68k_do_execute();
     for(int i = 0; i < 16; ++i) {
         BOOST_TEST(raw_read8(0x200 + i) == 0x20 + i);
     }
 
-    BOOST_TEST(regs.a[2] == 0x100);
+    BOOST_TEST(regs.a[src] == 0x100);
 }
 
 BOOST_AUTO_TEST_CASE(imm_to_reg) {
-    regs.a[2] = 0x100;
+    auto dst = rand_ar();
+    regs.a[dst] = 0x100;
     for(int i = 0; i < 16; ++i) {
         raw_write8(0x200 + i, 0x20 + i);
     }
-    asm_m68k("move16 (0x200).L, (%A2)");
+    raw_write16(0, 0173030 | dst);
+    raw_write32(2, 0x200);
     m68k_do_execute();
     for(int i = 0; i < 16; ++i) {
         BOOST_TEST(raw_read8(0x100 + i) == 0x20 + i);
     }
 
-    BOOST_TEST(regs.a[2] == 0x100);
+    BOOST_TEST(regs.a[dst] == 0x100);
 }
 
 BOOST_AUTO_TEST_CASE(incr_to_incr) {
@@ -67,7 +73,8 @@ BOOST_AUTO_TEST_CASE(incr_to_incr) {
     for(int i = 0; i < 16; ++i) {
         raw_write8(0x100 + i, 0x20 + i);
     }
-    asm_m68k("move16 (%A2)+, (%A3)+ ");
+    raw_write16(0, 0173040 | 2);
+    raw_write16(2, 0x8000 | 3 << 12);
     m68k_do_execute();
     for(int i = 0; i < 16; ++i) {
         BOOST_TEST(raw_read8(0x200 + i) == 0x20 + i);

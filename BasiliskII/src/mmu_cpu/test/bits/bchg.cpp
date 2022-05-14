@@ -7,12 +7,12 @@
 BOOST_FIXTURE_TEST_SUITE(BCHG, InitFix)
 BOOST_AUTO_TEST_SUITE(Imm)
 BOOST_AUTO_TEST_CASE(Byte) {
-    auto xr = rand_reg();
+    auto ea = rand_reg();
     auto v1 = get_v8();
     int n = get_vn(0, 7);
-    regs.a[xr] = 0x10;
+    regs.a[ea] = 0x10;
     raw_write8(0x10, v1);
-    raw_write16(0, 0004120 | xr);
+    raw_write16(0, 0004120 | ea);
     raw_write16(2, n);
     m68k_do_execute();
     BOOST_TEST(regs.z == !(v1 & 1 << n));
@@ -20,27 +20,27 @@ BOOST_AUTO_TEST_CASE(Byte) {
 }
 
 BOOST_AUTO_TEST_CASE(Long) {
-    auto xr = rand_reg();
+    auto ea = rand_reg();
     auto v1 = get_v32();
     int n = get_vn(0, 31);
-    regs.d[xr] = v1;
-    raw_write16(0, 0004100 | xr);
+    regs.d[ea] = v1;
+    raw_write16(0, 0004100 | ea);
     raw_write16(2, n);
     m68k_do_execute();
     BOOST_TEST(regs.z == !(v1 & 1 << n));
-    BOOST_TEST(regs.d[xr] == (v1 ^ 1 << n));
+    BOOST_TEST(regs.d[ea] == (v1 ^ 1 << n));
 }
 
 BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_AUTO_TEST_SUITE(Reg)
 BOOST_AUTO_TEST_CASE(Byte) {
-    auto [xr, yr] = rand_reg2();
+    auto [dn, ea] = rand_reg2();
     auto v1 = get_v8();
     int n = get_vn(0, 7);
-    regs.a[yr] = 0x10;
-    regs.d[xr] = n;
-    raw_write16(0, 0000520 | xr << 9 | yr);
+    regs.a[ea] = 0x10;
+    regs.d[dn] = n;
+    raw_write16(0, 0000520 | dn << 9 | ea);
     raw_write8(0x10, v1);
     m68k_do_execute();
     BOOST_TEST(regs.z == !(v1 & 1 << n));
@@ -48,15 +48,15 @@ BOOST_AUTO_TEST_CASE(Byte) {
 }
 
 BOOST_AUTO_TEST_CASE(Long) {
-    auto [xr, yr] = rand_reg2();
+    auto [dn, ea] = rand_reg2();
     auto v1 = get_v32();
     int n = get_vn(0, 31);
-    regs.d[yr] = v1;
-    regs.d[xr] = n;
-    raw_write16(0, 0000500 | xr << 9 | yr);
+    regs.d[ea] = v1;
+    regs.d[dn] = n;
+    raw_write16(0, 0000500 | dn << 9 | ea);
     m68k_do_execute();
     BOOST_TEST(regs.z == !(v1 & 1 << n));
-    BOOST_TEST(regs.d[yr] == (v1 ^ 1 << n));
+    BOOST_TEST(regs.d[ea] == (v1 ^ 1 << n));
 }
 BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE_END()

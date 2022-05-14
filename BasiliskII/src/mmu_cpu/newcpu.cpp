@@ -280,8 +280,8 @@ static void build_cpufunctbl() {
         opc_map[01606 | dn << 3] = op_shl_l;
 
         for(int i = 0; i < 4; ++i) {
-            opc_map[00700 | dn << 2 | i] = op_moveq;
-            opc_map[00704 | dn << 2 | i] = op_emul_op;
+            opc_map[00700 | dn << 3 | i] = op_moveq;
+            opc_map[00704 | dn << 3 | i] = op_emul_op;
         }
         for(int xg = 0; xg < 8; ++xg) {
             if(xg != 1) {
@@ -330,13 +330,12 @@ void m68k_do_execute() {
         return;
     }
     regs.opc = regs.pc;
-    op_t f = nullptr;
     if(regs.pc & 1) {
         // ADDRESS ERROR
         RAISE2(3, regs.opc - 1, false);
     } else {
         uint16_t opc = FETCH();
-        if((f = opc_map[opc >> 6]) != nullptr) {
+        if(op_t f = opc_map[opc >> 6]; f) {
             try {
                 f(opc, opc >> 9 & 7, opc >> 3 & 7, opc & 7);
             } catch(ILLEGAL_INST_EX &) {

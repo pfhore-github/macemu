@@ -7,6 +7,7 @@ BOOST_FIXTURE_TEST_SUITE(MOVEM, InitFix)
 BOOST_AUTO_TEST_SUITE(Word)
 BOOST_AUTO_TEST_SUITE(To)
 BOOST_AUTO_TEST_CASE(addr) {
+    regs.i_ea = 0;
     regs.d[1] = 0x1000;
     regs.d[2] = 0x2000;
     regs.d[3] = 0x3000;
@@ -25,6 +26,7 @@ BOOST_AUTO_TEST_CASE(addr) {
 }
 
 BOOST_AUTO_TEST_CASE(decr) {
+    regs.i_ea = 0;
     regs.d[1] = 0x1000;
     regs.d[2] = 0x2000;
     regs.d[3] = 0x3000;
@@ -47,6 +49,7 @@ BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_AUTO_TEST_SUITE(From)
 BOOST_AUTO_TEST_CASE(addr) {
+    regs.i_ea = 0;
     regs.a[2] = 0x5000;
     raw_write16(0x5000, 0x1000);
     raw_write16(0x5002, 0x2000);
@@ -66,6 +69,7 @@ BOOST_AUTO_TEST_CASE(addr) {
 }
 
 BOOST_AUTO_TEST_CASE(incr) {
+    regs.i_ea = 0;
     regs.a[2] = 0x5000;
     raw_write16(0x5000, 0x1000);
     raw_write16(0x5002, 0x2000);
@@ -91,6 +95,7 @@ BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE(Long)
 BOOST_AUTO_TEST_SUITE(To)
 BOOST_AUTO_TEST_CASE(addr) {
+    regs.i_ea = 0;
     regs.d[1] = 0x100000;
     regs.d[2] = 0x200000;
     regs.d[3] = 0x300000;
@@ -109,6 +114,7 @@ BOOST_AUTO_TEST_CASE(addr) {
 }
 
 BOOST_AUTO_TEST_CASE(decr) {
+    regs.i_ea = 0;
     regs.d[1] = 0x100000;
     regs.d[2] = 0x200000;
     regs.d[3] = 0x300000;
@@ -130,6 +136,7 @@ BOOST_AUTO_TEST_CASE(decr) {
 BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE(From)
 BOOST_AUTO_TEST_CASE(addr) {
+    regs.i_ea = 0;
     regs.a[2] = 0x5000;
     raw_write32(0x5000, 0x100000);
     raw_write32(0x5004, 0x200000);
@@ -149,6 +156,7 @@ BOOST_AUTO_TEST_CASE(addr) {
 }
 
 BOOST_AUTO_TEST_CASE(incr) {
+    regs.i_ea = 0;
     regs.a[2] = 0x5000;
     raw_write32(0x5000, 0x100000);
     raw_write32(0x5004, 0x200000);

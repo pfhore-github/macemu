@@ -469,11 +469,13 @@ void op_movec_to() {
 }
 
 OP(moveq) {
-    uint32_t v = static_cast<int8_t>(xop & 0xff);
-    TEST_NZ32(v);
+    auto v = static_cast<int8_t>(xop & 0x7f);
+    v <<= 1;
+    v >>= 1;
+    TEST_NZ8(v);
     regs.c = false;
     regs.v = false;
-    EA_WRITE32(0, dm, v);
+    EA_WRITE32(0, dm, int32_t(v));
 }
 
 void op_exg_d(int dm, int reg) { std::swap(regs.d[reg], regs.d[dm]); }

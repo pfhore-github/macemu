@@ -2,8 +2,6 @@
 #include "memory.h"
 #include "newcpu.h"
 #include "test/test_common.h"
-#include <boost/test/data/test_case.hpp>
-#include <boost/test/unit_test.hpp>
 
 BOOST_FIXTURE_TEST_SUITE(CAS2, InitFix)
 BOOST_AUTO_TEST_SUITE(Word)

@@ -3,99 +3,92 @@
 #include "newcpu.h"
 #include "test/test_common.h"
 BOOST_FIXTURE_TEST_SUITE(MOVE, InitFix)
-BOOST_DATA_TEST_CASE(opc, EA_D(), ea_dst) {
-    int dn = ea_dst & 7;
-    int type = (ea_dst >> 3) & 7;
-    BOOST_TEST(opc_map[00100 | type | dn << 3] == opc_map[00100]);
-    BOOST_TEST(opc_map[00200 | type | dn << 3] == opc_map[00200]);
-    BOOST_TEST(opc_map[00300 | type | dn << 3] == opc_map[00300]);
-}
-
-
 BOOST_AUTO_TEST_SUITE(Byte)
 
-BOOST_DATA_TEST_CASE(n, bdata::xrange(1), value) {
-    regs.d[1] = value << 7;
+BOOST_AUTO_TEST_CASE(n) {
+    regs.d[1] = 0x80;
     raw_write16(0, 0012001);
     m68k_do_execute();
-    BOOST_TEST(regs.n == value);
+    BOOST_TEST(regs.n);
 }
 
-BOOST_DATA_TEST_CASE(z, bdata::xrange(1), value) {
-    regs.d[1] = !value;
+BOOST_AUTO_TEST_CASE(z) {
+    regs.d[1] = 0;
     raw_write16(0, 0012001);
     m68k_do_execute();
-    BOOST_TEST(regs.z == value);
+    BOOST_TEST(regs.z);
 }
 BOOST_AUTO_TEST_SUITE(to)
 BOOST_AUTO_TEST_CASE(reg) {
-    regs.d[1] = 0x30;
-    regs.d[2] = 0x12345678;
-    raw_write16(0, 0012001);
+    auto [src, dst] = rand_reg2();
+    auto v1 = get_v32();
+    auto v2 = get_v8();
+    regs.d[src] = v2;
+    regs.d[dst] = v1;
+    raw_write16(0, 0010000 | dst << 9 | src);
     m68k_do_execute();
-    BOOST_TEST(regs.d[2] == 0x12345630);
-}
-
-BOOST_AUTO_TEST_CASE(address) {
-    regs.d[1] = 0xff;
-    regs.a[2] = 0x10;
-    raw_write16(0, 0012201);
-    m68k_do_execute();
-    BOOST_TEST(raw_read8(0x10) == 0xff);
+    BOOST_TEST(regs.d[dst] == ((v1 & 0xffffff00) | v2));
 }
 
 BOOST_AUTO_TEST_CASE(inc) {
-    regs.d[1] = 0xff;
-    regs.a[2] = 0x10;
-    raw_write16(0, 0012301);
+    auto src = rand_reg();
+    auto dst = rand_ar();
+    auto v1 = get_v8();
+    regs.d[src] = v1;
+    regs.a[dst] = 0x10;
+    raw_write16(0, 0010300 | dst << 9 | src);
     m68k_do_execute();
-    BOOST_TEST(raw_read8(0x10) == 0xff);
-    BOOST_TEST(regs.a[2] == 0x11);
+    BOOST_TEST(raw_read8(0x10) == v1);
+    BOOST_TEST(regs.a[dst] == 0x11);
 }
 
 BOOST_AUTO_TEST_CASE(dec) {
-    regs.d[1] = 0xff;
-    regs.a[2] = 0x11;
-    raw_write16(0, 0012401);
+    auto src = rand_reg();
+    auto dst = rand_ar();
+    auto v1 = get_v8();
+    regs.d[src] = v1;
+    regs.a[dst] = 0x11;
+    raw_write16(0, 0010400 | dst << 9 | src);
     m68k_do_execute();
-    BOOST_TEST(raw_read8(0x10) == 0xff);
-    BOOST_TEST(regs.a[2] == 0x10);
+    BOOST_TEST(raw_read8(0x10) == v1);
+    BOOST_TEST(regs.a[dst] == 0x10);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_AUTO_TEST_SUITE(from)
-BOOST_AUTO_TEST_CASE(address) {
-    regs.a[2] = 0x10;
-    raw_write8(0x10, 0xff);
-    raw_write16(0, 0011022);
-    m68k_do_execute();
-    BOOST_TEST(regs.d[1] == 0xff);
-}
 
 BOOST_AUTO_TEST_CASE(inc) {
-    raw_write8(0x10, 0xff);
-    regs.a[2] = 0x10;
-    raw_write16(0, 0011032);
+    auto dst = rand_reg();
+    auto src = rand_ar();
+    auto v1 = get_v8();
+    raw_write8(0x10, v1);
+    regs.a[src] = 0x10;
+    raw_write16(0, 0010030 | dst << 9 | src);
     m68k_do_execute();
-    BOOST_TEST(regs.a[2] == 0x11);
-    BOOST_TEST(regs.d[1] == 0xff);
+    BOOST_TEST(regs.a[src] == 0x11);
+    BOOST_TEST(regs.d[dst] == v1);
 }
 
 BOOST_AUTO_TEST_CASE(dec) {
-    raw_write8(0x10, 0xff);
-    regs.a[2] = 0x11;
-    raw_write16(0, 0011042);
+    auto dst = rand_reg();
+    auto src = rand_ar();
+    auto v1 = get_v8();
+    raw_write8(0x10, v1);
+    regs.a[src] = 0x11;
+    raw_write16(0, 0010040 | dst << 9 | src);
     m68k_do_execute();
-    BOOST_TEST(regs.a[2] == 0x10);
-    BOOST_TEST(regs.d[1] == 0xff);
+    BOOST_TEST(regs.a[src] == 0x10);
+    BOOST_TEST(regs.d[dst] == v1);
 }
 
 BOOST_AUTO_TEST_CASE(imm) {
-    raw_write16(0, 0011074);
-    raw_write16(2, 200);
+    auto dst = rand_reg();
+    auto v1 = get_v8();
+    raw_write16(0, 0010074 | dst << 9);
+    raw_write16(2, v1);
     m68k_do_execute();
-    BOOST_TEST(regs.d[1] == 200);
+    BOOST_TEST(regs.d[dst] == v1);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
@@ -103,54 +96,53 @@ BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_AUTO_TEST_SUITE(Word)
 
-BOOST_DATA_TEST_CASE(n, bdata::xrange(1), value) {
-    regs.d[1] = value << 15;
+BOOST_AUTO_TEST_CASE(n) {
+    regs.d[1] = 0x8000;
     raw_write16(0, 0032001);
     m68k_do_execute();
-    BOOST_TEST(regs.n == value);
+    BOOST_TEST(regs.n);
 }
 
-BOOST_DATA_TEST_CASE(z, bdata::xrange(1), value) {
-    regs.d[1] = !value;
+BOOST_AUTO_TEST_CASE(z) {
+    regs.d[1] = 0;
     raw_write16(0, 0032001);
     m68k_do_execute();
-    BOOST_TEST(regs.z == value);
+    BOOST_TEST(regs.z);
 }
 BOOST_AUTO_TEST_SUITE(to)
 BOOST_AUTO_TEST_CASE(reg) {
-    regs.d[1] = 0x3040;
-    regs.d[2] = 0x12345678;
-    raw_write16(0, 0032001);
+    auto [src, dst] = rand_reg2();
+    auto v1 = get_v32();
+    auto v2 = get_v16();
+    regs.d[src] = v2;
+    regs.d[dst] = v1;
+    raw_write16(0, 0030000 | dst << 9 | src);
     m68k_do_execute();
-    BOOST_TEST(regs.d[2] == 0x12343040);
-}
-
-BOOST_AUTO_TEST_CASE(address) {
-    regs.d[1] = 0xffff;
-    regs.a[2] = 0x10;
-    raw_write16(0, 0032201);
-    m68k_do_execute();
-    BOOST_TEST(raw_read16(0x10) == 0xffff);
-    BOOST_TEST(regs.n);
-    BOOST_TEST(!regs.z);
+    BOOST_TEST(regs.d[dst] == ((v1 & 0xffff0000) | v2));
 }
 
 BOOST_AUTO_TEST_CASE(inc) {
-    regs.d[1] = 0xffff;
-    regs.a[2] = 0x10;
-    raw_write16(0, 0032301);
+    auto src = rand_reg();
+    auto dst = rand_ar();
+    auto v1 = get_v16();
+    regs.d[src] = v1;
+    regs.a[dst] = 0x10;
+    raw_write16(0, 0030300 | dst << 9 | src);
     m68k_do_execute();
-    BOOST_TEST(raw_read16(0x10) == 0xffff);
-    BOOST_TEST(regs.a[2] == 0x12);
+    BOOST_TEST(raw_read16(0x10) == v1);
+    BOOST_TEST(regs.a[dst] == 0x12);
 }
 
 BOOST_AUTO_TEST_CASE(dec) {
-    regs.d[1] = 0xffff;
-    regs.a[2] = 0x12;
-    raw_write16(0, 0032401);
+    auto src = rand_reg();
+    auto dst = rand_ar();
+    auto v1 = get_v16();
+    regs.d[src] = v1;
+    regs.a[dst] = 0x12;
+    raw_write16(0, 0030400 | dst << 9 | src);
     m68k_do_execute();
-    BOOST_TEST(raw_read16(0x10) == 0xffff);
-    BOOST_TEST(regs.a[2] == 0x10);
+    BOOST_TEST(raw_read16(0x10) == v1);
+    BOOST_TEST(regs.a[dst] == 0x10);
 }
 
 BOOST_DATA_TEST_CASE(ccr, BIT *BIT *BIT *BIT *BIT, x1, v1, c1, n1, z1) {
@@ -183,37 +175,38 @@ BOOST_DATA_TEST_CASE(sr_valid, bdata::xrange(8), i) {
 BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_AUTO_TEST_SUITE(from)
-BOOST_AUTO_TEST_CASE(address) {
-    regs.a[2] = 0x10;
-    raw_write16(0x10, 0xffff);
-    raw_write16(0, 0031022);
-    m68k_do_execute();
-    BOOST_TEST(regs.d[1] == 0xffff);
-}
 
 BOOST_AUTO_TEST_CASE(inc) {
-    raw_write16(0x10, 0xffff);
-    regs.a[2] = 0x10;
-    raw_write16(0, 0031032);
+    auto dst = rand_reg();
+    auto src = rand_ar();
+    auto v1 = get_v16();
+    raw_write16(0x10, v1);
+    regs.a[src] = 0x10;
+    raw_write16(0, 0030030 | dst << 9 | src);
     m68k_do_execute();
-    BOOST_TEST(regs.a[2] == 0x12);
-    BOOST_TEST(regs.d[1] == 0xffff);
+    BOOST_TEST(regs.a[src] == 0x12);
+    BOOST_TEST(regs.d[dst] == v1);
 }
 
 BOOST_AUTO_TEST_CASE(dec) {
-    raw_write16(0x10, 0xffff);
-    regs.a[2] = 0x12;
-    raw_write16(0, 0031042);
+    auto dst = rand_reg();
+    auto src = rand_ar();
+    auto v1 = get_v16();
+    raw_write16(0x10, v1);
+    regs.a[src] = 0x12;
+    raw_write16(0, 0030040 | dst << 9 | src);
     m68k_do_execute();
-    BOOST_TEST(regs.a[2] == 0x10);
-    BOOST_TEST(regs.d[1] == 0xffff);
+    BOOST_TEST(regs.a[src] == 0x10);
+    BOOST_TEST(regs.d[dst] == v1);
 }
 
 BOOST_AUTO_TEST_CASE(imm) {
-    raw_write16(0, 0031074);
-    raw_write16(2, 2000);
+    auto dst = rand_reg();
+    auto v1 = get_v16();
+    raw_write16(0, 0030074 | dst << 9);
+    raw_write16(2, v1);
     m68k_do_execute();
-    BOOST_TEST(regs.d[1] == 2000);
+    BOOST_TEST(regs.d[dst] == v1);
 }
 
 BOOST_DATA_TEST_CASE(ccr, BIT *BIT *BIT *BIT *BIT, x1, v1, c1, n1, z1) {
@@ -224,7 +217,7 @@ BOOST_DATA_TEST_CASE(ccr, BIT *BIT *BIT *BIT *BIT, x1, v1, c1, n1, z1) {
     regs.z = z1;
     raw_write16(0, 0041301);
     m68k_do_execute();
-    BOOST_TEST(regs.d[1] == x1 << 4 | n1 << 3 | z1 << 2 | v1 << 1 | c1);
+    BOOST_TEST(regs.d[1] == (x1 << 4 | n1 << 3 | z1 << 2 | v1 << 1 | c1));
 }
 
 BOOST_AUTO_TEST_CASE(sr_invalid) {
@@ -244,54 +237,53 @@ BOOST_DATA_TEST_CASE(sr_valid, bdata::xrange(8), i) {
 BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE(Long)
-
-BOOST_DATA_TEST_CASE(n, bdata::xrange(1), value) {
-    regs.d[1] = value << 31;
+BOOST_AUTO_TEST_CASE(n) {
+    regs.d[1] = 0x80000000;
     raw_write16(0, 0022001);
     m68k_do_execute();
-    BOOST_TEST(regs.n == value);
+    BOOST_TEST(regs.n);
 }
 
-BOOST_DATA_TEST_CASE(z, bdata::xrange(1), value) {
-    regs.d[1] = !value;
+BOOST_AUTO_TEST_CASE(z) {
+    regs.d[1] = 0;
     raw_write16(0, 0022001);
     m68k_do_execute();
-    BOOST_TEST(regs.z == value);
+    BOOST_TEST(regs.z);
 }
 BOOST_AUTO_TEST_SUITE(to)
 BOOST_AUTO_TEST_CASE(reg) {
-    regs.d[1] = 0x12345678;
-    raw_write16(0, 0022001);
+    auto [src, dst] = rand_reg2();
+    auto v1 = get_v32();
+    auto v2 = get_v32();
+    regs.d[src] = v2;
+    regs.d[dst] = v1;
+    raw_write16(0, 0020000 | dst << 9 | src);
     m68k_do_execute();
-    BOOST_TEST(regs.d[2] == 0x12345678);
-}
-
-BOOST_AUTO_TEST_CASE(address) {
-    regs.d[1] = 0xffffffff;
-    regs.a[2] = 0x10;
-    raw_write16(0, 0022201);
-    m68k_do_execute();
-    BOOST_TEST(raw_read32(0x10) == 0xffffffff);
-    BOOST_TEST(regs.n);
-    BOOST_TEST(!regs.z);
+    BOOST_TEST(regs.d[dst] == v2);
 }
 
 BOOST_AUTO_TEST_CASE(inc) {
-    regs.d[1] = 0xffffffff;
-    regs.a[2] = 0x10;
-    raw_write16(0, 0022301);
+    auto src = rand_reg();
+    auto dst = rand_ar();
+    auto v1 = get_v16();
+    regs.d[src] = v1;
+    regs.a[dst] = 0x10;
+    raw_write16(0, 0020300 | dst << 9 | src);
     m68k_do_execute();
-    BOOST_TEST(raw_read32(0x10) == 0xffffffff);
-    BOOST_TEST(regs.a[2] == 0x14);
+    BOOST_TEST(raw_read32(0x10) == v1);
+    BOOST_TEST(regs.a[dst] == 0x14);
 }
 
 BOOST_AUTO_TEST_CASE(dec) {
-    regs.d[1] = 0xffffffff;
-    regs.a[2] = 0x14;
-    raw_write16(0, 0022401);
+    auto src = rand_reg();
+    auto dst = rand_ar();
+    auto v1 = get_v32();
+    regs.d[src] = v1;
+    regs.a[dst] = 0x14;
+    raw_write16(0, 0020400 | dst << 9 | src);
     m68k_do_execute();
-    BOOST_TEST(raw_read32(0x10) == 0xffffffff);
-    BOOST_TEST(regs.a[2] == 0x10);
+    BOOST_TEST(raw_read32(0x10) == v1);
+    BOOST_TEST(regs.a[dst] == 0x10);
 }
 
 BOOST_AUTO_TEST_CASE(usp_invalid) {
@@ -310,39 +302,38 @@ BOOST_AUTO_TEST_CASE(usp) {
 BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_AUTO_TEST_SUITE(from)
-BOOST_AUTO_TEST_CASE(address) {
-    regs.a[2] = 0x10;
-    raw_write32(0x10, 0xffffffff);
-    raw_write16(0, 0021022);
-    m68k_do_execute();
-    BOOST_TEST(regs.d[1] == 0xffffffff);
-}
-
 BOOST_AUTO_TEST_CASE(inc) {
-    raw_write32(0x10, 0xffffffff);
-    regs.a[2] = 0x10;
-    raw_write16(0, 0021032);
+    auto dst = rand_reg();
+    auto src = rand_ar();
+    auto v1 = get_v32();
+    raw_write32(0x10, v1);
+    regs.a[src] = 0x10;
+    raw_write16(0, 0020030 | dst << 9 | src);
     m68k_do_execute();
-    BOOST_TEST(regs.a[2] == 0x14);
-    BOOST_TEST(regs.d[1] == 0xffffffff);
+    BOOST_TEST(regs.a[src] == 0x14);
+    BOOST_TEST(regs.d[dst] == v1);
 }
 
 BOOST_AUTO_TEST_CASE(dec) {
-    raw_write32(0x10, 0xffffffff);
-    regs.a[2] = 0x14;
-    raw_write16(0, 0021042);
+    auto dst = rand_reg();
+    auto src = rand_ar();
+    auto v1 = get_v32();
+    raw_write32(0x10, v1);
+    regs.a[src] = 0x14;
+    raw_write16(0, 0020040 | dst << 9 | src);
     m68k_do_execute();
-    BOOST_TEST(regs.a[2] == 0x10);
-    BOOST_TEST(regs.d[1] == 0xffffffff);
+    BOOST_TEST(regs.a[src] == 0x10);
+    BOOST_TEST(regs.d[dst] == v1);
 }
 
 BOOST_AUTO_TEST_CASE(imm) {
-    raw_write16(0, 0021074);
-    raw_write32(2, 0x10000);
+    auto dst = rand_reg();
+    auto v1 = get_v32();
+    raw_write16(0, 0020074 | dst << 9);
+    raw_write32(2, v1);
     m68k_do_execute();
-    BOOST_TEST(regs.d[1] == 0x10000);
+    BOOST_TEST(regs.d[dst] == v1);
 }
-
 BOOST_AUTO_TEST_CASE(usp) {
     regs.usp = 0x1234;
     regs.S = true;

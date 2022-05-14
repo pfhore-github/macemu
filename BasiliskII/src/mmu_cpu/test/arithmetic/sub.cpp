@@ -12,7 +12,7 @@ BOOST_AUTO_TEST_CASE(RegToReg) {
     regs.d[2] = 25;
     asm_m68k("subb %D2, %D1");
     m68k_do_execute();
-    BOOST_TEST(regs.d[1] == 0x12345600 | (66 - 25));
+    BOOST_TEST(regs.d[1] == (0x12345600 | (66 - 25)));
 }
 
 BOOST_AUTO_TEST_CASE(MemToReg) {
@@ -21,7 +21,7 @@ BOOST_AUTO_TEST_CASE(MemToReg) {
     regs.a[2] = 0x10;
     asm_m68k("subb (%A2), %D1");
     m68k_do_execute();
-    BOOST_TEST(regs.d[1] == 0x12345600 | (66 - 25));
+    BOOST_TEST(regs.d[1] == (0x12345600 | (66 - 25)));
 }
 
 BOOST_AUTO_TEST_CASE(RegToMem) {

@@ -22,6 +22,7 @@ inline auto EA_M() { return bdata::xrange(020, 072); }
 inline auto EA_D_R() { return bdata::xrange(8) + bdata::xrange(020, 075); }
 inline auto EA_M_R() { return bdata::xrange(020, 074); }
 int rand_reg();
+int rand_ar();
 std::pair<int, int> rand_reg2();
 std::tuple<int, int, int> rand_reg3();
 std::tuple<int, int, int, int> rand_reg4();

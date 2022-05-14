@@ -369,7 +369,7 @@ OP(div_l) {
         }
         uint64_t ret1 = v2 / vd;
         uint64_t ret2 = v2 % vd;
-        regs.n = ret1 >> 63 & 1;
+        regs.n = ret1 >> 31 & 1;
         regs.z = ret1 == 0;
         if(ret1 >> 32) {
             regs.v = true;

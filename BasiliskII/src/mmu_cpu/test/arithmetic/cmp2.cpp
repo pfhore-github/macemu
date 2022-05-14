@@ -8,10 +8,12 @@ BOOST_FIXTURE_TEST_SUITE(CMP2, InitFix)
 
 BOOST_AUTO_TEST_SUITE(Byte)
 BOOST_AUTO_TEST_CASE(in_range) {
-    regs.a[2] = 0x10;
-    regs.d[3] = 0x40;
-    raw_write16(0, 0000322);
-    raw_write16(2, 0x3000);
+    auto rn = rand_reg();
+    int ea = rand_ar();
+    regs.a[ea] = 0x10;
+    regs.d[rn] = 0x40;
+    raw_write16(0, 0000320 | ea);
+    raw_write16(2, 0x0000 | rn << 12);
     raw_write8(0x10, 0x10);
     raw_write8(0x11, 0x50);
     m68k_do_execute();
@@ -20,11 +22,12 @@ BOOST_AUTO_TEST_CASE(in_range) {
 }
 
 BOOST_AUTO_TEST_CASE(low_eq) {
-    regs.a[2] = 0x10;
-    regs.d[3] = 0x10;
-
-    raw_write16(0, 0000322);
-    raw_write16(2, 0x3000);
+    auto rn = rand_reg();
+    int ea = rand_ar();
+    regs.a[ea] = 0x10;
+    regs.d[rn] = 0x10;
+    raw_write16(0, 0000320 | ea);
+    raw_write16(2, 0x0000 | rn << 12);
     raw_write8(0x10, 0x10);
     raw_write8(0x11, 0x50);
     m68k_do_execute();
@@ -33,11 +36,12 @@ BOOST_AUTO_TEST_CASE(low_eq) {
 }
 
 BOOST_AUTO_TEST_CASE(high) {
-    regs.a[3] = 0x10;
-    regs.d[4] = 0x50;
-
-    raw_write16(0, 0000323);
-    raw_write16(2, 0x4000);
+    auto rn = rand_reg();
+    int ea = rand_ar();
+    regs.a[ea] = 0x10;
+    regs.d[rn] = 0x50;
+    raw_write16(0, 0000320 | ea);
+    raw_write16(2, 0x0000 | rn << 12);
     raw_write8(0x10, 0x10);
     raw_write8(0x11, 0x50);
     m68k_do_execute();
@@ -46,11 +50,12 @@ BOOST_AUTO_TEST_CASE(high) {
 }
 
 BOOST_AUTO_TEST_CASE(under) {
-    regs.a[4] = 0x10;
-    regs.d[5] = 0x05;
-
-    raw_write16(0, 0000324);
-    raw_write16(2, 0x5000);
+    auto rn = rand_reg();
+    int ea = rand_ar();
+    regs.a[ea] = 0x10;
+    regs.d[rn] = 0x05;
+    raw_write16(0, 0000320 | ea);
+    raw_write16(2, 0x0000 | rn << 12);
     raw_write8(0x10, 0x10);
     raw_write8(0x11, 0x50);
     m68k_do_execute();
@@ -59,11 +64,12 @@ BOOST_AUTO_TEST_CASE(under) {
 }
 
 BOOST_AUTO_TEST_CASE(over) {
-    regs.a[5] = 0x10;
-    regs.d[6] = 0x55;
-
-    raw_write16(0, 0000325);
-    raw_write16(2, 0x6000);
+    auto rn = rand_reg();
+    int ea = rand_ar();
+    regs.a[ea] = 0x10;
+    regs.d[rn] = 0x55;
+    raw_write16(0, 0000320 | ea);
+    raw_write16(2, 0x0000 | rn << 12);
     raw_write8(0x10, 0x10);
     raw_write8(0x11, 0x50);
     m68k_do_execute();
@@ -77,22 +83,12 @@ BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE(Word)
 
 BOOST_AUTO_TEST_CASE(in_range) {
-    regs.a[3] = 0x10;
-    regs.d[2] = 0x4000;
-    raw_write16(0, 0001323);
-    raw_write16(2, 0x2000);
-    raw_write16(0x10, 0x1000);
-    raw_write16(0x12, 0x5000);
-    m68k_do_execute();
-    BOOST_TEST(!regs.z);
-    BOOST_TEST(!regs.c);
-}
-
-BOOST_AUTO_TEST_CASE(in_rangeA) {
-    regs.a[3] = 0x10;
-    regs.a[2] = 0x4000;
-    raw_write16(0, 0001323);
-    raw_write16(2, 0xa000);
+    auto rn = rand_reg();
+    int ea = rand_ar();
+    regs.a[ea] = 0x10;
+    regs.d[rn] = 0x4000;
+    raw_write16(0, 0001320 | ea);
+    raw_write16(2, 0x0000 | rn << 12);
     raw_write16(0x10, 0x1000);
     raw_write16(0x12, 0x5000);
     m68k_do_execute();
@@ -101,10 +97,12 @@ BOOST_AUTO_TEST_CASE(in_rangeA) {
 }
 
 BOOST_AUTO_TEST_CASE(low_eq) {
-    regs.a[3] = 0x10;
-    regs.d[2] = 0x1000;
-    raw_write16(0, 0001323);
-    raw_write16(2, 0x2000);
+    auto rn = rand_reg();
+    int ea = rand_ar();
+    regs.a[ea] = 0x10;
+    regs.d[rn] = 0x1000;
+    raw_write16(0, 0001320 | ea);
+    raw_write16(2, 0x0000 | rn << 12);
     raw_write16(0x10, 0x1000);
     raw_write16(0x12, 0x5000);
     m68k_do_execute();
@@ -113,10 +111,12 @@ BOOST_AUTO_TEST_CASE(low_eq) {
 }
 
 BOOST_AUTO_TEST_CASE(high) {
-    regs.a[3] = 0x10;
-    regs.d[2] = 0x5000;
-    raw_write16(0, 0001323);
-    raw_write16(2, 0x2000);
+    auto rn = rand_reg();
+    int ea = rand_ar();
+    regs.a[ea] = 0x10;
+    regs.d[rn] = 0x5000;
+    raw_write16(0, 0001320 | ea);
+    raw_write16(2, 0x0000 | rn << 12);
     raw_write16(0x10, 0x1000);
     raw_write16(0x12, 0x5000);
     m68k_do_execute();
@@ -125,10 +125,12 @@ BOOST_AUTO_TEST_CASE(high) {
 }
 
 BOOST_AUTO_TEST_CASE(under) {
-    regs.a[3] = 0x10;
-    regs.d[2] = 0x0005;
-    raw_write16(0, 0001323);
-    raw_write16(2, 0x2000);
+    auto rn = rand_reg();
+    int ea = rand_ar();
+    regs.a[ea] = 0x10;
+    regs.d[rn] = 0x0005;
+    raw_write16(0, 0001320 | ea);
+    raw_write16(2, 0x0000 | rn << 12);
     raw_write16(0x10, 0x1000);
     raw_write16(0x12, 0x5000);
     m68k_do_execute();
@@ -137,10 +139,12 @@ BOOST_AUTO_TEST_CASE(under) {
 }
 
 BOOST_AUTO_TEST_CASE(over) {
-    regs.a[3] = 0x10;
-    regs.d[2] = 0x5500;
-    raw_write16(0, 0001323);
-    raw_write16(2, 0x2000);
+    auto rn = rand_reg();
+    int ea = rand_ar();
+    regs.a[ea] = 0x10;
+    regs.d[rn] = 0x5555;
+    raw_write16(0, 0001320 | ea);
+    raw_write16(2, 0x0000 | rn << 12);
     raw_write16(0x10, 0x1000);
     raw_write16(0x12, 0x5000);
     m68k_do_execute();
@@ -153,10 +157,12 @@ BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE(Long)
 
 BOOST_AUTO_TEST_CASE(in_range) {
-    regs.a[3] = 0x10;
-    regs.d[2] = 0x40000000;
-    raw_write16(0, 0002323);
-    raw_write16(2, 0x2000);
+    auto rn = rand_reg();
+    int ea = rand_ar();
+    regs.a[ea] = 0x10;
+    regs.d[rn] = 0x40000000;
+    raw_write16(0, 0002320 | ea);
+    raw_write16(2, 0x0000 | rn << 12);
     raw_write32(0x10, 0x10000000);
     raw_write32(0x14, 0x50000000);
     m68k_do_execute();
@@ -165,10 +171,12 @@ BOOST_AUTO_TEST_CASE(in_range) {
 }
 
 BOOST_AUTO_TEST_CASE(low_eq) {
-    regs.a[3] = 0x10;
-    regs.d[2] = 0x10000000;
-    raw_write16(0, 0002323);
-    raw_write16(2, 0x2000);
+    auto rn = rand_reg();
+    int ea = rand_ar();
+    regs.a[ea] = 0x10;
+    regs.d[rn] = 0x10000000;
+    raw_write16(0, 0002320 | ea);
+    raw_write16(2, 0x0000 | rn << 12);
     raw_write32(0x10, 0x10000000);
     raw_write32(0x14, 0x50000000);
     m68k_do_execute();
@@ -177,10 +185,12 @@ BOOST_AUTO_TEST_CASE(low_eq) {
 }
 
 BOOST_AUTO_TEST_CASE(high) {
-    regs.a[3] = 0x10;
-    regs.d[2] = 0x50000000;
-    raw_write16(0, 0002323);
-    raw_write16(2, 0x2000);
+    auto rn = rand_reg();
+    int ea = rand_ar();
+    regs.a[ea] = 0x10;
+    regs.d[rn] = 0x10000000;
+    raw_write16(0, 0002320 | ea);
+    raw_write16(2, 0x0000 | rn << 12);
     raw_write32(0x10, 0x10000000);
     raw_write32(0x14, 0x50000000);
     m68k_do_execute();
@@ -189,10 +199,12 @@ BOOST_AUTO_TEST_CASE(high) {
 }
 
 BOOST_AUTO_TEST_CASE(under) {
-    regs.a[3] = 0x10;
-    regs.d[2] = 0x00050000;
-    raw_write16(0, 0002323);
-    raw_write16(2, 0x2000);
+    auto rn = rand_reg();
+    int ea = rand_ar();
+    regs.a[ea] = 0x10;
+    regs.d[rn] = 0x00050000;
+    raw_write16(0, 0002320 | ea);
+    raw_write16(2, 0x0000 | rn << 12);
     raw_write32(0x10, 0x10000000);
     raw_write32(0x14, 0x50000000);
     m68k_do_execute();
@@ -201,10 +213,12 @@ BOOST_AUTO_TEST_CASE(under) {
 }
 
 BOOST_AUTO_TEST_CASE(over) {
-    regs.a[3] = 0x10;
-    regs.d[2] = 0x55000000;
-    raw_write16(0, 0002323);
-    raw_write16(2, 0x2000);
+    auto rn = rand_reg();
+    int ea = rand_ar();
+    regs.a[ea] = 0x10;
+    regs.d[rn] = 0x55550000;
+    raw_write16(0, 0002320 | ea);
+    raw_write16(2, 0x0000 | rn << 12);
     raw_write32(0x10, 0x10000000);
     raw_write32(0x14, 0x50000000);
     m68k_do_execute();

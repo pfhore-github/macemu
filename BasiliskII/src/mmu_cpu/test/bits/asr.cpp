@@ -7,23 +7,23 @@ BOOST_FIXTURE_TEST_SUITE(ASR, InitFix)
 BOOST_AUTO_TEST_SUITE(Byte)
 
 BOOST_DATA_TEST_CASE(Imm, bdata::xrange(0, 8), n) {
-    auto xr = rand_reg();
+    auto dy = rand_reg();
     auto v1 = get_v8();
-    regs.d[xr] = v1;
-    write16(0, 0160000 | n << 9 | xr);
+    regs.d[dy] = v1;
+    write16(0, 0160000 | n << 9 | dy);
     m68k_do_execute();
-    BOOST_TEST(regs.d[xr] == ((int8_t(v1) >> (n ? n : 8) & 0xff)));
+    BOOST_TEST(regs.d[dy] == ((int8_t(v1) >> (n ? n : 8) & 0xff)));
 }
 
 BOOST_AUTO_TEST_CASE(Reg) {
-    auto [xr, yr] = rand_reg2();
+    auto [dx, dy] = rand_reg2();
     auto v1 = get_v8();
     int n = get_vn(1, 7);
-    regs.d[xr] = v1;
-    regs.d[yr] = n;
-    write16(0, 0160040 | yr << 9 | xr);
+    regs.d[dy] = v1;
+    regs.d[dx] = n;
+    write16(0, 0160040 | dx << 9 | dy);
     m68k_do_execute();
-    BOOST_TEST(regs.d[xr] == ((int8_t(v1) >> n) & 0xff));
+    BOOST_TEST(regs.d[dy] == ((int8_t(v1) >> n) & 0xff));
 }
 
 BOOST_AUTO_TEST_CASE(RegOver) {
@@ -71,23 +71,23 @@ BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_AUTO_TEST_SUITE(Word)
 BOOST_DATA_TEST_CASE(Imm, bdata::xrange(0, 8), n) {
-    auto xr = rand_reg();
+    auto dy = rand_reg();
     auto v1 = get_v16();
-    regs.d[xr] = v1;
-    write16(0, 0160100 | n << 9 | xr);
+    regs.d[dy] = v1;
+    write16(0, 0160100 | n << 9 | dy);
     m68k_do_execute();
-    BOOST_TEST(regs.d[xr] == ((int16_t(v1) >> (n ? n : 8) & 0xffff)));
+    BOOST_TEST(regs.d[dy] == ((int16_t(v1) >> (n ? n : 8) & 0xffff)));
 }
 
 BOOST_AUTO_TEST_CASE(Reg) {
-    auto [xr, yr] = rand_reg2();
+    auto [dx, dy] = rand_reg2();
     auto v1 = get_v16();
     int n = get_vn(1, 15);
-    regs.d[xr] = v1;
-    regs.d[yr] = n;
-    write16(0, 0160140 | yr << 9 | xr);
+    regs.d[dy] = v1;
+    regs.d[dx] = n;
+    write16(0, 0160140 | dx << 9 | dy);
     m68k_do_execute();
-    BOOST_TEST(regs.d[xr] == ((int16_t(v1) >> n) & 0xffff));
+    BOOST_TEST(regs.d[dy] == ((int16_t(v1) >> n) & 0xffff));
 }
 
 BOOST_AUTO_TEST_CASE(RegOver) {
@@ -132,9 +132,10 @@ BOOST_AUTO_TEST_CASE(z) {
 }
 
 BOOST_AUTO_TEST_CASE(ea) {
-    regs.a[2] = 0x10;
+    auto ea_v = rand_reg();
+    regs.a[ea_v] = 0x10;
     raw_write16(0x10, -16);
-    raw_write16(0, 0160322);
+    raw_write16(0, 0160320 | ea_v);
     m68k_do_execute();
     BOOST_TEST(raw_read16(0x10) = static_cast<uint16_t>(-8));
 }
@@ -143,23 +144,23 @@ BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_AUTO_TEST_SUITE(Long)
 BOOST_DATA_TEST_CASE(Imm, bdata::xrange(0, 8), n) {
-    auto xr = rand_reg();
+    auto dy = rand_reg();
     auto v1 = get_v32();
-    regs.d[xr] = v1;
-    write16(0, 0160200 | n << 9 | xr);
+    regs.d[dy] = v1;
+    write16(0, 0160200 | n << 9 | dy);
     m68k_do_execute();
-    BOOST_TEST(regs.d[xr] == (int32_t(v1) >> (n ? n : 8)));
+    BOOST_TEST(regs.d[dy] == (int32_t(v1) >> (n ? n : 8)));
 }
 
 BOOST_AUTO_TEST_CASE(Reg) {
-    auto [xr, yr] = rand_reg2();
+    auto [dx, dy] = rand_reg2();
     auto v1 = get_v32();
     int n = get_vn(1, 31);
-    regs.d[xr] = v1;
-    regs.d[yr] = n;
-    write16(0, 0160240 | yr << 9 | xr);
+    regs.d[dy] = v1;
+    regs.d[dx] = n;
+    write16(0, 0160240 | dx << 9 | dy);
     m68k_do_execute();
-    BOOST_TEST(regs.d[xr] == (int32_t(v1) >> n));
+    BOOST_TEST(regs.d[dy] == (int32_t(v1) >> n));
 }
 
 BOOST_AUTO_TEST_CASE(RegOver) {

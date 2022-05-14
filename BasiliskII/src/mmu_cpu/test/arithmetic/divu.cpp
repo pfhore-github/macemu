@@ -2,38 +2,43 @@
 #include "memory.h"
 #include "newcpu.h"
 #include "test/test_common.h"
-#include <boost/test/data/test_case.hpp>
-#include <boost/test/unit_test.hpp>
-#include <vector>
 BOOST_FIXTURE_TEST_SUITE(DIVU, InitFix)
-BOOST_DATA_TEST_CASE(opc, REG(), dn) {
-    BOOST_TEST(opc_map[01003 | dn << 3] == opc_map[01003]);
-}
 BOOST_AUTO_TEST_SUITE(Long)
-BOOST_AUTO_TEST_CASE(in_range) {
-    regs.d[1] = 2;
-    regs.d[2] = 10000000;
-    regs.d[3] = 0;
+BOOST_AUTO_TEST_CASE(operand) {
+    auto v1 = get_v32();
+    auto v2 = get_v32();
+    if(v2 == 0) {
+        v2 = 1;
+    }   
+    auto [ea, dr, dq] = rand_reg3();
+    regs.d[dq] = v1;
+    regs.d[ea] = v2;
+    raw_write16(0, 0046100 | ea);
+    raw_write16(2, 0x0000 | dq << 12 | dr);
+    m68k_do_execute();
+    BOOST_TEST( regs.d[dq] == ( v1 / v2));
+    BOOST_TEST( regs.d[dr] == ( v1 % v2));
+}
+
+BOOST_AUTO_TEST_CASE(n) {
+    regs.d[1] = 1;
+    regs.d[2] = 0x80000000;
     raw_write16(0, 0046101);
     raw_write16(2, 0x2002);
     m68k_do_execute();
-    BOOST_TEST(regs.d[2] == 5000000);
-    BOOST_TEST(!regs.v);
-    BOOST_TEST(!regs.z);
+    BOOST_TEST(regs.n);
 }
 
-BOOST_AUTO_TEST_CASE(zero) {
+BOOST_AUTO_TEST_CASE(z) {
     regs.d[1] = 12345;
     regs.d[2] = 0;
     raw_write16(0, 0046101);
     raw_write16(2, 0x2002);
     m68k_do_execute();
-    BOOST_TEST(regs.d[2] == 0);
-    BOOST_TEST(!regs.v);
     BOOST_TEST(regs.z);
 }
 
-BOOST_AUTO_TEST_CASE(overflow) {
+BOOST_AUTO_TEST_CASE(v) {
     regs.d[1] = 2;
     regs.d[2] = 2;
     regs.d[3] = 0;
@@ -51,26 +56,16 @@ BOOST_AUTO_TEST_CASE(div0) {
     exception_check(5);
 }
 
-BOOST_AUTO_TEST_CASE(mod) {
-    regs.d[1] = 3;
-    regs.d[2] = 10000;
-    regs.d[3] = 0;
-    raw_write16(0, 0046101);
-    raw_write16(2, 0x2003);
-    m68k_do_execute();
-    BOOST_TEST(regs.d[3] == 1);
-    BOOST_TEST(regs.d[2] == 3333);
-}
-BOOST_AUTO_TEST_CASE(divul) {
-    regs.d[1] = 3;
-    regs.d[2] = 10000;
+BOOST_AUTO_TEST_CASE(dword) {
+    regs.d[1] = 30;
+    regs.d[2] = 0;
     regs.d[3] = 1;
     raw_write16(0, 0046101);
-    raw_write16(2, 0x2003);
+    raw_write16(2, 0x2403);
 
     m68k_do_execute();
-    BOOST_TEST(regs.d[3] == 1);
-    BOOST_TEST(regs.d[2] == 3333);
+    BOOST_TEST(regs.d[3] == 16);
+    BOOST_TEST(regs.d[2] == 143165576);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

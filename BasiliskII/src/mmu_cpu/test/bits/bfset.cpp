@@ -7,44 +7,44 @@ BOOST_FIXTURE_TEST_SUITE(BFSET, InitFix)
 BOOST_AUTO_TEST_SUITE(REG)
 
 BOOST_AUTO_TEST_CASE(both_imm) {
-    auto xr = rand_reg();
+    auto ea = rand_reg();
     auto v1 = get_v32();
     auto off = get_vn(0, 31);
     auto w = get_vn(1, 31);
-    regs.d[xr] = v1;
-    write16(0, 0167300 | xr);
+    regs.d[ea] = v1;
+    write16(0, 0167300 | ea);
     write16(2, off << 6 | w);
     m68k_do_execute();
     uint32_t mask = std::rotr<uint32_t>(0xffffffffU << (32 - w), off);
-    BOOST_TEST(regs.d[xr] == (v1 | mask));
+    BOOST_TEST(regs.d[ea] == (v1 | mask));
 }
 
 BOOST_AUTO_TEST_CASE(width_reg) {
-    auto [xr, yr] = rand_reg2();
+    auto [ea, wr] = rand_reg2();
     auto v1 = get_v32();
     auto off = get_vn(0, 31);
     auto w = get_vn(1, 31);
-    regs.d[xr] = v1;
-    regs.d[yr] = w;
-    write16(0, 0167300 | xr);
-    write16(2, 1 << 5 | off << 6 | yr);
+    regs.d[ea] = v1;
+    regs.d[wr] = w;
+    write16(0, 0167300 | ea);
+    write16(2, 1 << 5 | off << 6 | wr);
     m68k_do_execute();
     uint32_t mask = std::rotr<uint32_t>(0xffffffffU << (32 - w), off);
-    BOOST_TEST(regs.d[xr] == (v1 | mask));
+    BOOST_TEST(regs.d[ea] == (v1 | mask));
 }
 
 BOOST_AUTO_TEST_CASE(off_reg) {
-    auto [xr, yr] = rand_reg2();
+    auto [ea, ofr] = rand_reg2();
     auto v1 = get_v32();
     auto off = get_vn(0, 31);
     auto w = get_vn(1, 31);
-    regs.d[xr] = v1;
-    regs.d[yr] = off;
-    write16(0, 0167300 | xr);
-    write16(2, 1 << 11 | yr << 6 | w);
+    regs.d[ea] = v1;
+    regs.d[ofr] = off;
+    write16(0, 0167300 | ea);
+    write16(2, 1 << 11 | ofr << 6 | w);
     m68k_do_execute();
     uint32_t mask = std::rotr<uint32_t>(0xffffffffU << (32 - w), off);
-    BOOST_TEST(regs.d[xr] == (v1 | mask));
+    BOOST_TEST(regs.d[ea] == (v1 | mask));
 }
 
 BOOST_AUTO_TEST_SUITE_END()

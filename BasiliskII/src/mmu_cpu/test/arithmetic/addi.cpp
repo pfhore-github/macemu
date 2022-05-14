@@ -6,14 +6,14 @@
 BOOST_FIXTURE_TEST_SUITE(ADDI, InitFix)
 BOOST_AUTO_TEST_SUITE(Byte)
 BOOST_AUTO_TEST_CASE(operand) {
-    auto xr = rand_reg();
+    auto ea = rand_reg();
     auto v1 = get_v8();
     auto v2 = get_v8();
-    regs.d[xr] = v1;
-    raw_write16(0, 0003000 | xr);
+    regs.d[ea] = v1;
+    raw_write16(0, 0003000 | ea);
     raw_write16(2, v2);
     m68k_do_execute();
-    BOOST_TEST(regs.d[xr] == ((v1 + v2) & 0xff));
+    BOOST_TEST(regs.d[ea] == ((v1 + v2) & 0xff));
 }
 BOOST_AUTO_TEST_CASE(cx) {
     regs.d[1] = 0xff;
@@ -95,14 +95,14 @@ BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE(Long)
 
 BOOST_AUTO_TEST_CASE(operand) {
-    auto xr = rand_reg();
+    auto ea = rand_reg();
     auto v1 = get_v32();
     auto v2 = get_v32();
-    regs.d[xr] = v1;
-    raw_write16(0, 0003200 | xr);
+    regs.d[ea] = v1;
+    raw_write16(0, 0003200 | ea);
     raw_write32(2, v2);
     m68k_do_execute();
-    BOOST_TEST(regs.d[xr] == (v1+v2));
+    BOOST_TEST(regs.d[ea] == (v1+v2));
 }
 
 

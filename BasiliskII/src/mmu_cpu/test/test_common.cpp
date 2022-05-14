@@ -141,6 +141,11 @@ int rand_reg() {
     std::uniform_int_distribution<> dist(0, 7);
     return dist(*rnd);
 }
+
+int rand_ar() {
+    std::uniform_int_distribution<> dist(0, 6);
+    return dist(*rnd);
+}
 std::pair<int, int> rand_reg2() {
     std::uniform_int_distribution<> dist(0, 7);
     int a, b;

@@ -132,6 +132,7 @@ mmu_cpu/test/arithmetic/suba.cpp
 mmu_cpu/test/arithmetic/cmp.cpp
 mmu_cpu/test/arithmetic/cmpi.cpp
 mmu_cpu/test/arithmetic/cmpa.cpp
+mmu_cpu/test/arithmetic/cmpm.cpp
 mmu_cpu/test/arithmetic/neg.cpp
 mmu_cpu/test/arithmetic/negx.cpp
 mmu_cpu/test/arithmetic/mulu.cpp
@@ -150,12 +151,14 @@ mmu_cpu/test/bcd/abcd.cpp
 mmu_cpu/test/bcd/pack.cpp
 mmu_cpu/test/bcd/unpk.cpp
 
+mmu_cpu/test/move/exg.cpp
+mmu_cpu/test/move/lea.cpp
 mmu_cpu/test/move/move.cpp
 mmu_cpu/test/move/movea.cpp
-mmu_cpu/test/move/moves.cpp
-mmu_cpu/test/move/movep.cpp
-mmu_cpu/test/move/movem.cpp
 mmu_cpu/test/move/move16.cpp
+mmu_cpu/test/move/movem.cpp
+mmu_cpu/test/move/movep.cpp
+mmu_cpu/test/move/moves.cpp
 mmu_cpu/test/move/pea.cpp
 mmu_cpu/test/move/movec.cpp
 mmu_cpu/test/move/moveq.cpp
@@ -164,6 +167,8 @@ mmu_cpu/test/branch/bcc.cpp
 mmu_cpu/test/branch/bkpt.cpp
 mmu_cpu/test/branch/bra.cpp
 mmu_cpu/test/branch/bsr.cpp
+mmu_cpu/test/branch/dbcc.cpp
+mmu_cpu/test/branch/illegal.cpp
 mmu_cpu/test/branch/link.cpp
 mmu_cpu/test/branch/unlk.cpp
 mmu_cpu/test/branch/bkpt.cpp
@@ -185,11 +190,7 @@ function( cpu_test name)
   add_test(NAME test_cpu_${name} COMMAND ./test_cpu_${name})
 endfunction(cpu_test)
 
-#cpu_test(jmp)
-cpu_test(lea)
 cpu_test(scc)
-cpu_test(dbcc)
-cpu_test(exg)
 
 #add_executable(test_fpu ${TEST_COMMON}
 #mmu_cpu/test/fpu/fmove.cpp
