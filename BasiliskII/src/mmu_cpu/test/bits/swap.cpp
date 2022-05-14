@@ -4,10 +4,6 @@
 #include "test/test_common.h"
 BOOST_FIXTURE_TEST_SUITE(SWAP, InitFix)
 
-BOOST_DATA_TEST_CASE(opc, REG(), dn) {
-    BOOST_TEST(opc_map[0044100 | dn] == opc_map[0044100]);
-}
-
 BOOST_AUTO_TEST_CASE(n) {
     regs.d[1] = 0x12348678;
     regs.z = true;

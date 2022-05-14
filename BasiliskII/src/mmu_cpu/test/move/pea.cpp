@@ -6,10 +6,6 @@
 #include <vector>
 #include "test/test_common.h"
 BOOST_FIXTURE_TEST_SUITE(PEA, InitFix)
-BOOST_DATA_TEST_CASE(opc, EA_M(), dn) {
-    BOOST_TEST(opc_map[0044100 | dn] == opc_map[0044120]);
-}
-
 BOOST_AUTO_TEST_CASE( run )
 {    
     regs.a[7] = 0x104;

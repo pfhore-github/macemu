@@ -24,12 +24,42 @@
 #ifndef NEWCPU_H
 #define NEWCPU_H
 #include "spcflags.h"
+#include "fpu/fpu_mpfr.h"
 #include <atomic>
 #include <functional>
 #include <memory>
 #include <setjmp.h>
 #include <stdint.h>
 #include <future>
+enum class TT { NORMAL, MOVE16, LFC, AA };
+enum class TM {
+    USER_DATA = 1,
+    USER_CODE,
+    SUPER_DATA = 5,
+    SUPER_CODE,
+};
+
+enum class SZ { LONG, BYTE, WORD, LINE };
+
+struct paddr {
+    uint32_t addr;
+    unsigned int upa : 2;
+    SZ sz : 2;
+    TT tt : 2;
+    TM tm : 3;
+    bool rw : 1;
+};
+struct ssw_t {
+    bool read = true;
+    bool cp = false, ct = false, cm = false, atc = false;
+    TT tt = TT::NORMAL;
+    TM tm = TM::USER_DATA;
+    SZ sz;
+    uint16_t to_value() const {
+        return cp << 15 | ct << 13 | cm << 12 | atc << 10 |
+               read << 8 | int(sz) << 5 | int(tt) << 3 | int(tm);
+    }
+};
 struct m68k_reg {
     uint32_t r[16];
     uint32_t *d = r;
@@ -46,41 +76,9 @@ struct m68k_reg {
     uint32_t msp;
     uint32_t vbr;
     uint8_t sfc, dfc;
-    // FPU
-    double fp[8];
-    struct fpcr_t {
-        uint8_t rnd;
-        uint8_t prec;
-        bool inex1;
-        bool inex2;
-        bool dz;
-        bool unfl;
-        bool ovfl;
-        bool operr;
-        bool snan;
-        bool bsun;
-    } FPCR;
-    struct fpsr_t {
-        bool ac_inex;
-        bool ac_dz;
-        bool ac_unfl;
-        bool ac_ovfl;
-        bool ac_iop;
-        bool inex1;
-        bool inex2;
-        bool dz;
-        bool unfl;
-        bool ovfl;
-        bool operr;
-        bool snan;
-        bool bsun;
-        int8_t qutinent;
-        bool nan;
-        bool i;
-        bool z;
-        bool n;
-    } FPSR;
-    uint32_t fpiar;
+
+    M68881 fpu;
+   
     // MMU
     uint32_t urp;
     uint32_t srp;
@@ -106,8 +104,10 @@ struct m68k_reg {
 
     uint32_t i_ea;
 
-    // MOVEM
-    uint32_t i_eav = -1;
+    // BUS ERROR DATA
+    uint32_t err_address;
+    ssw_t err_ssw;
+
     // emulator flag
 
     std::unique_ptr<std::promise<void>> sleep;

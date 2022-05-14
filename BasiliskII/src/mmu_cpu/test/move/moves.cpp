@@ -3,11 +3,6 @@
 #include "newcpu.h"
 #include "test/test_common.h"
 BOOST_FIXTURE_TEST_SUITE(MOVES, InitFix)
-BOOST_DATA_TEST_CASE(opc, EA_M(), ea) {
-    BOOST_TEST(opc_map[0007000 | ea] == opc_map[0007020]);
-    BOOST_TEST(opc_map[0007100 | ea] == opc_map[0007120]);
-    BOOST_TEST(opc_map[0007200 | ea] == opc_map[0007220]);
-}
 BOOST_AUTO_TEST_SUITE(Byte)
 BOOST_AUTO_TEST_CASE(unpriv) {
     regs.S = false;

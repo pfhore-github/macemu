@@ -22,11 +22,11 @@
 #define DISK_H
 
 const int DiskRefNum = -63;				// RefNum of driver
-const uint16 DiskDriverFlags = 0x6f04;	// Driver flags
+const uint16_t DiskDriverFlags = 0x6f04;	// Driver flags
 
-extern const uint8 DiskIcon[258];		// Icon data (copied to ROM by PatchROM())
+extern const uint8_t DiskIcon[258];		// Icon data (copied to ROM by PatchROM())
 
-extern uint32 DiskIconAddr;				// Icon address (Mac address space, set by PatchROM())
+extern uint32_t DiskIconAddr;				// Icon address (Mac address space, set by PatchROM())
 
 extern void DiskInit(void);
 extern void DiskExit(void);
@@ -35,9 +35,9 @@ extern void DiskInterrupt(void);
 
 extern bool DiskMountVolume(void *fh);
 
-extern int16 DiskOpen(uint32 pb, uint32 dce);
-extern int16 DiskPrime(uint32 pb, uint32 dce);
-extern int16 DiskControl(uint32 pb, uint32 dce);
-extern int16 DiskStatus(uint32 pb, uint32 dce);
+extern int16_t DiskOpen(uint32_t pb, uint32_t dce);
+extern int16_t DiskPrime(uint32_t pb, uint32_t dce);
+extern int16_t DiskControl(uint32_t pb, uint32_t dce);
+extern int16_t DiskStatus(uint32_t pb, uint32_t dce);
 
 #endif

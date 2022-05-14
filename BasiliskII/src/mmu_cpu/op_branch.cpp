@@ -12,39 +12,39 @@
 #include "exception.h"
 #include "intop.h"
 #include "newcpu.h"
-OP(link_l) {
+void reset_all();
+void op_link_l(int reg) {
     int32_t disp = FETCH32();
     PUSH32(regs.a[reg]);
     regs.a[reg] = regs.a[7];
     regs.a[7] += disp;
 }
 
-OP(bkpt) { ILLEGAL_INST(); }
+void op_bkpt() { ILLEGAL_INST(); }
+void op_trap(int v) { TRAP(v); }
 
-OP(trap) { TRAP(type << 3 | reg); }
-
-OP(link_w) {
+void op_link_w(int reg) {
     int16_t disp = FETCH();
     PUSH32(regs.a[reg]);
     regs.a[reg] = regs.a[7];
     regs.a[7] += disp;
 }
 
-OP(unlk) {
+void op_unlk(int reg) {
     regs.a[7] = regs.a[reg];
     regs.a[reg] = POP32();
 }
 
-OP(reset) {
+void op_reset() {
     if(!regs.S) {
         PRIV_ERROR();
         return;
     }
     // TODO
-    Exit680x0();
+    reset_all();
 }
 
-OP(stop) {
+void op_stop() {
     uint16_t next = FETCH();
     if(!regs.S) {
         PRIV_ERROR();
@@ -54,10 +54,9 @@ OP(stop) {
     regs.sleep = std::make_unique<std::promise<void>>();
     std::future<void> f = regs.sleep->get_future();
     f.wait();
-
 }
 
-OP(rte) {
+void op_rte() {
     if(!regs.S) {
         PRIV_ERROR();
         return;
@@ -84,8 +83,7 @@ BEGIN:
         regs.a[7] += 2 * 23;
         if(ssw & 1 << 12) {
             // MOVEM continution
-            regs.i_eav = ea;
-            break;
+            regs.i_ea = ea;
         }
         break;
     }
@@ -98,25 +96,25 @@ BEGIN:
     return;
 }
 
-OP(rtd) {
+void op_rtd() {
     int16_t disp = FETCH();
     uint32_t pc = POP32();
     regs.a[7] += disp;
     JUMP(pc);
 }
 
-OP(rts) {
+void op_rts() {
     uint32_t pc = POP32();
     JUMP(pc);
 }
 
-OP(trapv) {
+void op_trapv() {
     if(regs.v) {
         TRPPcc();
     }
 }
 
-OP(rtr) {
+void op_rtr() {
     SET_CCR(POP16());
     uint32_t pc = POP32();
     JUMP(pc);
@@ -172,38 +170,37 @@ bool cc_test(int cc) {
 }
 OP(scc) {
     int cond = xop >> 8 & 15;
-    EA_WRITE8(type, reg, cc_test(cond) ? 0xff : 0);
-}
-
-OP(trapcc) {
-    int cond = xop >> 8 & 15;
-    switch(reg) {
-    case 2:
-        FETCH();
-        break;
-    case 3:
-        FETCH32();
-        break;
-    case 4:
-        break;
-    default:
-        ILLEGAL_INST();
-    }
-    if(cc_test(cond)) {
-        TRPPcc();
-    }
-}
-
-OP(dbcc) {
-    int cond = xop >> 8 & 15;
-    uint32_t pc = regs.pc;
-    int disp = FETCH();
-    if(!cc_test(cond)) {
-        int16_t dx = regs.d[reg] - 1;
-        WRITE_D16(reg, dx);
-        if(dx != -1) {
-            JUMP(pc + disp);
+    bool ret = cc_test(cond);
+    if(type == 1) {
+        // DBcc
+        uint32_t pc = regs.pc;
+        int16_t disp = FETCH();
+        if(!ret) {
+            int16_t dx = regs.d[reg] - 1;
+            WRITE_D16(reg, dx);
+            if(dx != -1) {
+                JUMP(pc + disp);
+            }
         }
+    } else if(type == 7) {
+        // TRAPcc
+        switch(reg) {
+        case 2:
+            FETCH();
+            break;
+        case 3:
+            FETCH32();
+            break;
+        case 4:
+            break;
+        default:
+            ILLEGAL_INST();
+        }
+        if(ret) {
+            TRPPcc();
+        }
+    } else {
+        EA_WRITE8(type, reg, ret ? 0xff : 0);
     }
 }
 

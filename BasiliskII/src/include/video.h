@@ -80,7 +80,7 @@ inline video_depth DepthModeForPixelDepth(int depth)
 const char * NameOfDepth(video_depth depth);
 
 // Return a bytes-per-row value (assuming enough bytes to fit the bits but no further padding) for the specified depth and pixel width
-inline uint32 TrivialBytesPerRow(uint32 width, video_depth depth)
+inline uint32_t TrivialBytesPerRow(uint32_t width, video_depth depth)
 {
 	switch (depth) {
 		case VDEPTH_1BIT: return (width + 7) / 8;
@@ -124,12 +124,12 @@ inline uint32 TrivialBytesPerRow(uint32 width, video_depth depth)
 
 // Description of a video mode
 struct video_mode {
-	uint32 x;				// X size of screen (pixels)
-	uint32 y;				// Y size of screen (pixels)
-	uint32 resolution_id;	// Resolution ID (should be >= 0x80 and uniquely identify the sets of modes with the same X/Y size)
+	uint32_t x;				// X size of screen (pixels)
+	uint32_t y;				// Y size of screen (pixels)
+	uint32_t resolution_id;	// Resolution ID (should be >= 0x80 and uniquely identify the sets of modes with the same X/Y size)
 	video_depth depth;		// Color depth (see definitions above)
-	uint32 bytes_per_row;	// Bytes per row of frame buffer
-	uint32 user_data;		// Free for use by platform-specific code
+	uint32_t bytes_per_row;	// Bytes per row of frame buffer
+	uint32_t user_data;		// Free for use by platform-specific code
 };
 
 inline bool IsDirectMode(const video_mode &mode)
@@ -146,61 +146,61 @@ struct video_locals;
 // ("monitor" = rectangular display with a contiguous frame buffer)
 class monitor_desc {
 public:
-	monitor_desc(const vector<video_mode> &available_modes, video_depth default_depth, uint32 default_id);
+	monitor_desc(const vector<video_mode> &available_modes, video_depth default_depth, uint32_t default_id);
 	virtual ~monitor_desc() {}
 
 	// Get Mac slot ID number
-	uint8 get_slot_id(void) const {return slot_id;}
+	uint8_t get_slot_id(void) const {return slot_id;}
 
 	// Get current Mac frame buffer base address
-	uint32 get_mac_frame_base(void) const {return mac_frame_base;}
+	uint32_t get_mac_frame_base(void) const {return mac_frame_base;}
 
 	// Set Mac frame buffer base address (called from switch_to_mode())
-	void set_mac_frame_base(uint32 base) {mac_frame_base = base;}
+	void set_mac_frame_base(uint32_t base) {mac_frame_base = base;}
 
 	// Get current video mode
 	const video_mode &get_current_mode(void) const {return *current_mode;}
 
 	// Get Apple mode id for given depth
-	uint16 depth_to_apple_mode(video_depth depth) const {return apple_mode_for_depth[depth];}
+//	uint16_t depth_to_apple_mode(video_depth depth) const {return apple_mode_for_depth[depth];}
 
 	// Get current color depth
-	uint16 get_apple_mode(void) const {return depth_to_apple_mode(current_mode->depth);}
+//	uint16_t get_apple_mode(void) const {return depth_to_apple_mode(current_mode->depth);}
 
 	// Get bytes-per-row value for specified resolution/depth
 	// (if the mode isn't supported, make a good guess)
-	uint32 get_bytes_per_row(video_depth depth, uint32 id) const;
+	uint32_t get_bytes_per_row(video_depth depth, uint32_t id) const;
 
 	// Check whether a mode with the specified depth exists on this display
 	bool has_depth(video_depth depth) const;
 
 	// Mac video driver functions
-	int16 driver_open(void);
-	int16 driver_control(uint16 code, uint32 param, uint32 dce);
-	int16 driver_status(uint16 code, uint32 param);
+	int16_t driver_open(void);
+	int16_t driver_control(uint16_t code, uint32_t param, uint32_t dce);
+	int16_t driver_status(uint16_t code, uint32_t param);
 
 protected:
 	vector<video_mode> modes;                         // List of supported video modes
 	vector<video_mode>::const_iterator current_mode;  // Currently selected video mode
 
-	uint32 mac_frame_base;  // Mac frame buffer address for current mode
+	uint32_t mac_frame_base;  // Mac frame buffer address for current mode
 
 // Mac video driver per-display private variables/functions
 private:
 	// Check whether the specified resolution ID is one of the supported resolutions
-	bool has_resolution(uint32 id) const;
+	bool has_resolution(uint32_t id) const;
 
 	// Return iterator signifying "invalid mode"
 	vector<video_mode>::const_iterator invalid_mode(void) const {return modes.end();}
 
 	// Find specified mode (depth/resolution) (or invalid_mode() if not found)
-	vector<video_mode>::const_iterator find_mode(uint16 apple_mode, uint32 id) const;
+	vector<video_mode>::const_iterator find_mode(uint16_t apple_mode, uint32_t id) const;
 
 	// Find maximum supported depth for given resolution ID
-	video_depth max_depth_of_resolution(uint32 id) const;
+	video_depth max_depth_of_resolution(uint32_t id) const;
 
 	// Get X/Y size of specified resolution
-	void get_size_of_resolution(uint32 id, uint32 &x, uint32 &y) const;
+	void get_size_of_resolution(uint32_t id, uint32_t &x, uint32_t &y) const;
 
 	// Set palette to 50% gray
 	void set_gray_palette(void);
@@ -212,35 +212,35 @@ private:
 	bool allocate_gamma_table(int size);
 
 	// Set gamma table (0 = build linear ramp)
-	int16 set_gamma_table(uint32 user_table);
+	int16_t set_gamma_table(uint32_t user_table);
 
 	// Switch video mode
-	void switch_mode(vector<video_mode>::const_iterator it, uint32 param, uint32 dce);
+	void switch_mode(vector<video_mode>::const_iterator it, uint32_t param, uint32_t dce);
 
-	uint8 slot_id;               // NuBus slot ID number
-	static uint8 next_slot_id;   // Next available slot ID
+	uint8_t slot_id;               // NuBus slot ID number
+	static uint8_t next_slot_id;   // Next available slot ID
 
-	uint8 palette[256 * 3];      // Color palette, 256 entries, RGB
+	uint8_t palette[256 * 3];      // Color palette, 256 entries, RGB
 
 	bool luminance_mapping;      // Luminance mapping on/off
 	bool interrupts_enabled;     // VBL interrupts on/off
 	bool dm_present;             // We received a GetVideoParameters call, so the Display Manager seems to be present
 
-	uint32 gamma_table;          // Mac address of gamma table
+	uint32_t gamma_table;          // Mac address of gamma table
 	int alloc_gamma_table_size;  // Allocated size of gamma table
 
-	uint16 current_apple_mode;   // Currently selected depth/resolution
-	uint32 current_id;
-	uint16 preferred_apple_mode; // Preferred depth/resolution
-	uint32 preferred_id;
+	uint16_t current_apple_mode;   // Currently selected depth/resolution
+	uint32_t current_id;
+	uint16_t preferred_apple_mode; // Preferred depth/resolution
+	uint32_t preferred_id;
 
-	uint32 slot_param;           // Mac address of Slot Manager parameter block
+	uint32_t slot_param;           // Mac address of Slot Manager parameter block
 
 	// For compatibility reasons with older (pre-Display Manager) versions of
 	// MacOS, the Apple modes must start at 0x80 and be contiguous. Therefore
 	// we maintain an array to map the depth codes to the corresponding Apple
 	// mode.
-	uint16 apple_mode_for_depth[6];
+	uint16_t apple_mode_for_depth[6];
 
 // The following functions are implemented by platform-specific code
 public:
@@ -250,19 +250,19 @@ public:
 	virtual void switch_to_current_mode(void) = 0;
 
 	// Called by the video driver to set the color palette (in indexed modes)
-	virtual void set_palette(uint8 *pal, int num) = 0;
+	virtual void set_palette(uint8_t *pal, int num) = 0;
 	
 	// Called by the video driver to set the gamma table
-	virtual void set_gamma(uint8 *gamma, int num) = 0;
+	virtual void set_gamma(uint8_t *gamma, int num) = 0;
 };
 
 // Vector of pointers to available monitor descriptions, filled by VideoInit()
 extern vector<monitor_desc *> VideoMonitors;
 
 
-extern int16 VideoDriverOpen(uint32 pb, uint32 dce);
-extern int16 VideoDriverControl(uint32 pb, uint32 dce);
-extern int16 VideoDriverStatus(uint32 pb, uint32 dce);
+extern int16_t VideoDriverOpen(uint32_t pb, uint32_t dce);
+extern int16_t VideoDriverControl(uint32_t pb, uint32_t dce);
+extern int16_t VideoDriverStatus(uint32_t pb, uint32_t dce);
 
 
 // System specific and internal functions/data

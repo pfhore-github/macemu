@@ -259,20 +259,20 @@ enum {
 };
 
 // Functions
-extern void EnqueueMac(uint32 elem, uint32 list);	// Enqueue QElem in list
+extern void EnqueueMac(uint32_t elem, uint32_t list);	// Enqueue QElem in list
 extern int FindFreeDriveNumber(int num);			// Find first free drive number, starting at "num"
 extern void MountVolume(void *fh);					// Mount volume with given file handle (see sys.h)
-extern void FileDiskLayout(loff_t size, uint8 *data, loff_t &start_byte, loff_t &real_size);	// Calculate disk image file layout given file size and first 256 data bytes
-extern uint32 DebugUtil(uint32 Selector);			// DebugUtil() Replacement
-extern uint32 TimeToMacTime(time_t t);				// Convert time_t value to MacOS time
-extern time_t MacTimeToTime(uint32 t);				// Convert MacOS time to time_t value
+extern void FileDiskLayout(loff_t size, uint8_t *data, loff_t &start_byte, loff_t &real_size);	// Calculate disk image file layout given file size and first 256 data bytes
+extern uint32_t DebugUtil(uint32_t Selector);			// DebugUtil() Replacement
+extern uint32_t TimeToMacTime(time_t t);				// Convert time_t value to MacOS time
+extern time_t MacTimeToTime(uint32_t t);				// Convert MacOS time to time_t value
 
 // Construct four-character-code
-#define FOURCC(a,b,c,d) (((uint32)(a) << 24) | ((uint32)(b) << 16) | ((uint32)(c) << 8) | (uint32)(d))
+#define FOURCC(a,b,c,d) (((uint32_t)(a) << 24) | ((uint32_t)(b) << 16) | ((uint32_t)(c) << 8) | (uint32_t)(d))
 
 // Emulator identification codes (4 and 2 characters)
-const uint32 EMULATOR_ID_4 = 0x62617369;			// 'basi'
-const uint16 EMULATOR_ID_2 = 0x6261;				// 'ba'
+const uint32_t EMULATOR_ID_4 = 0x62617369;			// 'basi'
+const uint16_t EMULATOR_ID_2 = 0x6261;				// 'ba'
 
 // Test if basic MacOS initializations (of the ROM) are done
 static inline bool HasMacStarted(void)

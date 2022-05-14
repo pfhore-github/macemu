@@ -3,27 +3,12 @@
 #include "newcpu.h"
 #include "test/test_common.h"
 BOOST_FIXTURE_TEST_SUITE(MOVE, InitFix)
-BOOST_DATA_TEST_CASE(opc, EA_D() * EA_D_R(), ea_dst, ea_src) {
+BOOST_DATA_TEST_CASE(opc, EA_D(), ea_dst) {
     int dn = ea_dst & 7;
     int type = (ea_dst >> 3) & 7;
-    BOOST_TEST(opc_map[0010000 | type << 6 | dn << 9 | ea_src] ==
-               opc_map[0010000]);
-    BOOST_TEST(opc_map[0020000 | type << 6 | dn << 9 | ea_src] ==
-               opc_map[0020000]);
-    BOOST_TEST(opc_map[0030000 | type << 6 | dn << 9 | ea_src] ==
-               opc_map[0030000]);
-}
-
-BOOST_DATA_TEST_CASE(opc2, EA_D(), ea) {
-    BOOST_TEST(opc_map[0040300 | ea] == opc_map[0040300]);
-    BOOST_TEST(opc_map[0041300 | ea] == opc_map[0041300]);
-    BOOST_TEST(opc_map[0042300 | ea] == opc_map[0042300]);
-    BOOST_TEST(opc_map[0043300 | ea] == opc_map[0043300]);
-}
-
-BOOST_DATA_TEST_CASE(opc3, REG(), an) {
-    BOOST_TEST(opc_map[0047140 | an] == opc_map[0047140]);
-    BOOST_TEST(opc_map[0047150 | an] == opc_map[0047150]);
+    BOOST_TEST(opc_map[00100 | type | dn << 3] == opc_map[00100]);
+    BOOST_TEST(opc_map[00200 | type | dn << 3] == opc_map[00200]);
+    BOOST_TEST(opc_map[00300 | type | dn << 3] == opc_map[00300]);
 }
 
 
@@ -361,27 +346,11 @@ BOOST_AUTO_TEST_CASE(imm) {
 BOOST_AUTO_TEST_CASE(usp) {
     regs.usp = 0x1234;
     regs.S = true;
-    asm_m68k("move.l %USP, %A2");
+    raw_write16(0, 0047152);
     m68k_do_execute();
     BOOST_TEST(regs.a[2] == 0x1234);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE_END()
-BOOST_AUTO_TEST_SUITE_END()
-
-BOOST_FIXTURE_TEST_SUITE(MOVEQ, InitFix)
-BOOST_AUTO_TEST_CASE(n) {
-    asm_m68k("moveq #-4, %D1");
-    m68k_do_execute();
-    BOOST_TEST(regs.n);
-    BOOST_TEST(regs.d[1] == -4);
-}
-
-BOOST_AUTO_TEST_CASE(z) {
-    asm_m68k("moveq #0, %D1");
-    m68k_do_execute();
-    BOOST_TEST(regs.z);
-    BOOST_TEST(regs.d[1] == 0);
-}
 BOOST_AUTO_TEST_SUITE_END()

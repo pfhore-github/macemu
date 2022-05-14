@@ -21,6 +21,6 @@
 #ifndef RSRC_PATCHES_H
 #define RSRC_PATCHES_H
 
-extern void CheckLoad(uint32 type, int16 id, uint8 *p, uint32 size);
+extern void CheckLoad(uint32_t type, int16_t id, uint8_t *p, uint32_t size);
 
 #endif

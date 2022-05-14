@@ -26,9 +26,9 @@ struct sockaddr_in;
 extern void EtherInit(void);
 extern void EtherExit(void);
 
-extern int16 EtherOpen(uint32 pb, uint32 dce);
-extern int16 EtherControl(uint32 pb, uint32 dce);
-extern void EtherReadPacket(uint32 &src, uint32 &dest, uint32 &len, uint32 &remaining);
+extern int16_t EtherOpen(uint32_t pb, uint32_t dce);
+extern int16_t EtherControl(uint32_t pb, uint32_t dce);
+extern void EtherReadPacket(uint32_t &src, uint32_t &dest, uint32_t &len, uint32_t &remaining);
 
 // System specific and internal functions/data
 extern void EtherReset(void);
@@ -37,16 +37,16 @@ extern void EtherInterrupt(void);
 extern bool ether_init(void);
 extern void ether_exit(void);
 extern void ether_reset(void);
-extern int16 ether_add_multicast(uint32 pb);
-extern int16 ether_del_multicast(uint32 pb);
-extern int16 ether_attach_ph(uint16 type, uint32 handler);
-extern int16 ether_detach_ph(uint16 type);
-extern int16 ether_write(uint32 wds);
+extern int16_t ether_add_multicast(uint32_t pb);
+extern int16_t ether_del_multicast(uint32_t pb);
+extern int16_t ether_attach_ph(uint16_t type, uint32_t handler);
+extern int16_t ether_detach_ph(uint16_t type);
+extern int16_t ether_write(uint32_t wds);
 extern bool ether_start_udp_thread(int socket_fd);
 extern void ether_stop_udp_thread(void);
-extern void ether_udp_read(uint32 packet, int length, struct sockaddr_in *from);
+extern void ether_udp_read(uint32_t packet, int length, struct sockaddr_in *from);
 
-extern uint8 ether_addr[6];	// Ethernet address (set by ether_init())
+extern uint8_t ether_addr[6];	// Ethernet address (set by ether_init())
 
 // Ethernet driver data in MacOS RAM
 enum {
@@ -59,26 +59,26 @@ enum {
 	SIZEOF_etherdata = 76
 };
 
-extern uint32 ether_data;	// Mac address of driver data in MacOS RAM
+extern uint32_t ether_data;	// Mac address of driver data in MacOS RAM
 
 // Ethernet packet allocator (optimized for 32-bit platforms in real addressing mode)
 class EthernetPacket {
 #if SIZEOF_VOID_P == 4 && REAL_ADDRESSING
-	uint8 packet[1516];
+	uint8_t packet[1516];
  public:
-	uint32 addr(void) const { return (uint32)packet; }
+	uint32_t addr(void) const { return (uint32_t)packet; }
 #else
-	uint32 packet;
+	uint32_t packet;
  public:
 	EthernetPacket();
 	~EthernetPacket();
-	uint32 addr(void) const { return packet; }
+	uint32_t addr(void) const { return packet; }
 #endif
 };
 
 // Copy packet data from WDS to linear buffer (must hold at least 1514 bytes),
 // returns packet length
-static inline int ether_wds_to_buffer(uint32 wds, uint8 *p)
+static inline int ether_wds_to_buffer(uint32_t wds, uint8_t *p)
 {
 	int len = 0;
 	while (len < 1514) {

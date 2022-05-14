@@ -1,5 +1,5 @@
 #define BOOST_TEST_DYN_LINK
-#include "fpu/fpu_ieee.h"
+#include "fpu/fpu_mpfr.h"
 #include "memory.h"
 #include "newcpu.h"
 #include "test/test_common.h"

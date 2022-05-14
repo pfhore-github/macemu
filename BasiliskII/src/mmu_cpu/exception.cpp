@@ -1,14 +1,12 @@
-#include "SDL.h"
-#include "sysdeps.h"
-#include <vector>
-
-#include "cpu_emulation.h"
 #include "exception.h"
+#include "SDL.h"
+#include "cpu_emulation.h"
+#include "ex_stack.h"
 #include "main.h"
 #include "memory.h"
 #include "newcpu.h"
+#include "sysdeps.h"
 void SET_SR(uint16_t v);
-jmp_buf ex_jmp;
 void SAVE_SP();
 void LOAD_SP();
 void RAISE(int e, int f, const std::vector<uint16_t> &data, bool next,
@@ -25,7 +23,9 @@ void RAISE(int e, int f, const std::vector<uint16_t> &data, bool next,
     regs.S = true;
     // IRQ
     if(irq) {
-        regs.M = false;
+        if( std::exchange( regs.M, false) ) {
+            f = 1;
+        }
     }
     LOAD_SP();
     for(auto v : data) {
@@ -41,57 +41,13 @@ void RAISE(int e, int f, const std::vector<uint16_t> &data, bool next,
     regs.pc = read32(regs.vbr + (e << 2));
     regs.exception = false;
 }
-struct ssw_t {
-    bool read = true;
-    bool cp = false, ct = false, cm = false, ma = false, atc = false;
-    TT tt = TT::NORMAL;
-    TM tm = TM::USER_DATA;
-    SZ sz;
-    uint16_t to_value() const {
-        return cp << 15 | ct << 13 | cm << 12 | ma << 11 | atc << 10 |
-               read << 8 | int(sz) << 5 | int(tt) << 3 | int(tm);
-    }
-};
+
 void BUSERROR(const paddr &v, bool atc, bool ma) {
-    uint32_t ea = regs.i_eav;
-    ssw_t ssw{.read = !v.rw,
-              .cm = (ea != 0xffffffffU),
-              .ma = ma,
-              .atc = atc,
-              .tt = v.tt,
-              .tm = v.tm,
-              .sz = v.sz};
-    uint32_t ea_v = (ea == 0xffffffffU ? 0 : ea);
-    RAISE(2, 7,
-          {
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              LOW(v.addr),
-              HIGH(v.addr),
-              0,
-              0,
-              0,
-              // SSW
-              ssw.to_value(),
-              LOW(ea_v),
-              HIGH(ea_v),
-          },
-          false);
-    longjmp(ex_jmp, 1);
+    regs.err_address = v.addr;
+    regs.err_ssw.read = !v.rw;
+    regs.err_ssw.atc = atc;
+    regs.err_ssw.tt = v.tt;
+    regs.err_ssw.tm = v.tm;
+    regs.err_ssw.sz = v.sz;
+    throw BUS_ERROR_EX{};
 }

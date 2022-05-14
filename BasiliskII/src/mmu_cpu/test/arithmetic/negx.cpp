@@ -4,11 +4,6 @@
 #include "test/test_common.h"
 
 BOOST_FIXTURE_TEST_SUITE(NEGX, InitFix)
-BOOST_DATA_TEST_CASE(opc, EA_D(), ea) {
-    BOOST_TEST(opc_map[0040000 | ea] == opc_map[0040000]);
-    BOOST_TEST(opc_map[0040100 | ea] == opc_map[0040100]);
-    BOOST_TEST(opc_map[0040200 | ea] == opc_map[0040200]);
-}
 
 BOOST_AUTO_TEST_SUITE(Byte)
 BOOST_DATA_TEST_CASE(cx, BIT, value) {

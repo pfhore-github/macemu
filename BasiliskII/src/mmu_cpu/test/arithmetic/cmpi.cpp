@@ -4,13 +4,6 @@
 #include "test/test_common.h"
 
 BOOST_FIXTURE_TEST_SUITE(CMPI, InitFix)
-
-BOOST_DATA_TEST_CASE(opc, EA_D_R(), ea) {
-    BOOST_TEST(opc_map[0006000 | ea] == opc_map[0006000]);
-    BOOST_TEST(opc_map[0006100 | ea] == opc_map[0006100]);
-    BOOST_TEST(opc_map[0006200 | ea] == opc_map[0006200]);
-}
-
 BOOST_AUTO_TEST_CASE(Byte) {
     regs.d[1] = 24;
     raw_write16(0, 0006001);

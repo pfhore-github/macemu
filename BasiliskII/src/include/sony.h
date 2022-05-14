@@ -22,13 +22,13 @@
 #define SONY_H
 
 const int SonyRefNum = -5;				// RefNum of driver
-const uint16 SonyDriverFlags = 0x6f00;	// Driver flags
+const uint16_t SonyDriverFlags = 0x6f00;	// Driver flags
 
-extern const uint8 SonyDiskIcon[258];	// Icon data (copied to ROM by PatchROM())
-extern const uint8 SonyDriveIcon[258];
+extern const uint8_t SonyDiskIcon[258];	// Icon data (copied to ROM by PatchROM())
+extern const uint8_t SonyDriveIcon[258];
 
-extern uint32 SonyDiskIconAddr;			// Icon addresses (Mac address space, set by PatchROM())
-extern uint32 SonyDriveIconAddr;
+extern uint32_t SonyDiskIconAddr;			// Icon addresses (Mac address space, set by PatchROM())
+extern uint32_t SonyDriveIconAddr;
 
 extern void SonyInit(void);
 extern void SonyExit(void);
@@ -37,9 +37,9 @@ extern void SonyInterrupt(void);
 
 extern bool SonyMountVolume(void *fh);
 
-extern int16 SonyOpen(uint32 pb, uint32 dce);
-extern int16 SonyPrime(uint32 pb, uint32 dce);
-extern int16 SonyControl(uint32 pb, uint32 dce);
-extern int16 SonyStatus(uint32 pb, uint32 dce);
+extern int16_t SonyOpen(uint32_t pb, uint32_t dce);
+extern int16_t SonyPrime(uint32_t pb, uint32_t dce);
+extern int16_t SonyControl(uint32_t pb, uint32_t dce);
+extern int16_t SonyStatus(uint32_t pb, uint32_t dce);
 
 #endif

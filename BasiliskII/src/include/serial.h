@@ -38,11 +38,11 @@ extern int16 SerialStatus(uint32 pb, uint32 dce);
 extern int16 SerialClose(uint32 pb, uint32 dce);
 extern int16 SerialNothing(uint32 pb, uint32 dce);
 #else
-extern int16 SerialOpen(uint32 pb, uint32 dce, int port);
-extern int16 SerialPrime(uint32 pb, uint32 dce, int port);
-extern int16 SerialControl(uint32 pb, uint32 dce, int port);
-extern int16 SerialStatus(uint32 pb, uint32 dce, int port);
-extern int16 SerialClose(uint32 pb, uint32 dce, int port);
+extern int16_t SerialOpen(uint32_t pb, uint32_t dce, int port);
+extern int16_t SerialPrime(uint32_t pb, uint32_t dce, int port);
+extern int16_t SerialControl(uint32_t pb, uint32_t dce, int port);
+extern int16_t SerialStatus(uint32_t pb, uint32_t dce, int port);
+extern int16_t SerialClose(uint32_t pb, uint32_t dce, int port);
 #endif
 
 extern void SerialInterrupt(void);
@@ -71,26 +71,26 @@ public:
 
 	virtual ~SERDPort() {}
 
-	virtual int16 open(uint16 config) = 0;
-	virtual int16 prime_in(uint32 pb, uint32 dce) = 0;
-	virtual int16 prime_out(uint32 pb, uint32 dce) = 0;
-	virtual int16 control(uint32 pb, uint32 dce, uint16 code) = 0;
-	virtual int16 status(uint32 pb, uint32 dce, uint16 code) = 0;
-	virtual int16 close(void) = 0;
+	virtual int16_t open(uint16_t config) = 0;
+	virtual int16_t prime_in(uint32_t pb, uint32_t dce) = 0;
+	virtual int16_t prime_out(uint32_t pb, uint32_t dce) = 0;
+	virtual int16_t control(uint32_t pb, uint32_t dce, uint16_t code) = 0;
+	virtual int16_t status(uint32_t pb, uint32_t dce, uint16_t code) = 0;
+	virtual int16_t close(void) = 0;
 
 	bool is_open;		// Port has been opened
-	uint8 cum_errors;	// Cumulative errors
+	uint8_t cum_errors;	// Cumulative errors
 
 	bool read_pending;	// Read operation pending
 	bool read_done;		// Read operation complete
-	uint32 input_dt;	// Mac address of Deferred Task for reading
+	uint32_t input_dt;	// Mac address of Deferred Task for reading
 
 	bool write_pending;	// Write operation pending
 	bool write_done;	// Write operation complete
-	uint32 output_dt;	// Mac address of Deferred Task for writing
+	uint32_t output_dt;	// Mac address of Deferred Task for writing
 
 #ifdef POWERPC_ROM
-	uint32 dt_store;
+	uint32_t dt_store;
 #endif
 };
 

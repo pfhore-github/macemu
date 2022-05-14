@@ -28,16 +28,16 @@
 #include "timer.h"
 #include "memory.h"
 #include "newcpu.h"
-#include "compiler/compemu.h"
+#include "compiler/jit.h"
 #include <unordered_map>
 
 // RAM and ROM pointers
-uint32 RAMBaseMac = 0;		// RAM base (Mac address space) gb-- initializer is important
-uint8 *RAMBaseHost;			// RAM base (host address space)
-uint32 RAMSize;				// Size of RAM
-uint32 ROMBaseMac;			// ROM base (Mac address space)
-uint8 *ROMBaseHost;			// ROM base (host address space)
-uint32 ROMSize;				// Size of ROM
+uint32_t RAMBaseMac = 0;		// RAM base (Mac address space) gb-- initializer is important
+uint8_t *RAMBaseHost;			// RAM base (host address space)
+uint32_t RAMSize;				// Size of RAM
+uint32_t ROMBaseMac;			// ROM base (Mac address space)
+uint8_t *ROMBaseHost;			// ROM base (host address space)
+size_t ROMSize;				// Size of ROM
 
 
 #if USE_JIT
@@ -52,9 +52,37 @@ bool quit_program;
  *  Initialize 680x0 emulation, CheckROM() must have been called first
  */
 
-bool Init680x0(void)
+bool Init680x0()
 {
 	init_m68k();
+	for(int i = 0; i < 16; ++i) {
+		regs.r[i] = 0;
+	}
+	regs.opc = regs.pc = 0;
+	regs.n = regs.v = regs.z = regs.c = regs.x = false;
+	regs.IM = 0;
+	regs.M = false;
+	regs.S = true;
+	regs.exception = false;
+	regs.isp = regs.usp = regs.msp = 0;
+	regs.vbr = 0;
+	regs.sfc = regs.dfc = 0;
+
+	regs.urp = regs.srp = 0;
+	regs.tcr_e = regs.tcr_p = false;
+	memset(&regs.ITTR[0], 0, sizeof(m68k_reg::ttc_t));
+	memset(&regs.ITTR[1], 0, sizeof(m68k_reg::ttc_t));
+	memset(&regs.DTTR[0], 0, sizeof(m68k_reg::ttc_t));
+	memset(&regs.DTTR[1], 0, sizeof(m68k_reg::ttc_t));
+	memset(&regs.MMUSR, 0, sizeof(m68k_reg::mmusr_t));
+	regs.cacr_de = regs.cacr_ie = false;
+	regs.i_ea = 0;
+	regs.sleep.reset();
+	regs.spcflags.store(0);
+	regs.irq.store(0);
+	regs.traced = false;
+
+
 #if USE_JIT
 	UseJIT = compiler_use_jit();
 	if (UseJIT)
@@ -137,12 +165,12 @@ int intlev(void)
  *  r->a[7] and r->sr are unused!
  */
 
-void Execute68kTrap(uint16 trap, struct M68kRegisters *r)
+void Execute68kTrap(uint16_t trap, struct M68kRegisters *r)
 {
 	int i;
 
 	// Save old PC
-	uaecptr oldpc = regs.pc;
+	uint32_t oldpc = regs.pc;
 
 	// Set registers
 	for (i=0; i<8; i++)
@@ -180,12 +208,12 @@ void Execute68kTrap(uint16 trap, struct M68kRegisters *r)
  *  r->a[7] and r->sr are unused!
  */
 
-void Execute68k(uint32 addr, struct M68kRegisters *r)
+void Execute68k(uint32_t addr, struct M68kRegisters *r)
 {
 	int i;
 
 	// Save old PC
-	uaecptr oldpc = regs.pc;
+	uint32_t oldpc = regs.pc;
 
 	// Set registers
 	for (i=0; i<8; i++)

@@ -4,29 +4,10 @@
 #include "SDL.h"
 #include "newcpu.h"
 #include <vector>
-extern std::vector<uint8_t> RAM;
-enum class TT { NORMAL, MOVE16, LFC, AA };
-enum class TM {
-    DATA_PUSH,
-    USER_DATA,
-    USER_CODE,
-    MMU_DATA,
-    MMU_CODE,
-    SUPER_DATA,
-    SUPER_CODE,
-    RES
-};
+extern std::vector<std::byte> RAM;
 
-enum class SZ { LONG, BYTE, WORD, LINE };
 
-struct paddr {
-    uint32_t addr;
-    unsigned int upa : 2;
-    SZ sz : 2;
-    TT tt : 2;
-    TM tm : 3;
-    bool rw : 1;
-};
+
 struct presult {
     bool R : 1;
     bool T : 1;
@@ -62,4 +43,6 @@ inline uint16_t POP32() {
 }
 
 void init_mmu_opc();
+
+
 #endif /* MEMORY_H */

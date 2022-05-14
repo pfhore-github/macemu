@@ -41,16 +41,16 @@ extern void SavePrefsToStream(FILE *f);
 // Public preferences access functions
 extern void PrefsAddString(const char *name, const char *s);
 extern void PrefsAddBool(const char *name, bool b);
-extern void PrefsAddInt32(const char *name, int32 val);
+extern void PrefsAddInt32(const char *name, int32_t val);
 
 extern void PrefsReplaceString(const char *name, const char *s, int index = 0);
 extern void PrefsReplaceBool(const char *name, bool b);
-extern void PrefsReplaceInt32(const char *name, int32 val);
+extern void PrefsReplaceInt32(const char *name, int32_t val);
 
 extern const char *PrefsFindString(const char *name, int index = 0);
 extern "C" const char *PrefsFindStringC(const char *name, int index = 0);
 extern bool PrefsFindBool(const char *name);
-extern int32 PrefsFindInt32(const char *name);
+extern int32_t PrefsFindInt32(const char *name);
 
 extern void PrefsRemoveItem(const char *name, int index = 0);
 

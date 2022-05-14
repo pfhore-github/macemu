@@ -9,7 +9,7 @@
 #include "mbus.h"
 #include "memory.h"
 #include "newcpu.h"
-
+#include "via.h"
 uint8_t readIO8(uint32_t addr);
 uint16_t readIO16(uint32_t addr);
 uint32_t readIO32(uint32_t addr);
@@ -66,107 +66,93 @@ inline void readBE(void *dst, const void *src, int sz) {
 }
 
 bool rom_overlay;
-bool b_read_impl(uint32_t addr, void *v, int sz) {
+void b_read_impl(uint32_t addr, void *v, int sz) {
     uint32_t base = addr & 0xfffffff;
     switch(addr >> 28) {
     case 0:
-        if(rom_overlay) {
-            goto ROM;
-        }
-        /* fall through */
     case 1:
     case 2:
     case 3:
-        if(addr + sz < RAM.size()) {
-            readBE(v, &RAM[addr], sz);
-            return true;
+        if(rom_overlay) {
+            goto ROM;
+        }
+        if(base + sz < RAM.size()) {
+            return readBE(v, &RAM[base], sz);
         }
         break;
     case 4:
         rom_overlay = false;
     ROM:
-        if(base < ROMSize) {
-            readBE(v, &ROMBaseHost[base], sz);
-            return true;
-        }
-        break;
+        return readBE(v, &ROMBaseHost[base & (ROMSize - 1)], sz);
     case 5:
-        readIO(addr, v, sz);
-        return true;
+        return readIO(addr, v, sz);
     }
-    return false;
+    throw BUS_ERROR_EX{};
 }
-bool b_read8(uint32_t addr, void *v) { return b_read_impl(addr, v, 1); }
-bool b_read16(uint32_t addr, void *v) {
+uint8_t b_read8(uint32_t addr_v) {
+    uint8_t v;
+    b_read_impl(addr_v, &v, 1);
+    return v;
+}
+uint16_t b_read16(uint32_t addr) {
     if(addr & 1) {
-        uint8_t vp[2];
-        bool ret = b_read8(addr, vp) && b_read8(addr + 1, vp + 1);
-        if(ret) {
-            uint16_t *vv = static_cast<uint16_t *>(v);
-            *vv = vp[0] << 8 | vp[1];
-        }
-        return ret;
+        uint32_t v1 = b_read8(addr);
+        uint32_t v2 = b_read8(addr + 1);
+        return v1 << 8 | v2;
+    } else {
+        uint16_t v;
+        b_read_impl(addr, &v, 2);
+        return v;
     }
-    return b_read_impl(addr, v, 2);
 }
-bool b_read32(uint32_t addr, void *v) {
+uint32_t b_read32(uint32_t addr) {
     if(addr & 2) {
-        uint16_t vp[2];
-        bool ret = b_read16(addr, vp) && b_read16(addr + 2, vp + 1);
-        if(ret) {
-            uint32_t *vv = static_cast<uint32_t *>(v);
-            *vv = vp[0] << 16 | vp[1];
-        }
-        return ret;
+        uint32_t v1 = b_read16(addr);
+        uint32_t v2 = b_read16(addr + 2);
+        return v1 << 16 | v2;
+    } else {
+        uint32_t v;
+        b_read_impl(addr, &v, 4);
+        return v;
     }
-    return b_read_impl(addr, v, 4);
 }
 
-bool b_readline(uint32_t addr, void *v) { return b_read_impl(addr, v, 16); }
+void b_readline(uint32_t addr, std::byte *v) { b_read_impl(addr, v, 16); }
 
-bool b_write_impl(uint32_t addr, const void *v, int sz) {
+void b_write_impl(uint32_t addr, const void *v, int sz) {
     uint32_t base = addr & 0xfffffff;
     switch(addr >> 28) {
     case 0:
-        if(rom_overlay) {
-            return false;
-        }
-        /* fall through */
     case 1:
     case 2:
     case 3:
-        if(addr < RAM.size()) {
-            readBE(&RAM[addr], v, sz);
-            return true;
+        if(base < RAM.size()) {
+            return readBE(&RAM[base], v, sz);
         }
         break;
     case 5:
-        writeIO(addr, v, sz);
-        return true;
+        return writeIO(base, v, sz);
     }
-    return false;
+    throw BUS_ERROR_EX{};
 }
-bool b_write8(uint32_t addr, const void *v) {
-    return b_write_impl(addr, v, 1);
-}
-bool b_write16(uint32_t addr, const void *v) {
+void b_write8(uint32_t addr, uint8_t v) { b_write_impl(addr, &v, 1); }
+void b_write16(uint32_t addr, uint16_t v) {
     if(addr & 1) {
-        uint16_t vp = *static_cast<const uint16_t*>(v);
-        uint8_t v2[2] = {static_cast<uint8_t>(vp >> 8),
-                         static_cast<uint8_t>(vp & 0xff)};
-        return b_write8(addr, v2) && b_write8(addr + 1, v2 + 1);
+        b_write8(addr, v >> 8);
+        b_write8(addr + 1, v & 0xff);
+    } else {
+        b_write_impl(addr, &v, 2);
     }
-    return b_write_impl(addr, v, 2);
 }
-bool b_write32(uint32_t addr, const void *v) {
-    uint32_t base = addr & 0xfffffff;
+void b_write32(uint32_t addr, uint32_t v) {
     if(addr & 2) {
-        uint32_t vp = *static_cast<const uint32_t*>(v);
-        uint16_t v2[2] = {static_cast<uint16_t>(vp >> 16),
-                          static_cast<uint16_t>(vp & 0xffff)};
-        return b_write16(addr, v2) && b_write16(addr + 2, v2 + 1);
+        b_write16(addr, v >> 16);
+        b_write16(addr + 2, v & 0xffff);
+    } else {
+        b_write_impl(addr, &v, 4);
     }
-    return b_write_impl(addr, v, 4);
 }
 
-bool b_writeline(uint32_t addr, const void *v) { return b_write_impl(addr, v, 16); }
+void b_writeline(uint32_t addr, const std::byte *v) {
+    return b_write_impl(addr, v, 16);
+}

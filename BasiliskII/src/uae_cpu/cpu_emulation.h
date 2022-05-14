@@ -35,7 +35,7 @@ extern uint32 RAMSize;			// Size of RAM
 
 extern uint32 ROMBaseMac;		// ROM base (Mac address space)
 extern uint8 *ROMBaseHost;		// ROM base (host address space)
-extern uint32 ROMSize;			// Size of ROM
+extern size_t ROMSize;			// Size of ROM
 
 #if !REAL_ADDRESSING && !DIRECT_ADDRESSING
 // If we are not using real or direct addressing, the Mac frame buffer gets

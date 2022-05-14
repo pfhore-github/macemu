@@ -25,7 +25,7 @@ extern void ClipInit(void);
 extern void ClipExit(void);
 
 extern void ZeroScrap();
-extern void PutScrap(uint32 type, void *scrap, int32 length);
-extern void GetScrap(void **handle, uint32 type, int32 offset);
+extern void PutScrap(uint32_t type, void *scrap, int32_t length);
+extern void GetScrap(void **handle, uint32_t type, int32_t offset);
 
 #endif

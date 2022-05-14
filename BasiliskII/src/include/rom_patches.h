@@ -30,26 +30,26 @@ enum {
 	ROM_VERSION_32 = 0x067c			// 32-bit clean Mac II ROMs (512KB/1MB)
 };
 
-extern uint16 ROMVersion;
+extern uint16_t ROMVersion;
 
 // ROM offset of breakpoint, used by PatchROM()
-extern uint32 ROMBreakpoint;
+extern uint32_t ROMBreakpoint;
 
 // ROM offset of UniversalInfo, set by PatchROM()
-extern uint32 UniversalInfo;
+extern uint32_t UniversalInfo;
 
 // Mac address of PutScrap() patch
-extern uint32 PutScrapPatch;
+extern uint32_t PutScrapPatch;
 
 // Mac address of GetScrap() patch
-extern uint32 GetScrapPatch;
+extern uint32_t GetScrapPatch;
 
 // Flag: print ROM information in PatchROM()
 extern bool PrintROMInfo;
 
 extern bool CheckROM(void);
 extern bool PatchROM(void);
-extern void InstallDrivers(uint32 pb);
+extern void InstallDrivers(uint32_t pb);
 extern void InstallSERD(void);
 extern void PatchAfterStartup(void);
 

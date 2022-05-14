@@ -3,11 +3,11 @@
 #include "memory.h"
 #include "test/test_common.h"
 BOOST_FIXTURE_TEST_SUITE(MOVEP, InitFix)
-BOOST_DATA_TEST_CASE(opc, REG() * REG(), dn, an) {
-    BOOST_TEST(opc_map[0000410 | dn << 9 | an] == opc_map[0000410]);
-    BOOST_TEST(opc_map[0000610 | dn << 9 | an] == opc_map[0000610]);
-    BOOST_TEST(opc_map[0000510 | dn << 9 | an] == opc_map[0000510]);
-    BOOST_TEST(opc_map[0000710 | dn << 9 | an] == opc_map[0000710]);
+BOOST_DATA_TEST_CASE(opc, REG(), dn) {
+    BOOST_TEST(opc_map[00004 | dn << 3] == opc_map[00004]);
+    BOOST_TEST(opc_map[00006 | dn << 3] == opc_map[00006]);
+    BOOST_TEST(opc_map[00005 | dn << 3] == opc_map[00005]);
+    BOOST_TEST(opc_map[00007 | dn << 3] == opc_map[00007]);
 }
 BOOST_AUTO_TEST_CASE( word_from )
 {    

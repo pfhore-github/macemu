@@ -1,5 +1,5 @@
 /*
- *  fpu/fpu_ieee.cpp
+ *  fpu/fpu_mpfr.cpp
  *
  *  Basilisk II (C) 1997-2008 Christian Bauer
  *
@@ -94,7 +94,7 @@
 #include "main.h"
 #define FPU_IMPLEMENTATION
 #include "fpu/fpu.h"
-#include "fpu/fpu_ieee.h"
+#include "fpu/fpu_mpfr.h"
 
 /* Global FPU context */
 fpu_t fpu;

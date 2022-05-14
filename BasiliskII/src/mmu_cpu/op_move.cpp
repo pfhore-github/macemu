@@ -13,49 +13,8 @@
 #include "intop.h"
 #include "mbus.h"
 #include "newcpu.h"
-uint8_t read8s(uint32_t addr) {
-    uint8_t v;
-    if(!b_read8(addr, &v)) {
-        paddr pa{addr, 0, SZ::BYTE, TT::LFC, TM(regs.sfc), false};
-        BUSERROR(pa);
-    }
-    return v;
-}
-uint16_t read16s(uint32_t addr) {
-    uint16_t v;
-    if(!b_read16(addr, &v)) {
-        paddr pa{addr, 0, SZ::WORD, TT::LFC, TM(regs.sfc), false};
-        BUSERROR(pa);
-    }
-    return v;
-}
-uint32_t read32s(uint32_t addr) {
-    uint32_t v;
-    if(!b_read32(addr, &v)) {
-        paddr pa{addr, 0, SZ::LONG, TT::LFC, TM(regs.sfc), false};
-        BUSERROR(pa);
-    }
-    return v;
-}
-void write8s(uint32_t addr, uint8_t v) {
-    if(!b_write8(addr, &v)) {
-        paddr pa{addr, 0, SZ::BYTE, TT::LFC, TM(regs.dfc), true};
-        BUSERROR(pa);
-    }
-}
-void write16s(uint32_t addr, uint16_t v) {
-    if(!b_write16(addr, &v)) {
-        paddr pa{addr, 0, SZ::WORD, TT::LFC, TM(regs.dfc), true};
-        BUSERROR(pa);
-    }
-}
-void write32s(uint32_t addr, uint32_t v) {
-    if(!b_write32(addr, &v)) {
-        paddr pa{addr, 0, SZ::LONG, TT::LFC, TM(regs.dfc), true};
-        BUSERROR(pa);
-    }
-}
-
+#include "op.h"
+uint32_t do_mmu(uint32_t vaddr, bool code, bool rw, bool s);
 OP(moves_b) {
     uint16_t op2 = FETCH();
     if(!regs.S) {
@@ -64,11 +23,17 @@ OP(moves_b) {
     }
     int rg2 = op2 >> 12 & 7;
     bool w = op2 >> 11 & 1;
-    uint32_t addr = EA_Addr(type, reg, 1, true);
-    if(w) {
-        write8s(addr, regs.r[rg2]);
-    } else {
-        WRITE_D8(rg2, read8s(addr));
+    uint32_t vaddr = EA_Addr(type, reg, 1, true);
+    uint32_t addr = do_mmu(vaddr, false, w, true);
+    try {
+        if(w) {
+            b_write8(addr, regs.r[rg2]);
+        } else {
+            WRITE_D8(rg2, b_read8(addr));
+        }
+    } catch(BUS_ERROR_EX &) {
+        paddr pa{vaddr, 0, SZ::BYTE, TT::LFC, TM(w ? regs.dfc : regs.sfc), w};
+        BUSERROR(pa, true);
     }
 }
 
@@ -80,11 +45,17 @@ OP(moves_w) {
     }
     int rg2 = op2 >> 12 & 7;
     bool w = op2 >> 11 & 1;
-    uint32_t addr = EA_Addr(type, reg, 2, true);
-    if(w) {
-        write16s(addr, regs.r[rg2]);
-    } else {
-        WRITE_D16(rg2, read16s(addr));
+    uint32_t vaddr = EA_Addr(type, reg, 2, true);
+    uint32_t addr = do_mmu(vaddr, false, w, true);
+    try {
+        if(w) {
+            b_write16(addr, regs.r[rg2]);
+        } else {
+            WRITE_D16(rg2, b_read16(addr));
+        }
+    } catch(BUS_ERROR_EX &) {
+        paddr pa{vaddr, 0, SZ::WORD, TT::LFC, TM(w ? regs.dfc : regs.sfc), w};
+        BUSERROR(pa, true);
     }
 }
 
@@ -96,28 +67,34 @@ OP(moves_l) {
     }
     int rg2 = op2 >> 12 & 7;
     bool w = op2 >> 11 & 1;
-    uint32_t addr = EA_Addr(type, reg, 4, true);
-    if(w) {
-        write32s(addr, regs.r[rg2]);
-    } else {
-        regs.r[rg2] = read32s(addr);
+    uint32_t vaddr = EA_Addr(type, reg, 4, true);
+    uint32_t addr = do_mmu(vaddr, false, w, true);
+    try {
+        if(w) {
+            b_write32(addr, regs.r[rg2]);
+        } else {
+            regs.r[rg2] = b_read32(addr);
+        }
+    } catch(BUS_ERROR_EX &) {
+        paddr pa{vaddr, 0, SZ::LONG, TT::LFC, TM(w ? regs.dfc : regs.sfc), w};
+        BUSERROR(pa, true);
     }
 }
 
-OP(movep_w_from) {
+void op_movep_w_from(int dm, int reg) {
     int16_t disp = FETCH();
     uint32_t addr = regs.a[reg] + disp;
     WRITE_D16(dm, read8(addr) << 8 | read8(addr + 2));
 }
 
-OP(movep_l_from) {
+void op_movep_l_from(int dm, int reg) {
     int16_t disp = FETCH();
     uint32_t addr = regs.a[reg] + disp;
     regs.d[dm] = read8(addr) << 24 | read8(addr + 2) << 16 |
                  read8(addr + 4) << 8 | read8(addr + 6);
 }
 
-OP(movep_w_to) {
+void op_movep_w_to(int dm, int reg) {
     int16_t disp = FETCH();
     uint32_t addr = regs.a[reg] + disp;
     uint16_t v = regs.d[dm];
@@ -125,7 +102,7 @@ OP(movep_w_to) {
     write8(addr + 2, v);
 }
 
-OP(movep_l_to) {
+void op_movep_l_to(int dm, int reg) {
     int16_t disp = FETCH();
     uint32_t addr = regs.a[reg] + disp;
     uint32_t v = regs.d[dm];
@@ -194,103 +171,130 @@ OP(move_to_sr) {
 }
 
 OP(movem_to_w) {
-    uint16_t reg_list = FETCH();
-    if(regs.i_eav == -1) {
-        // start movem
-        regs.i_eav = EA_Addr(type, reg, 2, true);
-    }
-    regs.i_ea = regs.i_eav + (type == 4 ? 2 : 0);
-    if(type == 4) {
-        for(int i = 0; i < 15; ++i) {
-            if(reg_list & (1 << i)) {
-                regs.i_ea -= 2;
-                write16(regs.i_ea, regs.r[15 - i]);
-            }
-        }
-        regs.a[reg] = regs.i_ea;
+    if(type == 0) {
+        op_ext_w(reg);
     } else {
-        for(int i = 0; i < 15; ++i) {
-            if(reg_list & (1 << i)) {
-                write16(regs.i_ea, regs.r[i]);
-                regs.i_ea += 2;
+        uint16_t reg_list = FETCH();
+        try {
+            if(!regs.i_ea) {
+                // start movem
+                regs.i_ea = EA_Addr(type, reg, 2, true);
             }
+            uint32_t vv = regs.i_ea + (type == 4 ? 2 : 0);
+            if(type == 4) {
+                for(int i = 0; i < 15; ++i) {
+                    if(reg_list & (1 << i)) {
+                        vv -= 2;
+                        write16(vv, regs.r[15 - i]);
+                    }
+                }
+                regs.a[reg] = vv;
+            } else {
+                for(int i = 0; i < 15; ++i) {
+                    if(reg_list & (1 << i)) {
+                        write16(vv, regs.r[i]);
+                        vv += 2;
+                    }
+                }
+            }
+            regs.i_ea = 0;
+        } catch(BUS_ERROR_EX &e) {
+            regs.err_ssw.cm = true;
+            throw e;
         }
     }
-    regs.i_eav = -1;
 }
-
 OP(movem_to_l) {
-    uint16_t reg_list = FETCH();
-    if(regs.i_eav == -1) {
-        // start movem
-        regs.i_eav = EA_Addr(type, reg, 4, true);
-    }
-    regs.i_ea = regs.i_eav + (type == 4 ? 4 : 0);
-    if(type == 4) {
-        for(int i = 0; i < 15; ++i) {
-            if(reg_list & (1 << i)) {
-                regs.i_ea -= 4;
-                write32(regs.i_ea, regs.r[15 - i]);
-            }
-        }
-        regs.a[reg] = regs.i_ea;
+    if(type == 0) {
+        op_ext_l(reg);
     } else {
-        for(int i = 0; i < 15; ++i) {
-            if(reg_list & (1 << i)) {
-                write32(regs.i_ea, regs.r[i]);
-                regs.i_ea += 4;
+        uint16_t reg_list = FETCH();
+        try {
+            if(!regs.i_ea) {
+                // start movem
+                regs.i_ea = EA_Addr(type, reg, 4, true);
             }
+            uint32_t vv = regs.i_ea + (type == 4 ? 4 : 0);
+            if(type == 4) {
+                for(int i = 0; i < 15; ++i) {
+                    if(reg_list & (1 << i)) {
+                        vv -= 4;
+                        write32(vv, regs.r[15 - i]);
+                    }
+                }
+                regs.a[reg] = vv;
+            } else {
+                for(int i = 0; i < 15; ++i) {
+                    if(reg_list & (1 << i)) {
+                        write32(vv, regs.r[i]);
+                        vv += 4;
+                    }
+                }
+            }
+            regs.i_ea = 0;
+        } catch(BUS_ERROR_EX &e) {
+            regs.err_ssw.cm = true;
+            throw e;
         }
     }
-    regs.i_eav = -1;
 }
-
 OP(movem_from_w) {
     uint16_t reg_list = FETCH();
-    if(regs.i_eav == -1) {
-        // start movem from
-        regs.i_eav = EA_Addr(type, reg, 2, false);
-    }
-    regs.i_ea = regs.i_eav;
-    for(int i = 0; i < 16; ++i) {
-        if(reg_list & (1 << i)) {
-            EA_WRITE16(i >> 3, i & 7, read16(regs.i_ea));
-            regs.i_ea += 2;
+    try {
+        if(!regs.i_ea) {
+            // start movem
+            regs.i_ea = EA_Addr(type, reg, 2, false);
         }
+        uint32_t v = regs.i_ea;
+        for(int i = 0; i < 16; ++i) {
+            if(reg_list & (1 << i)) {
+                EA_WRITE16(i >> 3, i & 7, read16(v));
+                v += 2;
+            }
+        }
+        if(type == 3) {
+            regs.a[reg] = v;
+        }
+        regs.i_ea = 0;
+    } catch(BUS_ERROR_EX &e) {
+        regs.err_ssw.cm = true;
+        throw e;
     }
-    if(type == 3) {
-        regs.a[reg] = regs.i_ea;
-    }
-    regs.i_eav = -1;
 }
 
 OP(movem_from_l) {
     uint16_t reg_list = FETCH();
-    if(regs.i_eav == -1) {
-        // start movem from
-        regs.i_eav = EA_Addr(type, reg, 4, false);
-    }
-    regs.i_ea = regs.i_eav;
-    for(int i = 0; i < 16; ++i) {
-        if(reg_list & (1 << i)) {
-            regs.r[i] = read32(regs.i_ea);
-            regs.i_ea += 4;
+    try {
+        if(!regs.i_ea) {
+            // start movem
+            regs.i_ea = EA_Addr(type, reg, 4, false);
         }
+        uint32_t v = regs.i_ea;
+        for(int i = 0; i < 16; ++i) {
+            if(reg_list & (1 << i)) {
+                regs.r[i] = read32(v);
+                v += 4;
+            }
+        }
+        if(type == 3) {
+            regs.a[reg] = v;
+        }
+        regs.i_ea = 0;
+    } catch(BUS_ERROR_EX &e) {
+        regs.err_ssw.cm = true;
+        throw e;
     }
-    if(type == 3) {
-        regs.a[reg] = regs.i_ea;
-    }
-    regs.i_eav = -1;
 }
 
-OP(move_to_usp) {
+void op_move_to_usp(int reg) {
     if(!regs.S) {
         PRIV_ERROR();
         return;
     }
     regs.usp = regs.a[reg];
 }
-OP(move_from_usp) {
+
+void op_move_from_usp(int reg) {
     if(!regs.S) {
         PRIV_ERROR();
         return;
@@ -298,7 +302,7 @@ OP(move_from_usp) {
     regs.a[reg] = regs.usp;
 }
 
-OP(movec_from) {
+void op_movec_from() {
     uint16_t next = FETCH();
     if(!regs.S) {
         PRIV_ERROR();
@@ -371,7 +375,7 @@ OP(movec_from) {
     }
 }
 
-OP(movec_to) {
+void op_movec_to() {
     uint16_t next = FETCH();
     if(!regs.S) {
         PRIV_ERROR();
@@ -407,7 +411,7 @@ OP(movec_to) {
         return;
     case 0x004:
         regs.ITTR[0].address_base = regs.r[src] >> 24 & 0xff;
-        regs.ITTR[0].address_mask = regs.r[src] >> 24 & 0xff;
+        regs.ITTR[0].address_mask = regs.r[src] >> 16 & 0xff;
         regs.ITTR[0].E = regs.r[src] >> 15 & 1;
         regs.ITTR[0].S = regs.r[src] >> 13 & 3;
         regs.ITTR[0].U = regs.r[src] >> 8 & 3;
@@ -416,7 +420,7 @@ OP(movec_to) {
         return;
     case 0x005:
         regs.ITTR[1].address_base = regs.r[src] >> 24 & 0xff;
-        regs.ITTR[1].address_mask = regs.r[src] >> 24 & 0xff;
+        regs.ITTR[1].address_mask = regs.r[src] >> 16 & 0xff;
         regs.ITTR[1].E = regs.r[src] >> 15 & 1;
         regs.ITTR[1].S = regs.r[src] >> 13 & 3;
         regs.ITTR[1].U = regs.r[src] >> 8 & 3;
@@ -425,7 +429,7 @@ OP(movec_to) {
         return;
     case 0x006:
         regs.DTTR[0].address_base = regs.r[src] >> 24 & 0xff;
-        regs.DTTR[0].address_mask = regs.r[src] >> 24 & 0xff;
+        regs.DTTR[0].address_mask = regs.r[src] >> 16 & 0xff;
         regs.DTTR[0].E = regs.r[src] >> 15 & 1;
         regs.DTTR[0].S = regs.r[src] >> 13 & 3;
         regs.DTTR[0].U = regs.r[src] >> 8 & 3;
@@ -434,7 +438,7 @@ OP(movec_to) {
         return;
     case 0x007:
         regs.DTTR[1].address_base = regs.r[src] >> 24 & 0xff;
-        regs.DTTR[1].address_mask = regs.r[src] >> 24 & 0xff;
+        regs.DTTR[1].address_mask = regs.r[src] >> 16 & 0xff;
         regs.DTTR[1].E = regs.r[src] >> 15 & 1;
         regs.DTTR[1].S = regs.r[src] >> 13 & 3;
         regs.DTTR[1].U = regs.r[src] >> 8 & 3;
@@ -472,66 +476,51 @@ OP(moveq) {
     EA_WRITE32(0, dm, v);
 }
 
-OP(exg_d) { std::swap(regs.d[reg], regs.d[dm]); }
+void op_exg_d(int dm, int reg) { std::swap(regs.d[reg], regs.d[dm]); }
 
-OP(exg_a) { std::swap(regs.a[reg], regs.a[dm]); }
+void op_exg_a(int dm, int reg) { std::swap(regs.a[reg], regs.a[dm]); }
 
-OP(exg_da) { std::swap(regs.a[reg], regs.d[dm]); }
+void op_exg_da(int dm, int reg) { std::swap(regs.a[reg], regs.d[dm]); }
 
-void read_line(uint32_t addr, uint8_t *dst) {
-    if(!b_readline(addr, dst)) {
-        paddr pe{addr,
-                 0,
-                 SZ::LINE,
-                 TT::MOVE16,
-                 regs.S ? TM::SUPER_DATA : TM::USER_DATA,
-                 false};
-        BUSERROR(pe);
+void read_line(uint32_t addr, std::byte *dst) { b_readline(addr, dst); }
+void write_line(uint32_t addr, const std::byte *src) { b_writeline(addr, src); }
+
+OP(move16) {
+    std::byte buf[16];
+    uint32_t addr;
+    switch(type) {
+    case 0:
+        addr = FETCH32();
+        read_line(regs.a[reg], buf);
+        write_line(addr, buf);
+        regs.a[reg] += 16;
+        break;
+    case 1:
+        addr = FETCH32();
+        read_line(addr, buf);
+        write_line(regs.a[reg], buf);
+        regs.a[reg] += 16;
+        break;
+    case 2:
+        addr = FETCH32();
+        read_line(regs.a[reg], buf);
+        write_line(addr, buf);
+        break;
+    case 3:
+        addr = FETCH32();
+        read_line(addr, buf);
+        write_line(regs.a[reg], buf);
+        break;
+    case 4: {
+        uint16_t op2 = FETCH();
+        int ay = op2 >> 12 & 7;
+        read_line(regs.a[reg], buf);
+        write_line(regs.a[ay], buf);
+        regs.a[reg] += 16;
+        regs.a[ay] += 16;
+        break;
     }
-}
-void write_line(uint32_t addr, const uint8_t *src) {
-    if(!b_writeline(addr, src)) {
-        paddr pe{addr,
-                 0,
-                 SZ::LINE,
-                 TT::MOVE16,
-                 regs.S ? TM::SUPER_DATA : TM::USER_DATA,
-                 true};
-        BUSERROR(pe);
+    default:
+        ILLEGAL_INST();
     }
-}
-OP(move16_inc_to_imm) {
-    uint8_t buf[16];
-    uint32_t addr = FETCH32();
-    read_line(regs.a[reg], buf);
-    write_line(addr, buf);
-    regs.a[reg] += 16;
-}
-OP(move16_imm_to_inc) {
-    uint8_t buf[16];
-    uint32_t addr = FETCH32();
-    read_line(addr, buf);
-    write_line(regs.a[reg], buf);
-    regs.a[reg] += 16;
-}
-OP(move16_addr_to_imm) {
-    uint8_t buf[16];
-    uint32_t addr = FETCH32();
-    read_line(regs.a[reg], buf);
-    write_line(addr, buf);
-}
-OP(move16_imm_to_addr) {
-    uint8_t buf[16];
-    uint32_t addr = FETCH32();
-    read_line(addr, buf);
-    write_line(regs.a[reg], buf);
-}
-OP(move16_inc_to_inc) {
-    uint8_t buf[16];
-    uint32_t op2 = FETCH();
-    int ay = op2 >> 12 & 7;
-    read_line(regs.a[reg], buf);
-    write_line(regs.a[ay], buf);
-    regs.a[reg] += 16;
-    regs.a[ay] += 16;
 }

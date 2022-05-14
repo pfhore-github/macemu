@@ -22,11 +22,11 @@
 #define CDROM_H
 
 const int CDROMRefNum = -62;			// RefNum of driver
-const uint16 CDROMDriverFlags = 0x6d04;	// Driver flags
+const uint16_t CDROMDriverFlags = 0x6d04;	// Driver flags
 
-extern const uint8 CDROMIcon[258];		// Icon data (copied to ROM by PatchROM())
+extern const uint8_t CDROMIcon[258];		// Icon data (copied to ROM by PatchROM())
 
-extern uint32 CDROMIconAddr;			// Icon address (Mac address space, set by PatchROM())
+extern uint32_t CDROMIconAddr;			// Icon address (Mac address space, set by PatchROM())
 
 extern void CDROMInit(void);
 extern void CDROMExit(void);
@@ -35,10 +35,10 @@ extern void CDROMInterrupt(void);
 
 extern bool CDROMMountVolume(void *fh);
 
-extern int16 CDROMOpen(uint32 pb, uint32 dce);
-extern int16 CDROMPrime(uint32 pb, uint32 dce);
-extern int16 CDROMControl(uint32 pb, uint32 dce);
-extern int16 CDROMStatus(uint32 pb, uint32 dce);
+extern int16_t CDROMOpen(uint32_t pb, uint32_t dce);
+extern int16_t CDROMPrime(uint32_t pb, uint32_t dce);
+extern int16_t CDROMControl(uint32_t pb, uint32_t dce);
+extern int16_t CDROMStatus(uint32_t pb, uint32_t dce);
 
 extern void CDROMOpenDone(void); // Called by CDROMOpen() once drives have been to the drive queue
 

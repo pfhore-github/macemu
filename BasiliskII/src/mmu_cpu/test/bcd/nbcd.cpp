@@ -3,9 +3,6 @@
 #include "newcpu.h"
 #include "test/test_common.h"
 BOOST_FIXTURE_TEST_SUITE(NBCD, InitFix)
-BOOST_DATA_TEST_CASE(opc, EA_D(), ea) {
-    BOOST_TEST(opc_map[0044000 | ea] == opc_map[0044000]);
-}
 
 BOOST_AUTO_TEST_CASE(cx) {
     regs.d[1] = 0x27;

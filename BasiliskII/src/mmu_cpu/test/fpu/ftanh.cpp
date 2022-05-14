@@ -1,7 +1,7 @@
 #define BOOST_TEST_DYN_LINK
 #include "memory.h"
 #include "newcpu.h"
-#include "fpu/fpu_ieee.h"
+#include "fpu/fpu_mpfr.h"
 #include "test/test_common.h"
 #include <boost/test/data/test_case.hpp>
 #include <boost/test/unit_test.hpp>

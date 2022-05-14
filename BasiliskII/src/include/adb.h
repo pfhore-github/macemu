@@ -20,11 +20,11 @@
 
 #ifndef ADB_H
 #define ADB_H
-
+#include <stdint.h>
 extern void ADBInit(void);
 extern void ADBExit(void);
 
-extern void ADBOp(uint8 op, uint8 *data);
+extern void ADBOp(uint8_t op, uint8_t *data);
 
 extern void ADBMouseMoved(int x, int y);
 extern void ADBMouseDown(int button);

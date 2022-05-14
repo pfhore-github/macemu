@@ -5,11 +5,6 @@
 #include <boost/test/data/test_case.hpp>
 #include <boost/test/unit_test.hpp>
 BOOST_FIXTURE_TEST_SUITE(CLR, InitFix)
-BOOST_DATA_TEST_CASE(opc, EA_D(), ea) {
-    BOOST_TEST(opc_map[0041000 | ea] == opc_map[0041000]);
-    BOOST_TEST(opc_map[0041100 | ea] == opc_map[0041100]);
-    BOOST_TEST(opc_map[0041200 | ea] == opc_map[0041200]);
-}
 BOOST_AUTO_TEST_CASE(Byte) {
     regs.d[1] = 44;
     regs.x = regs.c = regs.v = regs.n = true;

@@ -4,34 +4,138 @@
 #include "test/test_common.h"
 
 BOOST_FIXTURE_TEST_SUITE(ADDI, InitFix)
-
-BOOST_DATA_TEST_CASE(opc, EA_D(), ea) {
-    BOOST_TEST(opc_map[0003000 | ea] == opc_map[0003000]);
-    BOOST_TEST(opc_map[0003100 | ea] == opc_map[0003100]);
-    BOOST_TEST(opc_map[0003200 | ea] == opc_map[0003200]);
+BOOST_AUTO_TEST_SUITE(Byte)
+BOOST_AUTO_TEST_CASE(operand) {
+    auto xr = rand_reg();
+    auto v1 = get_v8();
+    auto v2 = get_v8();
+    regs.d[xr] = v1;
+    raw_write16(0, 0003000 | xr);
+    raw_write16(2, v2);
+    m68k_do_execute();
+    BOOST_TEST(regs.d[xr] == ((v1 + v2) & 0xff));
 }
-
-BOOST_AUTO_TEST_CASE(Byte) {
-    regs.d[1] = 33;
+BOOST_AUTO_TEST_CASE(cx) {
+    regs.d[1] = 0xff;
     raw_write16(0, 0003001);
-    raw_write16(2, 25);
+    raw_write16(2, 2);
     m68k_do_execute();
-    BOOST_TEST(regs.d[1] == 58);
+    BOOST_TEST( regs.x );
+    BOOST_TEST( regs.c );
+}
+BOOST_AUTO_TEST_CASE(v) {
+    regs.d[1] = 0x7f;
+    raw_write16(0, 0003001);
+    raw_write16(2, 2);
+    m68k_do_execute();
+    BOOST_TEST( regs.v );
 }
 
-BOOST_AUTO_TEST_CASE(Word) {
-    regs.d[1] = 3456;
+BOOST_AUTO_TEST_CASE(z) {
+    regs.d[1] = 0xff;
+    raw_write16(0, 0003001);
+    raw_write16(2, 1);
+    m68k_do_execute();
+    BOOST_TEST( regs.z );
+}
+
+BOOST_AUTO_TEST_CASE(n) {
+    regs.d[1] = 0x7f;
+    raw_write16(0, 0003001);
+    raw_write16(2, 1);
+    m68k_do_execute();
+    BOOST_TEST( regs.n );
+}
+BOOST_AUTO_TEST_SUITE_END()
+BOOST_AUTO_TEST_SUITE(Word)
+
+BOOST_AUTO_TEST_CASE(operand) {
+    auto xr = rand_reg();
+    auto v1 = get_v16();
+    auto v2 = get_v16();
+    regs.d[xr] = v1;
+    raw_write16(0, 0003100 | xr);
+    raw_write16(2, v2);
+    m68k_do_execute();
+    BOOST_TEST(regs.d[xr] == ((v1 + v2) & 0xffff));
+}
+
+BOOST_AUTO_TEST_CASE(cx) {
+    regs.d[1] = 0xffff;
     raw_write16(0, 0003101);
-    raw_write16(2, 1000);
+    raw_write16(2, 2);
     m68k_do_execute();
-    BOOST_TEST(regs.d[1] == 4456);
+    BOOST_TEST( regs.x );
+    BOOST_TEST( regs.c );
+}
+BOOST_AUTO_TEST_CASE(v) {
+    regs.d[1] = 0x7fff;
+    raw_write16(0, 0003101);
+    raw_write16(2, 2);
+    m68k_do_execute();
+    BOOST_TEST( regs.v );
 }
 
-BOOST_AUTO_TEST_CASE(Long) {
-    regs.d[1] = 123456789;
-    raw_write16(0, 0003201);
-    raw_write32(2, 100000000);
+BOOST_AUTO_TEST_CASE(z) {
+    regs.d[1] = 0xffff;
+    raw_write16(0, 0003101);
+    raw_write16(2, 1);
     m68k_do_execute();
-    BOOST_TEST(regs.d[1] == 223456789);
+    BOOST_TEST( regs.z );
 }
+
+BOOST_AUTO_TEST_CASE(n) {
+    regs.d[1] = 0x7fff;
+    raw_write16(0, 0003101);
+    raw_write16(2, 1);
+    m68k_do_execute();
+    BOOST_TEST( regs.n );
+}
+BOOST_AUTO_TEST_SUITE_END()
+BOOST_AUTO_TEST_SUITE(Long)
+
+BOOST_AUTO_TEST_CASE(operand) {
+    auto xr = rand_reg();
+    auto v1 = get_v32();
+    auto v2 = get_v32();
+    regs.d[xr] = v1;
+    raw_write16(0, 0003200 | xr);
+    raw_write32(2, v2);
+    m68k_do_execute();
+    BOOST_TEST(regs.d[xr] == (v1+v2));
+}
+
+
+BOOST_AUTO_TEST_CASE(cx) {
+    regs.d[1] = 0xffffffff;
+    raw_write16(0, 0003201);
+    raw_write32(2, 2);
+    m68k_do_execute();
+    BOOST_TEST( regs.x );
+    BOOST_TEST( regs.c );
+}
+BOOST_AUTO_TEST_CASE(v) {
+    regs.d[1] = 0x7fffffff;
+    raw_write16(0, 0003201);
+    raw_write32(2, 2);
+    m68k_do_execute();
+    BOOST_TEST( regs.v );
+}
+
+BOOST_AUTO_TEST_CASE(z) {
+    regs.d[1] = 0xffffffff;
+    raw_write16(0, 0003201);
+    raw_write32(2, 1);
+    m68k_do_execute();
+    BOOST_TEST( regs.z );
+}
+
+BOOST_AUTO_TEST_CASE(n) {
+    regs.d[1] = 0x7fffffff;
+    raw_write16(0, 0003201);
+    raw_write32(2, 1);
+    m68k_do_execute();
+    BOOST_TEST( regs.n );
+}
+BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE_END()

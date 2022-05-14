@@ -96,7 +96,7 @@ const int SCRATCH_MEM_SIZE = 0x10000;	// Size of scratch memory area
 
 // RAM and ROM pointers
 std::vector<uint8_t> ROM;
-std::vector<uint8_t> RAM;
+std::vector<std::byte> RAM;
 
 // CPU and FPU type, addressing mode
 int CPUType;

@@ -26,16 +26,16 @@ extern void ExtFSExit(void);
 
 extern void InstallExtFS(void);
 
-extern int16 ExtFSComm(uint16 message, uint32 paramBlock, uint32 globalsPtr);
-extern int16 ExtFSHFS(uint32 vcb, uint16 selectCode, uint32 paramBlock, uint32 globalsPtr, int16 fsid);
+extern int16_t ExtFSComm(uint16_t message, uint32_t paramBlock, uint32_t globalsPtr);
+extern int16_t ExtFSHFS(uint32_t vcb, uint16_t selectCode, uint32_t paramBlock, uint32_t globalsPtr, int16_t fsid);
 
 // System specific and internal functions/data
 extern void extfs_init(void);
 extern void extfs_exit(void);
 extern void add_path_component(char *path, const char *component);
-extern void get_finfo(const char *path, uint32 finfo, uint32 fxinfo, bool is_dir);
-extern void set_finfo(const char *path, uint32 finfo, uint32 fxinfo, bool is_dir);
-extern uint32 get_rfork_size(const char *path);
+extern void get_finfo(const char *path, uint32_t finfo, uint32_t fxinfo, bool is_dir);
+extern void set_finfo(const char *path, uint32_t finfo, uint32_t fxinfo, bool is_dir);
+extern uint32_t get_rfork_size(const char *path);
 extern int open_rfork(const char *path, int flag);
 extern void close_rfork(const char *path, int fd);
 extern ssize_t extfs_read(int fd, void *buffer, size_t length);

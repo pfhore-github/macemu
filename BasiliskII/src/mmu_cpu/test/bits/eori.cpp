@@ -5,12 +5,6 @@
 
 BOOST_FIXTURE_TEST_SUITE(EORI, InitFix)
 
-BOOST_DATA_TEST_CASE(opc, EA_D(), ea) {
-    BOOST_TEST(opc_map[0005000 | ea] == opc_map[0005000]);
-    BOOST_TEST(opc_map[0005100 | ea] == opc_map[0005100]);
-    BOOST_TEST(opc_map[0005200 | ea] == opc_map[0005200]);
-}
-
 BOOST_AUTO_TEST_CASE(Byte) {
     regs.d[1] = 0x78;
     raw_write16(0, 0005001);
@@ -23,11 +17,11 @@ BOOST_DATA_TEST_CASE(ccr, BIT *BIT *BIT *BIT *BIT, x1, v1, c1, n1, z1) {
     raw_write16(0, 0005074);
     raw_write16(2, x1 << 4 | n1 << 3 | z1 << 2 | v1 << 1 | c1);
     m68k_do_execute();
-    BOOST_TEST(regs.x == false);
-    BOOST_TEST(regs.v == false);
-    BOOST_TEST(regs.c == false);
-    BOOST_TEST(regs.n == false);
-    BOOST_TEST(regs.z == false);
+    BOOST_TEST(regs.x == x1);
+    BOOST_TEST(regs.v == v1);
+    BOOST_TEST(regs.c == c1);
+    BOOST_TEST(regs.n == n1);
+    BOOST_TEST(regs.z == z1);
 }
 
 BOOST_AUTO_TEST_CASE(Word) {

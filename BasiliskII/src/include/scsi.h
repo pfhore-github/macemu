@@ -21,23 +21,25 @@
 #ifndef SCSI_H
 #define SCSI_H
 
-extern int16 SCSIReset(void);
-extern int16 SCSIGet(void);
-extern int16 SCSISelect(int id);
-extern int16 SCSICmd(int cmd_length, uint8 *cmd);
-extern int16 SCSIRead(uint32 tib);
-extern int16 SCSIWrite(uint32 tib);
-extern int16 SCSIComplete(uint32 timeout, uint32 message, uint32 stat);
-extern uint16 SCSIStat(void);
-extern int16 SCSIMgrBusy(void);
+extern int16_t SCSIReset(void);
+extern int16_t SCSIGet(void);
+extern int16_t SCSISelect(int id);
+extern int16_t SCSICmd(int cmd_length, uint8_t *cmd);
+extern int16_t SCSIRead(uint32_t tib);
+extern int16_t SCSIWrite(uint32_t tib);
+extern int16_t SCSIComplete(uint32_t timeout, uint32_t message, uint32_t stat);
+extern uint16_t SCSIStat(void);
+extern int16_t SCSIMgrBusy(void);
 
 // System specific and internal functions/data
 extern void SCSIInit(void);
 extern void SCSIExit(void);
 
-extern void scsi_set_cmd(int cmd_length, uint8 *cmd);
+extern void scsi_set_cmd(int cmd_length, uint8_t *cmd);
 extern bool scsi_is_target_present(int id);
 extern bool scsi_set_target(int id, int lun);
-extern bool scsi_send_cmd(size_t data_length, bool reading, int sg_index, uint8 **sg_ptr, uint32 *sg_len, uint16 *stat, uint32 timeout);
+extern bool scsi_send_cmd(size_t data_length, bool reading, int sg_index,
+                          uint8_t **sg_ptr, uint32_t *sg_len, uint16_t *stat,
+                          uint32_t timeout);
 
 #endif

@@ -27,15 +27,15 @@
 using std::vector;
 #endif
 
-extern int32 AudioDispatch(uint32 params, uint32 ti);
+extern int32_t AudioDispatch(uint32_t params, uint32_t ti);
 
 extern bool AudioAvailable;		// Flag: audio output available (from the software point of view)
 
-extern int16 SoundInOpen(uint32 pb, uint32 dce);
-extern int16 SoundInPrime(uint32 pb, uint32 dce);
-extern int16 SoundInControl(uint32 pb, uint32 dce);
-extern int16 SoundInStatus(uint32 pb, uint32 dce);
-extern int16 SoundInClose(uint32 pb, uint32 dce);
+extern int16_t SoundInOpen(uint32_t pb, uint32_t dce);
+extern int16_t SoundInPrime(uint32_t pb, uint32_t dce);
+extern int16_t SoundInControl(uint32_t pb, uint32_t dce);
+extern int16_t SoundInStatus(uint32_t pb, uint32_t dce);
+extern int16_t SoundInClose(uint32_t pb, uint32_t dce);
 
 // System specific and internal functions/data
 extern void AudioInit(void);
@@ -52,31 +52,31 @@ extern bool audio_set_sample_size(int index);
 extern bool audio_set_channels(int index);
 
 extern bool audio_get_main_mute(void);
-extern uint32 audio_get_main_volume(void);
+extern uint32_t audio_get_main_volume(void);
 extern bool audio_get_speaker_mute(void);
-extern uint32 audio_get_speaker_volume(void);
+extern uint32_t audio_get_speaker_volume(void);
 extern void audio_set_main_mute(bool mute);
-extern void audio_set_main_volume(uint32 vol);
+extern void audio_set_main_volume(uint32_t vol);
 extern void audio_set_speaker_mute(bool mute);
-extern void audio_set_speaker_volume(uint32 vol);
+extern void audio_set_speaker_volume(uint32_t vol);
 
 // Current audio status
 struct audio_status {
-	uint32 sample_rate;		// 16.16 fixed point
-	uint32 sample_size;		// 8 or 16
-	uint32 channels;		// 1 (mono) or 2 (stereo)
-	uint32 mixer;			// Mac address of Apple Mixer
+	uint32_t sample_rate;		// 16.16 fixed point
+	uint32_t sample_size;		// 8 or 16
+	uint32_t channels;		// 1 (mono) or 2 (stereo)
+	uint32_t mixer;			// Mac address of Apple Mixer
 	int num_sources;		// Number of active sources
 };
 extern struct audio_status AudioStatus;
 
 extern bool audio_open;					// Flag: audio is open and ready
 extern int audio_frames_per_block;		// Number of audio frames per block
-extern uint32 audio_component_flags;	// Component feature flags
+extern uint32_t audio_component_flags;	// Component feature flags
 
-extern vector<uint32> audio_sample_rates;	// Vector of supported sample rates (16.16 fixed point)
-extern vector<uint16> audio_sample_sizes;	// Vector of supported sample sizes
-extern vector<uint8> audio_channel_counts;	// Array of supported channels counts
+extern vector<uint32_t> audio_sample_rates;	// Vector of supported sample rates (16.16 fixed point)
+extern vector<uint16_t> audio_sample_sizes;	// Vector of supported sample sizes
+extern vector<uint8_t> audio_channel_counts;	// Array of supported channels counts
 
 // Audio component global data and 68k routines
 enum {
@@ -94,6 +94,6 @@ enum {
 	SIZEOF_adat = 204
 };
 
-extern uint32 audio_data;		// Mac address of global data area
+extern uint32_t audio_data;		// Mac address of global data area
 
 #endif

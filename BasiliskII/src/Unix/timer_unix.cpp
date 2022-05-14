@@ -384,18 +384,5 @@ void idle_wait(void)
 
 void idle_resume(void)
 {
-#ifdef IDLE_USES_COND_WAIT
-	pthread_cond_signal(&idle_cond);
-#else
-#ifdef IDLE_USES_SEMAPHORE
-	LOCK_IDLE;
-	if (idle_sem_ok > 1) {
-		idle_sem_ok--;
-		UNLOCK_IDLE;
-		sem_post(&idle_sem);
-		return;
-	}
-	UNLOCK_IDLE;
-#endif
-#endif
+	
 }

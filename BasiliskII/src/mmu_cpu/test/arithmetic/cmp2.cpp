@@ -71,9 +71,6 @@ BOOST_AUTO_TEST_CASE(over) {
     BOOST_TEST(regs.c);
 }
 
-BOOST_DATA_TEST_CASE(opc, EA_M_R(), ea) {
-    BOOST_TEST(opc_map[0000300 | ea] == opc_map[0000320]);
-}
 
 BOOST_AUTO_TEST_SUITE_END()
 
@@ -151,10 +148,6 @@ BOOST_AUTO_TEST_CASE(over) {
     BOOST_TEST(regs.c);
 }
 
-BOOST_DATA_TEST_CASE(opc, EA_M_R(), ea) {
-    BOOST_TEST(opc_map[0001300 | ea] == opc_map[0001320]);
-}
-
 BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_AUTO_TEST_SUITE(Long)
@@ -217,10 +210,6 @@ BOOST_AUTO_TEST_CASE(over) {
     m68k_do_execute();
     BOOST_TEST(!regs.z);
     BOOST_TEST(regs.c);
-}
-
-BOOST_DATA_TEST_CASE(opc, EA_M_R(), ea) {
-    BOOST_TEST(opc_map[0002300 | ea] == opc_map[0002320]);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

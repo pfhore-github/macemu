@@ -4,11 +4,9 @@
 #include "test/test_common.h"
 
 BOOST_FIXTURE_TEST_SUITE(MOVEA, InitFix)
-BOOST_DATA_TEST_CASE(opc, REG() * EA_D_R(), an, ea_src) {
-    BOOST_TEST(opc_map[0020100 | an << 9 | ea_src] ==
-               opc_map[0020100]);
-    BOOST_TEST(opc_map[0030100 | an << 9 | ea_src] ==
-               opc_map[0030100]);
+BOOST_DATA_TEST_CASE(opc, REG(), an) {
+    BOOST_TEST(opc_map[00201 | an << 3] == opc_map[00201]);
+    BOOST_TEST(opc_map[00301 | an << 3] == opc_map[00301]);
 }
 
 BOOST_AUTO_TEST_CASE(Word) {

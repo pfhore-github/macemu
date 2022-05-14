@@ -20,7 +20,9 @@
 
 #ifndef MAIN_H
 #define MAIN_H
+#include <stdlib.h>
 #include <atomic>
+#include <string.h>
 // CPU type (0 = 68000, 1 = 68010, 2 = 68020, 3 = 68030, 4 = 68040/060)
 extern int CPUType;
 
