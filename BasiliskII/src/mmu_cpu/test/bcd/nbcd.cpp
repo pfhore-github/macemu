@@ -5,12 +5,13 @@
 BOOST_FIXTURE_TEST_SUITE(NBCD, InitFix)
 
 BOOST_AUTO_TEST_CASE(cx) {
-    regs.d[1] = 0x27;
+    auto ea = rand_reg();
+    regs.d[ea] = 0x27;
     regs.z = true;
     regs.x = true;
-    raw_write16(0, 0044001);
+    raw_write16(0, 0044000 | ea);
     m68k_do_execute();
-    BOOST_TEST(regs.d[1] == 0x72);
+    BOOST_TEST(regs.d[ea] == 0x72);
     BOOST_TEST(regs.c);
     BOOST_TEST(regs.x);
     BOOST_TEST(!regs.z);

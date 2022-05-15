@@ -34,6 +34,7 @@ using op_t = void (*)(uint16_t, int, int, int);
 extern op_t opc_map[65536 >> 6];
 struct InitFix {
     InitFix();
+    ~InitFix() { regs.exception = false; }
 };
 
 void exception_check(int e);

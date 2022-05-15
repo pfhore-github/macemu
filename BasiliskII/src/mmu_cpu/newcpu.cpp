@@ -333,6 +333,7 @@ void m68k_do_execute() {
     if(regs.pc & 1) {
         // ADDRESS ERROR
         RAISE2(3, regs.opc - 1, false);
+        return;
     } else {
         uint16_t opc = FETCH();
         if(op_t f = opc_map[opc >> 6]; f) {
@@ -341,6 +342,9 @@ void m68k_do_execute() {
             } catch(ILLEGAL_INST_EX &) {
                 RAISE0(4, false);
             } catch(BUS_ERROR_EX &) {
+                if(regs.T == 2 || (regs.T == 1 && regs.traced)) {
+                    regs.err_ssw.ct = true;
+                }
                 uint32_t ea_v = regs.err_ssw.cm ? regs.i_ea : 0;
                 std::vector<uint16_t> data(26u, 0);
                 data[18] = LOW(regs.err_address);
@@ -349,14 +353,16 @@ void m68k_do_execute() {
                 data[24] = LOW(ea_v);
                 data[25] = HIGH(ea_v);
                 RAISE(2, 7, data, false);
+                return;
             }
         } else {
             RAISE0(4, false);
         }
     }
     // TRACE
-    if(regs.T == 2 || (regs.T == 1 && regs.traced)) {
+    if(!regs.err_ssw.ct && (regs.T == 2 || (regs.T == 1 && regs.traced))) {
         TRACE();
+        return;
     }
 
     // IRQ

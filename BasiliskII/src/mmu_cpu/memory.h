@@ -38,7 +38,7 @@ inline void PUSH32(uint32_t v) { write32(regs.a[7] -= 4, v); }
 inline uint16_t POP16() {
     return read16(std::exchange(regs.a[7], regs.a[7] + 2));
 }
-inline uint16_t POP32() {
+inline uint32_t POP32() {
     return read32(std::exchange(regs.a[7], regs.a[7] + 4));
 }
 

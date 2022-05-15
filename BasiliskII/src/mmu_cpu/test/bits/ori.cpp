@@ -4,15 +4,38 @@
 #include "test/test_common.h"
 
 BOOST_FIXTURE_TEST_SUITE(ORI, InitFix)
-
-BOOST_AUTO_TEST_CASE(Byte) {
-    regs.d[1] = 0x98;
-    raw_write16(0, 0000001);
-    raw_write16(2, 0x2a);
+BOOST_AUTO_TEST_SUITE(Byte)
+BOOST_AUTO_TEST_CASE(operand) {
+    auto ea = rand_reg();
+    auto v1 = get_v8();
+    auto v2 = get_v8();
+    regs.d[ea] = v1;
+    raw_write16(0, 0000000 | ea);
+    raw_write16(2, v2);
+    regs.x = regs.v = regs.c = true;
     m68k_do_execute();
-    BOOST_TEST(regs.d[1] == (0x98 | 0x2a));
+    BOOST_TEST(regs.d[ea] == (v1 | v2));
+    BOOST_TEST(regs.x);
+    BOOST_TEST(!regs.c);
+    BOOST_TEST(!regs.v);
 }
 
+BOOST_AUTO_TEST_CASE(n) {
+    regs.d[1] = 0x80;
+    raw_write16(0, 0000001);
+    raw_write16(2, 0);
+    m68k_do_execute();
+    BOOST_TEST(regs.n);
+}
+
+BOOST_AUTO_TEST_CASE(z) {
+    regs.d[1] = 0;
+    raw_write16(0, 0000001);
+    raw_write16(2, 0);
+
+    m68k_do_execute();
+    BOOST_TEST(regs.z);
+}
 BOOST_DATA_TEST_CASE(ccr, BIT *BIT *BIT *BIT *BIT, x1, v1, c1, n1, z1) {
     regs.x = regs.v = regs.c = regs.n = regs.z = false;
     raw_write16(0, 0000074);
@@ -25,13 +48,38 @@ BOOST_DATA_TEST_CASE(ccr, BIT *BIT *BIT *BIT *BIT, x1, v1, c1, n1, z1) {
     BOOST_TEST(regs.v == v1);
     BOOST_TEST(regs.c == c1);
 }
-
-BOOST_AUTO_TEST_CASE(Word) {
-    regs.d[1] = 0x5678;
-    raw_write16(0, 0000101);
-    raw_write16(2, 0xdead);
+BOOST_AUTO_TEST_SUITE_END()
+BOOST_AUTO_TEST_SUITE(Word)
+BOOST_AUTO_TEST_CASE(operand) {
+    auto ea = rand_reg();
+    auto v1 = get_v16();
+    auto v2 = get_v16();
+    regs.d[ea] = v1;
+    raw_write16(0, 0000100 | ea);
+    raw_write16(2, v2);
+    regs.x = regs.v = regs.c = true;
     m68k_do_execute();
-    BOOST_TEST(regs.d[1] == (0x5678 | 0xdead));
+    BOOST_TEST(regs.d[ea] == (v1 | v2));
+    BOOST_TEST(regs.x);
+    BOOST_TEST(!regs.c);
+    BOOST_TEST(!regs.v);
+}
+
+BOOST_AUTO_TEST_CASE(n) {
+    regs.d[1] = 0x8000;
+    raw_write16(0, 0000101);
+    raw_write16(2, 0);
+    m68k_do_execute();
+    BOOST_TEST(regs.n);
+}
+
+BOOST_AUTO_TEST_CASE(z) {
+    regs.d[1] = 0;
+    raw_write16(0, 0000101);
+    raw_write16(2, 0);
+
+    m68k_do_execute();
+    BOOST_TEST(regs.z);
 }
 
 BOOST_AUTO_TEST_CASE(sr_invalid) {
@@ -51,13 +99,38 @@ BOOST_DATA_TEST_CASE(sr_valid, bdata::xrange(8), i) {
     BOOST_TEST(regs.M);
     BOOST_TEST(regs.IM == i);
 }
-
-BOOST_AUTO_TEST_CASE(Long) {
-    regs.d[1] = 0x12345678;
-    raw_write16(0, 0000201);
-    raw_write32(2, 0xdeadbeaf);
+BOOST_AUTO_TEST_SUITE_END()
+BOOST_AUTO_TEST_SUITE(Long)
+BOOST_AUTO_TEST_CASE(operand) {
+    auto ea = rand_reg();
+    auto v1 = get_v32();
+    auto v2 = get_v32();
+    regs.d[ea] = v1;
+    raw_write16(0, 0000200 | ea);
+    raw_write32(2, v2);
+    regs.x = regs.v = regs.c = true;
     m68k_do_execute();
-    BOOST_TEST(regs.d[1] == (0x12345678 | 0xdeadbeaf));
+    BOOST_TEST(regs.d[ea] == (v1 | v2));
+    BOOST_TEST(regs.x);
+    BOOST_TEST(!regs.c);
+    BOOST_TEST(!regs.v);
 }
 
+BOOST_AUTO_TEST_CASE(n) {
+    regs.d[1] = 0x80000000;
+    raw_write16(0, 0000201);
+    raw_write32(2, 0);
+    m68k_do_execute();
+    BOOST_TEST(regs.n);
+}
+
+BOOST_AUTO_TEST_CASE(z) {
+    regs.d[1] = 0;
+    raw_write16(0, 0000201);
+    raw_write32(2, 0);
+
+    m68k_do_execute();
+    BOOST_TEST(regs.z);
+}
+BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE_END()

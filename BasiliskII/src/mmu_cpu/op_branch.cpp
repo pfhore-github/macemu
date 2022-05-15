@@ -81,6 +81,11 @@ BEGIN:
         uint32_t ea = POP32();
         uint16_t ssw = POP16();
         regs.a[7] += 2 * 23;
+        if(ssw & 1 << 13) {
+            // TRACE
+            SET_SR(sr);
+            TRACE();
+        }
         if(ssw & 1 << 12) {
             // MOVEM continution
             regs.i_ea = ea;

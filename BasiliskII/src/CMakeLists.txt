@@ -129,6 +129,7 @@ mmu_cpu/test/arithmetic/sub.cpp
 mmu_cpu/test/arithmetic/subi.cpp
 mmu_cpu/test/arithmetic/subq.cpp
 mmu_cpu/test/arithmetic/suba.cpp
+mmu_cpu/test/arithmetic/subx.cpp
 mmu_cpu/test/arithmetic/cmp.cpp
 mmu_cpu/test/arithmetic/cmpi.cpp
 mmu_cpu/test/arithmetic/cmpa.cpp
@@ -158,10 +159,11 @@ mmu_cpu/test/move/movea.cpp
 mmu_cpu/test/move/move16.cpp
 mmu_cpu/test/move/movem.cpp
 mmu_cpu/test/move/movep.cpp
-mmu_cpu/test/move/moves.cpp
-mmu_cpu/test/move/pea.cpp
-mmu_cpu/test/move/movec.cpp
 mmu_cpu/test/move/moveq.cpp
+mmu_cpu/test/move/pea.cpp
+mmu_cpu/test/move/scc.cpp
+mmu_cpu/test/move/moves.cpp
+mmu_cpu/test/move/movec.cpp
 
 mmu_cpu/test/branch/bcc.cpp
 mmu_cpu/test/branch/bkpt.cpp
@@ -170,9 +172,11 @@ mmu_cpu/test/branch/bsr.cpp
 mmu_cpu/test/branch/dbcc.cpp
 mmu_cpu/test/branch/illegal.cpp
 mmu_cpu/test/branch/link.cpp
+mmu_cpu/test/branch/nop.cpp
 mmu_cpu/test/branch/unlk.cpp
 mmu_cpu/test/branch/bkpt.cpp
 mmu_cpu/test/branch/trap.cpp
+mmu_cpu/test/branch/trapcc.cpp
 mmu_cpu/test/branch/reset.cpp
 mmu_cpu/test/branch/rte.cpp
 mmu_cpu/test/branch/rtd.cpp
@@ -189,8 +193,6 @@ function( cpu_test name)
   target_link_libraries(test_cpu_${name} ${TEST_LIB})
   add_test(NAME test_cpu_${name} COMMAND ./test_cpu_${name})
 endfunction(cpu_test)
-
-cpu_test(scc)
 
 #add_executable(test_fpu ${TEST_COMMON}
 #mmu_cpu/test/fpu/fmove.cpp

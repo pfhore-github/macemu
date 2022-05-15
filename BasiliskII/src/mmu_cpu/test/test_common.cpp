@@ -117,7 +117,7 @@ void EmulOp(uint16_t opcode, M68kRegisters *r) {}
 
 void exception_check(int e) {
     regs.M = false;
-    regs.isp = regs.a[7] = 0x1000;
+    regs.usp = regs.isp = regs.a[7] = 0x1000;
     regs.vbr = 0x3000;
     raw_write32(0x3000 + e * 4, 0x5000);
     m68k_do_execute();

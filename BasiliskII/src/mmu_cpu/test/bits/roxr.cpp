@@ -2,95 +2,156 @@
 #include "memory.h"
 #include "newcpu.h"
 #include "test/test_common.h"
-#include <boost/test/data/test_case.hpp>
-#include <boost/test/unit_test.hpp>
 
 BOOST_FIXTURE_TEST_SUITE(ROXR, InitFix)
 BOOST_AUTO_TEST_SUITE(Byte)
 
-BOOST_AUTO_TEST_CASE(Imm) {
-    regs.x = true;
-    regs.d[1] = 0x39;
-    asm_m68k("roxrb #3, %D1");
+BOOST_DATA_TEST_CASE(Imm, bdata::xrange(0, 8) * BIT, n, x) {
+    auto dy = rand_reg();
+    auto v1 = get_v8();
+    regs.x = x;
+    regs.d[dy] = v1;
+    uint16_t expected = x << 8 | v1;
+    int nn = n ? n : 8;
+    expected = (expected >> nn | expected << (9 - nn)) & 0xff;
+    write16(0, 0160020 | n << 9 | dy);
     m68k_do_execute();
-    BOOST_TEST(regs.d[1] == 0x67);
-}
-BOOST_AUTO_TEST_CASE(Imm8) {
-    regs.d[1] = 0x40;
-    asm_m68k("roxrb #8, %D1");
-    m68k_do_execute();
-    BOOST_TEST(regs.d[1] == 0x80);
+    BOOST_TEST(regs.d[dy] == expected);
 }
 
 BOOST_AUTO_TEST_CASE(Reg) {
-    regs.d[1] = 0x39;
-    regs.d[2] = 3;
-    asm_m68k("roxrb %D2, %D1");
+    auto [dx, dy] = rand_reg2();
+    auto v1 = get_v8();
+    regs.x = true;
+    int n = get_vn(1, 7);
+    regs.d[dy] = v1;
+    regs.d[dx] = n;
+    write16(0, 0160060 | dx << 9 | dy);
     m68k_do_execute();
-    BOOST_TEST(regs.d[1] == 0x47);
-}
-BOOST_AUTO_TEST_CASE(Reg0) {
-    regs.d[1] = 32;
-    regs.d[2] = 0;
-    asm_m68k("roxrb %D2, %D1");
-    m68k_do_execute();
-    BOOST_TEST(regs.d[1] == 32);
+    uint16_t expected = 0x100 | v1;
+    expected = (expected >> n | expected << (9 - n)) & 0xff;
+    BOOST_TEST(regs.d[dy] == expected);
 }
 
 BOOST_AUTO_TEST_CASE(RegOver) {
-    regs.d[1] = 0x39;
+    regs.d[1] = 0xc3;
     regs.d[2] = 67;
-    asm_m68k("roxrb %D2, %D1");
+    write16(0, 0160060 | 2 << 9 | 1);
     m68k_do_execute();
-    BOOST_TEST(regs.d[1] == 0x47);
+    BOOST_TEST(regs.d[1] == 0xD8);
 }
 
+BOOST_AUTO_TEST_CASE(c) {
+    regs.d[1] = 1;
+    write16(0, 0161021);
+    m68k_do_execute();
+    BOOST_TEST(regs.c);
+    BOOST_TEST(regs.x);
+}
+
+BOOST_AUTO_TEST_CASE(c_0) {
+    regs.x = true;
+    regs.c = false;
+    regs.d[2] = 0xff;
+    regs.d[1] = 0;
+    write16(0, 0161062);
+    m68k_do_execute();
+    BOOST_TEST(regs.c);
+    BOOST_TEST(regs.x);
+}
+
+BOOST_AUTO_TEST_CASE(n) {
+    regs.x = true;
+    regs.d[1] = 1;
+    write16(0, 0161021);
+    m68k_do_execute();
+    BOOST_TEST(regs.n);
+}
+
+BOOST_AUTO_TEST_CASE(z) {
+    regs.d[1] = 0;
+    write16(0, 0161021);
+    m68k_do_execute();
+    BOOST_TEST(regs.z);
+}
 BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_AUTO_TEST_SUITE(Word)
 
-BOOST_AUTO_TEST_CASE(Imm) {
-    regs.x = true;
-    regs.d[1] = 0x3009;
-    asm_m68k("roxrw #3, %D1");
+BOOST_DATA_TEST_CASE(Imm, bdata::xrange(0, 8) * BIT, n, x) {
+    auto dy = rand_reg();
+    auto v1 = get_v16();
+    regs.x = x;
+    regs.d[dy] = v1;
+    uint32_t expected = x << 16 | v1;
+    int nn = n ? n : 8;
+    expected = (expected >> nn | expected << (17 - nn)) & 0xffff;
+    write16(0, 0160120 | n << 9 | dy);
     m68k_do_execute();
-    BOOST_TEST(regs.d[1] == 0x6601);
-}
-BOOST_AUTO_TEST_CASE(Imm8) {
-    regs.d[1] = 0x1000;
-    asm_m68k("roxrw #8, %D1");
-    m68k_do_execute();
-    BOOST_TEST(regs.d[1] == 0x10);
+    BOOST_TEST(regs.d[dy] == expected);
 }
 
 BOOST_AUTO_TEST_CASE(Reg) {
-    regs.d[1] = 0x3009;
-    regs.d[2] = 3;
-    asm_m68k("roxrw %D2, %D1");
+    auto [dx, dy] = rand_reg2();
+    auto v1 = get_v16();
+    regs.x = true;
+    int n = get_vn(1, 15);
+    regs.d[dy] = v1;
+    regs.d[dx] = n;
+    write16(0, 0160160 | dx << 9 | dy);
     m68k_do_execute();
-    BOOST_TEST(regs.d[1] == 0x4601);
-}
-
-BOOST_AUTO_TEST_CASE(Reg0) {
-    regs.d[1] = 0x8000;
-    regs.d[2] = 0;
-    asm_m68k("roxrw %D2, %D1");
-    m68k_do_execute();
-    BOOST_TEST(regs.d[1] == 0x8000);
+    uint32_t expected = 0x10000 | v1;
+    expected = (expected >> n | expected << (17 - n)) & 0xffff;
+    BOOST_TEST(regs.d[dy] == expected);
 }
 
 BOOST_AUTO_TEST_CASE(RegOver) {
-    regs.d[1] = 0x3009;
+    regs.x = true;
+    regs.d[1] = 0x1234;
     regs.d[2] = 67;
-    asm_m68k("roxrw %D2, %D1");
+    write16(0, 0160160 | 2 << 9 | 1);
     m68k_do_execute();
-    BOOST_TEST(regs.d[1] == 0x4601);
+    BOOST_TEST(regs.d[1] == 0x2246);
+}
+
+BOOST_AUTO_TEST_CASE(c) {
+    regs.d[1] = 1;
+    write16(0, 0161121);
+    m68k_do_execute();
+    BOOST_TEST(regs.c);
+    BOOST_TEST(regs.x);
+}
+
+BOOST_AUTO_TEST_CASE(c_0) {
+    regs.x = true;
+    regs.c = false;
+    regs.d[2] = 0xffff;
+    regs.d[1] = 0;
+    write16(0, 0161162);
+    m68k_do_execute();
+    BOOST_TEST(regs.c);
+    BOOST_TEST(regs.x);
+}
+
+BOOST_AUTO_TEST_CASE(n) {
+    regs.x = true;
+    regs.d[1] = 1;
+    write16(0, 0161121);
+    m68k_do_execute();
+    BOOST_TEST(regs.n);
+}
+
+BOOST_AUTO_TEST_CASE(z) {
+    regs.d[1] = 1;
+    write16(0, 0161121);
+    m68k_do_execute();
+    BOOST_TEST(regs.z);
 }
 
 BOOST_AUTO_TEST_CASE(ea) {
     regs.a[2] = 0x10;
     raw_write16(0x10, 0x8000);
-    asm_m68k("roxrw (%A2)");
+    raw_write16(0, 0162322);
     m68k_do_execute();
     BOOST_TEST(raw_read16(0x10) = 0x4000);
 }
@@ -99,42 +160,74 @@ BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_AUTO_TEST_SUITE(Long)
 
-BOOST_AUTO_TEST_CASE(Imm) {
-    regs.x = true;
-    regs.d[1] = 0x30000009;
-    asm_m68k("roxrl #3, %D1");
+BOOST_DATA_TEST_CASE(Imm, bdata::xrange(0, 8) * BIT, n, x) {
+    auto dy = rand_reg();
+    auto v1 = get_v32();
+    regs.x = x;
+    regs.d[dy] = v1;
+    uint64_t expected = (uint64_t)x << 32 | (uint64_t)v1;
+    int nn = n ? n : 8;
+    expected = (expected >> nn | expected << (33 - nn)) & 0xffffffff;
+    write16(0, 0160220 | n << 9 | dy);
     m68k_do_execute();
-    BOOST_TEST(regs.d[1] == 0x66000001);
-}
-BOOST_AUTO_TEST_CASE(Imm8) {
-    regs.d[1] = 0x10000;
-    asm_m68k("roxrl #8, %D1");
-    m68k_do_execute();
-    BOOST_TEST(regs.d[1] == 256);
+    BOOST_TEST(regs.d[dy] == expected);
 }
 
 BOOST_AUTO_TEST_CASE(Reg) {
-    regs.d[1] = 0x30000009;
-    regs.d[2] = 3;
-    asm_m68k("roxrl %D2, %D1");
+    auto [dx, dy] = rand_reg2();
+    auto v1 = get_v32();
+    regs.x = true;
+    int n = get_vn(1, 31);
+    regs.d[dy] = v1;
+    regs.d[dx] = n;
+    write16(0, 0160260 | dx << 9 | dy);
     m68k_do_execute();
-    BOOST_TEST(regs.d[1] == 0x46000001);
-}
-
-BOOST_AUTO_TEST_CASE(Reg0) {
-    regs.d[1] = 0x80000000;
-    regs.d[2] = 0;
-    asm_m68k("roxrl %D2, %D1");
-    m68k_do_execute();
-    BOOST_TEST(regs.d[1] == 0x80000000);
+    uint64_t expected = 0x100000000ll | v1;
+    expected = (expected >> n | expected << (33 - n)) & 0xffffffff;
+    BOOST_TEST(regs.d[dy] == expected);
 }
 
 BOOST_AUTO_TEST_CASE(RegOver) {
-    regs.d[1] = 32;
-    regs.d[2] = 66;
-    asm_m68k("roxrl %D2, %D1");
+    regs.x = true;
+    regs.d[1] = 0x12345678;
+    regs.d[2] = 67;
+    write16(0, 0160260 | 2 << 9 | 1);
     m68k_do_execute();
-    BOOST_TEST(regs.d[1] == 8);
+    BOOST_TEST(regs.d[1] == 0x22468ACF);
+}
+
+BOOST_AUTO_TEST_CASE(c) {
+    regs.d[1] = 1;
+    write16(0, 0161221);
+    m68k_do_execute();
+    BOOST_TEST(regs.c);
+    BOOST_TEST(regs.x);
+}
+
+BOOST_AUTO_TEST_CASE(c_0) {
+    regs.x = true;
+    regs.c = false;
+    regs.d[2] = 0xffffffff;
+    regs.d[1] = 0;
+    write16(0, 0161262);
+    m68k_do_execute();
+    BOOST_TEST(regs.c);
+    BOOST_TEST(regs.x);
+}
+
+BOOST_AUTO_TEST_CASE(n) {
+    regs.x = true;
+    regs.d[1] = 1;
+    write16(0, 0161221);
+    m68k_do_execute();
+    BOOST_TEST(regs.n);
+}
+
+BOOST_AUTO_TEST_CASE(z) {
+    regs.d[1] = 1;
+    write16(0, 0161221);
+    m68k_do_execute();
+    BOOST_TEST(regs.z);
 }
 BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE_END()

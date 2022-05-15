@@ -2,137 +2,194 @@
 #include "memory.h"
 #include "newcpu.h"
 #include "test/test_common.h"
-#include <boost/test/data/test_case.hpp>
-#include <boost/test/unit_test.hpp>
 
 BOOST_FIXTURE_TEST_SUITE(ROR, InitFix)
 BOOST_AUTO_TEST_SUITE(Byte)
 
-BOOST_AUTO_TEST_CASE(Imm) {
-    regs.d[1] = 0x39;
-    asm_m68k("rorb #4, %D1");
+BOOST_DATA_TEST_CASE(Imm, bdata::xrange(0, 8), n) {
+    auto dy = rand_reg();
+    auto v1 = get_v8();
+    regs.d[dy] = v1;
+    write16(0, 0160030 | n << 9 | dy);
     m68k_do_execute();
-    BOOST_TEST(regs.d[1] == 0x93 );
-}
-BOOST_AUTO_TEST_CASE(Imm8) {
-    regs.d[1] = 0x40;
-    asm_m68k("rorb #8, %D1");
-    m68k_do_execute();
-    BOOST_TEST(regs.d[1] == 0x40 );
+    BOOST_TEST(regs.d[dy] == std::rotr<uint8_t>(v1, (n ? n : 8)));
 }
 
 BOOST_AUTO_TEST_CASE(Reg) {
-    regs.d[1] = 0x39;
-    regs.d[2] = 4;
-    asm_m68k("rorb %D2, %D1");
+    auto [dx, dy] = rand_reg2();
+    auto v1 = get_v8();
+    int n = get_vn(1, 7);
+    regs.d[dy] = v1;
+    regs.d[dx] = n;
+    write16(0, 0160070 | dx << 9 | dy);
     m68k_do_execute();
-    BOOST_TEST(regs.d[1] == 0x93 );
-}
-BOOST_AUTO_TEST_CASE(Reg0) {
-    regs.d[1] = 32;
-    regs.d[2] = 0;
-    asm_m68k("rorb %D2, %D1");
-    m68k_do_execute();
-    BOOST_TEST(regs.d[1] == 32 );
+    BOOST_TEST(regs.d[dy] == std::rotr<uint8_t>(v1, n));
 }
 
 BOOST_AUTO_TEST_CASE(RegOver) {
     regs.d[1] = 0x39;
     regs.d[2] = 68;
-    asm_m68k("rorb %D2, %D1");
+    write16(0, 0162071);
     m68k_do_execute();
-    BOOST_TEST(regs.d[1] == 0x93 );
+    BOOST_TEST(regs.d[1] == 0x93);
 }
 
+BOOST_AUTO_TEST_CASE(c) {
+    regs.d[1] = 1;
+    write16(0, 0161031);
+    m68k_do_execute();
+    BOOST_TEST(regs.c);
+}
+
+BOOST_AUTO_TEST_CASE(c_0) {
+    regs.d[2] = 1;
+    regs.d[1] = 0;
+    write16(0, 0161073);
+    m68k_do_execute();
+    BOOST_TEST(!regs.c);
+}
+
+BOOST_AUTO_TEST_CASE(n) {
+    regs.d[1] = 1;
+    write16(0, 0161031);
+    m68k_do_execute();
+    BOOST_TEST(regs.n);
+}
+
+BOOST_AUTO_TEST_CASE(z) {
+    regs.d[1] = 0;
+    write16(0, 0161031);
+    m68k_do_execute();
+    BOOST_TEST(regs.z);
+}
 BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_AUTO_TEST_SUITE(Word)
 
-BOOST_AUTO_TEST_CASE(Imm) {
-    regs.d[1] = 0x1234;
-    asm_m68k("rorw #4, %D1");
+BOOST_DATA_TEST_CASE(Imm, bdata::xrange(0, 8), n) {
+    auto dy = rand_reg();
+    auto v1 = get_v16();
+    regs.d[dy] = v1;
+    write16(0, 0160130 | n << 9 | dy);
     m68k_do_execute();
-    BOOST_TEST(regs.d[1] == 0x4123 );
-}
-BOOST_AUTO_TEST_CASE(Imm8) {
-    regs.d[1] = 0x1000;
-    asm_m68k("rorw #8, %D1");
-    m68k_do_execute();
-    BOOST_TEST(regs.d[1] == 0x10 );
+    BOOST_TEST(regs.d[dy] == std::rotr<uint16_t>(v1, (n ? n : 8)));
 }
 
 BOOST_AUTO_TEST_CASE(Reg) {
-    regs.d[1] = 0x3009;
-    regs.d[2] = 4;
-    asm_m68k("rorw %D2, %D1");
+    auto [dx, dy] = rand_reg2();
+    auto v1 = get_v16();
+    int n = get_vn(1, 15);
+    regs.d[dy] = v1;
+    regs.d[dx] = n;
+    write16(0, 0160170 | dx << 9 | dy);
     m68k_do_execute();
-    BOOST_TEST(regs.d[1] == 0x9300 );
-}
-
-BOOST_AUTO_TEST_CASE(Reg0) {
-    regs.d[1] = 0x8000;
-    regs.d[2] = 0;
-    asm_m68k("rorw %D2, %D1");
-    m68k_do_execute();
-    BOOST_TEST(regs.d[1] == 0x8000 );
+    BOOST_TEST(regs.d[dy] == std::rotr<uint16_t>(v1, n));
 }
 
 BOOST_AUTO_TEST_CASE(RegOver) {
-    regs.d[1] = 0x1234;
+    regs.d[1] = 0x3456;
     regs.d[2] = 68;
-    asm_m68k("rorw %D2, %D1");
+    write16(0, 0162171);
     m68k_do_execute();
-    BOOST_TEST(regs.d[1] == 0x4123 );
+    BOOST_TEST(regs.d[1] == 0x6345);
 }
 
-BOOST_AUTO_TEST_CASE(ea) {
-    regs.a[2] = 0x10;
-    raw_write16(0x10, 0x8000);
-    asm_m68k("rorw (%A2)");
+BOOST_AUTO_TEST_CASE(c) {
+    regs.d[1] = 1;
+    write16(0, 0161131);
     m68k_do_execute();
-    BOOST_TEST( raw_read16(0x10) = 0x4000);
+    BOOST_TEST(regs.c);
+}
+
+BOOST_AUTO_TEST_CASE(c_0) {
+    regs.d[2] = 1;
+    regs.d[1] = 0;
+    write16(0, 0161173);
+    m68k_do_execute();
+    BOOST_TEST(!regs.c);
+}
+
+BOOST_AUTO_TEST_CASE(n) {
+    regs.d[1] = 1;
+    write16(0, 0161131);
+    m68k_do_execute();
+    BOOST_TEST(regs.n);
+}
+
+BOOST_AUTO_TEST_CASE(z) {
+    regs.d[1] = 0;
+    write16(0, 0161131);
+    m68k_do_execute();
+    BOOST_TEST(regs.z);
+}
+BOOST_AUTO_TEST_CASE(ea) {
+    auto dy = rand_ar();
+    regs.a[dy] = 0x10;
+    raw_write16(0x10, 0x4000);
+    write16(0, 0163320 | dy);
+    m68k_do_execute();
+    BOOST_TEST(raw_read16(0x10) = 0x8000);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_AUTO_TEST_SUITE(Long)
 
-BOOST_AUTO_TEST_CASE(Imm) {
-    regs.x = true;
-    regs.d[1] = 0x12345678;
-    asm_m68k("rorl #4, %D1");
+BOOST_DATA_TEST_CASE(Imm, bdata::xrange(0, 8), n) {
+    auto dy = rand_reg();
+    auto v1 = get_v32();
+    regs.d[dy] = v1;
+    write16(0, 0160230 | n << 9 | dy);
     m68k_do_execute();
-    BOOST_TEST(regs.d[1] == 0x81234567 );
-}
-BOOST_AUTO_TEST_CASE(Imm8) {
-    regs.d[1] = 0x10000;
-    asm_m68k("rorl #8, %D1");
-    m68k_do_execute();
-    BOOST_TEST(regs.d[1] == 256 );
+    BOOST_TEST(regs.d[dy] == std::rotr<uint32_t>(v1, (n ? n : 8)));
 }
 
 BOOST_AUTO_TEST_CASE(Reg) {
-    regs.d[1] = 0x12345678;
-    regs.d[2] = 4;
-    asm_m68k("rorl %D2, %D1");
+    auto [dx, dy] = rand_reg2();
+    auto v1 = get_v32();
+    int n = get_vn(1, 31);
+    regs.d[dy] = v1;
+    regs.d[dx] = n;
+    write16(0, 0160270 | dx << 9 | dy);
     m68k_do_execute();
-    BOOST_TEST(regs.d[1] == 0x81234567 );
-}
-
-BOOST_AUTO_TEST_CASE(Reg0) {
-    regs.d[1] = 0x80000000;
-    regs.d[2] = 0;
-    asm_m68k("rorl %D2, %D1");
-    m68k_do_execute();
-    BOOST_TEST(regs.d[1] == 0x80000000 );
+    BOOST_TEST(regs.d[dy] == std::rotr<uint32_t>(v1, n));
 }
 
 BOOST_AUTO_TEST_CASE(RegOver) {
-    regs.d[1] = 32;
-    regs.d[2] = 66;
-    asm_m68k("rorl %D2, %D1");
+    regs.d[1] = 0x3456789A;
+    regs.d[2] = 68;
+    write16(0, 0162271);
     m68k_do_execute();
-    BOOST_TEST(regs.d[1] == 8 );
+    BOOST_TEST(regs.d[1] == 0xA3456789);
+}
+
+BOOST_AUTO_TEST_CASE(c) {
+    regs.d[1] = 1;
+    write16(0, 0161231);
+    m68k_do_execute();
+    BOOST_TEST(regs.c);
+}
+
+BOOST_AUTO_TEST_CASE(c_0) {
+    regs.d[2] = 1;
+    regs.d[1] = 0;
+    write16(0, 0161123);
+    m68k_do_execute();
+    BOOST_TEST(!regs.c);
+}
+
+BOOST_AUTO_TEST_CASE(n) {
+    regs.d[1] = 1;
+    write16(0, 0161231);
+    m68k_do_execute();
+    BOOST_TEST(regs.n);
+}
+
+BOOST_AUTO_TEST_CASE(z) {
+    regs.d[1] = 0;
+    write16(0, 0161231);
+    m68k_do_execute();
+    BOOST_TEST(regs.z);
 }
 BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE_END()

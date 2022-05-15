@@ -203,7 +203,7 @@ uint8_t read8(uint32_t addr, bool imem) {
     try {
         return b_read8(do_mmu(addr, imem, false, regs.S));
     } catch(BUS_ERROR_EX &e) {
-        TM tm = TM(int(regs.S ? TM::USER_DATA : TM::SUPER_DATA) + imem ? 1 : 0);
+        TM tm = TM(int(regs.S ? TM::SUPER_DATA : TM::USER_DATA) + (imem ? 1 : 0));
         paddr pe{addr, 0, SZ::BYTE, TT::NORMAL, tm, false};
         BUSERROR(pe, e.atc);
     }
@@ -212,7 +212,7 @@ uint16_t read16(uint32_t addr, bool imem) {
     try {
         return b_read16(do_mmu(addr, imem, false, regs.S));
     } catch(BUS_ERROR_EX &e) {
-        TM tm = TM(int(regs.S ? TM::USER_DATA : TM::SUPER_DATA) + imem ? 1 : 0);
+        TM tm = TM(int(regs.S ? TM::SUPER_DATA : TM::USER_DATA) + (imem ? 1 : 0));
         paddr pe{addr, 0, SZ::WORD, TT::NORMAL, tm, false};
         BUSERROR(pe, e.atc);
     }
@@ -228,7 +228,7 @@ uint32_t read32(uint32_t addr, bool imem) {
         uint32_t v = b_read32(do_mmu(addr, imem, false, regs.S));
         return v;
     } catch(BUS_ERROR_EX &e) {
-        TM tm = TM(int(regs.S ? TM::USER_DATA : TM::SUPER_DATA) + imem ? 1 : 0);
+        TM tm = TM(int(regs.S ? TM::SUPER_DATA: TM::USER_DATA ) + (imem ? 1 : 0));
         paddr pe{addr, 0, SZ::LONG, TT::NORMAL, tm, false};
         BUSERROR(pe, e.atc);
     }
@@ -242,7 +242,7 @@ void write8(uint32_t addr, uint8_t v) {
     try {
         b_write8(do_mmu(addr, false, true, regs.S), v);
     } catch(BUS_ERROR_EX &e) {
-        TM tm = regs.S ? TM::USER_DATA : TM::SUPER_DATA;
+        TM tm = regs.S ? TM::SUPER_DATA: TM::USER_DATA ;
         paddr pe{addr, 0, SZ::BYTE, TT::NORMAL, tm, true};
         BUSERROR(pe, e.atc);
     }
@@ -251,7 +251,7 @@ void write16(uint32_t addr, uint16_t v) {
     try {
         b_write16(do_mmu(addr, false, true, regs.S), v);
     } catch(BUS_ERROR_EX &e) {
-        TM tm = regs.S ? TM::USER_DATA : TM::SUPER_DATA;
+        TM tm = regs.S ? TM::SUPER_DATA: TM::USER_DATA ;
         paddr pe{addr, 0, SZ::WORD, TT::NORMAL, tm, true};
         BUSERROR(pe, e.atc);
     }
@@ -260,7 +260,7 @@ void write32(uint32_t addr, uint32_t v) {
     try {
         b_write32(do_mmu(addr, false, true, regs.S), v);
     } catch(BUS_ERROR_EX &e) {
-        TM tm = regs.S ? TM::USER_DATA : TM::SUPER_DATA;
+        TM tm = regs.S ? TM::SUPER_DATA: TM::USER_DATA ;
         paddr pe{addr, 0, SZ::LONG, TT::NORMAL, tm, true};
         BUSERROR(pe, e.atc);
     }

@@ -346,8 +346,10 @@ inline uint8_t DO_ROXR_B(uint8_t v, uint8_t sc) {
         TEST_NZ8(v);
         return v;
     }
-    regs.c = v >> (sc - 1) & 1;
-    uint8_t vv = v >> sc | regs.x << ( 8 - sc) | v << (9 - sc);
+    uint16_t xg = v | regs.x << 8;
+    xg = xg >> sc | xg << (9 - sc);
+    regs.c = xg >> 8 & 1;
+    uint8_t vv = xg & 0xff;
     regs.x = regs.c;
     TEST_NZ8(vv);
     return vv;
@@ -360,8 +362,10 @@ inline uint16_t DO_ROXR_W(uint16_t v, uint8_t sc) {
         TEST_NZ16(v);
         return v;
     }
-    regs.c = v >> (sc - 1) & 1;
-    uint16_t vv = v >> sc | regs.x << ( 16 - sc) | v << (17 - sc);
+    uint32_t xg = v | regs.x << 16;
+    xg = xg >> sc | xg << (17 - sc);
+    regs.c = xg >> 16 & 1;
+    uint16_t vv = xg & 0xffff;
     regs.x = regs.c;
     TEST_NZ16(vv);
     return vv;
@@ -374,8 +378,10 @@ inline uint32_t DO_ROXR_L(uint32_t v, uint8_t sc) {
         TEST_NZ32(v);
         return v;
     }
-    regs.c = v >> (sc - 1) & 1;
-    uint32_t vv = v >> sc | regs.x << ( 32 - sc) | v << (33 - sc);
+    uint64_t xg = (uint64_t)v | (uint64_t)regs.x << 32;
+    xg = xg >> sc | xg << (33 - sc);
+    regs.c = xg >> 32 & 1;
+    uint32_t vv = xg & 0xffffffff;
     regs.x = regs.c;
     TEST_NZ32(vv);
     return vv;
@@ -388,8 +394,10 @@ inline uint8_t DO_ROXL_B(uint8_t v, uint8_t sc) {
         TEST_NZ8(v);
         return v;
     }
-    regs.c = v >> (8-sc) & 1;
-    uint8_t vv = v << sc | regs.x << (sc-1) | v >> (9 - sc);
+    uint16_t xg = v | regs.x << 8;
+    xg = (xg << sc) | (xg >> (9 - sc));
+    regs.c = xg >> 8 & 1;
+    uint8_t vv = xg & 0xff;
     regs.x = regs.c;
     TEST_NZ8(vv);
     return vv;
@@ -402,8 +410,10 @@ inline uint16_t DO_ROXL_W(uint16_t v, uint8_t sc) {
         TEST_NZ16(v);
         return v;
     }
-    regs.c = v >> (16-sc) & 1;
-    uint16_t vv = v << sc | regs.x << (sc-1) | v >> (17 - sc);
+    uint32_t xg = v | regs.x << 16;
+    xg = (xg << sc) | (xg >> (17 - sc));
+    regs.c = xg >> 16 & 1;
+    uint16_t vv = xg & 0xffff;
     regs.x = regs.c;
     TEST_NZ16(vv);
     return vv;
@@ -416,8 +426,10 @@ inline uint32_t DO_ROXL_L(uint32_t v, uint8_t sc) {
         TEST_NZ32(v);
         return v;
     }
-    regs.c = v >> (32-sc) & 1;
-    uint32_t vv = v << sc | regs.x << (sc-1) | v >> (33 - sc);
+    uint64_t xg = (uint64_t)v | (uint64_t)regs.x << 32;
+    xg = (xg << sc) | (xg >> (33 - sc));
+    regs.c = xg >> 32 & 1;
+    uint32_t vv = xg & 0xffffffff;
     regs.x = regs.c;
     TEST_NZ32(vv);
     return vv;
@@ -501,7 +513,4 @@ inline uint32_t DO_ROL_L(uint32_t v, uint8_t sc) {
     return vv;
 }
 
-inline bool DO_BTST(uint32_t v, uint8_t bn) {
-    return ! (( v >> bn) & 1);
-}
-
+inline bool DO_BTST(uint32_t v, uint8_t bn) { return !((v >> bn) & 1); }
