@@ -1,14 +1,9 @@
 /*
- *  fpu/fpu_uae.h - Extra Definitions for the old UAE FPU core
+ *  fpu/fpu_mpfr.h - 
  *
  *  Basilisk II (C) 1997-2008 Christian Bauer
  *
  *  MC68881/68040 fpu emulation
- *
- *  Original UAE FPU, copyright 1996 Herman ten Brugge
- *  Rewrite for x86, copyright 1999-2000 Lauri Pesonen
- *  New framework, copyright 2000 Gwenole Beauchesne
- *  Adapted for JIT compilation (c) Bernd Meyer, 2000
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -25,8 +20,9 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef FPU_IEEE_H
-#define FPU_IEEE_H
+#ifndef FPU_MPFR_H
+#define FPU_MPFR_H
+#define _USE_MATH_DEFINES
 #include <stdint.h>
 #include <mpfr.h>
 void init_fpu();
@@ -34,11 +30,15 @@ void exit_fpu();
 
 
 void init_fpu_opc();
+enum class RND_MODE { ROUND_RN, ROUND_RZ, ROUND_RM, ROUND_RP };
+enum class RND_PREC { ROUND_EXT, ROUND_SGL, ROUND_DBL, ROUND_ERR };
+
 struct M68881 {
     // FPU
     mpfr_t fp[8];
+    mpfr_rnd_t rnd_mode;
     struct fpcr_t {
-        uint8_t prec;
+        RND_PREC prec;
         bool inex1;
         bool inex2;
         bool dz;
@@ -62,7 +62,7 @@ struct M68881 {
         bool operr;
         bool snan;
         bool bsun;
-        int8_t qutinent;
+        int8_t quotient;
         bool nan;
         bool i;
         bool z;
@@ -72,6 +72,4 @@ struct M68881 {
 
     
 };
-enum RND_MODE { ROUND_RN, ROUND_RZ, ROUND_RM, ROUND_RP };
-enum RND_PREC { ROUND_EXT, ROUND_SGL, ROUND_DBL, ROUND_ERR };
 #endif /* FPU_IEEE_H */

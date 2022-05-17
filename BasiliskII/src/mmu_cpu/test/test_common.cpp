@@ -70,47 +70,47 @@ void raw_write32(uint32_t addr, uint32_t v) {
     auto p = reinterpret_cast<uint32_t *>(&RAM[addr]);
     *p = SDL_SwapBE32(v);
 }
-#include <stdio.h>
-#include <unistd.h>
 
 static std::unordered_map<std::string, std::string> asmcodes;
-void asm_m68k(const char *a, int offset) {
-    auto f = asmcodes.find(a);
-    if(f == asmcodes.end()) {
-        char tmp[] = "/tmp/asm_ret_XXXXXX";
-        int tmps = mkstemp(tmp);
-        close(tmps);
-        auto p1_f = fmt::format("m68k-linux-gnu-as -mcpu=68040 -o {}", tmp);
-        FILE *p1 = popen(p1_f.c_str(), "w");
-        fprintf(p1, "%s\n", a);
-        if(pclose(p1)) {
-            BOOST_FAIL("assemble failure");
-        }
-        p1_f =
-            fmt::format("m68k-linux-gnu-objcopy -O binary {} /dev/stdout", tmp);
-        p1 = popen(p1_f.c_str(), "r");
-        std::string opc;
-        int c;
-        while((c = getc(p1)) != -1) {
-            opc += c;
-        }
-        pclose(p1);
-        asmcodes[a] = opc;
-        unlink(tmp);
-        f = asmcodes.find(a);
-    }
-    const auto &ret = f->second;
-    for(char c : ret) {
-        raw_write8(offset++, c);
+
+void set_fpu_reg(int reg, const xval& v) {
+    mpfr_prec_round(regs.fpu.fp[reg], 64, MPFR_RNDN);
+    mpfr_set_si_2exp(regs.fpu.fp[reg], v.frac, v.exp, MPFR_RNDN);
+}
+void set_fpu_reg(int reg, double v) {
+    mpfr_prec_round(regs.fpu.fp[reg], 64, MPFR_RNDN);
+    switch(fpclassify(v)) {
+    case FP_NAN:
+        mpfr_set_nan(regs.fpu.fp[reg]);
+        break;
+    case FP_INFINITE:
+        mpfr_set_inf(regs.fpu.fp[reg], signbit(v) ? -1 : 1);
+        break;
+    case FP_ZERO:
+        mpfr_set_zero(regs.fpu.fp[reg], signbit(v) ? -1 : 1);
+        break;
+    default:
+        mpfr_set_d(regs.fpu.fp[reg], v, mpfr_get_default_rounding_mode());
     }
 }
 
-void set_fpu(int reg, double v) {
-    mpfr_set_d(regs.fpu.fp[reg], v, mpfr_get_default_rounding_mode());
+void set_fpu_reg(int reg, float v) {
+    mpfr_prec_round(regs.fpu.fp[reg], 64, MPFR_RNDN);
+    switch(fpclassify(v)) {
+    case FP_NAN:
+        mpfr_set_nan(regs.fpu.fp[reg]);
+        break;
+    case FP_INFINITE:
+        mpfr_set_inf(regs.fpu.fp[reg], signbit(v) ? -1 : 1);
+        break;
+    case FP_ZERO:
+        mpfr_set_zero(regs.fpu.fp[reg], signbit(v) ? -1 : 1);
+        break;
+    default:
+        mpfr_set_flt(regs.fpu.fp[reg], v, mpfr_get_default_rounding_mode());
+    }
 }
-double get_fpu(int reg, double v) {
-    return mpfr_get_d(regs.fpu.fp[reg], mpfr_get_default_rounding_mode());
-}
+
 std::unordered_map<uint32_t, void (*)()> rom_functions;
 void dump_regs() {}
 void EmulOp(uint16_t opcode, M68kRegisters *r) {}
@@ -193,5 +193,10 @@ uint32_t get_v32() {
 
 uint64_t get_vn(int mn, int mx) {
     std::uniform_int_distribution<uint64_t> dist(mn, mx);
+    return dist(*rnd);
+}
+
+double get_rx(double mn, double mx) {
+    std::uniform_real_distribution<double> dist(mn, mx);
     return dist(*rnd);
 }

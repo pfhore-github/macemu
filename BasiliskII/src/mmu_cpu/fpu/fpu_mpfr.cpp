@@ -29,7 +29,7 @@ uint64_t read64(uint32_t addr) {
 }
 void write64(uint32_t addr, uint64_t v) {
     write32(addr, v >> 32);
-    write32(addr, v);
+    write32(addr+4, v);
 }
 void init_fpu() {
     mpfr_clear_flags();
@@ -38,41 +38,40 @@ void init_fpu() {
     mpfr_set_default_prec(64);
     mpfr_set_default_rounding_mode(MPFR_RNDN);
     for(int i = 0; i < 8; ++i) {
-        mpfr_init_set_d(regs.fpu.fp[i], 0.0, mpfr_get_default_rounding_mode());
+        mpfr_init2(regs.fpu.fp[i], 64);
     }
     regs.fpu.fpiar = 0;
 }
 
 void update_round() {}
-void load_single(uint32_t addr, mpfr_t dst) {
+void load_single(uint32_t addr, mpfr_ptr dst) {
     float v = bit_cast<float>(read32(addr));
     if(is_snan(v)) {
         regs.fpu.FPSR.snan = true;
     }
-    mpfr_set_d(dst, v, mpfr_get_default_rounding_mode());
+    mpfr_set_d(dst, v, regs.fpu.rnd_mode);
 }
 
-void store_single(uint32_t addr, mpfr_t src) {
-    uint32_t v =
-        bit_cast<uint32_t>(mpfr_get_flt(src, mpfr_get_default_rounding_mode()));
+void store_single(uint32_t addr, mpfr_ptr src) {
+    uint32_t v = bit_cast<uint32_t>(mpfr_get_flt(src, regs.fpu.rnd_mode));
     regs.fpu.FPSR.inex2 = mpfr_inexflag_p();
     write32(addr, v);
 }
-void load_double(uint32_t addr, mpfr_t dst) {
+void load_double(uint32_t addr, mpfr_ptr dst) {
     double v = bit_cast<double>(read64(addr));
     if(is_snan(v)) {
         regs.fpu.FPSR.snan = true;
     }
-    mpfr_set_d(dst, v, mpfr_get_default_rounding_mode());
+    mpfr_set_d(dst, v, regs.fpu.rnd_mode);
 }
 
-void store_double(uint32_t addr, mpfr_t src) {
-    double v = mpfr_get_d(src, mpfr_get_default_rounding_mode());
+void store_double(uint32_t addr, mpfr_ptr src) {
+    double v = mpfr_get_d(src, regs.fpu.rnd_mode);
     regs.fpu.FPSR.inex2 = mpfr_inexflag_p();
     write64(addr, bit_cast<uint64_t>(v));
 }
 
-void load_ext(uint32_t addr, mpfr_t dst) {
+void load_ext(uint32_t addr, mpfr_ptr dst) {
     uint16_t exp_i = read16(addr);
     uint64_t mantissa = read64(addr + 4);
     bool s = (exp_i >> 15) & 1;
@@ -90,28 +89,27 @@ void load_ext(uint32_t addr, mpfr_t dst) {
             mpfr_set_nan(dst);
         }
     }
-    mpfr_set_sj_2exp(dst, mantissa, exp_v - 0x3fff,
-                     mpfr_get_default_rounding_mode());
-    mpfr_setsign(dst, dst, s, mpfr_get_default_rounding_mode());
+    mpfr_set_sj_2exp(dst, mantissa, exp_v - 0x3ffe - 63, regs.fpu.rnd_mode);
+    mpfr_setsign(dst, dst, s, regs.fpu.rnd_mode);
 }
 
-void store_ext(uint32_t addr, mpfr_t src) {
+void store_ext(uint32_t addr, mpfr_ptr src) {
     bool s = mpfr_signbit(src);
     MPFR_DECL_INIT(tp, 64);
-    mpfr_set(tp, src, mpfr_get_default_rounding_mode());
-    mpfr_abs(tp, tp, mpfr_get_default_rounding_mode());
+    mpfr_set(tp, src, regs.fpu.rnd_mode);
+    mpfr_abs(tp, tp, regs.fpu.rnd_mode);
     mpz_t rop;
     mpz_init(rop);
-    int exp = mpfr_get_z_2exp(rop, tp);
+    int exp = mpfr_get_z_2exp(rop, tp)+63;
     uint64_t m = mpz_get_ui(rop);
-    int e = exp + 0x8000;
+    int e = exp + 0x3fff;
     mpz_clear(rop);
 
     write32(addr, s << 31 | e << 16);
     write64(addr + 4, m);
 }
 
-void load_packed(uint32_t addr, mpfr_t dst) {
+void load_packed(uint32_t addr, mpfr_ptr dst) {
     uint32_t v1 = read32(addr);
     uint64_t vd = read32(addr + 4);
     vd = vd << 32 | read32(addr + 8);
@@ -132,7 +130,7 @@ void load_packed(uint32_t addr, mpfr_t dst) {
         return;
     }
     char digit[26] = {0};
-    digit[0] = sm ? '-' : '+';
+    digit[0] = sm == -1.0 ? '-' : '+';
     digit[1] = (v1 & 0xf) + '0';
     digit[2] = '.';
     for(int i = 0; i < 16; ++i) {
@@ -140,13 +138,13 @@ void load_packed(uint32_t addr, mpfr_t dst) {
     }
     digit[19] = 'e';
     digit[20] = se ? '-' : '+';
-    digit[21] = ((v1 >> 28) & 0xf) + '0';
-    digit[22] = ((v1 >> 24) & 0xf) + '0';
-    digit[23] = ((v1 >> 20) & 0xf) + '0';
-    mpfr_set_str(dst, digit, 10, mpfr_get_default_rounding_mode());
+    digit[21] = ((v1 >> 24) & 0xf) + '0';
+    digit[22] = ((v1 >> 20) & 0xf) + '0';
+    digit[23] = ((v1 >> 16) & 0xf) + '0';
+    mpfr_set_str(dst, digit, 10, regs.fpu.rnd_mode);
 }
 
-void store_packed(uint32_t addr, mpfr_t value, int8_t k) {
+void store_packed(uint32_t addr, mpfr_ptr value, int8_t k) {
     bool s = mpfr_signbit(value);
     if(mpfr_nan_p(value)) {
         write32(addr, 0x7fff0000);
@@ -167,8 +165,8 @@ void store_packed(uint32_t addr, mpfr_t value, int8_t k) {
         return;
     }
     MPFR_DECL_INIT(tp, 64);
-    mpfr_set(tp, value, mpfr_get_default_rounding_mode());
-    mpfr_abs(tp, tp, mpfr_get_default_rounding_mode());
+    mpfr_set(tp, value, regs.fpu.rnd_mode);
+    mpfr_abs(tp, tp, regs.fpu.rnd_mode);
     char buf[64];
     if(k <= 0) {
         MPFR_DECL_INIT(tmp2, 64);
@@ -178,15 +176,15 @@ void store_packed(uint32_t addr, mpfr_t value, int8_t k) {
     }
     // SM-SE-0-0 EEE-XXXD DDDDDDDD DDDDDDDD
     mpfr_exp_t e;
-    mpfr_get_str(buf, &e, 10, k, tp, mpfr_get_default_rounding_mode());
+    mpfr_get_str(buf, &e, 10, k, tp, regs.fpu.rnd_mode);
     e--;
     uint32_t exp = s << 31 | ((e < 0 ? 1 : 0) << 30);
     e = abs(e);
     exp |= (e / 100) << 24 | ((e / 10) % 10) << 20 | (e % 10) << 16 |
            (buf[0] - '0');
     uint64_t mant = 0;
-    for(int i = 0; i < k; ++i) {
-        mant |= static_cast<uint64_t>(buf[i] - '0') << (60 - 4 * i);
+    for(int i = 0; i < k-1; ++i) {
+        mant |= static_cast<uint64_t>(buf[i+1] - '0') << (60 - 4 * i);
     }
     write32(addr, exp);
     write64(addr + 4, mant);
@@ -224,53 +222,62 @@ void fpu_checkexception() {
         return FP_INEX();
     }
 }
-void to_sgl(mpfr_t d) {
-    mpfr_prec_round(d, 24, mpfr_get_default_rounding_mode());
-    regs.fpu.FPSR.inex2 = mpfr_inexflag_p();
-    if(mpfr_get_exp(d) > 0x7e) {
-        mpfr_set_inf(d, mpfr_signbit(d));
-        regs.fpu.FPSR.ovfl = true;
-    } else if(mpfr_get_exp(d) < -0x7e) {
-        mpfr_set_zero(d, mpfr_signbit(d));
-        regs.fpu.FPSR.unfl = true;
+void to_sgl(mpfr_ptr d) {
+    mpfr_prec_round(d, 24, regs.fpu.rnd_mode);
+    if(mpfr_regular_p(d)) {
+        regs.fpu.FPSR.inex2 = mpfr_inexflag_p();
+        if(mpfr_get_exp(d) > 0x7e) {
+            mpfr_set_inf(d, mpfr_signbit(d));
+            regs.fpu.FPSR.ovfl = true;
+        } else if(mpfr_get_exp(d) < -0x7e) {
+            mpfr_set_zero(d, mpfr_signbit(d));
+            regs.fpu.FPSR.unfl = true;
+        }
     }
 }
-void to_dbl(mpfr_t d) {
-    mpfr_prec_round(d, 53, mpfr_get_default_rounding_mode());
-    regs.fpu.FPSR.inex2 = mpfr_inexflag_p();
-    if(mpfr_get_exp(d) > 0x3fe) {
-        mpfr_set_inf(d, mpfr_signbit(d));
-        regs.fpu.FPSR.ovfl = true;
-    } else if(mpfr_get_exp(d) < -0x3fe) {
-        mpfr_set_zero(d, mpfr_signbit(d));
-        regs.fpu.FPSR.unfl = true;
+void to_dbl(mpfr_ptr d) {
+    mpfr_prec_round(d, 53, regs.fpu.rnd_mode);
+    if(mpfr_regular_p(d)) {
+        regs.fpu.FPSR.inex2 = mpfr_inexflag_p();
+        if(mpfr_get_exp(d) > 0x3fe) {
+            mpfr_set_inf(d, mpfr_signbit(d));
+            regs.fpu.FPSR.ovfl = true;
+        } else if(mpfr_get_exp(d) < -0x3fe) {
+            mpfr_set_zero(d, mpfr_signbit(d));
+            regs.fpu.FPSR.unfl = true;
+        }
     }
 }
-void to_ext(mpfr_t d) {
-    if(mpfr_get_exp(d) > 0x3ffe) {
-        mpfr_set_inf(d, mpfr_signbit(d));
-        regs.fpu.FPSR.ovfl = true;
-    } else if(mpfr_get_exp(d) < -0x3fff) {
-        mpfr_set_zero(d, mpfr_signbit(d));
-        regs.fpu.FPSR.unfl = true;
+void to_ext(mpfr_ptr d) {
+    if(mpfr_regular_p(d)) {
+        if(mpfr_get_exp(d) > 0x3ffe) {
+            mpfr_set_inf(d, mpfr_signbit(d));
+            regs.fpu.FPSR.ovfl = true;
+        } else if(mpfr_get_exp(d) < -0x3fff) {
+            mpfr_set_zero(d, mpfr_signbit(d));
+            regs.fpu.FPSR.unfl = true;
+        }
     }
 }
-void fpu_postprocess(mpfr_t d, bool round = true) {
+void fpu_postprocess(mpfr_ptr d, bool round = true) {
     // rounding
     if(round) {
         switch(regs.fpu.FPCR.prec) {
-        case ROUND_SGL:
+        case RND_PREC::ROUND_SGL:
             to_sgl(d);
             break;
-        case ROUND_DBL:
+        case RND_PREC::ROUND_DBL:
             to_dbl(d);
             break;
-        case ROUND_EXT:
+        case RND_PREC::ROUND_EXT:
             to_ext(d);
+            break;
+        default:
             break;
         }
     }
-    regs.fpu.FPSR.operr = mpfr_nanflag_p();
+    regs.fpu.FPSR.ovfl |= mpfr_overflow_p();
+    regs.fpu.FPSR.unfl |= mpfr_underflow_p();
     regs.fpu.FPSR.dz = mpfr_divby0_p();
     regs.fpu.FPSR.operr = mpfr_nanflag_p() || mpfr_erangeflag_p();
     regs.fpu.FPSR.inex1 = mpfr_inexflag_p();
@@ -283,99 +290,99 @@ void fpu_postprocess(mpfr_t d, bool round = true) {
 
     fpu_checkexception();
 }
-using fpu_op_t = void (*)(mpfr_t src, mpfr_t dst);
-void fmove_cr(uint8_t op, mpfr_t v) {
+using fpu_op_t = void (*)(mpfr_ptr src, mpfr_ptr dst);
+void fmove_cr(uint8_t op, mpfr_ptr v) {
     switch(op) {
     case 0:
-        mpfr_const_pi(v, mpfr_get_default_rounding_mode()); // M_PI
+        mpfr_const_pi(v, regs.fpu.rnd_mode); // M_PI
         break;
     case 0xb: // LOG10(2)
-        mpfr_set_ui(v, 2.0, mpfr_get_default_rounding_mode());
-        mpfr_log10(v, v, mpfr_get_default_rounding_mode());
+        mpfr_set_ui(v, 2.0, regs.fpu.rnd_mode);
+        mpfr_log10(v, v, regs.fpu.rnd_mode);
         break;
     case 0xc: // E
-        mpfr_set_ui(v, 1.0, mpfr_get_default_rounding_mode());
-        mpfr_exp(v, v, mpfr_get_default_rounding_mode());
+        mpfr_set_ui(v, 1.0, regs.fpu.rnd_mode);
+        mpfr_exp(v, v, regs.fpu.rnd_mode);
         break;
     case 0xd: // log2(e)
-        mpfr_set_ui(v, 1.0, mpfr_get_default_rounding_mode());
-        mpfr_exp(v, v, mpfr_get_default_rounding_mode());
-        mpfr_log2(v, v, mpfr_get_default_rounding_mode());
+        mpfr_set_ui(v, 1.0, regs.fpu.rnd_mode);
+        mpfr_exp(v, v, regs.fpu.rnd_mode);
+        mpfr_log2(v, v, regs.fpu.rnd_mode);
         break;
     case 0xe: // log10(e)
-        mpfr_set_ui(v, 1.0, mpfr_get_default_rounding_mode());
-        mpfr_exp(v, v, mpfr_get_default_rounding_mode());
-        mpfr_log10(v, v, mpfr_get_default_rounding_mode());
+        mpfr_set_ui(v, 1.0, regs.fpu.rnd_mode);
+        mpfr_exp(v, v, regs.fpu.rnd_mode);
+        mpfr_log10(v, v, regs.fpu.rnd_mode);
         break;
     case 0xf: // 0
-        mpfr_set_d(v, 0.0, mpfr_get_default_rounding_mode());
+        mpfr_set_d(v, 0.0, regs.fpu.rnd_mode);
         break;
     case 0x30: // loge(2)
-        mpfr_const_log2(v, mpfr_get_default_rounding_mode());
+        mpfr_const_log2(v, regs.fpu.rnd_mode);
         break;
     case 0x31: // loge(10)
-        mpfr_set_d(v, 10.0, mpfr_get_default_rounding_mode());
-        mpfr_log10(v, v, mpfr_get_default_rounding_mode());
+        mpfr_set_d(v, 10.0, regs.fpu.rnd_mode);
+        mpfr_log(v, v, regs.fpu.rnd_mode);
         break;
     case 0x32: // 1e0
-        mpfr_ui_pow_ui(v, 10, 0, mpfr_get_default_rounding_mode());
+        mpfr_ui_pow_ui(v, 10, 0, regs.fpu.rnd_mode);
         break;
     case 0x33: // 1e1
-        mpfr_ui_pow_ui(v, 10, 1, mpfr_get_default_rounding_mode());
+        mpfr_ui_pow_ui(v, 10, 1, regs.fpu.rnd_mode);
         break;
     case 0x34: // 1e2
-        mpfr_ui_pow_ui(v, 10, 2, mpfr_get_default_rounding_mode());
+        mpfr_ui_pow_ui(v, 10, 2, regs.fpu.rnd_mode);
         break;
     case 0x35: // 1e4
-        mpfr_ui_pow_ui(v, 10, 4, mpfr_get_default_rounding_mode());
+        mpfr_ui_pow_ui(v, 10, 4, regs.fpu.rnd_mode);
         break;
     case 0x36: // 1e8
-        mpfr_ui_pow_ui(v, 10, 8, mpfr_get_default_rounding_mode());
+        mpfr_ui_pow_ui(v, 10, 8, regs.fpu.rnd_mode);
         break;
     case 0x37: // 1e16
-        mpfr_ui_pow_ui(v, 10, 16, mpfr_get_default_rounding_mode());
+        mpfr_ui_pow_ui(v, 10, 16, regs.fpu.rnd_mode);
         break;
     case 0x38: // 1e32
-        mpfr_ui_pow_ui(v, 10, 32, mpfr_get_default_rounding_mode());
+        mpfr_ui_pow_ui(v, 10, 32, regs.fpu.rnd_mode);
         break;
     case 0x39: // 1e64
-        mpfr_ui_pow_ui(v, 10, 64, mpfr_get_default_rounding_mode());
+        mpfr_ui_pow_ui(v, 10, 64, regs.fpu.rnd_mode);
         break;
     case 0x3a: // 1e128
-        mpfr_ui_pow_ui(v, 10, 128, mpfr_get_default_rounding_mode());
+        mpfr_ui_pow_ui(v, 10, 128, regs.fpu.rnd_mode);
         break;
     case 0x3b: // 1e256
-        mpfr_ui_pow_ui(v, 10, 256, mpfr_get_default_rounding_mode());
+        mpfr_ui_pow_ui(v, 10, 256, regs.fpu.rnd_mode);
         break;
     case 0x3c: // 1e512
-        mpfr_ui_pow_ui(v, 10, 512, mpfr_get_default_rounding_mode());
+        mpfr_ui_pow_ui(v, 10, 512, regs.fpu.rnd_mode);
         break;
     case 0x3d: // 1e1024
-        mpfr_ui_pow_ui(v, 10, 1024, mpfr_get_default_rounding_mode());
+        mpfr_ui_pow_ui(v, 10, 1024, regs.fpu.rnd_mode);
         break;
     case 0x3e: // 1e2048
-        mpfr_ui_pow_ui(v, 10, 2048, mpfr_get_default_rounding_mode());
+        mpfr_ui_pow_ui(v, 10, 2048, regs.fpu.rnd_mode);
         break;
     case 0x3f: // 1e4096
-        mpfr_ui_pow_ui(v, 10, 4096, mpfr_get_default_rounding_mode());
+        mpfr_ui_pow_ui(v, 10, 4096, regs.fpu.rnd_mode);
         break;
     default:
-        mpfr_set_d(v, 0.0, mpfr_get_default_rounding_mode());
+        mpfr_set_d(v, 0.0, regs.fpu.rnd_mode);
     }
 }
-#define OP_F(name) void op_##name(mpfr_t src, mpfr_t dst)
+#define OP_F(name) void op_##name(mpfr_ptr src, mpfr_ptr dst)
 OP_F(fmove_from) {
-    mpfr_set(dst, src, mpfr_get_default_rounding_mode());
+    mpfr_set(dst, src, regs.fpu.rnd_mode);
     fpu_postprocess(dst);
 }
 
 OP_F(fint) {
-    mpfr_rint(dst, src, mpfr_get_default_rounding_mode());
+    mpfr_rint(dst, src, regs.fpu.rnd_mode);
     fpu_postprocess(dst);
 }
 
 OP_F(fsinh) {
-    mpfr_sinh(dst, src, mpfr_get_default_rounding_mode());
+    mpfr_sinh(dst, src, regs.fpu.rnd_mode);
     fpu_postprocess(dst);
 }
 
@@ -385,101 +392,101 @@ OP_F(fintrz) {
 }
 
 OP_F(fsqrt) {
-    mpfr_sqrt(dst, src, mpfr_get_default_rounding_mode());
+    mpfr_sqrt(dst, src, regs.fpu.rnd_mode);
     fpu_postprocess(dst);
 }
 
 OP_F(flognp1) {
-    mpfr_log1p(dst, src, mpfr_get_default_rounding_mode());
+    mpfr_log1p(dst, src, regs.fpu.rnd_mode);
     fpu_postprocess(dst);
 }
 
 OP_F(fetoxm1) {
-    mpfr_expm1(dst, src, mpfr_get_default_rounding_mode());
+    mpfr_expm1(dst, src, regs.fpu.rnd_mode);
     fpu_postprocess(dst);
 }
 
 OP_F(ftanh) {
-    mpfr_tanh(dst, src, mpfr_get_default_rounding_mode());
+    mpfr_tanh(dst, src, regs.fpu.rnd_mode);
     fpu_postprocess(dst);
 }
 
 OP_F(fatan) {
-    mpfr_atan(dst, src, mpfr_get_default_rounding_mode());
+    mpfr_atan(dst, src, regs.fpu.rnd_mode);
     fpu_postprocess(dst);
 }
 
 OP_F(fasin) {
-    mpfr_asin(dst, src, mpfr_get_default_rounding_mode());
+    mpfr_asin(dst, src, regs.fpu.rnd_mode);
     fpu_postprocess(dst);
 }
 
 OP_F(fatanh) {
-    mpfr_atanh(dst, src, mpfr_get_default_rounding_mode());
+    mpfr_atanh(dst, src, regs.fpu.rnd_mode);
     fpu_postprocess(dst);
 }
 
 OP_F(fsin) {
-    mpfr_sin(dst, src, mpfr_get_default_rounding_mode());
+    mpfr_sin(dst, src, regs.fpu.rnd_mode);
     fpu_postprocess(dst);
 }
 
 OP_F(ftan) {
-    mpfr_tan(dst, src, mpfr_get_default_rounding_mode());
+    mpfr_tan(dst, src, regs.fpu.rnd_mode);
     fpu_postprocess(dst);
 }
 
 OP_F(fetox) {
-    mpfr_exp(dst, src, mpfr_get_default_rounding_mode());
+    mpfr_exp(dst, src, regs.fpu.rnd_mode);
     fpu_postprocess(dst);
 }
 
 OP_F(ftwotox) {
-    mpfr_exp2(dst, src, mpfr_get_default_rounding_mode());
+    mpfr_exp2(dst, src, regs.fpu.rnd_mode);
     fpu_postprocess(dst);
 }
 OP_F(ftentox) {
-    mpfr_exp10(dst, src, mpfr_get_default_rounding_mode());
+    mpfr_exp10(dst, src, regs.fpu.rnd_mode);
     fpu_postprocess(dst);
 }
 
 OP_F(flogn) {
-    mpfr_log(dst, src, mpfr_get_default_rounding_mode());
+    mpfr_log(dst, src, regs.fpu.rnd_mode);
     fpu_postprocess(dst);
 }
 
 OP_F(flog10) {
-    mpfr_log10(dst, src, mpfr_get_default_rounding_mode());
+    mpfr_log10(dst, src, regs.fpu.rnd_mode);
     fpu_postprocess(dst);
 }
 
 OP_F(flog2) {
-    mpfr_log2(dst, src, mpfr_get_default_rounding_mode());
+    mpfr_log2(dst, src, regs.fpu.rnd_mode);
     fpu_postprocess(dst);
 }
 
 OP_F(fabs) {
-    mpfr_abs(dst, src, mpfr_get_default_rounding_mode());
+    mpfr_abs(dst, src, regs.fpu.rnd_mode);
     fpu_postprocess(dst);
 }
 
 OP_F(fcosh) {
-    mpfr_cosh(dst, src, mpfr_get_default_rounding_mode());
+    mpfr_cosh(dst, src, regs.fpu.rnd_mode);
     fpu_postprocess(dst);
 }
 
 OP_F(fneg) {
-    mpfr_neg(dst, src, mpfr_get_default_rounding_mode());
+    mpfr_neg(dst, src, regs.fpu.rnd_mode);
     fpu_postprocess(dst);
 }
 
 OP_F(facos) {
-    mpfr_acos(dst, src, mpfr_get_default_rounding_mode());
+    mpfr_acos(dst, src, regs.fpu.rnd_mode);
     fpu_postprocess(dst);
 }
 
 OP_F(fcos) {
-    mpfr_cos(dst, src, mpfr_get_default_rounding_mode());
+    mpfr_cos(dst, src, regs.fpu.rnd_mode);
     fpu_postprocess(dst);
 }
 
@@ -490,10 +497,10 @@ OP_F(fgetexp) {
         mpfr_set_erangeflag();
         mpfr_set_nan(dst);
     } else if(mpfr_zero_p(src)) {
-        mpfr_set(dst, src, mpfr_get_default_rounding_mode());
+        mpfr_set(dst, src, regs.fpu.rnd_mode);
     } else {
         mpfr_exp_t e = mpfr_get_exp(src);
-        mpfr_set_si(dst, e - 1, mpfr_get_default_rounding_mode());
+        mpfr_set_si(dst, e - 1, regs.fpu.rnd_mode);
     }
     fpu_postprocess(dst);
 }
@@ -505,54 +512,54 @@ OP_F(fgetman) {
         mpfr_set_erangeflag();
         mpfr_set_nan(dst);
     } else if(mpfr_zero_p(src)) {
-        mpfr_set(dst, src, mpfr_get_default_rounding_mode());
+        mpfr_set(dst, src, regs.fpu.rnd_mode);
     } else {
         mpfr_exp_t exp;
-        mpfr_frexp(&exp, dst, src, mpfr_get_default_rounding_mode());
-        mpfr_mul_2si(dst, src, 2, mpfr_get_default_rounding_mode());
+        mpfr_frexp(&exp, dst, src, regs.fpu.rnd_mode);
+        mpfr_mul_2si(dst, dst, 1, regs.fpu.rnd_mode);
     }
     fpu_postprocess(dst);
 }
 
 OP_F(fdiv) {
-    mpfr_div(dst, dst, src, mpfr_get_default_rounding_mode());
+    mpfr_div(dst, dst, src, regs.fpu.rnd_mode);
     fpu_postprocess(dst);
 }
 
 OP_F(fmod) {
     long q;
-    mpfr_fmodquo(dst, &q, dst, src, mpfr_get_default_rounding_mode());
+    mpfr_fmodquo(dst, &q, dst, src, regs.fpu.rnd_mode);
     if(mpfr_number_p(dst)) {
-        regs.fpu.FPSR.qutinent = (static_cast<int8_t>(q) % 0x40);
+        regs.fpu.FPSR.quotient = (static_cast<int8_t>(q) % 0x40);
     }
     fpu_postprocess(dst);
 }
 
 OP_F(fadd) {
-    mpfr_add(dst, dst, src, mpfr_get_default_rounding_mode());
+    mpfr_add(dst, dst, src, regs.fpu.rnd_mode);
     fpu_postprocess(dst);
 }
 
 OP_F(fmul) {
-    mpfr_mul(dst, dst, src, mpfr_get_default_rounding_mode());
+    mpfr_mul(dst, dst, src, regs.fpu.rnd_mode);
     fpu_postprocess(dst);
 }
 
 OP_F(fsgldiv) {
     MPFR_DECL_INIT(src_s, 24);
     MPFR_DECL_INIT(dst_s, 24);
-    mpfr_set(src_s, src, mpfr_get_default_rounding_mode());
-    mpfr_set(dst_s, dst, mpfr_get_default_rounding_mode());
-    mpfr_div(dst, dst_s, src_s, mpfr_get_default_rounding_mode());
+    mpfr_set(src_s, src, regs.fpu.rnd_mode);
+    mpfr_set(dst_s, dst, regs.fpu.rnd_mode);
+    mpfr_div(dst, dst_s, src_s, regs.fpu.rnd_mode);
     to_sgl(dst);
     fpu_postprocess(dst, false);
 }
 
 OP_F(frem) {
     long q;
-    mpfr_remquo(dst, &q, dst, src, mpfr_get_default_rounding_mode());
+    mpfr_remquo(dst, &q, dst, src, regs.fpu.rnd_mode);
     if(mpfr_number_p(dst)) {
-        regs.fpu.FPSR.qutinent = (static_cast<int8_t>(q) % 0x40);
+        regs.fpu.FPSR.quotient = (static_cast<int8_t>(q) % 0x40);
     }
     fpu_postprocess(dst);
 }
@@ -563,134 +570,133 @@ OP_F(fscale) {
         mpfr_set_nan(dst);
     }
     long exp = mpfr_get_si(src, MPFR_RNDZ);
-    mpfr_mul_2si(dst, src, exp, mpfr_get_default_rounding_mode());
+    mpfr_mul_2si(dst, src, exp, regs.fpu.rnd_mode);
     fpu_postprocess(dst);
 }
 
 OP_F(fsglmul) {
     MPFR_DECL_INIT(src_s, 24);
     MPFR_DECL_INIT(dst_s, 24);
-    mpfr_set(src_s, src, mpfr_get_default_rounding_mode());
-    mpfr_set(dst_s, dst, mpfr_get_default_rounding_mode());
-    mpfr_mul(dst, dst_s, src_s, mpfr_get_default_rounding_mode());
+    mpfr_set(src_s, src, regs.fpu.rnd_mode);
+    mpfr_set(dst_s, dst, regs.fpu.rnd_mode);
+    mpfr_mul(dst, dst_s, src_s, regs.fpu.rnd_mode);
     to_sgl(dst);
     fpu_postprocess(dst, false);
 }
 
 OP_F(fsub) {
-    mpfr_sub(dst, dst, src, mpfr_get_default_rounding_mode());
+    mpfr_sub(dst, dst, src, regs.fpu.rnd_mode);
     fpu_postprocess(dst);
 }
 
 template <int i> OP_F(fsincos) {
     if(dst != regs.fpu.fp[i]) {
-        mpfr_sin_cos(dst, regs.fpu.fp[i], src,
-                     mpfr_get_default_rounding_mode());
+        mpfr_sin_cos(dst, regs.fpu.fp[i], src, regs.fpu.rnd_mode);
     } else {
-        mpfr_sin(dst, src, mpfr_get_default_rounding_mode());
+        mpfr_sin(dst, src, regs.fpu.rnd_mode);
     }
     fpu_postprocess(dst);
 }
 
 OP_F(fcmp) {
     MPFR_DECL_INIT(tmp, 64);
-    mpfr_sub(tmp, dst, src, mpfr_get_default_rounding_mode());
+    mpfr_sub(tmp, dst, src, regs.fpu.rnd_mode);
     fpu_postprocess(tmp);
 }
 
 OP_F(ftst) { fpu_postprocess(src); }
 
 OP_F(fsmove) {
-    mpfr_set(dst, src, mpfr_get_default_rounding_mode());
+    mpfr_set(dst, src, regs.fpu.rnd_mode);
     to_sgl(dst);
     fpu_postprocess(dst);
 }
 
 OP_F(fssqrt) {
-    mpfr_sqrt(dst, src, mpfr_get_default_rounding_mode());
+    mpfr_sqrt(dst, src, regs.fpu.rnd_mode);
     to_sgl(dst);
     fpu_postprocess(dst);
 }
 
 OP_F(fdmove) {
-    mpfr_set(dst, src, mpfr_get_default_rounding_mode());
+    mpfr_set(dst, src, regs.fpu.rnd_mode);
     to_dbl(dst);
     fpu_postprocess(dst);
 }
 
 OP_F(fdsqrt) {
-    mpfr_sqrt(dst, src, mpfr_get_default_rounding_mode());
+    mpfr_sqrt(dst, src, regs.fpu.rnd_mode);
     to_dbl(dst);
     fpu_postprocess(dst);
 }
 
 OP_F(fsabs) {
-    mpfr_abs(dst, src, mpfr_get_default_rounding_mode());
+    mpfr_abs(dst, src, regs.fpu.rnd_mode);
     to_sgl(dst);
     fpu_postprocess(dst);
 }
 
 OP_F(fsneg) {
-    mpfr_neg(dst, src, mpfr_get_default_rounding_mode());
+    mpfr_neg(dst, src, regs.fpu.rnd_mode);
     to_sgl(dst);
     fpu_postprocess(dst);
 }
 
 OP_F(fdabs) {
-    mpfr_abs(dst, src, mpfr_get_default_rounding_mode());
+    mpfr_abs(dst, src, regs.fpu.rnd_mode);
     to_dbl(dst);
     fpu_postprocess(dst);
 }
 
 OP_F(fdneg) {
-    mpfr_neg(dst, src, mpfr_get_default_rounding_mode());
+    mpfr_neg(dst, src, regs.fpu.rnd_mode);
     to_dbl(dst);
     fpu_postprocess(dst);
 }
 
 OP_F(fsdiv) {
-    mpfr_div(dst, dst, src, mpfr_get_default_rounding_mode());
+    mpfr_div(dst, dst, src, regs.fpu.rnd_mode);
     to_sgl(dst);
     fpu_postprocess(dst);
 }
 
 OP_F(fsadd) {
-    mpfr_add(dst, dst, src, mpfr_get_default_rounding_mode());
+    mpfr_add(dst, dst, src, regs.fpu.rnd_mode);
     to_sgl(dst);
     fpu_postprocess(dst);
 }
 
 OP_F(fsmul) {
-    mpfr_mul(dst, dst, src, mpfr_get_default_rounding_mode());
+    mpfr_mul(dst, dst, src, regs.fpu.rnd_mode);
     to_sgl(dst);
     fpu_postprocess(dst);
 }
 OP_F(fddiv) {
-    mpfr_div(dst, dst, src, mpfr_get_default_rounding_mode());
+    mpfr_div(dst, dst, src, regs.fpu.rnd_mode);
     to_dbl(dst);
     fpu_postprocess(dst);
 }
 
 OP_F(fdadd) {
-    mpfr_add(dst, dst, src, mpfr_get_default_rounding_mode());
+    mpfr_add(dst, dst, src, regs.fpu.rnd_mode);
     to_dbl(dst);
     fpu_postprocess(dst);
 }
 
 OP_F(fdmul) {
-    mpfr_mul(dst, dst, src, mpfr_get_default_rounding_mode());
+    mpfr_mul(dst, dst, src, regs.fpu.rnd_mode);
     to_dbl(dst);
     fpu_postprocess(dst);
 }
 
 OP_F(fssub) {
-    mpfr_sub(dst, dst, src, mpfr_get_default_rounding_mode());
+    mpfr_sub(dst, dst, src, regs.fpu.rnd_mode);
     to_sgl(dst);
     fpu_postprocess(dst);
 }
 
 OP_F(fdsub) {
-    mpfr_sub(dst, dst, src, mpfr_get_default_rounding_mode());
+    mpfr_sub(dst, dst, src, regs.fpu.rnd_mode);
     to_dbl(dst);
     fpu_postprocess(dst);
 }
@@ -719,13 +725,12 @@ static fpu_op_t fpu_op_t_table[0x80] = {
     op_fddiv,      nullptr,       op_fdadd,      op_fdmul,      op_fssub,
     nullptr,       nullptr,       nullptr,       op_fdsub};
 
-void fmove_to(int type, int reg, int d_type, uint8_t k, mpfr_t value) {
+void fmove_to(int type, int reg, int d_type, uint8_t k, mpfr_ptr value) {
     regs.i_ea = 0;
     switch(d_type) {
     case 0: {
-        regs.fpu.FPSR.operr =
-            mpfr_fits_sint_p(value, mpfr_get_default_rounding_mode());
-        int32_t v = mpfr_get_sj(value, mpfr_get_default_rounding_mode());
+        regs.fpu.FPSR.operr = mpfr_fits_sint_p(value, regs.fpu.rnd_mode);
+        int32_t v = mpfr_get_sj(value, regs.fpu.rnd_mode);
         regs.fpu.FPSR.inex2 = mpfr_inexflag_p();
         EA_WRITE32(type, reg, v);
         break;
@@ -746,10 +751,9 @@ void fmove_to(int type, int reg, int d_type, uint8_t k, mpfr_t value) {
         break;
     }
     case 4: {
-        regs.fpu.FPSR.operr =
-            mpfr_fits_sshort_p(value, mpfr_get_default_rounding_mode());
+        regs.fpu.FPSR.operr = mpfr_fits_sshort_p(value, regs.fpu.rnd_mode);
 
-        int16_t v = mpfr_get_sj(value, mpfr_get_default_rounding_mode());
+        int16_t v = mpfr_get_sj(value, regs.fpu.rnd_mode);
         regs.fpu.FPSR.inex2 = mpfr_inexflag_p();
         EA_WRITE16(type, reg, v);
         break;
@@ -760,7 +764,7 @@ void fmove_to(int type, int reg, int d_type, uint8_t k, mpfr_t value) {
         break;
     }
     case 6: {
-        int16_t v = mpfr_get_sj(value, mpfr_get_default_rounding_mode());
+        int16_t v = mpfr_get_sj(value, regs.fpu.rnd_mode);
         regs.fpu.FPSR.inex2 = mpfr_inexflag_p();
         regs.fpu.FPSR.operr = v > 127 || v < -128;
         EA_WRITE8(type, reg, v);
@@ -775,28 +779,29 @@ void fmove_to(int type, int reg, int d_type, uint8_t k, mpfr_t value) {
 }
 
 uint32_t get_fpcr() {
-    int rnd = 0;
-    switch(mpfr_get_default_rounding_mode()) {
+    RND_MODE rnd = RND_MODE::ROUND_RN;
+    switch(regs.fpu.rnd_mode) {
     case MPFR_RNDN:
-        rnd = ROUND_RN;
+        rnd = RND_MODE::ROUND_RN;
         break;
     case MPFR_RNDZ:
-        rnd = ROUND_RZ;
+        rnd = RND_MODE::ROUND_RZ;
         break;
     case MPFR_RNDD:
-        rnd = ROUND_RM;
+        rnd = RND_MODE::ROUND_RM;
         break;
     case MPFR_RNDU:
-        rnd = ROUND_RP;
+        rnd = RND_MODE::ROUND_RP;
         break;
     default:
         break;
     }
-    return rnd << 4 | regs.fpu.FPCR.prec << 6 | regs.fpu.FPCR.inex1 << 8 |
-           regs.fpu.FPCR.inex2 << 9 | regs.fpu.FPCR.dz << 10 |
-           regs.fpu.FPCR.unfl << 11 | regs.fpu.FPCR.ovfl << 12 |
-           regs.fpu.FPCR.operr << 13 | regs.fpu.FPCR.snan << 14 |
-           regs.fpu.FPCR.bsun << 15;
+    return static_cast<int>(rnd) << 4 |
+           static_cast<int>(regs.fpu.FPCR.prec) << 6 |
+           regs.fpu.FPCR.inex1 << 8 | regs.fpu.FPCR.inex2 << 9 |
+           regs.fpu.FPCR.dz << 10 | regs.fpu.FPCR.unfl << 11 |
+           regs.fpu.FPCR.ovfl << 12 | regs.fpu.FPCR.operr << 13 |
+           regs.fpu.FPCR.snan << 14 | regs.fpu.FPCR.bsun << 15;
 }
 
 void set_fpcr(uint32_t v) {
@@ -808,19 +813,19 @@ void set_fpcr(uint32_t v) {
     regs.fpu.FPCR.dz = v >> 10 & 1;
     regs.fpu.FPCR.inex2 = v >> 9 & 1;
     regs.fpu.FPCR.inex1 = v >> 8 & 1;
-    regs.fpu.FPCR.prec = v >> 6 & 3;
-    switch(v >> 4 & 3) {
-    case ROUND_RN:
-        mpfr_set_default_rounding_mode(MPFR_RNDN);
+    regs.fpu.FPCR.prec = static_cast<RND_PREC>(v >> 6 & 3);
+    switch(static_cast<RND_MODE>(v >> 4 & 3)) {
+    case RND_MODE::ROUND_RN:
+        mpfr_set_default_rounding_mode(regs.fpu.rnd_mode = MPFR_RNDN);
         break;
-    case ROUND_RZ:
-        mpfr_set_default_rounding_mode(MPFR_RNDZ);
+    case RND_MODE::ROUND_RZ:
+        mpfr_set_default_rounding_mode(regs.fpu.rnd_mode = MPFR_RNDZ);
         break;
-    case ROUND_RM:
-        mpfr_set_default_rounding_mode(MPFR_RNDD);
+    case RND_MODE::ROUND_RM:
+        mpfr_set_default_rounding_mode(regs.fpu.rnd_mode = MPFR_RNDD);
         break;
-    case ROUND_RP:
-        mpfr_set_default_rounding_mode(MPFR_RNDU);
+    case RND_MODE::ROUND_RP:
+        mpfr_set_default_rounding_mode(regs.fpu.rnd_mode = MPFR_RNDU);
         break;
     }
 }
@@ -828,7 +833,7 @@ void set_fpcr(uint32_t v) {
 uint32_t get_fpsr() {
     return regs.fpu.FPSR.n << 27 | regs.fpu.FPSR.z << 26 |
            regs.fpu.FPSR.i << 25 | regs.fpu.FPSR.nan << 24 |
-           (regs.fpu.FPSR.qutinent & 0xff) << 16 | regs.fpu.FPSR.bsun << 15 |
+           (regs.fpu.FPSR.quotient & 0xff) << 16 | regs.fpu.FPSR.bsun << 15 |
            regs.fpu.FPSR.snan << 14 | regs.fpu.FPSR.operr << 13 |
            regs.fpu.FPSR.ovfl << 12 | regs.fpu.FPSR.unfl << 11 |
            regs.fpu.FPSR.dz << 10 | regs.fpu.FPSR.inex2 << 9 |
@@ -842,7 +847,7 @@ void set_fpsr(uint32_t v) {
     regs.fpu.FPSR.i = v >> 25 & 1;
     regs.fpu.FPSR.nan = v >> 24 & 1;
     int8_t qut = v >> 16 & 0xff;
-    regs.fpu.FPSR.qutinent = qut;
+    regs.fpu.FPSR.quotient = qut;
     regs.fpu.FPSR.bsun = v >> 15 & 1;
     regs.fpu.FPSR.snan = v >> 14 & 1;
     regs.fpu.FPSR.operr = v >> 13 & 1;
@@ -1046,7 +1051,7 @@ OP(fpu_op) {
             switch(src_s) {
             case 0:
                 mpfr_set_si(src, static_cast<int32_t>(EA_READ32(type, reg)),
-                            mpfr_get_default_rounding_mode());
+                            regs.fpu.rnd_mode);
                 break;
             case 1: {
                 uint32_t addr = EA_Addr(type, reg, 4, false);
@@ -1065,7 +1070,7 @@ OP(fpu_op) {
             }
             case 4:
                 mpfr_set_si(src, static_cast<int16_t>(EA_READ16(type, reg)),
-                            mpfr_get_default_rounding_mode());
+                            regs.fpu.rnd_mode);
                 break;
             case 5: {
                 uint32_t addr = EA_Addr(type, reg, 8, false);
@@ -1074,15 +1079,16 @@ OP(fpu_op) {
             }
             case 6:
                 mpfr_set_si(src, static_cast<int8_t>(EA_READ8(type, reg)),
-                            mpfr_get_default_rounding_mode());
+                            regs.fpu.rnd_mode);
                 break;
             case 7:
+                mpfr_prec_round(regs.fpu.fp[dst_r], 64, regs.fpu.rnd_mode);
                 fmove_cr(opc2, regs.fpu.fp[dst_r]);
                 fpu_postprocess(regs.fpu.fp[dst_r]);
                 return;
             }
         } else {
-            mpfr_set(src, regs.fpu.fp[src_s], mpfr_get_default_rounding_mode());
+            mpfr_set(src, regs.fpu.fp[src_s], regs.fpu.rnd_mode);
         }
         if(fpu_op_t_table[opc2]) {
             regs.fpu.FPSR.bsun = false;
@@ -1090,6 +1096,7 @@ OP(fpu_op) {
             regs.fpu.FPSR.ovfl = false;
             regs.fpu.FPSR.unfl = false;
             regs.fpu.FPSR.dz = false;
+            mpfr_prec_round(regs.fpu.fp[dst_r], 64, regs.fpu.rnd_mode);
             fpu_op_t_table[opc2](src, regs.fpu.fp[dst_r]);
         } else {
             FP_UNDEF();

@@ -16,7 +16,7 @@ BOOST_AUTO_TEST_CASE(both_imm) {
     write16(0, 0164700 | ea);
     write16(2, dn << 12 | off << 6 | w);
     m68k_do_execute();
-    BOOST_TEST(regs.d[dn] == (1lu << w) - 1);
+    BOOST_TEST(regs.d[dn] == (1llu << w) - 1);
 }
 
 BOOST_AUTO_TEST_CASE(width_reg) {

@@ -55,7 +55,7 @@ BOOST_AUTO_TEST_CASE(value, *boost::unit_test::tolerance(0.000001)) {
     asm_m68k("frem.x %FP2, %FP3");
     m68k_do_execute();
     BOOST_TEST(regs.fp[3] == 1.0);
-    BOOST_TEST(regs.FPSR.qutinent == 4.0);
+    BOOST_TEST(regs.FPSR.quotient == 4.0);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

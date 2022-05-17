@@ -3,49 +3,32 @@
 #include "memory.h"
 #include "newcpu.h"
 #include "test/test_common.h"
-#include <boost/test/data/test_case.hpp>
-#include <boost/test/unit_test.hpp>
 BOOST_FIXTURE_TEST_SUITE(FATANH, InitFix)
-BOOST_DATA_TEST_CASE(zero, bdata::xrange(2), sg) {
-    regs.fp[2] = sg ? -0.0 : 0.0;
-    asm_m68k("fatanh.x %FP2, %FP3");
-    m68k_do_execute();
-    BOOST_TEST(signbit(regs.fp[3]) == sg);
-    BOOST_TEST(regs.fp[3] == 0.0);
-}
-BOOST_DATA_TEST_CASE(inf, bdata::xrange(2), sg) {
-    regs.fp[2] = sg ? -INFINITY : INFINITY;
-    asm_m68k("fatanh.x %FP2, %FP3");
-    m68k_do_execute();
-    BOOST_TEST(isnan(regs.fp[3]));
+BOOST_AUTO_TEST_CASE(operand, *boost::unit_test::tolerance(1e-12)) {
+    double in = get_rx(-0.5, 0.5);
+    fpu_test(0x0D, in, 0.0, atanh(in));
 }
 
-BOOST_AUTO_TEST_CASE(nan_) {
-    regs.fp[2] = NAN;
-    asm_m68k("fatanh.x %FP2, %FP3");
-    m68k_do_execute();
-    BOOST_TEST(isnan(regs.fp[3]));
+BOOST_DATA_TEST_CASE(zero, SIGN, sg) {
+    double in = copysign(0.0, sg);
+    fpu_test(0x0D, in, 0.0, in);
 }
 
-BOOST_AUTO_TEST_CASE(value, *boost::unit_test::tolerance(0.000001)) {
-    regs.fp[2] = 0.5;
-    asm_m68k("fatanh.x %FP2, %FP3");
-    m68k_do_execute();
-    BOOST_TEST(regs.fp[3] == 0.549306144334055);
+BOOST_DATA_TEST_CASE(inf, SIGN, sg) {
+    fpu_test<double>(0x0D, copysign(INFINITY, sg), 0.0, NAN);
+    BOOST_TEST(regs.fpu.FPSR.operr);
 }
 
-BOOST_AUTO_TEST_CASE(dz) {
-    regs.fp[2] = 1.0;
-    asm_m68k("fatanh.x %FP2, %FP3");
-    m68k_do_execute();
-    BOOST_TEST(isinf(regs.fp[3]));
-    BOOST_TEST(regs.FPSR.dz);
+BOOST_AUTO_TEST_CASE(nan_) { fpu_test<double>(0x0D, NAN, 0.0, NAN); }
+
+BOOST_DATA_TEST_CASE(dz, SIGN, sg) {
+    fpu_test<double>(0x0D, copysign(1.0, sg), 0.0, copysign(INFINITY, sg));
+    BOOST_TEST(regs.fpu.FPSR.dz);
 }
+
 BOOST_AUTO_TEST_CASE(operr) {
-    regs.fp[2] = 2.0;
-    asm_m68k("fatanh.x %FP2, %FP3");
-    m68k_do_execute();
-    BOOST_TEST(isnan(regs.fp[3]));
-    BOOST_TEST(regs.FPSR.operr);
+    fpu_test<double>(0x0D, 2.0, 0.0, NAN);
+    BOOST_TEST(regs.fpu.FPSR.operr);
 }
+
 BOOST_AUTO_TEST_SUITE_END()

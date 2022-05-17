@@ -16,11 +16,6 @@ void raw_write32(uint32_t addr, uint32_t v);
 const int SIGN[2] = {-1, 1};
 const bool BIT[2] = {false, true};
 inline auto REG() { return bdata::xrange(0, 8); }
-const int REG2[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
-inline auto EA_D() { return bdata::xrange(8) + bdata::xrange(020, 072); }
-inline auto EA_M() { return bdata::xrange(020, 072); }
-inline auto EA_D_R() { return bdata::xrange(8) + bdata::xrange(020, 075); }
-inline auto EA_M_R() { return bdata::xrange(020, 074); }
 int rand_reg();
 int rand_ar();
 std::pair<int, int> rand_reg2();
@@ -30,6 +25,8 @@ uint8_t get_v8();
 uint16_t get_v16();
 uint32_t get_v32();
 uint64_t get_vn(int mn, int mx);
+
+double get_rx(double mn, double mx);
 using op_t = void (*)(uint16_t, int, int, int);
 extern op_t opc_map[65536 >> 6];
 struct InitFix {
@@ -38,6 +35,49 @@ struct InitFix {
 };
 
 void exception_check(int e);
+struct xval {
+    long frac;
+    int exp;
+};
+void set_fpu_reg(int reg, const xval &v);
+void set_fpu_reg(int reg, double v);
+void set_fpu_reg(int reg, float v);
 
-void set_fpu(int reg, double v);
-double get_fpu(int reg);
+template <class T, class T2 = T>
+void fpu_test(char op, T v1, T v2, T2 expected) {
+    auto [src, dst] = rand_reg2();
+    set_fpu_reg(src, v1);
+    set_fpu_reg(dst, v2);
+    raw_write16(0, 0171000);
+    raw_write16(2, src << 10 | dst << 7 | op);
+    m68k_do_execute();
+    switch(fpclassify(expected)) {
+    case FP_NAN:
+        BOOST_TEST(mpfr_nan_p(regs.fpu.fp[dst]));
+        break;
+    case FP_INFINITE:
+        BOOST_TEST(mpfr_inf_p(regs.fpu.fp[dst]));
+        BOOST_TEST(mpfr_signbit(regs.fpu.fp[dst]) == signbit(expected));
+        break;
+    case FP_ZERO:
+        BOOST_TEST(mpfr_zero_p(regs.fpu.fp[dst]));
+        BOOST_TEST(mpfr_signbit(regs.fpu.fp[dst]) == signbit(expected));
+        break;
+    default:
+        if(sizeof(T2) == sizeof(float)) {
+            BOOST_CHECK_CLOSE(
+                mpfr_get_flt(regs.fpu.fp[dst], MPFR_RNDN), expected, 1e-04);
+        } else if(sizeof(T2) == sizeof(double)) {
+            BOOST_CHECK_CLOSE(mpfr_get_d(regs.fpu.fp[dst], MPFR_RNDN),
+                                       expected, 1e-10);
+        }
+        break;
+    }
+}
+
+#ifndef NAN
+constexpr double NAN = std::numeric_limits<double>::quiet_NaN();
+#endif
+#ifndef INFINITY
+constexpr double INFINITY = std::numeric_limits<double>::infinity();
+#endif

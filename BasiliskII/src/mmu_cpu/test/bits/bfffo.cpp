@@ -48,7 +48,7 @@ BOOST_AUTO_TEST_CASE(off_reg) {
     m68k_do_execute();
     uint32_t mask = 0xffffffffU << (32 - w) >> (32 - w);
     uint32_t vv = std::rotl<uint32_t>(v1, w + off) & mask;
-    BOOST_TEST(regs.d[dn] == off + (w + std::countl_zero(vv) - 32));
+    BOOST_TEST(regs.d[dn] == off + (w + (vv==0?32:std::countl_zero(vv)) - 32));
 }
 
 BOOST_AUTO_TEST_SUITE_END()
