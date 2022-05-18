@@ -3,303 +3,233 @@
 #include "memory.h"
 #include "newcpu.h"
 #include "test/test_common.h"
-#include <boost/test/data/test_case.hpp>
-#include <boost/test/unit_test.hpp>
+static mpfr_rnd_t modes[] = {MPFR_RNDN, MPFR_RNDZ, MPFR_RNDU, MPFR_RNDD};
 BOOST_FIXTURE_TEST_SUITE(FSUB, InitFix)
+
+BOOST_AUTO_TEST_CASE(operand) {
+    double v1 = get_rx(-10.0, 10.0);
+    double v2 = get_rx(-10.0, 10.0);
+    fpu_test(0x28, v1, v2, v2 - v1);
+}
+
+// 0 - X
 BOOST_AUTO_TEST_SUITE(zero_with)
+
 BOOST_DATA_TEST_CASE(normal, SIGN, sg) {
-    regs.fp[3] = copysign(0.0, sg);
-    regs.fp[2] = 1.0;
-    asm_m68k("fsub.x %FP2, %FP3");
-    m68k_do_execute();
-    BOOST_TEST(regs.fp[3] == -1.0);
+    double d = get_rx(-10.0, 10.0);
+    fpu_test(0x28, d, copysign(0.0, sg), -d);
 }
 
-BOOST_DATA_TEST_CASE(infinity, SIGN, sg) {
-    regs.fp[3] = copysign(0.0, sg);
-    regs.fp[2] = INFINITY;
-    asm_m68k("fsub.x %FP2, %FP3");
-    m68k_do_execute();
-    BOOST_TEST(isinf(regs.fp[3]));
-    BOOST_TEST(signbit(regs.fp[3]));
+BOOST_DATA_TEST_CASE(infinity, SIGN *SIGN, sg1, sg2) {
+    double d = copysign(INFINITY, sg2);
+    fpu_test(0x28, d, copysign(0.0, sg1), -d);
 }
 
-BOOST_DATA_TEST_CASE(zero, SIGN, sg) {
-    regs.fp[3] = copysign(0.0, sg);
-    regs.fp[2] = 0.0;
-    asm_m68k("fsub.x %FP2, %FP3");
-    m68k_do_execute();
-    BOOST_TEST(regs.fp[3] == 0.0);
+BOOST_DATA_TEST_CASE(zero, SIGN *SIGN *modes, sg1, sg2, mode) {
+    regs.fpu.rnd_mode = mode;
+    double expected = 0.0;
+    if((sg1 == 1 && sg2 == -1) || (sg1 == sg2 && mode == MPFR_RNDD)) {
+        expected = -0.0;
+    }
+    fpu_test(0x28, copysign(0.0, sg1), copysign(0.0, sg2), expected);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
+// ∞ - X
 BOOST_AUTO_TEST_SUITE(infinity_with)
 BOOST_DATA_TEST_CASE(normal, SIGN, sg) {
-    regs.fp[2] = 1.0;
-    regs.fp[3] = copysign(INFINITY, sg);
-    asm_m68k("fsub.x %FP2, %FP3");
-    m68k_do_execute();
-    BOOST_TEST(isinf(regs.fp[3]));
-    BOOST_TEST(signbit(regs.fp[3]) == signbit(sg));
+    double e = copysign(INFINITY, sg);
+    fpu_test(0x28, get_rx(-10.0, 10.0), e, e);
 }
 
-BOOST_DATA_TEST_CASE(zero, SIGN, sg) {
-    regs.fp[2] = 0.0;
-    regs.fp[3] = copysign(INFINITY, sg);
-    asm_m68k("fsub.x %FP2, %FP3");
-    m68k_do_execute();
-    BOOST_TEST(isinf(regs.fp[3]));
-    BOOST_TEST(signbit(regs.fp[3]) == signbit(sg));
+BOOST_DATA_TEST_CASE(zero, SIGN *SIGN, sg1, sg2) {
+    double e = copysign(INFINITY, sg2);
+    fpu_test(0x28, copysign(0.0, sg1), e, e);
 }
 
-BOOST_DATA_TEST_CASE(inf, SIGN, sg) {
-    regs.fp[2] = copysign(INFINITY, -sg);
-    regs.fp[3] = copysign(INFINITY, sg);
-    asm_m68k("fsub.x %FP2, %FP3");
-    m68k_do_execute();
-    BOOST_TEST(isinf(regs.fp[3]));
-    BOOST_TEST(signbit(regs.fp[3]) == signbit(sg));
+BOOST_DATA_TEST_CASE(inf, SIGN *SIGN, sg1, sg2) {
+    double d = copysign(INFINITY, sg1);
+    fpu_test(0x28, copysign(INFINITY, sg2), d, (sg1 != sg2) ? d : NAN);
+    if(sg1 == sg2) {
+        BOOST_TEST(regs.fpu.FPSR.operr);
+    }
 }
 BOOST_AUTO_TEST_SUITE_END()
+BOOST_DATA_TEST_CASE(with_zero, SIGN, sg) {
+    double c = get_rx(0.1, 10.0);
+    fpu_test(0x28, copysign(0.0, sg), c, c);
+}
+
+BOOST_DATA_TEST_CASE(with_inf, SIGN, sg) {
+    double inf = copysign(INFINITY, sg);
+    fpu_test(0x28, inf, get_rx(0.1, 10.0), -inf);
+}
+
 BOOST_AUTO_TEST_CASE(nan1) {
-    regs.fp[2] = 1.0;
-    regs.fp[3] = NAN;
-    asm_m68k("fsub.x %FP2, %FP3");
-    m68k_do_execute();
-    BOOST_TEST(isnan(regs.fp[3]));
+    fpu_test<double>(0x28, NAN, get_rx(-10.0, 10.0), NAN);
 }
 
 BOOST_AUTO_TEST_CASE(nan2) {
-    regs.fp[3] = 1.0;
-    regs.fp[2] = NAN;
-    asm_m68k("fsub.x %FP2, %FP3");
-    m68k_do_execute();
-    BOOST_TEST(isnan(regs.fp[3]));
-}
-
-BOOST_DATA_TEST_CASE(operr, SIGN, sg) {
-    regs.fp[2] = copysign(INFINITY, sg);
-    regs.fp[3] = copysign(INFINITY, sg);
-    asm_m68k("fsub.x %FP2, %FP3");
-    m68k_do_execute();
-    BOOST_TEST(isnan(regs.fp[3]));
-    BOOST_TEST(regs.FPSR.operr);
-}
-
-BOOST_AUTO_TEST_CASE(value, *boost::unit_test::tolerance(0.000001)) {
-    regs.fp[3] = 10.0;
-    regs.fp[2] = 2.0;
-    asm_m68k("fsub.x %FP2, %FP3");
-    m68k_do_execute();
-    BOOST_TEST(regs.fp[3] == 8.0);
+    fpu_test<double>(0x28, get_rx(-10.0, 10.0), NAN, NAN);
 }
 
 BOOST_AUTO_TEST_CASE(ovfl) {
-    regs.fp[2] = -std::numeric_limits<double>::max();
-    regs.fp[3] = std::numeric_limits<double>::max();
-    asm_m68k("fsub.x %FP2, %FP3");
-    m68k_do_execute();
-    BOOST_TEST(regs.FPSR.ovfl);
+    xval xm{1, 0x3ffe};
+    xval ym{-1, 0x3ffe};
+    fpu_test<xval, double>(0x28, xm, ym, INFINITY);
+    BOOST_TEST(regs.fpu.FPSR.ovfl);
 }
-
 BOOST_AUTO_TEST_SUITE_END()
-
 
 BOOST_FIXTURE_TEST_SUITE(FSSUB, InitFix)
+
+BOOST_AUTO_TEST_CASE(operand) {
+    double v1 = get_rx(-10.0, 10.0);
+    double v2 = get_rx(-10.0, 10.0);
+    fpu_test(0x68, v1, v2, static_cast<float>(v2 - v1));
+}
+
+// 0 - X
 BOOST_AUTO_TEST_SUITE(zero_with)
+
 BOOST_DATA_TEST_CASE(normal, SIGN, sg) {
-    regs.fp[3] = copysignf(0.0f, sg);
-    regs.fp[2] = 1.0f;
-    asm_m68k("fssub.x %FP2, %FP3");
-    m68k_do_execute();
-    BOOST_TEST(regs.fp[3] == -1.0f);
+    double d = get_rx(-10.0, 10.0);
+    fpu_test(0x68, d, copysign(0.0, sg), static_cast<float>(-d));
 }
 
-BOOST_DATA_TEST_CASE(infinity, SIGN, sg) {
-    regs.fp[3] = copysignf(0.0f, sg);
-    regs.fp[2] = INFINITY;
-    asm_m68k("fssub.x %FP2, %FP3");
-    m68k_do_execute();
-    BOOST_TEST(isinf(regs.fp[3]));
-    BOOST_TEST(signbit(regs.fp[3]));
+BOOST_DATA_TEST_CASE(infinity, SIGN *SIGN, sg1, sg2) {
+    double d = copysign(INFINITY, sg2);
+    fpu_test(0x68, d, copysign(0.0, sg1), static_cast<float>(-d));
 }
 
-BOOST_DATA_TEST_CASE(zero, SIGN, sg) {
-    regs.fp[3] = copysign(0.0f, sg);
-    regs.fp[2] = 0.0f;
-    asm_m68k("fssub.x %FP2, %FP3");
-    m68k_do_execute();
-    BOOST_TEST(regs.fp[3] == 0.0f);
+BOOST_DATA_TEST_CASE(zero, SIGN *SIGN *modes, sg1, sg2, mode) {
+    regs.fpu.rnd_mode = mode;
+    float expected = 0.0f;
+    if((sg1 == 1 && sg2 == -1) || (sg1 == sg2 && mode == MPFR_RNDD)) {
+        expected = -0.0f;
+    }
+    fpu_test(0x28, copysign(0.0, sg1), copysign(0.0, sg2), expected);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
+// ∞ - X
 BOOST_AUTO_TEST_SUITE(infinity_with)
 BOOST_DATA_TEST_CASE(normal, SIGN, sg) {
-    regs.fp[2] = 1.0f;
-    regs.fp[3] = copysignf(INFINITY, sg);
-    asm_m68k("fssub.x %FP2, %FP3");
-    m68k_do_execute();
-    BOOST_TEST(isinf(regs.fp[3]));
-    BOOST_TEST(signbit(regs.fp[3]) == signbit(sg));
+    double e = copysign(INFINITY, sg);
+    fpu_test(0x68, get_rx(-10.0, 10.0), e, static_cast<float>(e));
 }
 
-BOOST_DATA_TEST_CASE(zero, SIGN, sg) {
-    regs.fp[2] = 0.0f;
-    regs.fp[3] = copysignf(INFINITY, sg);
-    asm_m68k("fssub.x %FP2, %FP3");
-    m68k_do_execute();
-    BOOST_TEST(isinf(regs.fp[3]));
-    BOOST_TEST(signbit(regs.fp[3]) == signbit(sg));
+BOOST_DATA_TEST_CASE(zero, SIGN *SIGN, sg1, sg2) {
+    double e = copysign(INFINITY, sg2);
+    fpu_test(0x68, copysign(0.0, sg1), e, static_cast<float>(e));
 }
 
-BOOST_DATA_TEST_CASE(inf, SIGN, sg) {
-    regs.fp[2] = copysignf(INFINITY, -sg);
-    regs.fp[3] = copysignf(INFINITY, sg);
-    asm_m68k("fssub.x %FP2, %FP3");
-    m68k_do_execute();
-    BOOST_TEST(isinf(regs.fp[3]));
-    BOOST_TEST(signbit(regs.fp[3]) == signbit(sg));
+BOOST_DATA_TEST_CASE(inf, SIGN *SIGN, sg1, sg2) {
+    double d = copysign(INFINITY, sg1);
+    fpu_test<double, float>(0x68, copysign(INFINITY, sg2), d, (sg1 != sg2) ? d : NAN);
+    if(sg1 == sg2) {
+        BOOST_TEST(regs.fpu.FPSR.operr);
+    }
 }
 BOOST_AUTO_TEST_SUITE_END()
+BOOST_DATA_TEST_CASE(with_zero, SIGN, sg) {
+    double c = get_rx(0.1, 10.0);
+    fpu_test<double, float>(0x68, copysign(0.0, sg), c, c);
+}
+
+BOOST_DATA_TEST_CASE(with_inf, SIGN, sg) {
+    double inf = copysign(INFINITY, sg);
+    fpu_test<double, float>(0x68, inf, get_rx(0.1, 10.0), -inf);
+}
+
 BOOST_AUTO_TEST_CASE(nan1) {
-    regs.fp[2] = 1.0f;
-    regs.fp[3] = NAN;
-    asm_m68k("fssub.x %FP2, %FP3");
-    m68k_do_execute();
-    BOOST_TEST(isnan(regs.fp[3]));
+    fpu_test<double, float>(0x68, NAN, get_rx(-10.0, 10.0), NAN);
 }
 
 BOOST_AUTO_TEST_CASE(nan2) {
-    regs.fp[3] = 1.0f;
-    regs.fp[2] = NAN;
-    asm_m68k("fssub.x %FP2, %FP3");
-    m68k_do_execute();
-    BOOST_TEST(isnan(regs.fp[3]));
-}
-
-BOOST_DATA_TEST_CASE(operr, SIGN, sg) {
-    regs.fp[2] = copysignf(INFINITY, sg);
-    regs.fp[3] = copysignf(INFINITY, sg);
-    asm_m68k("fssub.x %FP2, %FP3");
-    m68k_do_execute();
-    BOOST_TEST(isnan(regs.fp[3]));
-    BOOST_TEST(regs.FPSR.operr);
-}
-
-BOOST_AUTO_TEST_CASE(value, *boost::unit_test::tolerance(0.000001)) {
-    regs.fp[3] = 10.0f;
-    regs.fp[2] = 2.0f;
-    asm_m68k("fssub.x %FP2, %FP3");
-    m68k_do_execute();
-    BOOST_TEST(regs.fp[3] == 8.0f);
+    fpu_test<double, float>(0x68, get_rx(-10.0, 10.0), NAN, NAN);
 }
 
 BOOST_AUTO_TEST_CASE(ovfl) {
-    regs.fp[2] = -std::numeric_limits<float>::max();
-    regs.fp[3] = std::numeric_limits<float>::max();
-    asm_m68k("fssub.x %FP2, %FP3");
-    m68k_do_execute();
-    BOOST_TEST(regs.FPSR.ovfl);
+    xval xm{1, 0x3ffe};
+    xval ym{-1, 0x3ffe};
+    fpu_test<xval, float>(0x68, xm, ym, INFINITY);
+    BOOST_TEST(regs.fpu.FPSR.ovfl);
 }
-
 BOOST_AUTO_TEST_SUITE_END()
-
-
 BOOST_FIXTURE_TEST_SUITE(FDSUB, InitFix)
+
+BOOST_AUTO_TEST_CASE(operand) {
+    double v1 = get_rx(-10.0, 10.0);
+    double v2 = get_rx(-10.0, 10.0);
+    fpu_test(0x6c, v1, v2, v2 - v1);
+}
+
+// 0 - X
 BOOST_AUTO_TEST_SUITE(zero_with)
+
 BOOST_DATA_TEST_CASE(normal, SIGN, sg) {
-    regs.fp[3] = copysign(0.0, sg);
-    regs.fp[2] = 1.0;
-    asm_m68k("fdsub.x %FP2, %FP3");
-    m68k_do_execute();
-    BOOST_TEST(regs.fp[3] == -1.0);
+    double d = get_rx(-10.0, 10.0);
+    fpu_test(0x6c, d, copysign(0.0, sg), -d);
 }
 
-BOOST_DATA_TEST_CASE(infinity, SIGN, sg) {
-    regs.fp[3] = copysign(0.0, sg);
-    regs.fp[2] = INFINITY;
-    asm_m68k("fdsub.x %FP2, %FP3");
-    m68k_do_execute();
-    BOOST_TEST(isinf(regs.fp[3]));
-    BOOST_TEST(signbit(regs.fp[3]));
+BOOST_DATA_TEST_CASE(infinity, SIGN *SIGN, sg1, sg2) {
+    double d = copysign(INFINITY, sg2);
+    fpu_test(0x6c, d, copysign(0.0, sg1), -d);
 }
 
-BOOST_DATA_TEST_CASE(zero, SIGN, sg) {
-    regs.fp[3] = copysign(0.0, sg);
-    regs.fp[2] = 0.0;
-    asm_m68k("fdsub.x %FP2, %FP3");
-    m68k_do_execute();
-    BOOST_TEST(regs.fp[3] == 0.0);
+BOOST_DATA_TEST_CASE(zero, SIGN *SIGN *modes, sg1, sg2, mode) {
+    regs.fpu.rnd_mode = mode;
+    double expected = 0.0;
+    if((sg1 == 1 && sg2 == -1) || (sg1 == sg2 && mode == MPFR_RNDD)) {
+        expected = -0.0;
+    }
+    fpu_test(0x6c, copysign(0.0, sg1), copysign(0.0, sg2), expected);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
+// ∞ - X
 BOOST_AUTO_TEST_SUITE(infinity_with)
 BOOST_DATA_TEST_CASE(normal, SIGN, sg) {
-    regs.fp[2] = 1.0;
-    regs.fp[3] = copysign(INFINITY, sg);
-    asm_m68k("fdsub.x %FP2, %FP3");
-    m68k_do_execute();
-    BOOST_TEST(isinf(regs.fp[3]));
-    BOOST_TEST(signbit(regs.fp[3]) == signbit(sg));
+    double e = copysign(INFINITY, sg);
+    fpu_test(0x6c, get_rx(-10.0, 10.0), e, e);
 }
 
-BOOST_DATA_TEST_CASE(zero, SIGN, sg) {
-    regs.fp[2] = 0.0;
-    regs.fp[3] = copysign(INFINITY, sg);
-    asm_m68k("fdsub.x %FP2, %FP3");
-    m68k_do_execute();
-    BOOST_TEST(isinf(regs.fp[3]));
-    BOOST_TEST(signbit(regs.fp[3]) == signbit(sg));
+BOOST_DATA_TEST_CASE(zero, SIGN *SIGN, sg1, sg2) {
+    double e = copysign(INFINITY, sg2);
+    fpu_test(0x6c, copysign(0.0, sg1), e, e);
 }
 
-BOOST_DATA_TEST_CASE(inf, SIGN, sg) {
-    regs.fp[2] = copysign(INFINITY, -sg);
-    regs.fp[3] = copysign(INFINITY, sg);
-    asm_m68k("fdsub.x %FP2, %FP3");
-    m68k_do_execute();
-    BOOST_TEST(isinf(regs.fp[3]));
-    BOOST_TEST(signbit(regs.fp[3]) == signbit(sg));
+BOOST_DATA_TEST_CASE(inf, SIGN *SIGN, sg1, sg2) {
+    double d = copysign(INFINITY, sg1);
+    fpu_test(0x6c, copysign(INFINITY, sg2), d, (sg1 != sg2) ? d : NAN);
+    if(sg1 == sg2) {
+        BOOST_TEST(regs.fpu.FPSR.operr);
+    }
 }
 BOOST_AUTO_TEST_SUITE_END()
+BOOST_DATA_TEST_CASE(with_zero, SIGN, sg) {
+    double c = get_rx(0.1, 10.0);
+    fpu_test(0x6c, copysign(0.0, sg), c, c);
+}
+
+BOOST_DATA_TEST_CASE(with_inf, SIGN, sg) {
+    double inf = copysign(INFINITY, sg);
+    fpu_test(0x6c, inf, get_rx(0.1, 10.0), -inf);
+}
+
 BOOST_AUTO_TEST_CASE(nan1) {
-    regs.fp[2] = 1.0;
-    regs.fp[3] = NAN;
-    asm_m68k("fdsub.x %FP2, %FP3");
-    m68k_do_execute();
-    BOOST_TEST(isnan(regs.fp[3]));
+    fpu_test<double>(0x6c, NAN, get_rx(-10.0, 10.0), NAN);
 }
 
 BOOST_AUTO_TEST_CASE(nan2) {
-    regs.fp[3] = 1.0;
-    regs.fp[2] = NAN;
-    asm_m68k("fdsub.x %FP2, %FP3");
-    m68k_do_execute();
-    BOOST_TEST(isnan(regs.fp[3]));
-}
-
-BOOST_DATA_TEST_CASE(operr, SIGN, sg) {
-    regs.fp[2] = copysign(INFINITY, sg);
-    regs.fp[3] = copysign(INFINITY, sg);
-    asm_m68k("fdsub.x %FP2, %FP3");
-    m68k_do_execute();
-    BOOST_TEST(isnan(regs.fp[3]));
-    BOOST_TEST(regs.FPSR.operr);
-}
-
-BOOST_AUTO_TEST_CASE(value, *boost::unit_test::tolerance(0.000001)) {
-    regs.fp[3] = 10.0;
-    regs.fp[2] = 2.0;
-    asm_m68k("fdsub.x %FP2, %FP3");
-    m68k_do_execute();
-    BOOST_TEST(regs.fp[3] == 8.0);
+    fpu_test<double>(0x6c, get_rx(-10.0, 10.0), NAN, NAN);
 }
 
 BOOST_AUTO_TEST_CASE(ovfl) {
-    regs.fp[2] = -std::numeric_limits<double>::max();
-    regs.fp[3] = std::numeric_limits<double>::max();
-    asm_m68k("fdsub.x %FP2, %FP3");
-    m68k_do_execute();
-    BOOST_TEST(regs.FPSR.ovfl);
+    xval xm{1, 0x3ffe};
+    xval ym{-1, 0x3ffe};
+    fpu_test<xval, double>(0x6c, xm, ym, INFINITY);
+    BOOST_TEST(regs.fpu.FPSR.ovfl);
 }
-
 BOOST_AUTO_TEST_SUITE_END()

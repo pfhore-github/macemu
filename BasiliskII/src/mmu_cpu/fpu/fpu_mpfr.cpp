@@ -89,7 +89,7 @@ void load_ext(uint32_t addr, mpfr_ptr dst) {
             mpfr_set_nan(dst);
         }
     }
-    mpfr_set_sj_2exp(dst, mantissa, exp_v - 0x3ffe - 63, regs.fpu.rnd_mode);
+    mpfr_set_uj_2exp(dst, mantissa, exp_v - 0x3ffe - 64, regs.fpu.rnd_mode);
     mpfr_setsign(dst, dst, s, regs.fpu.rnd_mode);
 }
 
@@ -570,7 +570,7 @@ OP_F(fscale) {
         mpfr_set_nan(dst);
     }
     long exp = mpfr_get_si(src, MPFR_RNDZ);
-    mpfr_mul_2si(dst, src, exp, regs.fpu.rnd_mode);
+    mpfr_mul_2si(dst, dst, exp, regs.fpu.rnd_mode);
     fpu_postprocess(dst);
 }
 
@@ -591,6 +591,7 @@ OP_F(fsub) {
 
 template <int i> OP_F(fsincos) {
     if(dst != regs.fpu.fp[i]) {
+        mpfr_prec_round(regs.fpu.fp[i], 64, regs.fpu.rnd_mode);
         mpfr_sin_cos(dst, regs.fpu.fp[i], src, regs.fpu.rnd_mode);
     } else {
         mpfr_sin(dst, src, regs.fpu.rnd_mode);

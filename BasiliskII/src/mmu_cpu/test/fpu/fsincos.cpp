@@ -3,40 +3,46 @@
 #include "memory.h"
 #include "newcpu.h"
 #include "test/test_common.h"
-#include <boost/test/data/test_case.hpp>
-#include <boost/test/unit_test.hpp>
 BOOST_FIXTURE_TEST_SUITE(FSINCOS, InitFix)
-BOOST_DATA_TEST_CASE(zero, SIGN, sg) {
-    regs.fp[2] = copysign(0.0, sg);
-    asm_m68k("fsincos.x %FP2, %FP4, %FP3");
+BOOST_AUTO_TEST_CASE(operand) {
+    auto [r1, r2, r3] = rand_reg3();
+    double in = get_rx(-1.0, 1.0);
+    set_fpu_reg(r1, in);
+    raw_write16(0, 0171000);
+    raw_write16(2, r1 << 10 | r2 << 7 | 0x30 | r3);
     m68k_do_execute();
-    BOOST_TEST(signbit(regs.fp[3]) == signbit(sg));
-    BOOST_TEST(regs.fp[4] == 1.0);
-    BOOST_TEST(regs.fp[3] == 0.0);
+    BOOST_CHECK_CLOSE(mpfr_get_d(regs.fpu.fp[r2], MPFR_RNDN), sin(in), 1e-10);
+    BOOST_CHECK_CLOSE(mpfr_get_d(regs.fpu.fp[r3], MPFR_RNDN), cos(in), 1e-10);
+}
+BOOST_DATA_TEST_CASE(zero, SIGN, sg) {
+    auto [r1, r2, r3] = rand_reg3();
+    double x = copysign(0.0, sg);
+    set_fpu_reg(r1, x);
+    raw_write16(0, 0171000);
+    raw_write16(2, r1 << 10 | r2 << 7 | 0x30 | r3);
+    m68k_do_execute();
+    BOOST_CHECK_CLOSE(mpfr_get_d(regs.fpu.fp[r2], MPFR_RNDN), x, 1e-10);
+    BOOST_CHECK_CLOSE(mpfr_get_d(regs.fpu.fp[r3], MPFR_RNDN), 1.0, 1e-10);
 }
 BOOST_DATA_TEST_CASE(inf, SIGN, sg) {
-    regs.fp[2] = copysign(INFINITY, sg);
-    asm_m68k("fsincos.x %FP2, %FP4, %FP3");
+    auto [r1, r2, r3] = rand_reg3();
+    double x = copysign(INFINITY, sg);
+    set_fpu_reg(r1, x);
+    raw_write16(0, 0171000);
+    raw_write16(2, r1 << 10 | r2 << 7 | 0x30 | r3);
     m68k_do_execute();
-    BOOST_TEST(isnan(regs.fp[4]));
-    BOOST_TEST(isnan(regs.fp[3]));
-    BOOST_TEST(regs.FPSR.operr);
+    BOOST_TEST(mpfr_nan_p(regs.fpu.fp[r2]));
+    BOOST_TEST(mpfr_nan_p(regs.fpu.fp[r3]));
 }
 
 BOOST_AUTO_TEST_CASE(nan_) {
-    regs.fp[2] = NAN;
-    asm_m68k("fsincos.x %FP2, %FP4, %FP3");
+    auto [r1, r2, r3] = rand_reg3();
+    set_fpu_reg(r1, NAN);
+    raw_write16(0, 0171000);
+    raw_write16(2, r1 << 10 | r2 << 7 | 0x30 | r3);
     m68k_do_execute();
-    BOOST_TEST(isnan(regs.fp[3]));
-    BOOST_TEST(isnan(regs.fp[4]));
-}
-
-BOOST_AUTO_TEST_CASE(value, *boost::unit_test::tolerance(0.000001)) {
-    regs.fp[2] = 0.5;
-    asm_m68k("fsincos.x %FP2, %FP4, %FP3");
-    m68k_do_execute();
-    BOOST_TEST(regs.fp[3] == 0.479425538604203);
-    BOOST_TEST(regs.fp[4] == 0.877582561890373);
+    BOOST_TEST(mpfr_nan_p(regs.fpu.fp[r2]));
+    BOOST_TEST(mpfr_nan_p(regs.fpu.fp[r3]));
 }
 
 BOOST_AUTO_TEST_SUITE_END()

@@ -38,35 +38,43 @@ BOOST_AUTO_TEST_SUITE_END()
 // ∞ + X
 BOOST_AUTO_TEST_SUITE(infinity_with)
 BOOST_DATA_TEST_CASE(normal, SIGN, sg) {
-    double d = get_rx(-10.0, 10.0);
     double e = copysign(INFINITY, sg);
-    fpu_test(0x22, e, d, e);
+    fpu_test(0x22, e, get_rx(-10.0, 10.0), e);
 }
 
 BOOST_DATA_TEST_CASE(zero, SIGN *SIGN, sg1, sg2) {
-    double d = copysign(0.0, sg1);
     double e = copysign(INFINITY, sg2);
-    fpu_test(0x22, e, d, e);
+    fpu_test(0x22, e, copysign(0.0, sg1), e);
 }
 
 BOOST_DATA_TEST_CASE(inf, SIGN *SIGN, sg1, sg2) {
     double d = copysign(INFINITY, sg1);
-    double e = copysign(INFINITY, sg2);
-    fpu_test(0x22, e, d, (sg1 == sg2) ? d : NAN);
+    fpu_test(0x22, copysign(INFINITY, sg2), d, (sg1 == sg2) ? d : NAN);
     if(sg1 != sg2) {
         BOOST_TEST(regs.fpu.FPSR.operr);
     }
 }
 BOOST_AUTO_TEST_SUITE_END()
 
+BOOST_DATA_TEST_CASE(with_zero, SIGN, sg) {
+    double z = copysign(0.0, sg);
+    double c = get_rx(0.1, 10.0);
+    fpu_test(0x22, z, c, c);
+}
+
+BOOST_DATA_TEST_CASE(with_inf, SIGN, sg) {
+    double inf = copysign(INFINITY, sg);
+    double c = get_rx(0.1, 10.0);
+    fpu_test(0x22, inf, c, inf);
+}
+
+
 BOOST_AUTO_TEST_CASE(nan1) {
-    double d = get_rx(-10.0, 10.0);
-    fpu_test<double>(0x22, NAN, d, NAN);
+    fpu_test<double>(0x22, NAN, get_rx(-10.0, 10.0), NAN);
 }
 
 BOOST_AUTO_TEST_CASE(nan2) {
-    double d = get_rx(-10.0, 10.0);
-    fpu_test<double>(0x22, d, NAN, NAN);
+    fpu_test<double>(0x22, get_rx(-10.0, 10.0), NAN, NAN);
 }
 
 BOOST_AUTO_TEST_CASE(ovfl) {
@@ -77,7 +85,7 @@ BOOST_AUTO_TEST_CASE(ovfl) {
 
 BOOST_FIXTURE_TEST_SUITE(FSADD, InitFix)
 
-BOOST_AUTO_TEST_CASE(operand, *boost::unit_test::tolerance(1e-3)) {
+BOOST_AUTO_TEST_CASE(operand) {
     float v1 = get_rx(-1.0, 1.0);
     float v2 = get_rx(-1.0, 1.0);
     fpu_test<float>(0x62, v1, v2, v1 + v2);
@@ -130,6 +138,19 @@ BOOST_DATA_TEST_CASE(inf, SIGN *SIGN, sg1, sg2) {
 }
 
 BOOST_AUTO_TEST_SUITE_END()
+
+BOOST_DATA_TEST_CASE(with_zero, SIGN, sg) {
+    float z = copysignf(0.0, sg);
+    float c = get_rx(0.1, 10.0);
+    fpu_test(0x62, z, c, c);
+}
+
+BOOST_DATA_TEST_CASE(with_inf, SIGN, sg) {
+    float inf = copysignf(INFINITY, sg);
+    float c = get_rx(0.1, 10.0);
+    fpu_test(0x62, inf, c, inf);
+}
+
 
 BOOST_AUTO_TEST_CASE(nan1) {
     fpu_test<float>(0x62, 1.0f, NAN, NAN);
@@ -200,6 +221,19 @@ BOOST_DATA_TEST_CASE(inf, SIGN *SIGN, sg1, sg2) {
     }
 }
 BOOST_AUTO_TEST_SUITE_END()
+
+BOOST_DATA_TEST_CASE(with_zero, SIGN, sg) {
+    double z = copysign(0.0, sg);
+    double c = get_rx(0.1, 10.0);
+    fpu_test(0x66, z, c, c);
+}
+
+BOOST_DATA_TEST_CASE(with_inf, SIGN, sg) {
+    double inf = copysign(INFINITY, sg);
+    double c = get_rx(0.1, 10.0);
+    fpu_test(0x66, inf, c, inf);
+}
+
 
 BOOST_AUTO_TEST_CASE(nan1) {
     double d = get_rx(-10.0, 10.0);

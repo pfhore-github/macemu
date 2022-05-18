@@ -10,7 +10,7 @@ BOOST_AUTO_TEST_CASE(operand) {
     regs.d[ea] = v;
     raw_write16(0, 0042000 | ea);
     m68k_do_execute();
-    BOOST_TEST(regs.d[ea] == 0x100 - v);
+    BOOST_TEST(regs.d[ea] == ((0x100 - v)&0xff));
 }
 
 BOOST_AUTO_TEST_CASE(n) {
@@ -50,7 +50,7 @@ BOOST_AUTO_TEST_CASE(operand) {
     regs.d[ea] = v;
     raw_write16(0, 0042100 | ea);
     m68k_do_execute();
-    BOOST_TEST(regs.d[ea] == 0x10000 - v);
+    BOOST_TEST(regs.d[ea] == ((0x10000 - v)&0xffff));
 }
 
 BOOST_AUTO_TEST_CASE(n) {

@@ -98,15 +98,15 @@ BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_FIXTURE_TEST_SUITE(FSDIV, InitFix)
 BOOST_AUTO_TEST_CASE(operand) {
-    double v1 = get_rx(-10.0, 10.0);
+    float v1 = get_rx(-10.0, 10.0);
     if(v1 == 0.0) {
         v1 = 1.0;
     }
-    double v2 = get_rx(-10.0, 10.0);
+    float v2 = get_rx(-10.0, 10.0);
     if(v2 == 0.0) {
         v2 = 1.0;
     }
-    fpu_test(0x20, v1, v2, v2 / v1);
+    fpu_test(0x60, v1, v2, v2 / v1);
 }
 // 0 / X
 BOOST_AUTO_TEST_SUITE(zero_with)

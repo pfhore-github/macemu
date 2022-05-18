@@ -3,123 +3,64 @@
 #include "memory.h"
 #include "newcpu.h"
 #include "test/test_common.h"
-#include <boost/test/data/test_case.hpp>
-#include <boost/test/unit_test.hpp>
-#include <vector>
 BOOST_FIXTURE_TEST_SUITE(FNEG, InitFix)
+BOOST_DATA_TEST_CASE(operand, SIGN, sg) {
+    double v = get_rx(0.1, 10.0);
+    fpu_test(0x1A, copysign(v, sg), 0.0, copysign(v,-sg));
+}
+
 BOOST_DATA_TEST_CASE(zero, SIGN, sg) {
-    regs.fp[2] = copysign(0.0, sg);
-    asm_m68k("fneg.x %FP2, %FP3");
-    m68k_do_execute();
-    BOOST_TEST(signbit(regs.fp[3]) != signbit(sg));
-    BOOST_TEST(regs.fp[3] == 0.0);
+    fpu_test(0x1A, copysign(0.0, sg), 0.0, copysign(0.0,-sg));
 }
 
 BOOST_DATA_TEST_CASE(inf, SIGN, sg) {
-    regs.fp[2] = copysign(INFINITY, sg);
-    asm_m68k("fneg.x %FP2, %FP3");
-    m68k_do_execute();
-    BOOST_TEST(signbit(regs.fp[3]) != signbit(sg));
-    BOOST_TEST(isinf(regs.fp[3]));
+    fpu_test<double>(0x1A, copysign(INFINITY, sg), 0.0, copysign(INFINITY,-sg));
 }
 
 BOOST_AUTO_TEST_CASE(nan_) {
-    regs.fp[2] = NAN;
-    asm_m68k("fneg.x %FP2, %FP3");
-    m68k_do_execute();
-    BOOST_TEST(isnan(regs.fp[3]));
+    fpu_test<double>(0x1A, NAN, 0.0, NAN);
 }
 
-BOOST_AUTO_TEST_CASE(positive) {
-    regs.fp[2] = 2.3;
-    asm_m68k("fneg.x %FP2, %FP3");
-    m68k_do_execute();
-    BOOST_TEST(regs.fp[3] == -2.3);
-}
-
-BOOST_AUTO_TEST_CASE(negative) {
-    regs.fp[2] = -2.5;
-    asm_m68k("fneg.x %FP2, %FP3");
-    m68k_do_execute();
-    BOOST_TEST(regs.fp[3] == 2.5);
-}
 BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_FIXTURE_TEST_SUITE(FSNEG, InitFix)
+
+BOOST_DATA_TEST_CASE(operand, SIGN, sg) {
+    float v = get_rx(0.1, 10.0);
+    fpu_test(0x5A, copysignf(v, sg), 0.0f, copysignf(v, -sg));
+}
+
 BOOST_DATA_TEST_CASE(zero, SIGN, sg) {
-    regs.fp[2] = copysign(0.0, sg);
-    asm_m68k("fsneg.x %FP2, %FP3");
-    m68k_do_execute();
-    BOOST_TEST(signbit(regs.fp[3]) != signbit(sg));
-    BOOST_TEST(regs.fp[3] == 0.0);
+    fpu_test(0x5A, copysignf(0.0f, sg), 0.0f, copysignf(0.0, -sg));
 }
 
 BOOST_DATA_TEST_CASE(inf, SIGN, sg) {
-    regs.fp[2] = copysign(INFINITY, sg);
-    asm_m68k("fsneg.x %FP2, %FP3");
-    m68k_do_execute();
-    BOOST_TEST(signbit(regs.fp[3]) != signbit(sg));
-    BOOST_TEST(isinf(regs.fp[3]));
+    fpu_test(0x5A, copysignf(INFINITY, sg), 0.0f, copysignf(INFINITY, -sg));
 }
 
 BOOST_AUTO_TEST_CASE(nan_) {
-    regs.fp[2] = NAN;
-    asm_m68k("fsneg.x %FP2, %FP3");
-    m68k_do_execute();
-    BOOST_TEST(isnan(regs.fp[3]));
+    fpu_test<float>(0x5A, NAN, 0.0f, NAN);
 }
 
-BOOST_AUTO_TEST_CASE(positive) {
-    regs.fp[2] = 2.3f;
-    asm_m68k("fsneg.x %FP2, %FP3");
-    m68k_do_execute();
-    BOOST_TEST(regs.fp[3] == -2.3f);
-}
-
-BOOST_AUTO_TEST_CASE(negative) {
-    regs.fp[2] = -2.5;
-    asm_m68k("fsneg.x %FP2, %FP3");
-    m68k_do_execute();
-    BOOST_TEST(regs.fp[3] == 2.5);
-}
 BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_FIXTURE_TEST_SUITE(FDNEG, InitFix)
+
+BOOST_DATA_TEST_CASE(operand, SIGN, sg) {
+    double v = get_rx(0.1, 10.0);
+    fpu_test(0x5E, copysign(v, sg), 0.0, copysign(v, -sg));
+}
+
 BOOST_DATA_TEST_CASE(zero, SIGN, sg) {
-    regs.fp[2] = copysign(0.0, sg);
-    asm_m68k("fdneg.x %FP2, %FP3");
-    m68k_do_execute();
-    BOOST_TEST(signbit(regs.fp[3]) != signbit(sg));
-    BOOST_TEST(regs.fp[3] == 0.0);
+    fpu_test(0x5E, copysign(0.0, sg), 0.0, copysign(0.0, -sg));
 }
 
 BOOST_DATA_TEST_CASE(inf, SIGN, sg) {
-    regs.fp[2] = copysign(INFINITY, sg);
-    asm_m68k("fdneg.x %FP2, %FP3");
-    m68k_do_execute();
-    BOOST_TEST(signbit(regs.fp[3]) != signbit(sg));
-    BOOST_TEST(isinf(regs.fp[3]));
+    fpu_test<double>(0x5E, copysign(INFINITY, sg), 0.0, copysign(INFINITY, -sg));
 }
 
 BOOST_AUTO_TEST_CASE(nan_) {
-    regs.fp[2] = NAN;
-    asm_m68k("fdneg.x %FP2, %FP3");
-    m68k_do_execute();
-    BOOST_TEST(isnan(regs.fp[3]));
+    fpu_test<double>(0x5E, NAN, 0.0, NAN);
 }
 
-BOOST_AUTO_TEST_CASE(positive) {
-    regs.fp[2] = 2.3;
-    asm_m68k("fdneg.x %FP2, %FP3");
-    m68k_do_execute();
-    BOOST_TEST(regs.fp[3] == -2.3);
-}
-
-BOOST_AUTO_TEST_CASE(negative) {
-    regs.fp[2] = -2.5;
-    asm_m68k("fdneg.x %FP2, %FP3");
-    m68k_do_execute();
-    BOOST_TEST(regs.fp[3] == 2.5);
-}
 BOOST_AUTO_TEST_SUITE_END()
-

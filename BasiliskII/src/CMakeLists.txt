@@ -194,52 +194,57 @@ function( cpu_test name)
   add_test(NAME test_cpu_${name} COMMAND ./test_cpu_${name})
 endfunction(cpu_test)
 
-#add_executable(test_fpu ${TEST_COMMON}
-#mmu_cpu/test/fpu/fmove.cpp
-#mmu_cpu/test/fpu/fint.cpp 
-#mmu_cpu/test/fpu/fsinh.cpp
-#mmu_cpu/test/fpu/fintrz.cpp
-#mmu_cpu/test/fpu/fsqrt.cpp
-#mmu_cpu/test/fpu/flognp1.cpp
-#mmu_cpu/test/fpu/fexpm1.cpp
-#mmu_cpu/test/fpu/ftanh.cpp
-#mmu_cpu/test/fpu/fatan.cpp
-#mmu_cpu/test/fpu/fasin.cpp
-#mmu_cpu/test/fpu/fatanh.cpp
-#mmu_cpu/test/fpu/fsin.cpp
-#mmu_cpu/test/fpu/ftan.cpp
-#mmu_cpu/test/fpu/fetox.cpp
-#mmu_cpu/test/fpu/ftwotox.cpp
-#mmu_cpu/test/fpu/ftentox.cpp
-#mmu_cpu/test/fpu/flogn.cpp
-#mmu_cpu/test/fpu/flog10.cpp
-#mmu_cpu/test/fpu/flog2.cpp
-#mmu_cpu/test/fpu/fabs.cpp
-#mmu_cpu/test/fpu/fcosh.cpp
-#mmu_cpu/test/fpu/fneg.cpp
-#mmu_cpu/test/fpu/facos.cpp
-#mmu_cpu/test/fpu/fcos.cpp
-#mmu_cpu/test/fpu/fgetexp.cpp
-#mmu_cpu/test/fpu/fgetman.cpp
-#mmu_cpu/test/fpu/fdiv.cpp
-#mmu_cpu/test/fpu/fmod.cpp
-#mmu_cpu/test/fpu/fadd.cpp
-#mmu_cpu/test/fpu/fmul.cpp
-#mmu_cpu/test/fpu/fsgldiv.cpp
-#mmu_cpu/test/fpu/frem.cpp
-#mmu_cpu/test/fpu/fscale.cpp
-#mmu_cpu/test/fpu/fsglmul.cpp
-#mmu_cpu/test/fpu/fsub.cpp
-#mmu_cpu/test/fpu/fsincos.cpp
-#mmu_cpu/test/fpu/fcmp.cpp
-#mmu_cpu/test/fpu/ftst.cpp
-#mmu_cpu/test/fpu/fmovem.cpp
-#mmu_cpu/test/fpu/fscc.cpp
-#mmu_cpu/test/fpu/fdbcc.cpp
-#mmu_cpu/test/fpu/fbcc.cpp
-# )
-#target_link_libraries(test_fpu ${TEST_LIB})
-#add_test(NAME test_fpu COMMAND ./test_fpu)
+add_executable(test_fpu ${TEST_COMMON}
+mmu_cpu/test/fpu/fabs.cpp
+mmu_cpu/test/fpu/facos.cpp
+mmu_cpu/test/fpu/fadd.cpp
+mmu_cpu/test/fpu/fasin.cpp
+mmu_cpu/test/fpu/fatan.cpp
+mmu_cpu/test/fpu/fatanh.cpp
+mmu_cpu/test/fpu/fcmp.cpp
+mmu_cpu/test/fpu/fcos.cpp
+mmu_cpu/test/fpu/fcosh.cpp
+mmu_cpu/test/fpu/fdiv.cpp
+mmu_cpu/test/fpu/fetox.cpp
+mmu_cpu/test/fpu/fetoxm1.cpp
+mmu_cpu/test/fpu/fgetexp.cpp
+mmu_cpu/test/fpu/fgetman.cpp
+mmu_cpu/test/fpu/fint.cpp 
+mmu_cpu/test/fpu/fintrz.cpp
+mmu_cpu/test/fpu/flog10.cpp
+mmu_cpu/test/fpu/flog2.cpp
+mmu_cpu/test/fpu/flogn.cpp
+mmu_cpu/test/fpu/flognp1.cpp
+mmu_cpu/test/fpu/fmod.cpp
+mmu_cpu/test/fpu/fmul.cpp
+mmu_cpu/test/fpu/fneg.cpp
+mmu_cpu/test/fpu/fnop.cpp
+mmu_cpu/test/fpu/frem.cpp
+mmu_cpu/test/fpu/fscale.cpp
+mmu_cpu/test/fpu/fsgldiv.cpp
+mmu_cpu/test/fpu/fsglmul.cpp
+mmu_cpu/test/fpu/fsin.cpp
+mmu_cpu/test/fpu/fsincos.cpp
+mmu_cpu/test/fpu/fsinh.cpp
+mmu_cpu/test/fpu/fsqrt.cpp
+mmu_cpu/test/fpu/fsub.cpp
+mmu_cpu/test/fpu/ftan.cpp
+mmu_cpu/test/fpu/ftanh.cpp
+mmu_cpu/test/fpu/ftentox.cpp
+mmu_cpu/test/fpu/ftst.cpp
+mmu_cpu/test/fpu/ftwotox.cpp
+
+
+mmu_cpu/test/fpu/fmove.cpp
+mmu_cpu/test/fpu/fmovecr.cpp
+mmu_cpu/test/fpu/fmovem.cpp
+
+mmu_cpu/test/fpu/fbcc.cpp
+mmu_cpu/test/fpu/fdbcc.cpp
+mmu_cpu/test/fpu/fscc.cpp
+ )
+target_link_libraries(test_fpu ${TEST_LIB})
+add_test(NAME test_fpu COMMAND ./test_fpu)
 
 add_executable(test_mmu ${TEST_COMMON}
 mmu_cpu/test/mmu.cpp

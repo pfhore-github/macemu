@@ -114,32 +114,6 @@ BOOST_AUTO_TEST_CASE(REG) {
 }
 BOOST_AUTO_TEST_SUITE_END()
 
-BOOST_FIXTURE_TEST_SUITE(FMOVE_CR, InitFix)
-static const int dbl_off[] = {0, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x30, 0x31};
-static const double dbl_const[] = {
-    M_PI, M_LN2 / M_LN10, M_E, M_LOG2E, M_LOG10E, 0.0, M_LN2, M_LN10};
-
-BOOST_DATA_TEST_CASE(math_const, dbl_off ^ dbl_const, offset, value) {
-    auto dstr = rand_reg();
-    raw_write16(0, 0171000);
-    raw_write16(2, 0x5C00 | dstr << 7 | offset);
-    m68k_do_execute();
-    BOOST_CHECK_CLOSE(mpfr_get_d(regs.fpu.fp[dstr], MPFR_RNDN), value, 1e-08);
-}
-
-static const int exps[] = {0,  1,   2,   4,   8,    16,   32,
-                           64, 128, 256, 512, 1024, 2048, 4096};
-BOOST_DATA_TEST_CASE(exp10_const, bdata::xrange(14) ^ exps, i, value) {
-    auto dstr = rand_reg();
-    raw_write16(0, 0171000);
-    raw_write16(2, 0x5C00 | dstr << 7 | (0x32 + i));
-    m68k_do_execute();
-    MPFR_DECL_INIT(tmp, 64);
-    mpfr_log10(tmp, regs.fpu.fp[dstr], MPFR_RNDN);
-    BOOST_TEST(mpfr_get_ui(tmp, MPFR_RNDN) == value);
-}
-BOOST_AUTO_TEST_SUITE_END()
-
 BOOST_FIXTURE_TEST_SUITE(FMOVE_TO, InitFix)
 
 BOOST_AUTO_TEST_CASE(Byte) {
@@ -205,10 +179,12 @@ BOOST_AUTO_TEST_CASE(Double) {
 }
 
 BOOST_AUTO_TEST_CASE(Ext) {
+    regs.fpu.rnd_mode = MPFR_RNDN;
     auto reg = rand_reg();
     MPFR_DECL_INIT(tmp, 64);
     mpfr_set_d(tmp, 4.0, MPFR_RNDN);
     mpfr_div_d(tmp, tmp, 3.0, MPFR_RNDN);
+    mpfr_prec_round(regs.fpu.fp[reg], 64, MPFR_RNDN);
     mpfr_set(regs.fpu.fp[reg], tmp, MPFR_RNDN);
     regs.a[1] = 0x10;
     raw_write16(0, 0171031);
@@ -313,62 +289,65 @@ BOOST_AUTO_TEST_CASE(negative_k) {
 
 BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE_END()
-#if 0
-
-
-
-
-
-
 
 BOOST_FIXTURE_TEST_SUITE(FMOVE_CR_FROM, InitFix)
 BOOST_AUTO_TEST_CASE(fpiar) {
-    regs.a[3] = 0x100;
-    asm_m68k("fmove.l %FPIAR, %A3");
+    auto ar = rand_ar();
+    regs.a[ar] = 0x100;
+    raw_write16(0, 0171010 | ar);
+    raw_write16(2, 0xA000 | 1 << 10);
     m68k_do_execute();
-    BOOST_TEST(regs.a[3] == 0);
+    BOOST_TEST(regs.a[ar] == 0);
 }
 
 BOOST_AUTO_TEST_CASE(fpsr) {
-    memset(&regs.FPSR, 0, sizeof(regs.FPSR));
-    regs.FPSR.n = true;
-    asm_m68k("fmove.l %FPSR, %D3");
+    auto dr = rand_reg();
+    memset(&regs.fpu.FPSR, 0, sizeof(regs.fpu.FPSR));
+    regs.fpu.FPSR.n = true;
+    raw_write16(0, 0171000 | dr);
+    raw_write16(2, 0xA000 | 1 << 11);
     m68k_do_execute();
-    BOOST_TEST(regs.d[3] == 1 << 27);
+    BOOST_TEST(regs.d[dr] == 1 << 27);
 }
 
 BOOST_AUTO_TEST_CASE(fpcr) {
-    memset(&regs.FPCR, 0, sizeof(regs.FPCR));
-    regs.FPCR.bsun = true;
-    asm_m68k("fmove.l %FPCR, %D3");
+    auto dr = rand_reg();
+    memset(&regs.fpu.FPCR, 0, sizeof(regs.fpu.FPCR));
+    regs.fpu.FPCR.bsun = true;
+    raw_write16(0, 0171000 | dr);
+    raw_write16(2, 0xA000 | 1 << 12);
     m68k_do_execute();
-    BOOST_TEST(regs.d[3] == 0x8000);
+    BOOST_TEST(regs.d[dr] == 0x8000);
 }
 BOOST_AUTO_TEST_SUITE_END()
-
 
 BOOST_FIXTURE_TEST_SUITE(FMOVE_CR_TO, InitFix)
 BOOST_AUTO_TEST_CASE(fpiar) {
-    regs.a[3] = 0x100;
-    asm_m68k("fmove.l %A3, %FPIAR");
+    auto ar = rand_ar();
+    regs.a[ar] = 0x100;
+    raw_write16(0, 0171010 | ar);
+    raw_write16(2, 0x8000 | 1 << 10);
     m68k_do_execute();
-    BOOST_TEST(regs.fpiar == 0x100);
+    BOOST_TEST(regs.fpu.fpiar == 0x100);
 }
 
 BOOST_AUTO_TEST_CASE(fpsr) {
-    memset(&regs.FPSR, 0, sizeof(regs.FPSR));
-    regs.d[3] = 1 << 27;
-    asm_m68k("fmove.l %D3, %FPSR");
+    auto dr = rand_reg();
+    memset(&regs.fpu.FPSR, 0, sizeof(regs.fpu.FPSR));
+    regs.d[dr] = 1 << 27;
+    raw_write16(0, 0171000 | dr);
+    raw_write16(2, 0x8000 | 1 << 11);
     m68k_do_execute();
-    BOOST_TEST(regs.FPSR.n);
+    BOOST_TEST(regs.fpu.FPSR.n);
 }
 
 BOOST_AUTO_TEST_CASE(fpcr) {
-    memset(&regs.FPCR, 0, sizeof(regs.FPCR));
-    regs.d[3] = 0x8000;
-    asm_m68k("fmove.l %D3, %FPCR");
+    auto dr = rand_reg();
+    memset(&regs.fpu.FPCR, 0, sizeof(regs.fpu.FPCR));
+    regs.d[dr] = 0x8000;
+    raw_write16(0, 0171000 | dr);
+    raw_write16(2, 0x8000 | 1 << 12);
     m68k_do_execute();
-    BOOST_TEST(regs.FPCR.bsun);
+    BOOST_TEST(regs.fpu.FPCR.bsun);
 }
 BOOST_AUTO_TEST_SUITE_END()
-#endif

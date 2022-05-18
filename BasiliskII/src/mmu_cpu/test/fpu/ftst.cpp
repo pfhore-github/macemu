@@ -2,36 +2,29 @@
 #include "memory.h"
 #include "newcpu.h"
 #include "test/test_common.h"
-#include <boost/test/data/test_case.hpp>
-#include <boost/test/unit_test.hpp>
-#include <vector>
 BOOST_FIXTURE_TEST_SUITE(FTST, InitFix)
-BOOST_DATA_TEST_CASE(n, bdata::xrange(2), value) {
-    regs.fp[3] = value ? -2 : 2;
-    asm_m68k("ftst.x %FP3");
-    m68k_do_execute();
-    BOOST_TEST(regs.FPSR.n == value);
+BOOST_DATA_TEST_CASE(n, SIGN, sg) {
+    auto v1 = copysign(get_rx(1.0, 10.0), sg);
+    fpu_test(0x3A, v1, 0.0, 0.0);
+    BOOST_TEST(regs.fpu.FPSR.n == (sg < 0));
 }
 
-BOOST_DATA_TEST_CASE(z, bdata::xrange(2), value) {
-    regs.fp[3] = value ? 0 : 2;
-    asm_m68k("ftst.x %FP3");
-    m68k_do_execute();
-    BOOST_TEST(regs.FPSR.z == value);
+BOOST_DATA_TEST_CASE(z, BIT, value) {
+    auto v1 = value ? 0.0 : get_rx(1.0, 10.0);
+    fpu_test(0x3A, v1, 1.0, 1.0);
+    BOOST_TEST(regs.fpu.FPSR.z == value);
 }
 
-BOOST_DATA_TEST_CASE(inf, bdata::xrange(2), value) {
-    regs.fp[3] = value ? INFINITY : 2;
-    asm_m68k("ftst.x %FP3");
-    m68k_do_execute();
-    BOOST_TEST(regs.FPSR.i == value);
+BOOST_DATA_TEST_CASE(inf, BIT, value) {
+    auto v1 = value ? INFINITY : get_rx(1.0, 10.0);
+    fpu_test(0x3A, v1, 1.0, 1.0);
+    BOOST_TEST(regs.fpu.FPSR.i == value);
 }
 
-BOOST_DATA_TEST_CASE(nan_, bdata::xrange(2), value) {
-    regs.fp[3] = value ? NAN : 2;
-    asm_m68k("ftst.x %FP3");
-    m68k_do_execute();
-    BOOST_TEST(regs.FPSR.nan == value);
+BOOST_DATA_TEST_CASE(nan_, BIT, value) {
+    auto v1 = value ? NAN : get_rx(1.0, 10.0);
+    fpu_test(0x3A, v1, 1.0, 1.0);
+    BOOST_TEST(regs.fpu.FPSR.nan == value);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
