@@ -1,0 +1,41 @@
+file(REMOVE_RECURSE
+  "CMakeFiles/test_mmu.dir/mmu_cpu/compiler/jit.cpp.o"
+  "CMakeFiles/test_mmu.dir/mmu_cpu/compiler/jit.cpp.o.d"
+  "CMakeFiles/test_mmu.dir/mmu_cpu/ea.cpp.o"
+  "CMakeFiles/test_mmu.dir/mmu_cpu/ea.cpp.o.d"
+  "CMakeFiles/test_mmu.dir/mmu_cpu/exception.cpp.o"
+  "CMakeFiles/test_mmu.dir/mmu_cpu/exception.cpp.o.d"
+  "CMakeFiles/test_mmu.dir/mmu_cpu/fpu/fpu_mpfr.cpp.o"
+  "CMakeFiles/test_mmu.dir/mmu_cpu/fpu/fpu_mpfr.cpp.o.d"
+  "CMakeFiles/test_mmu.dir/mmu_cpu/mbus.cpp.o"
+  "CMakeFiles/test_mmu.dir/mmu_cpu/mbus.cpp.o.d"
+  "CMakeFiles/test_mmu.dir/mmu_cpu/memory.cpp.o"
+  "CMakeFiles/test_mmu.dir/mmu_cpu/memory.cpp.o.d"
+  "CMakeFiles/test_mmu.dir/mmu_cpu/mmu/mmu_68040.cpp.o"
+  "CMakeFiles/test_mmu.dir/mmu_cpu/mmu/mmu_68040.cpp.o.d"
+  "CMakeFiles/test_mmu.dir/mmu_cpu/newcpu.cpp.o"
+  "CMakeFiles/test_mmu.dir/mmu_cpu/newcpu.cpp.o.d"
+  "CMakeFiles/test_mmu.dir/mmu_cpu/op_arithmetic.cpp.o"
+  "CMakeFiles/test_mmu.dir/mmu_cpu/op_arithmetic.cpp.o.d"
+  "CMakeFiles/test_mmu.dir/mmu_cpu/op_bcd.cpp.o"
+  "CMakeFiles/test_mmu.dir/mmu_cpu/op_bcd.cpp.o.d"
+  "CMakeFiles/test_mmu.dir/mmu_cpu/op_bf.cpp.o"
+  "CMakeFiles/test_mmu.dir/mmu_cpu/op_bf.cpp.o.d"
+  "CMakeFiles/test_mmu.dir/mmu_cpu/op_bits.cpp.o"
+  "CMakeFiles/test_mmu.dir/mmu_cpu/op_bits.cpp.o.d"
+  "CMakeFiles/test_mmu.dir/mmu_cpu/op_branch.cpp.o"
+  "CMakeFiles/test_mmu.dir/mmu_cpu/op_branch.cpp.o.d"
+  "CMakeFiles/test_mmu.dir/mmu_cpu/op_move.cpp.o"
+  "CMakeFiles/test_mmu.dir/mmu_cpu/op_move.cpp.o.d"
+  "CMakeFiles/test_mmu.dir/mmu_cpu/test/mmu.cpp.o"
+  "CMakeFiles/test_mmu.dir/mmu_cpu/test/mmu.cpp.o.d"
+  "CMakeFiles/test_mmu.dir/mmu_cpu/test/test_common.cpp.o"
+  "CMakeFiles/test_mmu.dir/mmu_cpu/test/test_common.cpp.o.d"
+  "test_mmu"
+  "test_mmu.pdb"
+)
+
+# Per-language clean rules from dependency scanning.
+foreach(lang CXX)
+  include(CMakeFiles/test_mmu.dir/cmake_clean_${lang}.cmake OPTIONAL)
+endforeach()

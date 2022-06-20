@@ -85,11 +85,8 @@ void op_unpk_a(int dm, int reg) {
     uint16_t dst = ((src & 0xf0) << 4 | (src & 0x0f)) + adjust;
     write16(regs.a[dm] -= 2, dst);
 }
-
-void op_abcd_d(int dm, int reg)  {
-    uint8_t src = regs.d[reg];
-    uint8_t dst = regs.d[dm];
-    int v = from_bcd(dst) + from_bcd(src) + regs.x;
+uint8_t do_abcd(uint8_t a, uint8_t b) {
+    int v = from_bcd(a) + from_bcd(b) + regs.x;
     if(v > 99) {
         regs.c = true;
         v -= 100;
@@ -97,21 +94,17 @@ void op_abcd_d(int dm, int reg)  {
         regs.c = false;
     }
     regs.x = regs.c;
-    regs.z = v == 0;
-    WRITE_D8(dm, to_bcd(v));
+    regs.z = v == 0 ? false : regs.z;
+    return to_bcd(v);
+}
+void op_abcd_d(int dm, int reg)  {
+    uint8_t src = regs.d[reg];
+    uint8_t dst = regs.d[dm];
+    WRITE_D8(dm, do_abcd(dst, src));
 }
 
 void op_abcd_a(int dm, int reg) {
     uint8_t src = read8(--regs.a[reg]);
     uint8_t dst = read8(--regs.a[dm]);
-    int v = from_bcd(dst) + from_bcd(src) + regs.x;
-    if(v > 99) {
-        regs.c = true;
-        v -= 100;
-    } else {
-        regs.c = false;
-    }
-    regs.x = regs.c;
-    regs.z = v == 0;
-    write8(regs.a[dm], to_bcd(v));
+    write8(regs.a[dm], do_abcd(dst, src));
 }

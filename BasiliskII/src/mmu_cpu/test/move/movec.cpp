@@ -2,6 +2,7 @@
 #include "memory.h"
 #include "newcpu.h"
 #include "test/test_common.h"
+#include "mmu/mmu_68040.h"
 BOOST_FIXTURE_TEST_SUITE(MOVEC, InitFix)
 BOOST_AUTO_TEST_SUITE(from)
 
@@ -76,7 +77,7 @@ BOOST_AUTO_TEST_CASE(isp) {
 
 BOOST_AUTO_TEST_CASE(tc) {
     regs.S = true;
-    regs.tcr_p = true;
+    mmu.tcr_p = true;
     raw_write16(0, 0047172);
     raw_write16(2, 0x7003);
     m68k_do_execute();
@@ -85,9 +86,9 @@ BOOST_AUTO_TEST_CASE(tc) {
 
 BOOST_DATA_TEST_CASE(ittr, BIT, i) {
     regs.S = true;
-    regs.ITTR[i].address_base = 0x20;
-    regs.ITTR[i].address_mask = 0x30;
-    regs.ITTR[i].S = true;
+    mmu.ITTR[i].address_base = 0x20;
+    mmu.ITTR[i].address_mask = 0x30;
+    mmu.ITTR[i].S = true;
     raw_write16(0, 0047172);
     raw_write16(2, 0x0004 + i);
     m68k_do_execute();
@@ -96,9 +97,9 @@ BOOST_DATA_TEST_CASE(ittr, BIT, i) {
 
 BOOST_DATA_TEST_CASE(dttr, BIT, i) {
     regs.S = true;
-    regs.DTTR[i].address_base = 0x20;
-    regs.DTTR[i].address_mask = 0x30;
-    regs.DTTR[i].S = true;
+    mmu.DTTR[i].address_base = 0x20;
+    mmu.DTTR[i].address_mask = 0x30;
+    mmu.DTTR[i].S = true;
     raw_write16(0, 0047172);
     raw_write16(2, 0x1006 + i);
     m68k_do_execute();
@@ -107,10 +108,10 @@ BOOST_DATA_TEST_CASE(dttr, BIT, i) {
 
 BOOST_AUTO_TEST_CASE(mmusr) {
     regs.S = true;
-    regs.MMUSR.PA = 0x64000000;
-    regs.MMUSR.G = true;
-    regs.MMUSR.S = true;
-    regs.MMUSR.R = true;
+    mmu.MMUSR.PA = 0x64000000;
+    mmu.MMUSR.G = true;
+    mmu.MMUSR.S = true;
+    mmu.MMUSR.R = true;
     raw_write16(0, 0047172);
     raw_write16(2, 0x2805);
     m68k_do_execute();
@@ -119,7 +120,7 @@ BOOST_AUTO_TEST_CASE(mmusr) {
 
 BOOST_AUTO_TEST_CASE(urp) {
     regs.S = true;
-    regs.urp = 0x5000;
+    mmu.urp = 0x5000;
     raw_write16(0, 0047172);
     raw_write16(2, 0x3806);
     m68k_do_execute();
@@ -128,7 +129,7 @@ BOOST_AUTO_TEST_CASE(urp) {
 
 BOOST_AUTO_TEST_CASE(srp) {
     regs.S = true;
-    regs.srp = 0x6000;
+    mmu.srp = 0x6000;
     raw_write16(0, 0047172);
     raw_write16(2, 0x4807);
     m68k_do_execute();
@@ -213,7 +214,7 @@ BOOST_AUTO_TEST_CASE(tc) {
     raw_write16(0, 0047173);
     raw_write16(2, 0x7003);
     m68k_do_execute();
-    BOOST_TEST(regs.tcr_p);
+    BOOST_TEST(mmu.tcr_p);
 }
 
 BOOST_DATA_TEST_CASE(ittr, BIT, i) {
@@ -222,9 +223,9 @@ BOOST_DATA_TEST_CASE(ittr, BIT, i) {
     raw_write16(0, 0047173);
     raw_write16(2, 0x0004 + i);
     m68k_do_execute();
-    BOOST_TEST(regs.ITTR[i].address_base == 0x20);
-    BOOST_TEST(regs.ITTR[i].address_mask == 0x30);
-    BOOST_TEST(regs.ITTR[i].S);
+    BOOST_TEST(mmu.ITTR[i].address_base == 0x20);
+    BOOST_TEST(mmu.ITTR[i].address_mask == 0x30);
+    BOOST_TEST(mmu.ITTR[i].S);
 }
 
 BOOST_DATA_TEST_CASE(dttr, BIT, i) {
@@ -233,9 +234,9 @@ BOOST_DATA_TEST_CASE(dttr, BIT, i) {
     raw_write16(0, 0047173);
     raw_write16(2, 0x1006 + i);
     m68k_do_execute();
-    BOOST_TEST(regs.DTTR[i].address_base == 0x20);
-    BOOST_TEST(regs.DTTR[i].address_mask == 0x30);
-    BOOST_TEST(regs.DTTR[i].S);
+    BOOST_TEST(mmu.DTTR[i].address_base == 0x20);
+    BOOST_TEST(mmu.DTTR[i].address_mask == 0x30);
+    BOOST_TEST(mmu.DTTR[i].S);
 }
 
 BOOST_AUTO_TEST_CASE(mmusr) {
@@ -244,10 +245,10 @@ BOOST_AUTO_TEST_CASE(mmusr) {
     raw_write16(0, 0047173);
     raw_write16(2, 0x2805);
     m68k_do_execute();
-    BOOST_TEST( regs.MMUSR.PA == 0x64000000);
-    BOOST_TEST( regs.MMUSR.G );
-    BOOST_TEST( regs.MMUSR.S );
-    BOOST_TEST( regs.MMUSR.R );
+    BOOST_TEST( mmu.MMUSR.PA == 0x64000000);
+    BOOST_TEST( mmu.MMUSR.G );
+    BOOST_TEST( mmu.MMUSR.S );
+    BOOST_TEST( mmu.MMUSR.R );
 }
 
 BOOST_AUTO_TEST_CASE(urp) {
@@ -256,7 +257,7 @@ BOOST_AUTO_TEST_CASE(urp) {
     raw_write16(0, 0047173);
     raw_write16(2, 0x3806);
     m68k_do_execute();
-    BOOST_TEST(regs.urp == 0x5000);
+    BOOST_TEST(mmu.urp == 0x5000);
 }
 
 BOOST_AUTO_TEST_CASE(srp) {
@@ -265,7 +266,7 @@ BOOST_AUTO_TEST_CASE(srp) {
     raw_write16(0, 0047173);
     raw_write16(2, 0x4807);
     m68k_do_execute();
-    BOOST_TEST(regs.srp == 0x6000);
+    BOOST_TEST(mmu.srp == 0x6000);
 }
 BOOST_AUTO_TEST_SUITE_END()
 

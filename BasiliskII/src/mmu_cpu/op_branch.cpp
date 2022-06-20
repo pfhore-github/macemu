@@ -211,9 +211,9 @@ OP(scc) {
 
 OP(bra) {
     uint32_t pc = regs.pc;
-    int32_t disp = static_cast<int8_t>(xop & 0xff);
+    int32_t disp = DO_EXTB_L(xop & 0xff);
     if(disp == 0) {
-        disp = static_cast<int16_t>(FETCH());
+        disp = DO_EXT_L(FETCH());
     } else if(disp == -1) {
         disp = FETCH32();
     }
@@ -222,9 +222,9 @@ OP(bra) {
 
 OP(bsr) {
     uint32_t pc = regs.pc;
-    int32_t disp = static_cast<int8_t>(xop & 0xff);
+    int32_t disp = DO_EXTB_L(xop & 0xff);
     if(disp == 0) {
-        disp = static_cast<int16_t>(FETCH());
+        disp = DO_EXT_L(FETCH());
     } else if(disp == -1) {
         disp = FETCH32();
     }
@@ -235,9 +235,9 @@ OP(bsr) {
 OP(bcc) {
     uint32_t pc = regs.pc;
     int cond = xop >> 8 & 15;
-    int32_t disp = static_cast<int8_t>(xop & 0xff);
+    int32_t disp = DO_EXTB_L(xop & 0xff);
     if(disp == 0) {
-        disp = static_cast<int16_t>(FETCH());
+        disp = DO_EXT_L(FETCH());
     } else if(disp == -1) {
         disp = FETCH32();
     }

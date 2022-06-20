@@ -1,5 +1,17 @@
 #include "newcpu.h"
 #include <stdint.h>
+inline uint32_t DO_EXT_L(uint16_t v) {
+    return static_cast<int32_t>(static_cast<int16_t>(v));
+}
+
+inline uint16_t DO_EXT_W(uint8_t v) {
+    return static_cast<int16_t>(static_cast<int8_t>(v));
+}
+
+inline uint32_t DO_EXTB_L(uint8_t v) {
+    return static_cast<int32_t>(static_cast<int8_t>(v));
+}
+
 inline void TEST_NZ8(int8_t v) {
     regs.n = v < 0;
     regs.z = v == 0;
@@ -514,3 +526,23 @@ inline uint32_t DO_ROL_L(uint32_t v, uint8_t sc) {
 }
 
 inline bool DO_BTST(uint32_t v, uint8_t bn) { return !((v >> bn) & 1); }
+
+inline uint8_t DO_BCHG_B(uint8_t v, int bn) {
+    regs.z = DO_BTST(v, bn);
+    return v ^ (1 << bn);
+}
+
+inline uint32_t DO_BCHG_L(uint32_t v, int bn) {
+    regs.z = DO_BTST(v, bn);
+    return v ^ (1 << bn);
+}
+
+inline uint8_t DO_BCLR_B(uint8_t v, int bn) {
+    regs.z = DO_BTST(v, bn);
+    return v &~ (1 << bn);
+}
+
+inline uint32_t DO_BCLR_L(uint32_t v, int bn) {
+    regs.z = DO_BTST(v, bn);
+    return v &~ (1 << bn);
+}

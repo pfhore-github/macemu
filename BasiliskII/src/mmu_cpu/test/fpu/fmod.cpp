@@ -14,7 +14,7 @@ BOOST_AUTO_TEST_CASE(operand) {
         v2 = 1.0;
     }
     fpu_test(0x21, v1, v2, fmod(v2,v1));
-    BOOST_TEST(regs.fpu.FPSR.quotient == int(v2/v1)%0x80);
+    BOOST_TEST(fpu.FPSR.quotient == int(v2/v1)%0x80);
 }
 
 // 0 / X
@@ -31,30 +31,30 @@ BOOST_DATA_TEST_CASE(infinity, SIGN *SIGN, sg1, sg2) {
 
 BOOST_DATA_TEST_CASE(zero, SIGN *SIGN, sg1, sg2) {
     fpu_test(0x21, copysign(0.0, sg2), copysign(0.0, sg1), NAN);
-    BOOST_TEST(regs.fpu.FPSR.operr);
+    BOOST_TEST(fpu.FPSR.operr);
 }
 BOOST_AUTO_TEST_SUITE_END()
 // ∞ / X
 BOOST_AUTO_TEST_SUITE(infinity_with)
 BOOST_DATA_TEST_CASE(normal, SIGN, sg) {
     fpu_test(0x21, get_rx(0.1, 10.0), copysign(INFINITY, sg), NAN);
-    BOOST_TEST(regs.fpu.FPSR.operr);
+    BOOST_TEST(fpu.FPSR.operr);
 }
 
 BOOST_DATA_TEST_CASE(zero, SIGN *SIGN, sg1, sg2) {
     fpu_test(0x21, copysign(0.0, sg2), copysign(INFINITY, sg1), NAN);
-    BOOST_TEST(regs.fpu.FPSR.operr);
+    BOOST_TEST(fpu.FPSR.operr);
 }
 
 BOOST_DATA_TEST_CASE(inf, SIGN *SIGN, sg1, sg2) {
     fpu_test(0x21, copysign(INFINITY, sg2), copysign(INFINITY, sg1), NAN);
-    BOOST_TEST(regs.fpu.FPSR.operr);
+    BOOST_TEST(fpu.FPSR.operr);
 }
 BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_DATA_TEST_CASE(with_zero, SIGN, sg) {
     fpu_test(0x21, copysign(0.0, sg), get_rx(0.1, 10.0), NAN);
-    BOOST_TEST(regs.fpu.FPSR.operr);
+    BOOST_TEST(fpu.FPSR.operr);
 }
 
 BOOST_DATA_TEST_CASE(with_inf, SIGN, sg) {

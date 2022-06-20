@@ -18,7 +18,7 @@ BOOST_AUTO_TEST_CASE(pinf) { fpu_test<double>(0x06, INFINITY, 0.0, INFINITY); }
 
 BOOST_AUTO_TEST_CASE(minf) {
     fpu_test<double>(0x06, -INFINITY, 0.0, NAN);
-    BOOST_TEST(regs.fpu.FPSR.operr);
+    BOOST_TEST(fpu.FPSR.operr);
 }
 BOOST_AUTO_TEST_CASE(nan_) { fpu_test<double>(0x06, NAN, 0.0, NAN); }
 

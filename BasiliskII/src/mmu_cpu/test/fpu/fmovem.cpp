@@ -2,24 +2,24 @@
 #include "memory.h"
 #include "newcpu.h"
 #include "test/test_common.h"
-void load_ext(uint32_t addr, mpfr_ptr dst);
-void store_ext(uint32_t addr, mpfr_ptr v);
+#include "fpu/fpu_mpfr.h"
+void load_ext(uint32_t addr, fpvalue &dst);
+void store_ext(uint32_t addr, const fpvalue &v);
 double load_ext_v(uint32_t addr) {
-    MPFR_DECL_INIT(tmp, 64);
+    fpvalue tmp;
     load_ext(addr, tmp);
-    return mpfr_get_d(tmp, MPFR_RNDN);
+    return static_cast<double>(tmp);
 }
 void store_ext_v(uint32_t addr, double v) {
-    MPFR_DECL_INIT(tmp, 64);
-    mpfr_set_d(tmp, v, MPFR_RNDN);
+    fpvalue tmp = v;
     store_ext(addr, tmp);
 }
 BOOST_FIXTURE_TEST_SUITE(FMOVEM_CR_FROM, InitFix)
 BOOST_AUTO_TEST_CASE(fpiar_fpsr) {
     auto ar = rand_ar();
     regs.a[ar] = 0x10;
-    memset(&regs.fpu.FPSR, 0, sizeof(regs.fpu.FPSR));
-    regs.fpu.FPSR.n = true;
+    memset(&fpu.FPSR, 0, sizeof(fpu.FPSR));
+    fpu.FPSR.n = true;
     raw_write16(0, 0171030 | ar);
     raw_write16(2, 0xA000 | 1 << 10 | 1 << 11);
     m68k_do_execute();
@@ -31,8 +31,8 @@ BOOST_AUTO_TEST_CASE(fpiar_fpsr) {
 BOOST_AUTO_TEST_CASE(fpiar_fpcr) {
     auto ar = rand_ar();
     regs.a[ar] = 0x10;
-    memset(&regs.fpu.FPCR, 0, sizeof(regs.fpu.FPCR));
-    regs.fpu.FPCR.bsun = true;
+    memset(&fpu.FPCR, 0, sizeof(fpu.FPCR));
+    fpu.FPCR.bsun = true;
     raw_write16(0, 0171030 | ar);
     raw_write16(2, 0xA000 | 1 << 10 | 1 << 12);
     m68k_do_execute();
@@ -44,10 +44,10 @@ BOOST_AUTO_TEST_CASE(fpiar_fpcr) {
 BOOST_AUTO_TEST_CASE(fpcr_fpsr) {
     auto ar = rand_ar();
     regs.a[ar] = 0x10;
-    memset(&regs.fpu.FPCR, 0, sizeof(regs.fpu.FPCR));
-    regs.fpu.FPCR.bsun = true;
-    memset(&regs.fpu.FPSR, 0, sizeof(regs.fpu.FPSR));
-    regs.fpu.FPSR.n = true;
+    memset(&fpu.FPCR, 0, sizeof(fpu.FPCR));
+    fpu.FPCR.bsun = true;
+    memset(&fpu.FPSR, 0, sizeof(fpu.FPSR));
+    fpu.FPSR.n = true;
     raw_write16(0, 0171030 | ar);
     raw_write16(2, 0xA000 | 1 << 11 | 1 << 12);
     m68k_do_execute();
@@ -59,10 +59,10 @@ BOOST_AUTO_TEST_CASE(fpcr_fpsr) {
 BOOST_AUTO_TEST_CASE(all) {
     auto ar = rand_ar();
     regs.a[ar] = 0x10;
-    memset(&regs.fpu.FPSR, 0, sizeof(regs.fpu.FPSR));
-    regs.fpu.FPSR.n = true;
-    memset(&regs.fpu.FPCR, 0, sizeof(regs.fpu.FPCR));
-    regs.fpu.FPCR.bsun = true;
+    memset(&fpu.FPSR, 0, sizeof(fpu.FPSR));
+    fpu.FPSR.n = true;
+    memset(&fpu.FPCR, 0, sizeof(fpu.FPCR));
+    fpu.FPCR.bsun = true;
     raw_write16(0, 0171030 | ar);
     raw_write16(2, 0xA000 | 1 << 10 | 1 << 11 | 1 << 12);
     m68k_do_execute();
@@ -83,8 +83,8 @@ BOOST_AUTO_TEST_CASE(fpiar_fpsr) {
     raw_write16(2, 0x8000 | 1 << 10 | 1 << 11);
     m68k_do_execute();
     BOOST_TEST(regs.a[ar] == 0x10);
-    BOOST_TEST(regs.fpu.FPSR.n);
-    BOOST_TEST(regs.fpu.fpiar == 0x100);
+    BOOST_TEST(fpu.FPSR.n);
+    BOOST_TEST(fpu.fpiar == 0x100);
 }
 
 BOOST_AUTO_TEST_CASE(fpiar_fpcr) {
@@ -96,8 +96,8 @@ BOOST_AUTO_TEST_CASE(fpiar_fpcr) {
     raw_write16(2, 0x8000 | 1 << 10 | 1 << 12);
     m68k_do_execute();
     BOOST_TEST(regs.a[ar] == 0x10);
-    BOOST_TEST(regs.fpu.FPCR.bsun);
-    BOOST_TEST(regs.fpu.fpiar == 0x100);
+    BOOST_TEST(fpu.FPCR.bsun);
+    BOOST_TEST(fpu.fpiar == 0x100);
 }
 
 BOOST_AUTO_TEST_CASE(fpcr_fpsr) {
@@ -109,8 +109,8 @@ BOOST_AUTO_TEST_CASE(fpcr_fpsr) {
     raw_write16(2, 0x8000 | 1 << 11 | 1 << 12);
     m68k_do_execute();
     BOOST_TEST(regs.a[ar] == 0x10);
-    BOOST_TEST(regs.fpu.FPSR.n);
-    BOOST_TEST(regs.fpu.FPCR.bsun);
+    BOOST_TEST(fpu.FPSR.n);
+    BOOST_TEST(fpu.FPCR.bsun);
 }
 
 BOOST_AUTO_TEST_CASE(all) {
@@ -123,9 +123,9 @@ BOOST_AUTO_TEST_CASE(all) {
     raw_write16(2, 0x8000 | 1 << 10 | 1 << 11 | 1 << 12);
     m68k_do_execute();
     BOOST_TEST(regs.a[ar] == 0x10);
-    BOOST_TEST(regs.fpu.FPSR.n);
-    BOOST_TEST(regs.fpu.FPCR.bsun);
-    BOOST_TEST(regs.fpu.fpiar == 0x100);
+    BOOST_TEST(fpu.FPSR.n);
+    BOOST_TEST(fpu.FPCR.bsun);
+    BOOST_TEST(fpu.fpiar == 0x100);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
@@ -203,9 +203,9 @@ BOOST_AUTO_TEST_CASE(addr) {
     raw_write16(0, 0171020 | ar);
     raw_write16(2, 0xD070);
     m68k_do_execute();
-    BOOST_TEST(mpfr_get_d(regs.fpu.fp[1], MPFR_RNDN) == 1.0);
-    BOOST_TEST(mpfr_get_d(regs.fpu.fp[2], MPFR_RNDN) == 2.0);
-    BOOST_TEST(mpfr_get_d(regs.fpu.fp[3], MPFR_RNDN) == 3.0);
+    BOOST_TEST(static_cast<double>(fpu.fp[1]) == 1.0);
+    BOOST_TEST(static_cast<double>(fpu.fp[2]) == 2.0);
+    BOOST_TEST(static_cast<double>(fpu.fp[3]) == 3.0);
 }
 
 BOOST_AUTO_TEST_CASE(addr_d) {
@@ -219,9 +219,9 @@ BOOST_AUTO_TEST_CASE(addr_d) {
     raw_write16(0, 0171020 | ar);
     raw_write16(2, 0xD800 | dr << 4);
     m68k_do_execute();
-    BOOST_TEST(mpfr_get_d(regs.fpu.fp[1], MPFR_RNDN) == 1.0);
-    BOOST_TEST(mpfr_get_d(regs.fpu.fp[2], MPFR_RNDN) == 2.0);
-    BOOST_TEST(mpfr_get_d(regs.fpu.fp[3], MPFR_RNDN) == 3.0);
+    BOOST_TEST(static_cast<double>(fpu.fp[1]) == 1.0);
+    BOOST_TEST(static_cast<double>(fpu.fp[2]) == 2.0);
+    BOOST_TEST(static_cast<double>(fpu.fp[3]) == 3.0);
 }
 
 BOOST_AUTO_TEST_CASE(incr) {
@@ -233,9 +233,9 @@ BOOST_AUTO_TEST_CASE(incr) {
     raw_write16(0, 0171030 | ar);
     raw_write16(2, 0xD070);
     m68k_do_execute();
-    BOOST_TEST(mpfr_get_d(regs.fpu.fp[1], MPFR_RNDN) == 1.0);
-    BOOST_TEST(mpfr_get_d(regs.fpu.fp[2], MPFR_RNDN) == 2.0);
-    BOOST_TEST(mpfr_get_d(regs.fpu.fp[3], MPFR_RNDN) == 3.0);
+    BOOST_TEST(static_cast<double>(fpu.fp[1]) == 1.0);
+    BOOST_TEST(static_cast<double>(fpu.fp[2]) == 2.0);
+    BOOST_TEST(static_cast<double>(fpu.fp[3]) == 3.0);
     BOOST_TEST(regs.a[ar] == 0x100 + 12 * 3);
 }
 
@@ -250,9 +250,9 @@ BOOST_AUTO_TEST_CASE(incr_d) {
     raw_write16(0, 0171030 | ar);
     raw_write16(2, 0xD800 | dr << 4);
     m68k_do_execute();
-    BOOST_TEST(mpfr_get_d(regs.fpu.fp[1], MPFR_RNDN) == 1.0);
-    BOOST_TEST(mpfr_get_d(regs.fpu.fp[2], MPFR_RNDN) == 2.0);
-    BOOST_TEST(mpfr_get_d(regs.fpu.fp[3], MPFR_RNDN) == 3.0);
+    BOOST_TEST(static_cast<double>(fpu.fp[1]) == 1.0);
+    BOOST_TEST(static_cast<double>(fpu.fp[2]) == 2.0);
+    BOOST_TEST(static_cast<double>(fpu.fp[3]) == 3.0);
     BOOST_TEST(regs.a[ar] == 0x100 + 12 * 3);
 }
 

@@ -127,1257 +127,133 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named Basillisk2
+# Target rules for targets named Yame
 
 # Build rule for target.
-Basillisk2: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Basillisk2
-.PHONY : Basillisk2
+Yame: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Yame
+.PHONY : Yame
 
 # fast build rule for target.
-Basillisk2/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/build
-.PHONY : Basillisk2/fast
+Yame/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/build
+.PHONY : Yame/fast
 
 #=============================================================================
-# Target rules for targets named test_cpu
+# Target rules for targets named ut
 
 # Build rule for target.
-test_cpu: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_cpu
-.PHONY : test_cpu
+ut: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 ut
+.PHONY : ut
 
 # fast build rule for target.
-test_cpu/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu.dir/build.make CMakeFiles/test_cpu.dir/build
-.PHONY : test_cpu/fast
-
-#=============================================================================
-# Target rules for targets named test_cpu_math
-
-# Build rule for target.
-test_cpu_math: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_cpu_math
-.PHONY : test_cpu_math
-
-# fast build rule for target.
-test_cpu_math/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_math.dir/build.make CMakeFiles/test_cpu_math.dir/build
-.PHONY : test_cpu_math/fast
-
-#=============================================================================
-# Target rules for targets named test_cpu_and
-
-# Build rule for target.
-test_cpu_and: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_cpu_and
-.PHONY : test_cpu_and
-
-# fast build rule for target.
-test_cpu_and/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_and.dir/build.make CMakeFiles/test_cpu_and.dir/build
-.PHONY : test_cpu_and/fast
-
-#=============================================================================
-# Target rules for targets named test_cpu_cmp2
-
-# Build rule for target.
-test_cpu_cmp2: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_cpu_cmp2
-.PHONY : test_cpu_cmp2
-
-# fast build rule for target.
-test_cpu_cmp2/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp2.dir/build.make CMakeFiles/test_cpu_cmp2.dir/build
-.PHONY : test_cpu_cmp2/fast
-
-#=============================================================================
-# Target rules for targets named test_cpu_chk2
-
-# Build rule for target.
-test_cpu_chk2: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_cpu_chk2
-.PHONY : test_cpu_chk2
-
-# fast build rule for target.
-test_cpu_chk2/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk2.dir/build.make CMakeFiles/test_cpu_chk2.dir/build
-.PHONY : test_cpu_chk2/fast
-
-#=============================================================================
-# Target rules for targets named test_cpu_btst
-
-# Build rule for target.
-test_cpu_btst: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_cpu_btst
-.PHONY : test_cpu_btst
-
-# fast build rule for target.
-test_cpu_btst/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_btst.dir/build.make CMakeFiles/test_cpu_btst.dir/build
-.PHONY : test_cpu_btst/fast
-
-#=============================================================================
-# Target rules for targets named test_cpu_bchg
-
-# Build rule for target.
-test_cpu_bchg: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_cpu_bchg
-.PHONY : test_cpu_bchg
-
-# fast build rule for target.
-test_cpu_bchg/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bchg.dir/build.make CMakeFiles/test_cpu_bchg.dir/build
-.PHONY : test_cpu_bchg/fast
-
-#=============================================================================
-# Target rules for targets named test_cpu_bclr
-
-# Build rule for target.
-test_cpu_bclr: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_cpu_bclr
-.PHONY : test_cpu_bclr
-
-# fast build rule for target.
-test_cpu_bclr/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bclr.dir/build.make CMakeFiles/test_cpu_bclr.dir/build
-.PHONY : test_cpu_bclr/fast
-
-#=============================================================================
-# Target rules for targets named test_cpu_bset
-
-# Build rule for target.
-test_cpu_bset: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_cpu_bset
-.PHONY : test_cpu_bset
-
-# fast build rule for target.
-test_cpu_bset/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bset.dir/build.make CMakeFiles/test_cpu_bset.dir/build
-.PHONY : test_cpu_bset/fast
-
-#=============================================================================
-# Target rules for targets named test_cpu_cas
-
-# Build rule for target.
-test_cpu_cas: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_cpu_cas
-.PHONY : test_cpu_cas
-
-# fast build rule for target.
-test_cpu_cas/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas.dir/build.make CMakeFiles/test_cpu_cas.dir/build
-.PHONY : test_cpu_cas/fast
-
-#=============================================================================
-# Target rules for targets named test_cpu_cas2
-
-# Build rule for target.
-test_cpu_cas2: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_cpu_cas2
-.PHONY : test_cpu_cas2
-
-# fast build rule for target.
-test_cpu_cas2/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas2.dir/build.make CMakeFiles/test_cpu_cas2.dir/build
-.PHONY : test_cpu_cas2/fast
-
-#=============================================================================
-# Target rules for targets named test_cpu_movep
-
-# Build rule for target.
-test_cpu_movep: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_cpu_movep
-.PHONY : test_cpu_movep
-
-# fast build rule for target.
-test_cpu_movep/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movep.dir/build.make CMakeFiles/test_cpu_movep.dir/build
-.PHONY : test_cpu_movep/fast
-
-#=============================================================================
-# Target rules for targets named test_cpu_move
-
-# Build rule for target.
-test_cpu_move: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_cpu_move
-.PHONY : test_cpu_move
-
-# fast build rule for target.
-test_cpu_move/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_move.dir/build.make CMakeFiles/test_cpu_move.dir/build
-.PHONY : test_cpu_move/fast
-
-#=============================================================================
-# Target rules for targets named test_cpu_negx
-
-# Build rule for target.
-test_cpu_negx: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_cpu_negx
-.PHONY : test_cpu_negx
-
-# fast build rule for target.
-test_cpu_negx/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_negx.dir/build.make CMakeFiles/test_cpu_negx.dir/build
-.PHONY : test_cpu_negx/fast
-
-#=============================================================================
-# Target rules for targets named test_cpu_clr
-
-# Build rule for target.
-test_cpu_clr: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_cpu_clr
-.PHONY : test_cpu_clr
-
-# fast build rule for target.
-test_cpu_clr/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_clr.dir/build.make CMakeFiles/test_cpu_clr.dir/build
-.PHONY : test_cpu_clr/fast
-
-#=============================================================================
-# Target rules for targets named test_cpu_neg
-
-# Build rule for target.
-test_cpu_neg: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_cpu_neg
-.PHONY : test_cpu_neg
-
-# fast build rule for target.
-test_cpu_neg/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_neg.dir/build.make CMakeFiles/test_cpu_neg.dir/build
-.PHONY : test_cpu_neg/fast
-
-#=============================================================================
-# Target rules for targets named test_cpu_not
-
-# Build rule for target.
-test_cpu_not: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_cpu_not
-.PHONY : test_cpu_not
-
-# fast build rule for target.
-test_cpu_not/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_not.dir/build.make CMakeFiles/test_cpu_not.dir/build
-.PHONY : test_cpu_not/fast
-
-#=============================================================================
-# Target rules for targets named test_cpu_nbcd
-
-# Build rule for target.
-test_cpu_nbcd: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_cpu_nbcd
-.PHONY : test_cpu_nbcd
-
-# fast build rule for target.
-test_cpu_nbcd/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_nbcd.dir/build.make CMakeFiles/test_cpu_nbcd.dir/build
-.PHONY : test_cpu_nbcd/fast
-
-#=============================================================================
-# Target rules for targets named test_cpu_link
-
-# Build rule for target.
-test_cpu_link: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_cpu_link
-.PHONY : test_cpu_link
-
-# fast build rule for target.
-test_cpu_link/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_link.dir/build.make CMakeFiles/test_cpu_link.dir/build
-.PHONY : test_cpu_link/fast
-
-#=============================================================================
-# Target rules for targets named test_cpu_swap
-
-# Build rule for target.
-test_cpu_swap: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_cpu_swap
-.PHONY : test_cpu_swap
-
-# fast build rule for target.
-test_cpu_swap/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_swap.dir/build.make CMakeFiles/test_cpu_swap.dir/build
-.PHONY : test_cpu_swap/fast
-
-#=============================================================================
-# Target rules for targets named test_cpu_pea
-
-# Build rule for target.
-test_cpu_pea: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_cpu_pea
-.PHONY : test_cpu_pea
-
-# fast build rule for target.
-test_cpu_pea/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pea.dir/build.make CMakeFiles/test_cpu_pea.dir/build
-.PHONY : test_cpu_pea/fast
-
-#=============================================================================
-# Target rules for targets named test_cpu_ext
-
-# Build rule for target.
-test_cpu_ext: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_cpu_ext
-.PHONY : test_cpu_ext
-
-# fast build rule for target.
-test_cpu_ext/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_ext.dir/build.make CMakeFiles/test_cpu_ext.dir/build
-.PHONY : test_cpu_ext/fast
-
-#=============================================================================
-# Target rules for targets named test_cpu_movem
-
-# Build rule for target.
-test_cpu_movem: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_cpu_movem
-.PHONY : test_cpu_movem
-
-# fast build rule for target.
-test_cpu_movem/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movem.dir/build.make CMakeFiles/test_cpu_movem.dir/build
-.PHONY : test_cpu_movem/fast
-
-#=============================================================================
-# Target rules for targets named test_cpu_tst
-
-# Build rule for target.
-test_cpu_tst: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_cpu_tst
-.PHONY : test_cpu_tst
-
-# fast build rule for target.
-test_cpu_tst/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_tst.dir/build.make CMakeFiles/test_cpu_tst.dir/build
-.PHONY : test_cpu_tst/fast
-
-#=============================================================================
-# Target rules for targets named test_cpu_mul
-
-# Build rule for target.
-test_cpu_mul: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_cpu_mul
-.PHONY : test_cpu_mul
-
-# fast build rule for target.
-test_cpu_mul/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_mul.dir/build.make CMakeFiles/test_cpu_mul.dir/build
-.PHONY : test_cpu_mul/fast
-
-#=============================================================================
-# Target rules for targets named test_cpu_div
-
-# Build rule for target.
-test_cpu_div: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_cpu_div
-.PHONY : test_cpu_div
-
-# fast build rule for target.
-test_cpu_div/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_div.dir/build.make CMakeFiles/test_cpu_div.dir/build
-.PHONY : test_cpu_div/fast
-
-#=============================================================================
-# Target rules for targets named test_cpu_unlk
-
-# Build rule for target.
-test_cpu_unlk: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_cpu_unlk
-.PHONY : test_cpu_unlk
-
-# fast build rule for target.
-test_cpu_unlk/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unlk.dir/build.make CMakeFiles/test_cpu_unlk.dir/build
-.PHONY : test_cpu_unlk/fast
-
-#=============================================================================
-# Target rules for targets named test_cpu_rtx
-
-# Build rule for target.
-test_cpu_rtx: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_cpu_rtx
-.PHONY : test_cpu_rtx
-
-# fast build rule for target.
-test_cpu_rtx/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_rtx.dir/build.make CMakeFiles/test_cpu_rtx.dir/build
-.PHONY : test_cpu_rtx/fast
-
-#=============================================================================
-# Target rules for targets named test_cpu_jmp
-
-# Build rule for target.
-test_cpu_jmp: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_cpu_jmp
-.PHONY : test_cpu_jmp
-
-# fast build rule for target.
-test_cpu_jmp/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_jmp.dir/build.make CMakeFiles/test_cpu_jmp.dir/build
-.PHONY : test_cpu_jmp/fast
-
-#=============================================================================
-# Target rules for targets named test_cpu_chk
-
-# Build rule for target.
-test_cpu_chk: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_cpu_chk
-.PHONY : test_cpu_chk
-
-# fast build rule for target.
-test_cpu_chk/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk.dir/build.make CMakeFiles/test_cpu_chk.dir/build
-.PHONY : test_cpu_chk/fast
-
-#=============================================================================
-# Target rules for targets named test_cpu_lea
-
-# Build rule for target.
-test_cpu_lea: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_cpu_lea
-.PHONY : test_cpu_lea
-
-# fast build rule for target.
-test_cpu_lea/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_lea.dir/build.make CMakeFiles/test_cpu_lea.dir/build
-.PHONY : test_cpu_lea/fast
-
-#=============================================================================
-# Target rules for targets named test_cpu_scc
-
-# Build rule for target.
-test_cpu_scc: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_cpu_scc
-.PHONY : test_cpu_scc
-
-# fast build rule for target.
-test_cpu_scc/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_scc.dir/build.make CMakeFiles/test_cpu_scc.dir/build
-.PHONY : test_cpu_scc/fast
-
-#=============================================================================
-# Target rules for targets named test_cpu_dbcc
-
-# Build rule for target.
-test_cpu_dbcc: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_cpu_dbcc
-.PHONY : test_cpu_dbcc
-
-# fast build rule for target.
-test_cpu_dbcc/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_dbcc.dir/build.make CMakeFiles/test_cpu_dbcc.dir/build
-.PHONY : test_cpu_dbcc/fast
-
-#=============================================================================
-# Target rules for targets named test_cpu_or
-
-# Build rule for target.
-test_cpu_or: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_cpu_or
-.PHONY : test_cpu_or
-
-# fast build rule for target.
-test_cpu_or/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_or.dir/build.make CMakeFiles/test_cpu_or.dir/build
-.PHONY : test_cpu_or/fast
-
-#=============================================================================
-# Target rules for targets named test_cpu_sbcd
-
-# Build rule for target.
-test_cpu_sbcd: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_cpu_sbcd
-.PHONY : test_cpu_sbcd
-
-# fast build rule for target.
-test_cpu_sbcd/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sbcd.dir/build.make CMakeFiles/test_cpu_sbcd.dir/build
-.PHONY : test_cpu_sbcd/fast
-
-#=============================================================================
-# Target rules for targets named test_cpu_pack
-
-# Build rule for target.
-test_cpu_pack: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_cpu_pack
-.PHONY : test_cpu_pack
-
-# fast build rule for target.
-test_cpu_pack/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pack.dir/build.make CMakeFiles/test_cpu_pack.dir/build
-.PHONY : test_cpu_pack/fast
-
-#=============================================================================
-# Target rules for targets named test_cpu_unpk
-
-# Build rule for target.
-test_cpu_unpk: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_cpu_unpk
-.PHONY : test_cpu_unpk
-
-# fast build rule for target.
-test_cpu_unpk/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unpk.dir/build.make CMakeFiles/test_cpu_unpk.dir/build
-.PHONY : test_cpu_unpk/fast
-
-#=============================================================================
-# Target rules for targets named test_cpu_sub
-
-# Build rule for target.
-test_cpu_sub: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_cpu_sub
-.PHONY : test_cpu_sub
-
-# fast build rule for target.
-test_cpu_sub/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sub.dir/build.make CMakeFiles/test_cpu_sub.dir/build
-.PHONY : test_cpu_sub/fast
-
-#=============================================================================
-# Target rules for targets named test_cpu_cmp
-
-# Build rule for target.
-test_cpu_cmp: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_cpu_cmp
-.PHONY : test_cpu_cmp
-
-# fast build rule for target.
-test_cpu_cmp/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp.dir/build.make CMakeFiles/test_cpu_cmp.dir/build
-.PHONY : test_cpu_cmp/fast
-
-#=============================================================================
-# Target rules for targets named test_cpu_eor
-
-# Build rule for target.
-test_cpu_eor: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_cpu_eor
-.PHONY : test_cpu_eor
-
-# fast build rule for target.
-test_cpu_eor/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_eor.dir/build.make CMakeFiles/test_cpu_eor.dir/build
-.PHONY : test_cpu_eor/fast
-
-#=============================================================================
-# Target rules for targets named test_cpu_exg
-
-# Build rule for target.
-test_cpu_exg: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_cpu_exg
-.PHONY : test_cpu_exg
-
-# fast build rule for target.
-test_cpu_exg/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_exg.dir/build.make CMakeFiles/test_cpu_exg.dir/build
-.PHONY : test_cpu_exg/fast
-
-#=============================================================================
-# Target rules for targets named test_cpu_add
-
-# Build rule for target.
-test_cpu_add: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_cpu_add
-.PHONY : test_cpu_add
-
-# fast build rule for target.
-test_cpu_add/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_add.dir/build.make CMakeFiles/test_cpu_add.dir/build
-.PHONY : test_cpu_add/fast
-
-#=============================================================================
-# Target rules for targets named test_cpu_shift
-
-# Build rule for target.
-test_cpu_shift: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_cpu_shift
-.PHONY : test_cpu_shift
-
-# fast build rule for target.
-test_cpu_shift/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_shift.dir/build.make CMakeFiles/test_cpu_shift.dir/build
-.PHONY : test_cpu_shift/fast
-
-#=============================================================================
-# Target rules for targets named test_cpu_bitfields
-
-# Build rule for target.
-test_cpu_bitfields: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_cpu_bitfields
-.PHONY : test_cpu_bitfields
-
-# fast build rule for target.
-test_cpu_bitfields/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bitfields.dir/build.make CMakeFiles/test_cpu_bitfields.dir/build
-.PHONY : test_cpu_bitfields/fast
-
-#=============================================================================
-# Target rules for targets named test_cpu_fmove
-
-# Build rule for target.
-test_cpu_fmove: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_cpu_fmove
-.PHONY : test_cpu_fmove
-
-# fast build rule for target.
-test_cpu_fmove/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_fmove.dir/build.make CMakeFiles/test_cpu_fmove.dir/build
-.PHONY : test_cpu_fmove/fast
-
-CrossPlatform/video_blit.o: CrossPlatform/video_blit.cpp.o
-.PHONY : CrossPlatform/video_blit.o
+ut/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/build
+.PHONY : ut/fast
+
+chips/io.o: chips/io.cpp.o
+.PHONY : chips/io.o
 
 # target to build an object file
-CrossPlatform/video_blit.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/CrossPlatform/video_blit.cpp.o
-.PHONY : CrossPlatform/video_blit.cpp.o
+chips/io.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/chips/io.cpp.o
+.PHONY : chips/io.cpp.o
 
-CrossPlatform/video_blit.i: CrossPlatform/video_blit.cpp.i
-.PHONY : CrossPlatform/video_blit.i
+chips/io.i: chips/io.cpp.i
+.PHONY : chips/io.i
 
 # target to preprocess a source file
-CrossPlatform/video_blit.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/CrossPlatform/video_blit.cpp.i
-.PHONY : CrossPlatform/video_blit.cpp.i
+chips/io.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/chips/io.cpp.i
+.PHONY : chips/io.cpp.i
 
-CrossPlatform/video_blit.s: CrossPlatform/video_blit.cpp.s
-.PHONY : CrossPlatform/video_blit.s
+chips/io.s: chips/io.cpp.s
+.PHONY : chips/io.s
 
 # target to generate assembly for a file
-CrossPlatform/video_blit.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/CrossPlatform/video_blit.cpp.s
-.PHONY : CrossPlatform/video_blit.cpp.s
+chips/io.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/chips/io.cpp.s
+.PHONY : chips/io.cpp.s
 
-CrossPlatform/vm_alloc.o: CrossPlatform/vm_alloc.cpp.o
-.PHONY : CrossPlatform/vm_alloc.o
+chips/iop.o: chips/iop.cpp.o
+.PHONY : chips/iop.o
 
 # target to build an object file
-CrossPlatform/vm_alloc.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/CrossPlatform/vm_alloc.cpp.o
-.PHONY : CrossPlatform/vm_alloc.cpp.o
+chips/iop.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/chips/iop.cpp.o
+.PHONY : chips/iop.cpp.o
 
-CrossPlatform/vm_alloc.i: CrossPlatform/vm_alloc.cpp.i
-.PHONY : CrossPlatform/vm_alloc.i
+chips/iop.i: chips/iop.cpp.i
+.PHONY : chips/iop.i
 
 # target to preprocess a source file
-CrossPlatform/vm_alloc.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/CrossPlatform/vm_alloc.cpp.i
-.PHONY : CrossPlatform/vm_alloc.cpp.i
+chips/iop.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/chips/iop.cpp.i
+.PHONY : chips/iop.cpp.i
 
-CrossPlatform/vm_alloc.s: CrossPlatform/vm_alloc.cpp.s
-.PHONY : CrossPlatform/vm_alloc.s
+chips/iop.s: chips/iop.cpp.s
+.PHONY : chips/iop.s
 
 # target to generate assembly for a file
-CrossPlatform/vm_alloc.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/CrossPlatform/vm_alloc.cpp.s
-.PHONY : CrossPlatform/vm_alloc.cpp.s
+chips/iop.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/chips/iop.cpp.s
+.PHONY : chips/iop.cpp.s
 
-SDL/audio_sdl.o: SDL/audio_sdl.cpp.o
-.PHONY : SDL/audio_sdl.o
+chips/mcu.o: chips/mcu.cpp.o
+.PHONY : chips/mcu.o
 
 # target to build an object file
-SDL/audio_sdl.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/SDL/audio_sdl.cpp.o
-.PHONY : SDL/audio_sdl.cpp.o
+chips/mcu.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/chips/mcu.cpp.o
+.PHONY : chips/mcu.cpp.o
 
-SDL/audio_sdl.i: SDL/audio_sdl.cpp.i
-.PHONY : SDL/audio_sdl.i
+chips/mcu.i: chips/mcu.cpp.i
+.PHONY : chips/mcu.i
 
 # target to preprocess a source file
-SDL/audio_sdl.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/SDL/audio_sdl.cpp.i
-.PHONY : SDL/audio_sdl.cpp.i
+chips/mcu.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/chips/mcu.cpp.i
+.PHONY : chips/mcu.cpp.i
 
-SDL/audio_sdl.s: SDL/audio_sdl.cpp.s
-.PHONY : SDL/audio_sdl.s
+chips/mcu.s: chips/mcu.cpp.s
+.PHONY : chips/mcu.s
 
 # target to generate assembly for a file
-SDL/audio_sdl.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/SDL/audio_sdl.cpp.s
-.PHONY : SDL/audio_sdl.cpp.s
+chips/mcu.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/chips/mcu.cpp.s
+.PHONY : chips/mcu.cpp.s
 
-SDL/common.o: SDL/common.cpp.o
-.PHONY : SDL/common.o
+chips/via.o: chips/via.cpp.o
+.PHONY : chips/via.o
 
 # target to build an object file
-SDL/common.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/SDL/common.cpp.o
-.PHONY : SDL/common.cpp.o
+chips/via.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/chips/via.cpp.o
+.PHONY : chips/via.cpp.o
 
-SDL/common.i: SDL/common.cpp.i
-.PHONY : SDL/common.i
-
-# target to preprocess a source file
-SDL/common.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/SDL/common.cpp.i
-.PHONY : SDL/common.cpp.i
-
-SDL/common.s: SDL/common.cpp.s
-.PHONY : SDL/common.s
-
-# target to generate assembly for a file
-SDL/common.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/SDL/common.cpp.s
-.PHONY : SDL/common.cpp.s
-
-SDL/video_sdl2.o: SDL/video_sdl2.cpp.o
-.PHONY : SDL/video_sdl2.o
-
-# target to build an object file
-SDL/video_sdl2.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/SDL/video_sdl2.cpp.o
-.PHONY : SDL/video_sdl2.cpp.o
-
-SDL/video_sdl2.i: SDL/video_sdl2.cpp.i
-.PHONY : SDL/video_sdl2.i
+chips/via.i: chips/via.cpp.i
+.PHONY : chips/via.i
 
 # target to preprocess a source file
-SDL/video_sdl2.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/SDL/video_sdl2.cpp.i
-.PHONY : SDL/video_sdl2.cpp.i
+chips/via.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/chips/via.cpp.i
+.PHONY : chips/via.cpp.i
 
-SDL/video_sdl2.s: SDL/video_sdl2.cpp.s
-.PHONY : SDL/video_sdl2.s
-
-# target to generate assembly for a file
-SDL/video_sdl2.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/SDL/video_sdl2.cpp.s
-.PHONY : SDL/video_sdl2.cpp.s
-
-Unix/Linux/scsi_linux.o: Unix/Linux/scsi_linux.cpp.o
-.PHONY : Unix/Linux/scsi_linux.o
-
-# target to build an object file
-Unix/Linux/scsi_linux.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/Unix/Linux/scsi_linux.cpp.o
-.PHONY : Unix/Linux/scsi_linux.cpp.o
-
-Unix/Linux/scsi_linux.i: Unix/Linux/scsi_linux.cpp.i
-.PHONY : Unix/Linux/scsi_linux.i
-
-# target to preprocess a source file
-Unix/Linux/scsi_linux.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/Unix/Linux/scsi_linux.cpp.i
-.PHONY : Unix/Linux/scsi_linux.cpp.i
-
-Unix/Linux/scsi_linux.s: Unix/Linux/scsi_linux.cpp.s
-.PHONY : Unix/Linux/scsi_linux.s
+chips/via.s: chips/via.cpp.s
+.PHONY : chips/via.s
 
 # target to generate assembly for a file
-Unix/Linux/scsi_linux.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/Unix/Linux/scsi_linux.cpp.s
-.PHONY : Unix/Linux/scsi_linux.cpp.s
-
-Unix/disk_sparsebundle.o: Unix/disk_sparsebundle.cpp.o
-.PHONY : Unix/disk_sparsebundle.o
-
-# target to build an object file
-Unix/disk_sparsebundle.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/Unix/disk_sparsebundle.cpp.o
-.PHONY : Unix/disk_sparsebundle.cpp.o
-
-Unix/disk_sparsebundle.i: Unix/disk_sparsebundle.cpp.i
-.PHONY : Unix/disk_sparsebundle.i
-
-# target to preprocess a source file
-Unix/disk_sparsebundle.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/Unix/disk_sparsebundle.cpp.i
-.PHONY : Unix/disk_sparsebundle.cpp.i
-
-Unix/disk_sparsebundle.s: Unix/disk_sparsebundle.cpp.s
-.PHONY : Unix/disk_sparsebundle.s
-
-# target to generate assembly for a file
-Unix/disk_sparsebundle.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/Unix/disk_sparsebundle.cpp.s
-.PHONY : Unix/disk_sparsebundle.cpp.s
-
-Unix/ether_unix.o: Unix/ether_unix.cpp.o
-.PHONY : Unix/ether_unix.o
-
-# target to build an object file
-Unix/ether_unix.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/Unix/ether_unix.cpp.o
-.PHONY : Unix/ether_unix.cpp.o
-
-Unix/ether_unix.i: Unix/ether_unix.cpp.i
-.PHONY : Unix/ether_unix.i
-
-# target to preprocess a source file
-Unix/ether_unix.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/Unix/ether_unix.cpp.i
-.PHONY : Unix/ether_unix.cpp.i
-
-Unix/ether_unix.s: Unix/ether_unix.cpp.s
-.PHONY : Unix/ether_unix.s
-
-# target to generate assembly for a file
-Unix/ether_unix.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/Unix/ether_unix.cpp.s
-.PHONY : Unix/ether_unix.cpp.s
-
-Unix/extfs_unix.o: Unix/extfs_unix.cpp.o
-.PHONY : Unix/extfs_unix.o
-
-# target to build an object file
-Unix/extfs_unix.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/Unix/extfs_unix.cpp.o
-.PHONY : Unix/extfs_unix.cpp.o
-
-Unix/extfs_unix.i: Unix/extfs_unix.cpp.i
-.PHONY : Unix/extfs_unix.i
-
-# target to preprocess a source file
-Unix/extfs_unix.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/Unix/extfs_unix.cpp.i
-.PHONY : Unix/extfs_unix.cpp.i
-
-Unix/extfs_unix.s: Unix/extfs_unix.cpp.s
-.PHONY : Unix/extfs_unix.s
-
-# target to generate assembly for a file
-Unix/extfs_unix.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/Unix/extfs_unix.cpp.s
-.PHONY : Unix/extfs_unix.cpp.s
-
-Unix/main_unix.o: Unix/main_unix.cpp.o
-.PHONY : Unix/main_unix.o
-
-# target to build an object file
-Unix/main_unix.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/Unix/main_unix.cpp.o
-.PHONY : Unix/main_unix.cpp.o
-
-Unix/main_unix.i: Unix/main_unix.cpp.i
-.PHONY : Unix/main_unix.i
-
-# target to preprocess a source file
-Unix/main_unix.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/Unix/main_unix.cpp.i
-.PHONY : Unix/main_unix.cpp.i
-
-Unix/main_unix.s: Unix/main_unix.cpp.s
-.PHONY : Unix/main_unix.s
-
-# target to generate assembly for a file
-Unix/main_unix.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/Unix/main_unix.cpp.s
-.PHONY : Unix/main_unix.cpp.s
-
-Unix/prefs_unix.o: Unix/prefs_unix.cpp.o
-.PHONY : Unix/prefs_unix.o
-
-# target to build an object file
-Unix/prefs_unix.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/Unix/prefs_unix.cpp.o
-.PHONY : Unix/prefs_unix.cpp.o
-
-Unix/prefs_unix.i: Unix/prefs_unix.cpp.i
-.PHONY : Unix/prefs_unix.i
-
-# target to preprocess a source file
-Unix/prefs_unix.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/Unix/prefs_unix.cpp.i
-.PHONY : Unix/prefs_unix.cpp.i
-
-Unix/prefs_unix.s: Unix/prefs_unix.cpp.s
-.PHONY : Unix/prefs_unix.s
-
-# target to generate assembly for a file
-Unix/prefs_unix.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/Unix/prefs_unix.cpp.s
-.PHONY : Unix/prefs_unix.cpp.s
-
-Unix/serial_unix.o: Unix/serial_unix.cpp.o
-.PHONY : Unix/serial_unix.o
-
-# target to build an object file
-Unix/serial_unix.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/Unix/serial_unix.cpp.o
-.PHONY : Unix/serial_unix.cpp.o
-
-Unix/serial_unix.i: Unix/serial_unix.cpp.i
-.PHONY : Unix/serial_unix.i
-
-# target to preprocess a source file
-Unix/serial_unix.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/Unix/serial_unix.cpp.i
-.PHONY : Unix/serial_unix.cpp.i
-
-Unix/serial_unix.s: Unix/serial_unix.cpp.s
-.PHONY : Unix/serial_unix.s
-
-# target to generate assembly for a file
-Unix/serial_unix.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/Unix/serial_unix.cpp.s
-.PHONY : Unix/serial_unix.cpp.s
-
-Unix/sys_unix.o: Unix/sys_unix.cpp.o
-.PHONY : Unix/sys_unix.o
-
-# target to build an object file
-Unix/sys_unix.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/Unix/sys_unix.cpp.o
-.PHONY : Unix/sys_unix.cpp.o
-
-Unix/sys_unix.i: Unix/sys_unix.cpp.i
-.PHONY : Unix/sys_unix.i
-
-# target to preprocess a source file
-Unix/sys_unix.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/Unix/sys_unix.cpp.i
-.PHONY : Unix/sys_unix.cpp.i
-
-Unix/sys_unix.s: Unix/sys_unix.cpp.s
-.PHONY : Unix/sys_unix.s
-
-# target to generate assembly for a file
-Unix/sys_unix.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/Unix/sys_unix.cpp.s
-.PHONY : Unix/sys_unix.cpp.s
-
-Unix/timer_unix.o: Unix/timer_unix.cpp.o
-.PHONY : Unix/timer_unix.o
-
-# target to build an object file
-Unix/timer_unix.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/Unix/timer_unix.cpp.o
-.PHONY : Unix/timer_unix.cpp.o
-
-Unix/timer_unix.i: Unix/timer_unix.cpp.i
-.PHONY : Unix/timer_unix.i
-
-# target to preprocess a source file
-Unix/timer_unix.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/Unix/timer_unix.cpp.i
-.PHONY : Unix/timer_unix.cpp.i
-
-Unix/timer_unix.s: Unix/timer_unix.cpp.s
-.PHONY : Unix/timer_unix.s
-
-# target to generate assembly for a file
-Unix/timer_unix.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/Unix/timer_unix.cpp.s
-.PHONY : Unix/timer_unix.cpp.s
-
-Unix/tinyxml2.o: Unix/tinyxml2.cpp.o
-.PHONY : Unix/tinyxml2.o
-
-# target to build an object file
-Unix/tinyxml2.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/Unix/tinyxml2.cpp.o
-.PHONY : Unix/tinyxml2.cpp.o
-
-Unix/tinyxml2.i: Unix/tinyxml2.cpp.i
-.PHONY : Unix/tinyxml2.i
-
-# target to preprocess a source file
-Unix/tinyxml2.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/Unix/tinyxml2.cpp.i
-.PHONY : Unix/tinyxml2.cpp.i
-
-Unix/tinyxml2.s: Unix/tinyxml2.cpp.s
-.PHONY : Unix/tinyxml2.s
-
-# target to generate assembly for a file
-Unix/tinyxml2.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/Unix/tinyxml2.cpp.s
-.PHONY : Unix/tinyxml2.cpp.s
-
-Unix/user_strings_unix.o: Unix/user_strings_unix.cpp.o
-.PHONY : Unix/user_strings_unix.o
-
-# target to build an object file
-Unix/user_strings_unix.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/Unix/user_strings_unix.cpp.o
-.PHONY : Unix/user_strings_unix.cpp.o
-
-Unix/user_strings_unix.i: Unix/user_strings_unix.cpp.i
-.PHONY : Unix/user_strings_unix.i
-
-# target to preprocess a source file
-Unix/user_strings_unix.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/Unix/user_strings_unix.cpp.i
-.PHONY : Unix/user_strings_unix.cpp.i
-
-Unix/user_strings_unix.s: Unix/user_strings_unix.cpp.s
-.PHONY : Unix/user_strings_unix.s
-
-# target to generate assembly for a file
-Unix/user_strings_unix.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/Unix/user_strings_unix.cpp.s
-.PHONY : Unix/user_strings_unix.cpp.s
-
-Unix/xpram_unix.o: Unix/xpram_unix.cpp.o
-.PHONY : Unix/xpram_unix.o
-
-# target to build an object file
-Unix/xpram_unix.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/Unix/xpram_unix.cpp.o
-.PHONY : Unix/xpram_unix.cpp.o
-
-Unix/xpram_unix.i: Unix/xpram_unix.cpp.i
-.PHONY : Unix/xpram_unix.i
-
-# target to preprocess a source file
-Unix/xpram_unix.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/Unix/xpram_unix.cpp.i
-.PHONY : Unix/xpram_unix.cpp.i
-
-Unix/xpram_unix.s: Unix/xpram_unix.cpp.s
-.PHONY : Unix/xpram_unix.s
-
-# target to generate assembly for a file
-Unix/xpram_unix.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/Unix/xpram_unix.cpp.s
-.PHONY : Unix/xpram_unix.cpp.s
-
-adb.o: adb.cpp.o
-.PHONY : adb.o
-
-# target to build an object file
-adb.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/adb.cpp.o
-.PHONY : adb.cpp.o
-
-adb.i: adb.cpp.i
-.PHONY : adb.i
-
-# target to preprocess a source file
-adb.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/adb.cpp.i
-.PHONY : adb.cpp.i
-
-adb.s: adb.cpp.s
-.PHONY : adb.s
-
-# target to generate assembly for a file
-adb.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/adb.cpp.s
-.PHONY : adb.cpp.s
-
-audio.o: audio.cpp.o
-.PHONY : audio.o
-
-# target to build an object file
-audio.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/audio.cpp.o
-.PHONY : audio.cpp.o
-
-audio.i: audio.cpp.i
-.PHONY : audio.i
-
-# target to preprocess a source file
-audio.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/audio.cpp.i
-.PHONY : audio.cpp.i
-
-audio.s: audio.cpp.s
-.PHONY : audio.s
-
-# target to generate assembly for a file
-audio.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/audio.cpp.s
-.PHONY : audio.cpp.s
-
-cdrom.o: cdrom.cpp.o
-.PHONY : cdrom.o
-
-# target to build an object file
-cdrom.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/cdrom.cpp.o
-.PHONY : cdrom.cpp.o
-
-cdrom.i: cdrom.cpp.i
-.PHONY : cdrom.i
-
-# target to preprocess a source file
-cdrom.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/cdrom.cpp.i
-.PHONY : cdrom.cpp.i
-
-cdrom.s: cdrom.cpp.s
-.PHONY : cdrom.s
-
-# target to generate assembly for a file
-cdrom.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/cdrom.cpp.s
-.PHONY : cdrom.cpp.s
-
-disk.o: disk.cpp.o
-.PHONY : disk.o
-
-# target to build an object file
-disk.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/disk.cpp.o
-.PHONY : disk.cpp.o
-
-disk.i: disk.cpp.i
-.PHONY : disk.i
-
-# target to preprocess a source file
-disk.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/disk.cpp.i
-.PHONY : disk.cpp.i
-
-disk.s: disk.cpp.s
-.PHONY : disk.s
-
-# target to generate assembly for a file
-disk.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/disk.cpp.s
-.PHONY : disk.cpp.s
-
-dummy/clip_dummy.o: dummy/clip_dummy.cpp.o
-.PHONY : dummy/clip_dummy.o
-
-# target to build an object file
-dummy/clip_dummy.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/dummy/clip_dummy.cpp.o
-.PHONY : dummy/clip_dummy.cpp.o
-
-dummy/clip_dummy.i: dummy/clip_dummy.cpp.i
-.PHONY : dummy/clip_dummy.i
-
-# target to preprocess a source file
-dummy/clip_dummy.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/dummy/clip_dummy.cpp.i
-.PHONY : dummy/clip_dummy.cpp.i
-
-dummy/clip_dummy.s: dummy/clip_dummy.cpp.s
-.PHONY : dummy/clip_dummy.s
-
-# target to generate assembly for a file
-dummy/clip_dummy.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/dummy/clip_dummy.cpp.s
-.PHONY : dummy/clip_dummy.cpp.s
-
-emul_op.o: emul_op.cpp.o
-.PHONY : emul_op.o
-
-# target to build an object file
-emul_op.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/emul_op.cpp.o
-.PHONY : emul_op.cpp.o
-
-emul_op.i: emul_op.cpp.i
-.PHONY : emul_op.i
-
-# target to preprocess a source file
-emul_op.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/emul_op.cpp.i
-.PHONY : emul_op.cpp.i
-
-emul_op.s: emul_op.cpp.s
-.PHONY : emul_op.s
-
-# target to generate assembly for a file
-emul_op.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/emul_op.cpp.s
-.PHONY : emul_op.cpp.s
-
-ether.o: ether.cpp.o
-.PHONY : ether.o
-
-# target to build an object file
-ether.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/ether.cpp.o
-.PHONY : ether.cpp.o
-
-ether.i: ether.cpp.i
-.PHONY : ether.i
-
-# target to preprocess a source file
-ether.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/ether.cpp.i
-.PHONY : ether.cpp.i
-
-ether.s: ether.cpp.s
-.PHONY : ether.s
-
-# target to generate assembly for a file
-ether.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/ether.cpp.s
-.PHONY : ether.cpp.s
-
-extfs.o: extfs.cpp.o
-.PHONY : extfs.o
-
-# target to build an object file
-extfs.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/extfs.cpp.o
-.PHONY : extfs.cpp.o
-
-extfs.i: extfs.cpp.i
-.PHONY : extfs.i
-
-# target to preprocess a source file
-extfs.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/extfs.cpp.i
-.PHONY : extfs.cpp.i
-
-extfs.s: extfs.cpp.s
-.PHONY : extfs.s
-
-# target to generate assembly for a file
-extfs.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/extfs.cpp.s
-.PHONY : extfs.cpp.s
-
-macos_util.o: macos_util.cpp.o
-.PHONY : macos_util.o
-
-# target to build an object file
-macos_util.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/macos_util.cpp.o
-.PHONY : macos_util.cpp.o
-
-macos_util.i: macos_util.cpp.i
-.PHONY : macos_util.i
-
-# target to preprocess a source file
-macos_util.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/macos_util.cpp.i
-.PHONY : macos_util.cpp.i
-
-macos_util.s: macos_util.cpp.s
-.PHONY : macos_util.s
-
-# target to generate assembly for a file
-macos_util.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/macos_util.cpp.s
-.PHONY : macos_util.cpp.s
-
-main.o: main.cpp.o
-.PHONY : main.o
-
-# target to build an object file
-main.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/main.cpp.o
-.PHONY : main.cpp.o
-
-main.i: main.cpp.i
-.PHONY : main.i
-
-# target to preprocess a source file
-main.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/main.cpp.i
-.PHONY : main.cpp.i
-
-main.s: main.cpp.s
-.PHONY : main.s
-
-# target to generate assembly for a file
-main.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/main.cpp.s
-.PHONY : main.cpp.s
+chips/via.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/chips/via.cpp.s
+.PHONY : chips/via.cpp.s
 
 mmu_cpu/basilisk_glue.o: mmu_cpu/basilisk_glue.cpp.o
 .PHONY : mmu_cpu/basilisk_glue.o
 
 # target to build an object file
 mmu_cpu/basilisk_glue.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/mmu_cpu/basilisk_glue.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/mmu_cpu/basilisk_glue.cpp.o
 .PHONY : mmu_cpu/basilisk_glue.cpp.o
 
 mmu_cpu/basilisk_glue.i: mmu_cpu/basilisk_glue.cpp.i
@@ -1385,7 +261,7 @@ mmu_cpu/basilisk_glue.i: mmu_cpu/basilisk_glue.cpp.i
 
 # target to preprocess a source file
 mmu_cpu/basilisk_glue.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/mmu_cpu/basilisk_glue.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/mmu_cpu/basilisk_glue.cpp.i
 .PHONY : mmu_cpu/basilisk_glue.cpp.i
 
 mmu_cpu/basilisk_glue.s: mmu_cpu/basilisk_glue.cpp.s
@@ -1393,60 +269,67 @@ mmu_cpu/basilisk_glue.s: mmu_cpu/basilisk_glue.cpp.s
 
 # target to generate assembly for a file
 mmu_cpu/basilisk_glue.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/mmu_cpu/basilisk_glue.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/mmu_cpu/basilisk_glue.cpp.s
 .PHONY : mmu_cpu/basilisk_glue.cpp.s
+
+mmu_cpu/compiler/jit.o: mmu_cpu/compiler/jit.cpp.o
+.PHONY : mmu_cpu/compiler/jit.o
+
+# target to build an object file
+mmu_cpu/compiler/jit.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/mmu_cpu/compiler/jit.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/compiler/jit.cpp.o
+.PHONY : mmu_cpu/compiler/jit.cpp.o
+
+mmu_cpu/compiler/jit.i: mmu_cpu/compiler/jit.cpp.i
+.PHONY : mmu_cpu/compiler/jit.i
+
+# target to preprocess a source file
+mmu_cpu/compiler/jit.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/mmu_cpu/compiler/jit.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/compiler/jit.cpp.i
+.PHONY : mmu_cpu/compiler/jit.cpp.i
+
+mmu_cpu/compiler/jit.s: mmu_cpu/compiler/jit.cpp.s
+.PHONY : mmu_cpu/compiler/jit.s
+
+# target to generate assembly for a file
+mmu_cpu/compiler/jit.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/mmu_cpu/compiler/jit.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/compiler/jit.cpp.s
+.PHONY : mmu_cpu/compiler/jit.cpp.s
+
+mmu_cpu/disasm.o: mmu_cpu/disasm.cpp.o
+.PHONY : mmu_cpu/disasm.o
+
+# target to build an object file
+mmu_cpu/disasm.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/mmu_cpu/disasm.cpp.o
+.PHONY : mmu_cpu/disasm.cpp.o
+
+mmu_cpu/disasm.i: mmu_cpu/disasm.cpp.i
+.PHONY : mmu_cpu/disasm.i
+
+# target to preprocess a source file
+mmu_cpu/disasm.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/mmu_cpu/disasm.cpp.i
+.PHONY : mmu_cpu/disasm.cpp.i
+
+mmu_cpu/disasm.s: mmu_cpu/disasm.cpp.s
+.PHONY : mmu_cpu/disasm.s
+
+# target to generate assembly for a file
+mmu_cpu/disasm.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/mmu_cpu/disasm.cpp.s
+.PHONY : mmu_cpu/disasm.cpp.s
 
 mmu_cpu/ea.o: mmu_cpu/ea.cpp.o
 .PHONY : mmu_cpu/ea.o
 
 # target to build an object file
 mmu_cpu/ea.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/mmu_cpu/ea.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu.dir/build.make CMakeFiles/test_cpu.dir/mmu_cpu/ea.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_math.dir/build.make CMakeFiles/test_cpu_math.dir/mmu_cpu/ea.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_and.dir/build.make CMakeFiles/test_cpu_and.dir/mmu_cpu/ea.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp2.dir/build.make CMakeFiles/test_cpu_cmp2.dir/mmu_cpu/ea.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk2.dir/build.make CMakeFiles/test_cpu_chk2.dir/mmu_cpu/ea.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_btst.dir/build.make CMakeFiles/test_cpu_btst.dir/mmu_cpu/ea.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bchg.dir/build.make CMakeFiles/test_cpu_bchg.dir/mmu_cpu/ea.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bclr.dir/build.make CMakeFiles/test_cpu_bclr.dir/mmu_cpu/ea.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bset.dir/build.make CMakeFiles/test_cpu_bset.dir/mmu_cpu/ea.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas.dir/build.make CMakeFiles/test_cpu_cas.dir/mmu_cpu/ea.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas2.dir/build.make CMakeFiles/test_cpu_cas2.dir/mmu_cpu/ea.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movep.dir/build.make CMakeFiles/test_cpu_movep.dir/mmu_cpu/ea.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_move.dir/build.make CMakeFiles/test_cpu_move.dir/mmu_cpu/ea.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_negx.dir/build.make CMakeFiles/test_cpu_negx.dir/mmu_cpu/ea.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_clr.dir/build.make CMakeFiles/test_cpu_clr.dir/mmu_cpu/ea.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_neg.dir/build.make CMakeFiles/test_cpu_neg.dir/mmu_cpu/ea.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_not.dir/build.make CMakeFiles/test_cpu_not.dir/mmu_cpu/ea.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_nbcd.dir/build.make CMakeFiles/test_cpu_nbcd.dir/mmu_cpu/ea.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_link.dir/build.make CMakeFiles/test_cpu_link.dir/mmu_cpu/ea.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_swap.dir/build.make CMakeFiles/test_cpu_swap.dir/mmu_cpu/ea.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pea.dir/build.make CMakeFiles/test_cpu_pea.dir/mmu_cpu/ea.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_ext.dir/build.make CMakeFiles/test_cpu_ext.dir/mmu_cpu/ea.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movem.dir/build.make CMakeFiles/test_cpu_movem.dir/mmu_cpu/ea.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_tst.dir/build.make CMakeFiles/test_cpu_tst.dir/mmu_cpu/ea.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_mul.dir/build.make CMakeFiles/test_cpu_mul.dir/mmu_cpu/ea.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_div.dir/build.make CMakeFiles/test_cpu_div.dir/mmu_cpu/ea.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unlk.dir/build.make CMakeFiles/test_cpu_unlk.dir/mmu_cpu/ea.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_rtx.dir/build.make CMakeFiles/test_cpu_rtx.dir/mmu_cpu/ea.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_jmp.dir/build.make CMakeFiles/test_cpu_jmp.dir/mmu_cpu/ea.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk.dir/build.make CMakeFiles/test_cpu_chk.dir/mmu_cpu/ea.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_lea.dir/build.make CMakeFiles/test_cpu_lea.dir/mmu_cpu/ea.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_scc.dir/build.make CMakeFiles/test_cpu_scc.dir/mmu_cpu/ea.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_dbcc.dir/build.make CMakeFiles/test_cpu_dbcc.dir/mmu_cpu/ea.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_or.dir/build.make CMakeFiles/test_cpu_or.dir/mmu_cpu/ea.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sbcd.dir/build.make CMakeFiles/test_cpu_sbcd.dir/mmu_cpu/ea.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pack.dir/build.make CMakeFiles/test_cpu_pack.dir/mmu_cpu/ea.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unpk.dir/build.make CMakeFiles/test_cpu_unpk.dir/mmu_cpu/ea.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sub.dir/build.make CMakeFiles/test_cpu_sub.dir/mmu_cpu/ea.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp.dir/build.make CMakeFiles/test_cpu_cmp.dir/mmu_cpu/ea.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_eor.dir/build.make CMakeFiles/test_cpu_eor.dir/mmu_cpu/ea.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_exg.dir/build.make CMakeFiles/test_cpu_exg.dir/mmu_cpu/ea.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_add.dir/build.make CMakeFiles/test_cpu_add.dir/mmu_cpu/ea.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_shift.dir/build.make CMakeFiles/test_cpu_shift.dir/mmu_cpu/ea.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bitfields.dir/build.make CMakeFiles/test_cpu_bitfields.dir/mmu_cpu/ea.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_fmove.dir/build.make CMakeFiles/test_cpu_fmove.dir/mmu_cpu/ea.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/mmu_cpu/ea.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/ea.cpp.o
 .PHONY : mmu_cpu/ea.cpp.o
 
 mmu_cpu/ea.i: mmu_cpu/ea.cpp.i
@@ -1454,52 +337,8 @@ mmu_cpu/ea.i: mmu_cpu/ea.cpp.i
 
 # target to preprocess a source file
 mmu_cpu/ea.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/mmu_cpu/ea.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu.dir/build.make CMakeFiles/test_cpu.dir/mmu_cpu/ea.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_math.dir/build.make CMakeFiles/test_cpu_math.dir/mmu_cpu/ea.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_and.dir/build.make CMakeFiles/test_cpu_and.dir/mmu_cpu/ea.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp2.dir/build.make CMakeFiles/test_cpu_cmp2.dir/mmu_cpu/ea.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk2.dir/build.make CMakeFiles/test_cpu_chk2.dir/mmu_cpu/ea.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_btst.dir/build.make CMakeFiles/test_cpu_btst.dir/mmu_cpu/ea.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bchg.dir/build.make CMakeFiles/test_cpu_bchg.dir/mmu_cpu/ea.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bclr.dir/build.make CMakeFiles/test_cpu_bclr.dir/mmu_cpu/ea.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bset.dir/build.make CMakeFiles/test_cpu_bset.dir/mmu_cpu/ea.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas.dir/build.make CMakeFiles/test_cpu_cas.dir/mmu_cpu/ea.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas2.dir/build.make CMakeFiles/test_cpu_cas2.dir/mmu_cpu/ea.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movep.dir/build.make CMakeFiles/test_cpu_movep.dir/mmu_cpu/ea.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_move.dir/build.make CMakeFiles/test_cpu_move.dir/mmu_cpu/ea.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_negx.dir/build.make CMakeFiles/test_cpu_negx.dir/mmu_cpu/ea.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_clr.dir/build.make CMakeFiles/test_cpu_clr.dir/mmu_cpu/ea.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_neg.dir/build.make CMakeFiles/test_cpu_neg.dir/mmu_cpu/ea.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_not.dir/build.make CMakeFiles/test_cpu_not.dir/mmu_cpu/ea.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_nbcd.dir/build.make CMakeFiles/test_cpu_nbcd.dir/mmu_cpu/ea.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_link.dir/build.make CMakeFiles/test_cpu_link.dir/mmu_cpu/ea.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_swap.dir/build.make CMakeFiles/test_cpu_swap.dir/mmu_cpu/ea.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pea.dir/build.make CMakeFiles/test_cpu_pea.dir/mmu_cpu/ea.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_ext.dir/build.make CMakeFiles/test_cpu_ext.dir/mmu_cpu/ea.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movem.dir/build.make CMakeFiles/test_cpu_movem.dir/mmu_cpu/ea.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_tst.dir/build.make CMakeFiles/test_cpu_tst.dir/mmu_cpu/ea.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_mul.dir/build.make CMakeFiles/test_cpu_mul.dir/mmu_cpu/ea.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_div.dir/build.make CMakeFiles/test_cpu_div.dir/mmu_cpu/ea.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unlk.dir/build.make CMakeFiles/test_cpu_unlk.dir/mmu_cpu/ea.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_rtx.dir/build.make CMakeFiles/test_cpu_rtx.dir/mmu_cpu/ea.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_jmp.dir/build.make CMakeFiles/test_cpu_jmp.dir/mmu_cpu/ea.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk.dir/build.make CMakeFiles/test_cpu_chk.dir/mmu_cpu/ea.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_lea.dir/build.make CMakeFiles/test_cpu_lea.dir/mmu_cpu/ea.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_scc.dir/build.make CMakeFiles/test_cpu_scc.dir/mmu_cpu/ea.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_dbcc.dir/build.make CMakeFiles/test_cpu_dbcc.dir/mmu_cpu/ea.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_or.dir/build.make CMakeFiles/test_cpu_or.dir/mmu_cpu/ea.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sbcd.dir/build.make CMakeFiles/test_cpu_sbcd.dir/mmu_cpu/ea.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pack.dir/build.make CMakeFiles/test_cpu_pack.dir/mmu_cpu/ea.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unpk.dir/build.make CMakeFiles/test_cpu_unpk.dir/mmu_cpu/ea.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sub.dir/build.make CMakeFiles/test_cpu_sub.dir/mmu_cpu/ea.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp.dir/build.make CMakeFiles/test_cpu_cmp.dir/mmu_cpu/ea.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_eor.dir/build.make CMakeFiles/test_cpu_eor.dir/mmu_cpu/ea.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_exg.dir/build.make CMakeFiles/test_cpu_exg.dir/mmu_cpu/ea.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_add.dir/build.make CMakeFiles/test_cpu_add.dir/mmu_cpu/ea.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_shift.dir/build.make CMakeFiles/test_cpu_shift.dir/mmu_cpu/ea.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bitfields.dir/build.make CMakeFiles/test_cpu_bitfields.dir/mmu_cpu/ea.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_fmove.dir/build.make CMakeFiles/test_cpu_fmove.dir/mmu_cpu/ea.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/mmu_cpu/ea.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/ea.cpp.i
 .PHONY : mmu_cpu/ea.cpp.i
 
 mmu_cpu/ea.s: mmu_cpu/ea.cpp.s
@@ -1507,52 +346,8 @@ mmu_cpu/ea.s: mmu_cpu/ea.cpp.s
 
 # target to generate assembly for a file
 mmu_cpu/ea.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/mmu_cpu/ea.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu.dir/build.make CMakeFiles/test_cpu.dir/mmu_cpu/ea.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_math.dir/build.make CMakeFiles/test_cpu_math.dir/mmu_cpu/ea.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_and.dir/build.make CMakeFiles/test_cpu_and.dir/mmu_cpu/ea.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp2.dir/build.make CMakeFiles/test_cpu_cmp2.dir/mmu_cpu/ea.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk2.dir/build.make CMakeFiles/test_cpu_chk2.dir/mmu_cpu/ea.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_btst.dir/build.make CMakeFiles/test_cpu_btst.dir/mmu_cpu/ea.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bchg.dir/build.make CMakeFiles/test_cpu_bchg.dir/mmu_cpu/ea.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bclr.dir/build.make CMakeFiles/test_cpu_bclr.dir/mmu_cpu/ea.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bset.dir/build.make CMakeFiles/test_cpu_bset.dir/mmu_cpu/ea.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas.dir/build.make CMakeFiles/test_cpu_cas.dir/mmu_cpu/ea.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas2.dir/build.make CMakeFiles/test_cpu_cas2.dir/mmu_cpu/ea.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movep.dir/build.make CMakeFiles/test_cpu_movep.dir/mmu_cpu/ea.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_move.dir/build.make CMakeFiles/test_cpu_move.dir/mmu_cpu/ea.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_negx.dir/build.make CMakeFiles/test_cpu_negx.dir/mmu_cpu/ea.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_clr.dir/build.make CMakeFiles/test_cpu_clr.dir/mmu_cpu/ea.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_neg.dir/build.make CMakeFiles/test_cpu_neg.dir/mmu_cpu/ea.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_not.dir/build.make CMakeFiles/test_cpu_not.dir/mmu_cpu/ea.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_nbcd.dir/build.make CMakeFiles/test_cpu_nbcd.dir/mmu_cpu/ea.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_link.dir/build.make CMakeFiles/test_cpu_link.dir/mmu_cpu/ea.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_swap.dir/build.make CMakeFiles/test_cpu_swap.dir/mmu_cpu/ea.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pea.dir/build.make CMakeFiles/test_cpu_pea.dir/mmu_cpu/ea.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_ext.dir/build.make CMakeFiles/test_cpu_ext.dir/mmu_cpu/ea.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movem.dir/build.make CMakeFiles/test_cpu_movem.dir/mmu_cpu/ea.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_tst.dir/build.make CMakeFiles/test_cpu_tst.dir/mmu_cpu/ea.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_mul.dir/build.make CMakeFiles/test_cpu_mul.dir/mmu_cpu/ea.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_div.dir/build.make CMakeFiles/test_cpu_div.dir/mmu_cpu/ea.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unlk.dir/build.make CMakeFiles/test_cpu_unlk.dir/mmu_cpu/ea.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_rtx.dir/build.make CMakeFiles/test_cpu_rtx.dir/mmu_cpu/ea.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_jmp.dir/build.make CMakeFiles/test_cpu_jmp.dir/mmu_cpu/ea.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk.dir/build.make CMakeFiles/test_cpu_chk.dir/mmu_cpu/ea.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_lea.dir/build.make CMakeFiles/test_cpu_lea.dir/mmu_cpu/ea.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_scc.dir/build.make CMakeFiles/test_cpu_scc.dir/mmu_cpu/ea.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_dbcc.dir/build.make CMakeFiles/test_cpu_dbcc.dir/mmu_cpu/ea.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_or.dir/build.make CMakeFiles/test_cpu_or.dir/mmu_cpu/ea.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sbcd.dir/build.make CMakeFiles/test_cpu_sbcd.dir/mmu_cpu/ea.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pack.dir/build.make CMakeFiles/test_cpu_pack.dir/mmu_cpu/ea.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unpk.dir/build.make CMakeFiles/test_cpu_unpk.dir/mmu_cpu/ea.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sub.dir/build.make CMakeFiles/test_cpu_sub.dir/mmu_cpu/ea.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp.dir/build.make CMakeFiles/test_cpu_cmp.dir/mmu_cpu/ea.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_eor.dir/build.make CMakeFiles/test_cpu_eor.dir/mmu_cpu/ea.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_exg.dir/build.make CMakeFiles/test_cpu_exg.dir/mmu_cpu/ea.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_add.dir/build.make CMakeFiles/test_cpu_add.dir/mmu_cpu/ea.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_shift.dir/build.make CMakeFiles/test_cpu_shift.dir/mmu_cpu/ea.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bitfields.dir/build.make CMakeFiles/test_cpu_bitfields.dir/mmu_cpu/ea.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_fmove.dir/build.make CMakeFiles/test_cpu_fmove.dir/mmu_cpu/ea.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/mmu_cpu/ea.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/ea.cpp.s
 .PHONY : mmu_cpu/ea.cpp.s
 
 mmu_cpu/exception.o: mmu_cpu/exception.cpp.o
@@ -1560,52 +355,8 @@ mmu_cpu/exception.o: mmu_cpu/exception.cpp.o
 
 # target to build an object file
 mmu_cpu/exception.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/mmu_cpu/exception.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu.dir/build.make CMakeFiles/test_cpu.dir/mmu_cpu/exception.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_math.dir/build.make CMakeFiles/test_cpu_math.dir/mmu_cpu/exception.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_and.dir/build.make CMakeFiles/test_cpu_and.dir/mmu_cpu/exception.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp2.dir/build.make CMakeFiles/test_cpu_cmp2.dir/mmu_cpu/exception.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk2.dir/build.make CMakeFiles/test_cpu_chk2.dir/mmu_cpu/exception.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_btst.dir/build.make CMakeFiles/test_cpu_btst.dir/mmu_cpu/exception.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bchg.dir/build.make CMakeFiles/test_cpu_bchg.dir/mmu_cpu/exception.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bclr.dir/build.make CMakeFiles/test_cpu_bclr.dir/mmu_cpu/exception.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bset.dir/build.make CMakeFiles/test_cpu_bset.dir/mmu_cpu/exception.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas.dir/build.make CMakeFiles/test_cpu_cas.dir/mmu_cpu/exception.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas2.dir/build.make CMakeFiles/test_cpu_cas2.dir/mmu_cpu/exception.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movep.dir/build.make CMakeFiles/test_cpu_movep.dir/mmu_cpu/exception.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_move.dir/build.make CMakeFiles/test_cpu_move.dir/mmu_cpu/exception.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_negx.dir/build.make CMakeFiles/test_cpu_negx.dir/mmu_cpu/exception.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_clr.dir/build.make CMakeFiles/test_cpu_clr.dir/mmu_cpu/exception.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_neg.dir/build.make CMakeFiles/test_cpu_neg.dir/mmu_cpu/exception.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_not.dir/build.make CMakeFiles/test_cpu_not.dir/mmu_cpu/exception.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_nbcd.dir/build.make CMakeFiles/test_cpu_nbcd.dir/mmu_cpu/exception.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_link.dir/build.make CMakeFiles/test_cpu_link.dir/mmu_cpu/exception.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_swap.dir/build.make CMakeFiles/test_cpu_swap.dir/mmu_cpu/exception.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pea.dir/build.make CMakeFiles/test_cpu_pea.dir/mmu_cpu/exception.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_ext.dir/build.make CMakeFiles/test_cpu_ext.dir/mmu_cpu/exception.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movem.dir/build.make CMakeFiles/test_cpu_movem.dir/mmu_cpu/exception.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_tst.dir/build.make CMakeFiles/test_cpu_tst.dir/mmu_cpu/exception.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_mul.dir/build.make CMakeFiles/test_cpu_mul.dir/mmu_cpu/exception.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_div.dir/build.make CMakeFiles/test_cpu_div.dir/mmu_cpu/exception.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unlk.dir/build.make CMakeFiles/test_cpu_unlk.dir/mmu_cpu/exception.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_rtx.dir/build.make CMakeFiles/test_cpu_rtx.dir/mmu_cpu/exception.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_jmp.dir/build.make CMakeFiles/test_cpu_jmp.dir/mmu_cpu/exception.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk.dir/build.make CMakeFiles/test_cpu_chk.dir/mmu_cpu/exception.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_lea.dir/build.make CMakeFiles/test_cpu_lea.dir/mmu_cpu/exception.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_scc.dir/build.make CMakeFiles/test_cpu_scc.dir/mmu_cpu/exception.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_dbcc.dir/build.make CMakeFiles/test_cpu_dbcc.dir/mmu_cpu/exception.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_or.dir/build.make CMakeFiles/test_cpu_or.dir/mmu_cpu/exception.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sbcd.dir/build.make CMakeFiles/test_cpu_sbcd.dir/mmu_cpu/exception.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pack.dir/build.make CMakeFiles/test_cpu_pack.dir/mmu_cpu/exception.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unpk.dir/build.make CMakeFiles/test_cpu_unpk.dir/mmu_cpu/exception.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sub.dir/build.make CMakeFiles/test_cpu_sub.dir/mmu_cpu/exception.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp.dir/build.make CMakeFiles/test_cpu_cmp.dir/mmu_cpu/exception.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_eor.dir/build.make CMakeFiles/test_cpu_eor.dir/mmu_cpu/exception.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_exg.dir/build.make CMakeFiles/test_cpu_exg.dir/mmu_cpu/exception.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_add.dir/build.make CMakeFiles/test_cpu_add.dir/mmu_cpu/exception.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_shift.dir/build.make CMakeFiles/test_cpu_shift.dir/mmu_cpu/exception.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bitfields.dir/build.make CMakeFiles/test_cpu_bitfields.dir/mmu_cpu/exception.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_fmove.dir/build.make CMakeFiles/test_cpu_fmove.dir/mmu_cpu/exception.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/mmu_cpu/exception.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/exception.cpp.o
 .PHONY : mmu_cpu/exception.cpp.o
 
 mmu_cpu/exception.i: mmu_cpu/exception.cpp.i
@@ -1613,52 +364,8 @@ mmu_cpu/exception.i: mmu_cpu/exception.cpp.i
 
 # target to preprocess a source file
 mmu_cpu/exception.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/mmu_cpu/exception.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu.dir/build.make CMakeFiles/test_cpu.dir/mmu_cpu/exception.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_math.dir/build.make CMakeFiles/test_cpu_math.dir/mmu_cpu/exception.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_and.dir/build.make CMakeFiles/test_cpu_and.dir/mmu_cpu/exception.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp2.dir/build.make CMakeFiles/test_cpu_cmp2.dir/mmu_cpu/exception.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk2.dir/build.make CMakeFiles/test_cpu_chk2.dir/mmu_cpu/exception.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_btst.dir/build.make CMakeFiles/test_cpu_btst.dir/mmu_cpu/exception.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bchg.dir/build.make CMakeFiles/test_cpu_bchg.dir/mmu_cpu/exception.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bclr.dir/build.make CMakeFiles/test_cpu_bclr.dir/mmu_cpu/exception.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bset.dir/build.make CMakeFiles/test_cpu_bset.dir/mmu_cpu/exception.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas.dir/build.make CMakeFiles/test_cpu_cas.dir/mmu_cpu/exception.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas2.dir/build.make CMakeFiles/test_cpu_cas2.dir/mmu_cpu/exception.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movep.dir/build.make CMakeFiles/test_cpu_movep.dir/mmu_cpu/exception.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_move.dir/build.make CMakeFiles/test_cpu_move.dir/mmu_cpu/exception.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_negx.dir/build.make CMakeFiles/test_cpu_negx.dir/mmu_cpu/exception.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_clr.dir/build.make CMakeFiles/test_cpu_clr.dir/mmu_cpu/exception.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_neg.dir/build.make CMakeFiles/test_cpu_neg.dir/mmu_cpu/exception.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_not.dir/build.make CMakeFiles/test_cpu_not.dir/mmu_cpu/exception.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_nbcd.dir/build.make CMakeFiles/test_cpu_nbcd.dir/mmu_cpu/exception.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_link.dir/build.make CMakeFiles/test_cpu_link.dir/mmu_cpu/exception.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_swap.dir/build.make CMakeFiles/test_cpu_swap.dir/mmu_cpu/exception.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pea.dir/build.make CMakeFiles/test_cpu_pea.dir/mmu_cpu/exception.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_ext.dir/build.make CMakeFiles/test_cpu_ext.dir/mmu_cpu/exception.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movem.dir/build.make CMakeFiles/test_cpu_movem.dir/mmu_cpu/exception.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_tst.dir/build.make CMakeFiles/test_cpu_tst.dir/mmu_cpu/exception.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_mul.dir/build.make CMakeFiles/test_cpu_mul.dir/mmu_cpu/exception.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_div.dir/build.make CMakeFiles/test_cpu_div.dir/mmu_cpu/exception.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unlk.dir/build.make CMakeFiles/test_cpu_unlk.dir/mmu_cpu/exception.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_rtx.dir/build.make CMakeFiles/test_cpu_rtx.dir/mmu_cpu/exception.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_jmp.dir/build.make CMakeFiles/test_cpu_jmp.dir/mmu_cpu/exception.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk.dir/build.make CMakeFiles/test_cpu_chk.dir/mmu_cpu/exception.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_lea.dir/build.make CMakeFiles/test_cpu_lea.dir/mmu_cpu/exception.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_scc.dir/build.make CMakeFiles/test_cpu_scc.dir/mmu_cpu/exception.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_dbcc.dir/build.make CMakeFiles/test_cpu_dbcc.dir/mmu_cpu/exception.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_or.dir/build.make CMakeFiles/test_cpu_or.dir/mmu_cpu/exception.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sbcd.dir/build.make CMakeFiles/test_cpu_sbcd.dir/mmu_cpu/exception.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pack.dir/build.make CMakeFiles/test_cpu_pack.dir/mmu_cpu/exception.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unpk.dir/build.make CMakeFiles/test_cpu_unpk.dir/mmu_cpu/exception.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sub.dir/build.make CMakeFiles/test_cpu_sub.dir/mmu_cpu/exception.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp.dir/build.make CMakeFiles/test_cpu_cmp.dir/mmu_cpu/exception.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_eor.dir/build.make CMakeFiles/test_cpu_eor.dir/mmu_cpu/exception.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_exg.dir/build.make CMakeFiles/test_cpu_exg.dir/mmu_cpu/exception.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_add.dir/build.make CMakeFiles/test_cpu_add.dir/mmu_cpu/exception.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_shift.dir/build.make CMakeFiles/test_cpu_shift.dir/mmu_cpu/exception.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bitfields.dir/build.make CMakeFiles/test_cpu_bitfields.dir/mmu_cpu/exception.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_fmove.dir/build.make CMakeFiles/test_cpu_fmove.dir/mmu_cpu/exception.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/mmu_cpu/exception.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/exception.cpp.i
 .PHONY : mmu_cpu/exception.cpp.i
 
 mmu_cpu/exception.s: mmu_cpu/exception.cpp.s
@@ -1666,264 +373,71 @@ mmu_cpu/exception.s: mmu_cpu/exception.cpp.s
 
 # target to generate assembly for a file
 mmu_cpu/exception.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/mmu_cpu/exception.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu.dir/build.make CMakeFiles/test_cpu.dir/mmu_cpu/exception.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_math.dir/build.make CMakeFiles/test_cpu_math.dir/mmu_cpu/exception.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_and.dir/build.make CMakeFiles/test_cpu_and.dir/mmu_cpu/exception.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp2.dir/build.make CMakeFiles/test_cpu_cmp2.dir/mmu_cpu/exception.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk2.dir/build.make CMakeFiles/test_cpu_chk2.dir/mmu_cpu/exception.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_btst.dir/build.make CMakeFiles/test_cpu_btst.dir/mmu_cpu/exception.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bchg.dir/build.make CMakeFiles/test_cpu_bchg.dir/mmu_cpu/exception.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bclr.dir/build.make CMakeFiles/test_cpu_bclr.dir/mmu_cpu/exception.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bset.dir/build.make CMakeFiles/test_cpu_bset.dir/mmu_cpu/exception.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas.dir/build.make CMakeFiles/test_cpu_cas.dir/mmu_cpu/exception.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas2.dir/build.make CMakeFiles/test_cpu_cas2.dir/mmu_cpu/exception.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movep.dir/build.make CMakeFiles/test_cpu_movep.dir/mmu_cpu/exception.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_move.dir/build.make CMakeFiles/test_cpu_move.dir/mmu_cpu/exception.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_negx.dir/build.make CMakeFiles/test_cpu_negx.dir/mmu_cpu/exception.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_clr.dir/build.make CMakeFiles/test_cpu_clr.dir/mmu_cpu/exception.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_neg.dir/build.make CMakeFiles/test_cpu_neg.dir/mmu_cpu/exception.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_not.dir/build.make CMakeFiles/test_cpu_not.dir/mmu_cpu/exception.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_nbcd.dir/build.make CMakeFiles/test_cpu_nbcd.dir/mmu_cpu/exception.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_link.dir/build.make CMakeFiles/test_cpu_link.dir/mmu_cpu/exception.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_swap.dir/build.make CMakeFiles/test_cpu_swap.dir/mmu_cpu/exception.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pea.dir/build.make CMakeFiles/test_cpu_pea.dir/mmu_cpu/exception.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_ext.dir/build.make CMakeFiles/test_cpu_ext.dir/mmu_cpu/exception.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movem.dir/build.make CMakeFiles/test_cpu_movem.dir/mmu_cpu/exception.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_tst.dir/build.make CMakeFiles/test_cpu_tst.dir/mmu_cpu/exception.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_mul.dir/build.make CMakeFiles/test_cpu_mul.dir/mmu_cpu/exception.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_div.dir/build.make CMakeFiles/test_cpu_div.dir/mmu_cpu/exception.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unlk.dir/build.make CMakeFiles/test_cpu_unlk.dir/mmu_cpu/exception.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_rtx.dir/build.make CMakeFiles/test_cpu_rtx.dir/mmu_cpu/exception.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_jmp.dir/build.make CMakeFiles/test_cpu_jmp.dir/mmu_cpu/exception.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk.dir/build.make CMakeFiles/test_cpu_chk.dir/mmu_cpu/exception.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_lea.dir/build.make CMakeFiles/test_cpu_lea.dir/mmu_cpu/exception.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_scc.dir/build.make CMakeFiles/test_cpu_scc.dir/mmu_cpu/exception.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_dbcc.dir/build.make CMakeFiles/test_cpu_dbcc.dir/mmu_cpu/exception.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_or.dir/build.make CMakeFiles/test_cpu_or.dir/mmu_cpu/exception.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sbcd.dir/build.make CMakeFiles/test_cpu_sbcd.dir/mmu_cpu/exception.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pack.dir/build.make CMakeFiles/test_cpu_pack.dir/mmu_cpu/exception.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unpk.dir/build.make CMakeFiles/test_cpu_unpk.dir/mmu_cpu/exception.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sub.dir/build.make CMakeFiles/test_cpu_sub.dir/mmu_cpu/exception.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp.dir/build.make CMakeFiles/test_cpu_cmp.dir/mmu_cpu/exception.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_eor.dir/build.make CMakeFiles/test_cpu_eor.dir/mmu_cpu/exception.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_exg.dir/build.make CMakeFiles/test_cpu_exg.dir/mmu_cpu/exception.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_add.dir/build.make CMakeFiles/test_cpu_add.dir/mmu_cpu/exception.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_shift.dir/build.make CMakeFiles/test_cpu_shift.dir/mmu_cpu/exception.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bitfields.dir/build.make CMakeFiles/test_cpu_bitfields.dir/mmu_cpu/exception.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_fmove.dir/build.make CMakeFiles/test_cpu_fmove.dir/mmu_cpu/exception.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/mmu_cpu/exception.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/exception.cpp.s
 .PHONY : mmu_cpu/exception.cpp.s
 
-mmu_cpu/fpu/fpu_ieee.o: mmu_cpu/fpu/fpu_ieee.cpp.o
-.PHONY : mmu_cpu/fpu/fpu_ieee.o
+mmu_cpu/fpu/fpu_mpfr.o: mmu_cpu/fpu/fpu_mpfr.cpp.o
+.PHONY : mmu_cpu/fpu/fpu_mpfr.o
 
 # target to build an object file
-mmu_cpu/fpu/fpu_ieee.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/mmu_cpu/fpu/fpu_ieee.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu.dir/build.make CMakeFiles/test_cpu.dir/mmu_cpu/fpu/fpu_ieee.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_math.dir/build.make CMakeFiles/test_cpu_math.dir/mmu_cpu/fpu/fpu_ieee.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_and.dir/build.make CMakeFiles/test_cpu_and.dir/mmu_cpu/fpu/fpu_ieee.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp2.dir/build.make CMakeFiles/test_cpu_cmp2.dir/mmu_cpu/fpu/fpu_ieee.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk2.dir/build.make CMakeFiles/test_cpu_chk2.dir/mmu_cpu/fpu/fpu_ieee.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_btst.dir/build.make CMakeFiles/test_cpu_btst.dir/mmu_cpu/fpu/fpu_ieee.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bchg.dir/build.make CMakeFiles/test_cpu_bchg.dir/mmu_cpu/fpu/fpu_ieee.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bclr.dir/build.make CMakeFiles/test_cpu_bclr.dir/mmu_cpu/fpu/fpu_ieee.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bset.dir/build.make CMakeFiles/test_cpu_bset.dir/mmu_cpu/fpu/fpu_ieee.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas.dir/build.make CMakeFiles/test_cpu_cas.dir/mmu_cpu/fpu/fpu_ieee.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas2.dir/build.make CMakeFiles/test_cpu_cas2.dir/mmu_cpu/fpu/fpu_ieee.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movep.dir/build.make CMakeFiles/test_cpu_movep.dir/mmu_cpu/fpu/fpu_ieee.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_move.dir/build.make CMakeFiles/test_cpu_move.dir/mmu_cpu/fpu/fpu_ieee.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_negx.dir/build.make CMakeFiles/test_cpu_negx.dir/mmu_cpu/fpu/fpu_ieee.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_clr.dir/build.make CMakeFiles/test_cpu_clr.dir/mmu_cpu/fpu/fpu_ieee.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_neg.dir/build.make CMakeFiles/test_cpu_neg.dir/mmu_cpu/fpu/fpu_ieee.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_not.dir/build.make CMakeFiles/test_cpu_not.dir/mmu_cpu/fpu/fpu_ieee.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_nbcd.dir/build.make CMakeFiles/test_cpu_nbcd.dir/mmu_cpu/fpu/fpu_ieee.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_link.dir/build.make CMakeFiles/test_cpu_link.dir/mmu_cpu/fpu/fpu_ieee.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_swap.dir/build.make CMakeFiles/test_cpu_swap.dir/mmu_cpu/fpu/fpu_ieee.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pea.dir/build.make CMakeFiles/test_cpu_pea.dir/mmu_cpu/fpu/fpu_ieee.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_ext.dir/build.make CMakeFiles/test_cpu_ext.dir/mmu_cpu/fpu/fpu_ieee.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movem.dir/build.make CMakeFiles/test_cpu_movem.dir/mmu_cpu/fpu/fpu_ieee.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_tst.dir/build.make CMakeFiles/test_cpu_tst.dir/mmu_cpu/fpu/fpu_ieee.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_mul.dir/build.make CMakeFiles/test_cpu_mul.dir/mmu_cpu/fpu/fpu_ieee.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_div.dir/build.make CMakeFiles/test_cpu_div.dir/mmu_cpu/fpu/fpu_ieee.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unlk.dir/build.make CMakeFiles/test_cpu_unlk.dir/mmu_cpu/fpu/fpu_ieee.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_rtx.dir/build.make CMakeFiles/test_cpu_rtx.dir/mmu_cpu/fpu/fpu_ieee.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_jmp.dir/build.make CMakeFiles/test_cpu_jmp.dir/mmu_cpu/fpu/fpu_ieee.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk.dir/build.make CMakeFiles/test_cpu_chk.dir/mmu_cpu/fpu/fpu_ieee.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_lea.dir/build.make CMakeFiles/test_cpu_lea.dir/mmu_cpu/fpu/fpu_ieee.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_scc.dir/build.make CMakeFiles/test_cpu_scc.dir/mmu_cpu/fpu/fpu_ieee.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_dbcc.dir/build.make CMakeFiles/test_cpu_dbcc.dir/mmu_cpu/fpu/fpu_ieee.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_or.dir/build.make CMakeFiles/test_cpu_or.dir/mmu_cpu/fpu/fpu_ieee.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sbcd.dir/build.make CMakeFiles/test_cpu_sbcd.dir/mmu_cpu/fpu/fpu_ieee.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pack.dir/build.make CMakeFiles/test_cpu_pack.dir/mmu_cpu/fpu/fpu_ieee.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unpk.dir/build.make CMakeFiles/test_cpu_unpk.dir/mmu_cpu/fpu/fpu_ieee.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sub.dir/build.make CMakeFiles/test_cpu_sub.dir/mmu_cpu/fpu/fpu_ieee.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp.dir/build.make CMakeFiles/test_cpu_cmp.dir/mmu_cpu/fpu/fpu_ieee.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_eor.dir/build.make CMakeFiles/test_cpu_eor.dir/mmu_cpu/fpu/fpu_ieee.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_exg.dir/build.make CMakeFiles/test_cpu_exg.dir/mmu_cpu/fpu/fpu_ieee.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_add.dir/build.make CMakeFiles/test_cpu_add.dir/mmu_cpu/fpu/fpu_ieee.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_shift.dir/build.make CMakeFiles/test_cpu_shift.dir/mmu_cpu/fpu/fpu_ieee.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bitfields.dir/build.make CMakeFiles/test_cpu_bitfields.dir/mmu_cpu/fpu/fpu_ieee.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_fmove.dir/build.make CMakeFiles/test_cpu_fmove.dir/mmu_cpu/fpu/fpu_ieee.cpp.o
-.PHONY : mmu_cpu/fpu/fpu_ieee.cpp.o
+mmu_cpu/fpu/fpu_mpfr.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/mmu_cpu/fpu/fpu_mpfr.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/fpu/fpu_mpfr.cpp.o
+.PHONY : mmu_cpu/fpu/fpu_mpfr.cpp.o
 
-mmu_cpu/fpu/fpu_ieee.i: mmu_cpu/fpu/fpu_ieee.cpp.i
-.PHONY : mmu_cpu/fpu/fpu_ieee.i
+mmu_cpu/fpu/fpu_mpfr.i: mmu_cpu/fpu/fpu_mpfr.cpp.i
+.PHONY : mmu_cpu/fpu/fpu_mpfr.i
 
 # target to preprocess a source file
-mmu_cpu/fpu/fpu_ieee.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/mmu_cpu/fpu/fpu_ieee.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu.dir/build.make CMakeFiles/test_cpu.dir/mmu_cpu/fpu/fpu_ieee.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_math.dir/build.make CMakeFiles/test_cpu_math.dir/mmu_cpu/fpu/fpu_ieee.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_and.dir/build.make CMakeFiles/test_cpu_and.dir/mmu_cpu/fpu/fpu_ieee.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp2.dir/build.make CMakeFiles/test_cpu_cmp2.dir/mmu_cpu/fpu/fpu_ieee.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk2.dir/build.make CMakeFiles/test_cpu_chk2.dir/mmu_cpu/fpu/fpu_ieee.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_btst.dir/build.make CMakeFiles/test_cpu_btst.dir/mmu_cpu/fpu/fpu_ieee.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bchg.dir/build.make CMakeFiles/test_cpu_bchg.dir/mmu_cpu/fpu/fpu_ieee.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bclr.dir/build.make CMakeFiles/test_cpu_bclr.dir/mmu_cpu/fpu/fpu_ieee.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bset.dir/build.make CMakeFiles/test_cpu_bset.dir/mmu_cpu/fpu/fpu_ieee.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas.dir/build.make CMakeFiles/test_cpu_cas.dir/mmu_cpu/fpu/fpu_ieee.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas2.dir/build.make CMakeFiles/test_cpu_cas2.dir/mmu_cpu/fpu/fpu_ieee.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movep.dir/build.make CMakeFiles/test_cpu_movep.dir/mmu_cpu/fpu/fpu_ieee.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_move.dir/build.make CMakeFiles/test_cpu_move.dir/mmu_cpu/fpu/fpu_ieee.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_negx.dir/build.make CMakeFiles/test_cpu_negx.dir/mmu_cpu/fpu/fpu_ieee.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_clr.dir/build.make CMakeFiles/test_cpu_clr.dir/mmu_cpu/fpu/fpu_ieee.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_neg.dir/build.make CMakeFiles/test_cpu_neg.dir/mmu_cpu/fpu/fpu_ieee.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_not.dir/build.make CMakeFiles/test_cpu_not.dir/mmu_cpu/fpu/fpu_ieee.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_nbcd.dir/build.make CMakeFiles/test_cpu_nbcd.dir/mmu_cpu/fpu/fpu_ieee.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_link.dir/build.make CMakeFiles/test_cpu_link.dir/mmu_cpu/fpu/fpu_ieee.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_swap.dir/build.make CMakeFiles/test_cpu_swap.dir/mmu_cpu/fpu/fpu_ieee.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pea.dir/build.make CMakeFiles/test_cpu_pea.dir/mmu_cpu/fpu/fpu_ieee.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_ext.dir/build.make CMakeFiles/test_cpu_ext.dir/mmu_cpu/fpu/fpu_ieee.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movem.dir/build.make CMakeFiles/test_cpu_movem.dir/mmu_cpu/fpu/fpu_ieee.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_tst.dir/build.make CMakeFiles/test_cpu_tst.dir/mmu_cpu/fpu/fpu_ieee.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_mul.dir/build.make CMakeFiles/test_cpu_mul.dir/mmu_cpu/fpu/fpu_ieee.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_div.dir/build.make CMakeFiles/test_cpu_div.dir/mmu_cpu/fpu/fpu_ieee.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unlk.dir/build.make CMakeFiles/test_cpu_unlk.dir/mmu_cpu/fpu/fpu_ieee.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_rtx.dir/build.make CMakeFiles/test_cpu_rtx.dir/mmu_cpu/fpu/fpu_ieee.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_jmp.dir/build.make CMakeFiles/test_cpu_jmp.dir/mmu_cpu/fpu/fpu_ieee.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk.dir/build.make CMakeFiles/test_cpu_chk.dir/mmu_cpu/fpu/fpu_ieee.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_lea.dir/build.make CMakeFiles/test_cpu_lea.dir/mmu_cpu/fpu/fpu_ieee.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_scc.dir/build.make CMakeFiles/test_cpu_scc.dir/mmu_cpu/fpu/fpu_ieee.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_dbcc.dir/build.make CMakeFiles/test_cpu_dbcc.dir/mmu_cpu/fpu/fpu_ieee.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_or.dir/build.make CMakeFiles/test_cpu_or.dir/mmu_cpu/fpu/fpu_ieee.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sbcd.dir/build.make CMakeFiles/test_cpu_sbcd.dir/mmu_cpu/fpu/fpu_ieee.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pack.dir/build.make CMakeFiles/test_cpu_pack.dir/mmu_cpu/fpu/fpu_ieee.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unpk.dir/build.make CMakeFiles/test_cpu_unpk.dir/mmu_cpu/fpu/fpu_ieee.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sub.dir/build.make CMakeFiles/test_cpu_sub.dir/mmu_cpu/fpu/fpu_ieee.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp.dir/build.make CMakeFiles/test_cpu_cmp.dir/mmu_cpu/fpu/fpu_ieee.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_eor.dir/build.make CMakeFiles/test_cpu_eor.dir/mmu_cpu/fpu/fpu_ieee.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_exg.dir/build.make CMakeFiles/test_cpu_exg.dir/mmu_cpu/fpu/fpu_ieee.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_add.dir/build.make CMakeFiles/test_cpu_add.dir/mmu_cpu/fpu/fpu_ieee.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_shift.dir/build.make CMakeFiles/test_cpu_shift.dir/mmu_cpu/fpu/fpu_ieee.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bitfields.dir/build.make CMakeFiles/test_cpu_bitfields.dir/mmu_cpu/fpu/fpu_ieee.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_fmove.dir/build.make CMakeFiles/test_cpu_fmove.dir/mmu_cpu/fpu/fpu_ieee.cpp.i
-.PHONY : mmu_cpu/fpu/fpu_ieee.cpp.i
+mmu_cpu/fpu/fpu_mpfr.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/mmu_cpu/fpu/fpu_mpfr.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/fpu/fpu_mpfr.cpp.i
+.PHONY : mmu_cpu/fpu/fpu_mpfr.cpp.i
 
-mmu_cpu/fpu/fpu_ieee.s: mmu_cpu/fpu/fpu_ieee.cpp.s
-.PHONY : mmu_cpu/fpu/fpu_ieee.s
+mmu_cpu/fpu/fpu_mpfr.s: mmu_cpu/fpu/fpu_mpfr.cpp.s
+.PHONY : mmu_cpu/fpu/fpu_mpfr.s
 
 # target to generate assembly for a file
-mmu_cpu/fpu/fpu_ieee.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/mmu_cpu/fpu/fpu_ieee.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu.dir/build.make CMakeFiles/test_cpu.dir/mmu_cpu/fpu/fpu_ieee.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_math.dir/build.make CMakeFiles/test_cpu_math.dir/mmu_cpu/fpu/fpu_ieee.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_and.dir/build.make CMakeFiles/test_cpu_and.dir/mmu_cpu/fpu/fpu_ieee.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp2.dir/build.make CMakeFiles/test_cpu_cmp2.dir/mmu_cpu/fpu/fpu_ieee.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk2.dir/build.make CMakeFiles/test_cpu_chk2.dir/mmu_cpu/fpu/fpu_ieee.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_btst.dir/build.make CMakeFiles/test_cpu_btst.dir/mmu_cpu/fpu/fpu_ieee.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bchg.dir/build.make CMakeFiles/test_cpu_bchg.dir/mmu_cpu/fpu/fpu_ieee.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bclr.dir/build.make CMakeFiles/test_cpu_bclr.dir/mmu_cpu/fpu/fpu_ieee.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bset.dir/build.make CMakeFiles/test_cpu_bset.dir/mmu_cpu/fpu/fpu_ieee.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas.dir/build.make CMakeFiles/test_cpu_cas.dir/mmu_cpu/fpu/fpu_ieee.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas2.dir/build.make CMakeFiles/test_cpu_cas2.dir/mmu_cpu/fpu/fpu_ieee.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movep.dir/build.make CMakeFiles/test_cpu_movep.dir/mmu_cpu/fpu/fpu_ieee.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_move.dir/build.make CMakeFiles/test_cpu_move.dir/mmu_cpu/fpu/fpu_ieee.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_negx.dir/build.make CMakeFiles/test_cpu_negx.dir/mmu_cpu/fpu/fpu_ieee.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_clr.dir/build.make CMakeFiles/test_cpu_clr.dir/mmu_cpu/fpu/fpu_ieee.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_neg.dir/build.make CMakeFiles/test_cpu_neg.dir/mmu_cpu/fpu/fpu_ieee.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_not.dir/build.make CMakeFiles/test_cpu_not.dir/mmu_cpu/fpu/fpu_ieee.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_nbcd.dir/build.make CMakeFiles/test_cpu_nbcd.dir/mmu_cpu/fpu/fpu_ieee.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_link.dir/build.make CMakeFiles/test_cpu_link.dir/mmu_cpu/fpu/fpu_ieee.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_swap.dir/build.make CMakeFiles/test_cpu_swap.dir/mmu_cpu/fpu/fpu_ieee.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pea.dir/build.make CMakeFiles/test_cpu_pea.dir/mmu_cpu/fpu/fpu_ieee.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_ext.dir/build.make CMakeFiles/test_cpu_ext.dir/mmu_cpu/fpu/fpu_ieee.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movem.dir/build.make CMakeFiles/test_cpu_movem.dir/mmu_cpu/fpu/fpu_ieee.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_tst.dir/build.make CMakeFiles/test_cpu_tst.dir/mmu_cpu/fpu/fpu_ieee.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_mul.dir/build.make CMakeFiles/test_cpu_mul.dir/mmu_cpu/fpu/fpu_ieee.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_div.dir/build.make CMakeFiles/test_cpu_div.dir/mmu_cpu/fpu/fpu_ieee.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unlk.dir/build.make CMakeFiles/test_cpu_unlk.dir/mmu_cpu/fpu/fpu_ieee.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_rtx.dir/build.make CMakeFiles/test_cpu_rtx.dir/mmu_cpu/fpu/fpu_ieee.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_jmp.dir/build.make CMakeFiles/test_cpu_jmp.dir/mmu_cpu/fpu/fpu_ieee.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk.dir/build.make CMakeFiles/test_cpu_chk.dir/mmu_cpu/fpu/fpu_ieee.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_lea.dir/build.make CMakeFiles/test_cpu_lea.dir/mmu_cpu/fpu/fpu_ieee.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_scc.dir/build.make CMakeFiles/test_cpu_scc.dir/mmu_cpu/fpu/fpu_ieee.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_dbcc.dir/build.make CMakeFiles/test_cpu_dbcc.dir/mmu_cpu/fpu/fpu_ieee.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_or.dir/build.make CMakeFiles/test_cpu_or.dir/mmu_cpu/fpu/fpu_ieee.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sbcd.dir/build.make CMakeFiles/test_cpu_sbcd.dir/mmu_cpu/fpu/fpu_ieee.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pack.dir/build.make CMakeFiles/test_cpu_pack.dir/mmu_cpu/fpu/fpu_ieee.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unpk.dir/build.make CMakeFiles/test_cpu_unpk.dir/mmu_cpu/fpu/fpu_ieee.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sub.dir/build.make CMakeFiles/test_cpu_sub.dir/mmu_cpu/fpu/fpu_ieee.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp.dir/build.make CMakeFiles/test_cpu_cmp.dir/mmu_cpu/fpu/fpu_ieee.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_eor.dir/build.make CMakeFiles/test_cpu_eor.dir/mmu_cpu/fpu/fpu_ieee.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_exg.dir/build.make CMakeFiles/test_cpu_exg.dir/mmu_cpu/fpu/fpu_ieee.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_add.dir/build.make CMakeFiles/test_cpu_add.dir/mmu_cpu/fpu/fpu_ieee.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_shift.dir/build.make CMakeFiles/test_cpu_shift.dir/mmu_cpu/fpu/fpu_ieee.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bitfields.dir/build.make CMakeFiles/test_cpu_bitfields.dir/mmu_cpu/fpu/fpu_ieee.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_fmove.dir/build.make CMakeFiles/test_cpu_fmove.dir/mmu_cpu/fpu/fpu_ieee.cpp.s
-.PHONY : mmu_cpu/fpu/fpu_ieee.cpp.s
+mmu_cpu/fpu/fpu_mpfr.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/mmu_cpu/fpu/fpu_mpfr.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/fpu/fpu_mpfr.cpp.s
+.PHONY : mmu_cpu/fpu/fpu_mpfr.cpp.s
+
+mmu_cpu/mbus.o: mmu_cpu/mbus.cpp.o
+.PHONY : mmu_cpu/mbus.o
+
+# target to build an object file
+mmu_cpu/mbus.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/mmu_cpu/mbus.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/mbus.cpp.o
+.PHONY : mmu_cpu/mbus.cpp.o
+
+mmu_cpu/mbus.i: mmu_cpu/mbus.cpp.i
+.PHONY : mmu_cpu/mbus.i
+
+# target to preprocess a source file
+mmu_cpu/mbus.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/mmu_cpu/mbus.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/mbus.cpp.i
+.PHONY : mmu_cpu/mbus.cpp.i
+
+mmu_cpu/mbus.s: mmu_cpu/mbus.cpp.s
+.PHONY : mmu_cpu/mbus.s
+
+# target to generate assembly for a file
+mmu_cpu/mbus.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/mmu_cpu/mbus.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/mbus.cpp.s
+.PHONY : mmu_cpu/mbus.cpp.s
 
 mmu_cpu/memory.o: mmu_cpu/memory.cpp.o
 .PHONY : mmu_cpu/memory.o
 
 # target to build an object file
 mmu_cpu/memory.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/mmu_cpu/memory.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu.dir/build.make CMakeFiles/test_cpu.dir/mmu_cpu/memory.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_math.dir/build.make CMakeFiles/test_cpu_math.dir/mmu_cpu/memory.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_and.dir/build.make CMakeFiles/test_cpu_and.dir/mmu_cpu/memory.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp2.dir/build.make CMakeFiles/test_cpu_cmp2.dir/mmu_cpu/memory.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk2.dir/build.make CMakeFiles/test_cpu_chk2.dir/mmu_cpu/memory.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_btst.dir/build.make CMakeFiles/test_cpu_btst.dir/mmu_cpu/memory.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bchg.dir/build.make CMakeFiles/test_cpu_bchg.dir/mmu_cpu/memory.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bclr.dir/build.make CMakeFiles/test_cpu_bclr.dir/mmu_cpu/memory.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bset.dir/build.make CMakeFiles/test_cpu_bset.dir/mmu_cpu/memory.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas.dir/build.make CMakeFiles/test_cpu_cas.dir/mmu_cpu/memory.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas2.dir/build.make CMakeFiles/test_cpu_cas2.dir/mmu_cpu/memory.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movep.dir/build.make CMakeFiles/test_cpu_movep.dir/mmu_cpu/memory.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_move.dir/build.make CMakeFiles/test_cpu_move.dir/mmu_cpu/memory.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_negx.dir/build.make CMakeFiles/test_cpu_negx.dir/mmu_cpu/memory.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_clr.dir/build.make CMakeFiles/test_cpu_clr.dir/mmu_cpu/memory.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_neg.dir/build.make CMakeFiles/test_cpu_neg.dir/mmu_cpu/memory.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_not.dir/build.make CMakeFiles/test_cpu_not.dir/mmu_cpu/memory.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_nbcd.dir/build.make CMakeFiles/test_cpu_nbcd.dir/mmu_cpu/memory.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_link.dir/build.make CMakeFiles/test_cpu_link.dir/mmu_cpu/memory.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_swap.dir/build.make CMakeFiles/test_cpu_swap.dir/mmu_cpu/memory.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pea.dir/build.make CMakeFiles/test_cpu_pea.dir/mmu_cpu/memory.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_ext.dir/build.make CMakeFiles/test_cpu_ext.dir/mmu_cpu/memory.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movem.dir/build.make CMakeFiles/test_cpu_movem.dir/mmu_cpu/memory.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_tst.dir/build.make CMakeFiles/test_cpu_tst.dir/mmu_cpu/memory.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_mul.dir/build.make CMakeFiles/test_cpu_mul.dir/mmu_cpu/memory.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_div.dir/build.make CMakeFiles/test_cpu_div.dir/mmu_cpu/memory.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unlk.dir/build.make CMakeFiles/test_cpu_unlk.dir/mmu_cpu/memory.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_rtx.dir/build.make CMakeFiles/test_cpu_rtx.dir/mmu_cpu/memory.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_jmp.dir/build.make CMakeFiles/test_cpu_jmp.dir/mmu_cpu/memory.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk.dir/build.make CMakeFiles/test_cpu_chk.dir/mmu_cpu/memory.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_lea.dir/build.make CMakeFiles/test_cpu_lea.dir/mmu_cpu/memory.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_scc.dir/build.make CMakeFiles/test_cpu_scc.dir/mmu_cpu/memory.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_dbcc.dir/build.make CMakeFiles/test_cpu_dbcc.dir/mmu_cpu/memory.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_or.dir/build.make CMakeFiles/test_cpu_or.dir/mmu_cpu/memory.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sbcd.dir/build.make CMakeFiles/test_cpu_sbcd.dir/mmu_cpu/memory.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pack.dir/build.make CMakeFiles/test_cpu_pack.dir/mmu_cpu/memory.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unpk.dir/build.make CMakeFiles/test_cpu_unpk.dir/mmu_cpu/memory.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sub.dir/build.make CMakeFiles/test_cpu_sub.dir/mmu_cpu/memory.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp.dir/build.make CMakeFiles/test_cpu_cmp.dir/mmu_cpu/memory.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_eor.dir/build.make CMakeFiles/test_cpu_eor.dir/mmu_cpu/memory.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_exg.dir/build.make CMakeFiles/test_cpu_exg.dir/mmu_cpu/memory.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_add.dir/build.make CMakeFiles/test_cpu_add.dir/mmu_cpu/memory.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_shift.dir/build.make CMakeFiles/test_cpu_shift.dir/mmu_cpu/memory.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bitfields.dir/build.make CMakeFiles/test_cpu_bitfields.dir/mmu_cpu/memory.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_fmove.dir/build.make CMakeFiles/test_cpu_fmove.dir/mmu_cpu/memory.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/mmu_cpu/memory.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/memory.cpp.o
 .PHONY : mmu_cpu/memory.cpp.o
 
 mmu_cpu/memory.i: mmu_cpu/memory.cpp.i
@@ -1931,52 +445,8 @@ mmu_cpu/memory.i: mmu_cpu/memory.cpp.i
 
 # target to preprocess a source file
 mmu_cpu/memory.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/mmu_cpu/memory.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu.dir/build.make CMakeFiles/test_cpu.dir/mmu_cpu/memory.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_math.dir/build.make CMakeFiles/test_cpu_math.dir/mmu_cpu/memory.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_and.dir/build.make CMakeFiles/test_cpu_and.dir/mmu_cpu/memory.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp2.dir/build.make CMakeFiles/test_cpu_cmp2.dir/mmu_cpu/memory.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk2.dir/build.make CMakeFiles/test_cpu_chk2.dir/mmu_cpu/memory.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_btst.dir/build.make CMakeFiles/test_cpu_btst.dir/mmu_cpu/memory.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bchg.dir/build.make CMakeFiles/test_cpu_bchg.dir/mmu_cpu/memory.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bclr.dir/build.make CMakeFiles/test_cpu_bclr.dir/mmu_cpu/memory.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bset.dir/build.make CMakeFiles/test_cpu_bset.dir/mmu_cpu/memory.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas.dir/build.make CMakeFiles/test_cpu_cas.dir/mmu_cpu/memory.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas2.dir/build.make CMakeFiles/test_cpu_cas2.dir/mmu_cpu/memory.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movep.dir/build.make CMakeFiles/test_cpu_movep.dir/mmu_cpu/memory.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_move.dir/build.make CMakeFiles/test_cpu_move.dir/mmu_cpu/memory.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_negx.dir/build.make CMakeFiles/test_cpu_negx.dir/mmu_cpu/memory.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_clr.dir/build.make CMakeFiles/test_cpu_clr.dir/mmu_cpu/memory.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_neg.dir/build.make CMakeFiles/test_cpu_neg.dir/mmu_cpu/memory.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_not.dir/build.make CMakeFiles/test_cpu_not.dir/mmu_cpu/memory.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_nbcd.dir/build.make CMakeFiles/test_cpu_nbcd.dir/mmu_cpu/memory.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_link.dir/build.make CMakeFiles/test_cpu_link.dir/mmu_cpu/memory.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_swap.dir/build.make CMakeFiles/test_cpu_swap.dir/mmu_cpu/memory.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pea.dir/build.make CMakeFiles/test_cpu_pea.dir/mmu_cpu/memory.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_ext.dir/build.make CMakeFiles/test_cpu_ext.dir/mmu_cpu/memory.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movem.dir/build.make CMakeFiles/test_cpu_movem.dir/mmu_cpu/memory.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_tst.dir/build.make CMakeFiles/test_cpu_tst.dir/mmu_cpu/memory.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_mul.dir/build.make CMakeFiles/test_cpu_mul.dir/mmu_cpu/memory.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_div.dir/build.make CMakeFiles/test_cpu_div.dir/mmu_cpu/memory.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unlk.dir/build.make CMakeFiles/test_cpu_unlk.dir/mmu_cpu/memory.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_rtx.dir/build.make CMakeFiles/test_cpu_rtx.dir/mmu_cpu/memory.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_jmp.dir/build.make CMakeFiles/test_cpu_jmp.dir/mmu_cpu/memory.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk.dir/build.make CMakeFiles/test_cpu_chk.dir/mmu_cpu/memory.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_lea.dir/build.make CMakeFiles/test_cpu_lea.dir/mmu_cpu/memory.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_scc.dir/build.make CMakeFiles/test_cpu_scc.dir/mmu_cpu/memory.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_dbcc.dir/build.make CMakeFiles/test_cpu_dbcc.dir/mmu_cpu/memory.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_or.dir/build.make CMakeFiles/test_cpu_or.dir/mmu_cpu/memory.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sbcd.dir/build.make CMakeFiles/test_cpu_sbcd.dir/mmu_cpu/memory.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pack.dir/build.make CMakeFiles/test_cpu_pack.dir/mmu_cpu/memory.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unpk.dir/build.make CMakeFiles/test_cpu_unpk.dir/mmu_cpu/memory.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sub.dir/build.make CMakeFiles/test_cpu_sub.dir/mmu_cpu/memory.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp.dir/build.make CMakeFiles/test_cpu_cmp.dir/mmu_cpu/memory.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_eor.dir/build.make CMakeFiles/test_cpu_eor.dir/mmu_cpu/memory.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_exg.dir/build.make CMakeFiles/test_cpu_exg.dir/mmu_cpu/memory.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_add.dir/build.make CMakeFiles/test_cpu_add.dir/mmu_cpu/memory.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_shift.dir/build.make CMakeFiles/test_cpu_shift.dir/mmu_cpu/memory.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bitfields.dir/build.make CMakeFiles/test_cpu_bitfields.dir/mmu_cpu/memory.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_fmove.dir/build.make CMakeFiles/test_cpu_fmove.dir/mmu_cpu/memory.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/mmu_cpu/memory.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/memory.cpp.i
 .PHONY : mmu_cpu/memory.cpp.i
 
 mmu_cpu/memory.s: mmu_cpu/memory.cpp.s
@@ -1984,105 +454,44 @@ mmu_cpu/memory.s: mmu_cpu/memory.cpp.s
 
 # target to generate assembly for a file
 mmu_cpu/memory.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/mmu_cpu/memory.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu.dir/build.make CMakeFiles/test_cpu.dir/mmu_cpu/memory.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_math.dir/build.make CMakeFiles/test_cpu_math.dir/mmu_cpu/memory.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_and.dir/build.make CMakeFiles/test_cpu_and.dir/mmu_cpu/memory.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp2.dir/build.make CMakeFiles/test_cpu_cmp2.dir/mmu_cpu/memory.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk2.dir/build.make CMakeFiles/test_cpu_chk2.dir/mmu_cpu/memory.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_btst.dir/build.make CMakeFiles/test_cpu_btst.dir/mmu_cpu/memory.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bchg.dir/build.make CMakeFiles/test_cpu_bchg.dir/mmu_cpu/memory.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bclr.dir/build.make CMakeFiles/test_cpu_bclr.dir/mmu_cpu/memory.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bset.dir/build.make CMakeFiles/test_cpu_bset.dir/mmu_cpu/memory.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas.dir/build.make CMakeFiles/test_cpu_cas.dir/mmu_cpu/memory.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas2.dir/build.make CMakeFiles/test_cpu_cas2.dir/mmu_cpu/memory.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movep.dir/build.make CMakeFiles/test_cpu_movep.dir/mmu_cpu/memory.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_move.dir/build.make CMakeFiles/test_cpu_move.dir/mmu_cpu/memory.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_negx.dir/build.make CMakeFiles/test_cpu_negx.dir/mmu_cpu/memory.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_clr.dir/build.make CMakeFiles/test_cpu_clr.dir/mmu_cpu/memory.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_neg.dir/build.make CMakeFiles/test_cpu_neg.dir/mmu_cpu/memory.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_not.dir/build.make CMakeFiles/test_cpu_not.dir/mmu_cpu/memory.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_nbcd.dir/build.make CMakeFiles/test_cpu_nbcd.dir/mmu_cpu/memory.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_link.dir/build.make CMakeFiles/test_cpu_link.dir/mmu_cpu/memory.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_swap.dir/build.make CMakeFiles/test_cpu_swap.dir/mmu_cpu/memory.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pea.dir/build.make CMakeFiles/test_cpu_pea.dir/mmu_cpu/memory.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_ext.dir/build.make CMakeFiles/test_cpu_ext.dir/mmu_cpu/memory.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movem.dir/build.make CMakeFiles/test_cpu_movem.dir/mmu_cpu/memory.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_tst.dir/build.make CMakeFiles/test_cpu_tst.dir/mmu_cpu/memory.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_mul.dir/build.make CMakeFiles/test_cpu_mul.dir/mmu_cpu/memory.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_div.dir/build.make CMakeFiles/test_cpu_div.dir/mmu_cpu/memory.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unlk.dir/build.make CMakeFiles/test_cpu_unlk.dir/mmu_cpu/memory.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_rtx.dir/build.make CMakeFiles/test_cpu_rtx.dir/mmu_cpu/memory.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_jmp.dir/build.make CMakeFiles/test_cpu_jmp.dir/mmu_cpu/memory.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk.dir/build.make CMakeFiles/test_cpu_chk.dir/mmu_cpu/memory.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_lea.dir/build.make CMakeFiles/test_cpu_lea.dir/mmu_cpu/memory.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_scc.dir/build.make CMakeFiles/test_cpu_scc.dir/mmu_cpu/memory.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_dbcc.dir/build.make CMakeFiles/test_cpu_dbcc.dir/mmu_cpu/memory.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_or.dir/build.make CMakeFiles/test_cpu_or.dir/mmu_cpu/memory.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sbcd.dir/build.make CMakeFiles/test_cpu_sbcd.dir/mmu_cpu/memory.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pack.dir/build.make CMakeFiles/test_cpu_pack.dir/mmu_cpu/memory.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unpk.dir/build.make CMakeFiles/test_cpu_unpk.dir/mmu_cpu/memory.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sub.dir/build.make CMakeFiles/test_cpu_sub.dir/mmu_cpu/memory.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp.dir/build.make CMakeFiles/test_cpu_cmp.dir/mmu_cpu/memory.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_eor.dir/build.make CMakeFiles/test_cpu_eor.dir/mmu_cpu/memory.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_exg.dir/build.make CMakeFiles/test_cpu_exg.dir/mmu_cpu/memory.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_add.dir/build.make CMakeFiles/test_cpu_add.dir/mmu_cpu/memory.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_shift.dir/build.make CMakeFiles/test_cpu_shift.dir/mmu_cpu/memory.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bitfields.dir/build.make CMakeFiles/test_cpu_bitfields.dir/mmu_cpu/memory.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_fmove.dir/build.make CMakeFiles/test_cpu_fmove.dir/mmu_cpu/memory.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/mmu_cpu/memory.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/memory.cpp.s
 .PHONY : mmu_cpu/memory.cpp.s
+
+mmu_cpu/mmu/mmu_68040.o: mmu_cpu/mmu/mmu_68040.cpp.o
+.PHONY : mmu_cpu/mmu/mmu_68040.o
+
+# target to build an object file
+mmu_cpu/mmu/mmu_68040.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/mmu_cpu/mmu/mmu_68040.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/mmu/mmu_68040.cpp.o
+.PHONY : mmu_cpu/mmu/mmu_68040.cpp.o
+
+mmu_cpu/mmu/mmu_68040.i: mmu_cpu/mmu/mmu_68040.cpp.i
+.PHONY : mmu_cpu/mmu/mmu_68040.i
+
+# target to preprocess a source file
+mmu_cpu/mmu/mmu_68040.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/mmu_cpu/mmu/mmu_68040.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/mmu/mmu_68040.cpp.i
+.PHONY : mmu_cpu/mmu/mmu_68040.cpp.i
+
+mmu_cpu/mmu/mmu_68040.s: mmu_cpu/mmu/mmu_68040.cpp.s
+.PHONY : mmu_cpu/mmu/mmu_68040.s
+
+# target to generate assembly for a file
+mmu_cpu/mmu/mmu_68040.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/mmu_cpu/mmu/mmu_68040.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/mmu/mmu_68040.cpp.s
+.PHONY : mmu_cpu/mmu/mmu_68040.cpp.s
 
 mmu_cpu/newcpu.o: mmu_cpu/newcpu.cpp.o
 .PHONY : mmu_cpu/newcpu.o
 
 # target to build an object file
 mmu_cpu/newcpu.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/mmu_cpu/newcpu.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu.dir/build.make CMakeFiles/test_cpu.dir/mmu_cpu/newcpu.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_math.dir/build.make CMakeFiles/test_cpu_math.dir/mmu_cpu/newcpu.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_and.dir/build.make CMakeFiles/test_cpu_and.dir/mmu_cpu/newcpu.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp2.dir/build.make CMakeFiles/test_cpu_cmp2.dir/mmu_cpu/newcpu.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk2.dir/build.make CMakeFiles/test_cpu_chk2.dir/mmu_cpu/newcpu.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_btst.dir/build.make CMakeFiles/test_cpu_btst.dir/mmu_cpu/newcpu.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bchg.dir/build.make CMakeFiles/test_cpu_bchg.dir/mmu_cpu/newcpu.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bclr.dir/build.make CMakeFiles/test_cpu_bclr.dir/mmu_cpu/newcpu.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bset.dir/build.make CMakeFiles/test_cpu_bset.dir/mmu_cpu/newcpu.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas.dir/build.make CMakeFiles/test_cpu_cas.dir/mmu_cpu/newcpu.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas2.dir/build.make CMakeFiles/test_cpu_cas2.dir/mmu_cpu/newcpu.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movep.dir/build.make CMakeFiles/test_cpu_movep.dir/mmu_cpu/newcpu.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_move.dir/build.make CMakeFiles/test_cpu_move.dir/mmu_cpu/newcpu.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_negx.dir/build.make CMakeFiles/test_cpu_negx.dir/mmu_cpu/newcpu.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_clr.dir/build.make CMakeFiles/test_cpu_clr.dir/mmu_cpu/newcpu.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_neg.dir/build.make CMakeFiles/test_cpu_neg.dir/mmu_cpu/newcpu.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_not.dir/build.make CMakeFiles/test_cpu_not.dir/mmu_cpu/newcpu.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_nbcd.dir/build.make CMakeFiles/test_cpu_nbcd.dir/mmu_cpu/newcpu.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_link.dir/build.make CMakeFiles/test_cpu_link.dir/mmu_cpu/newcpu.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_swap.dir/build.make CMakeFiles/test_cpu_swap.dir/mmu_cpu/newcpu.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pea.dir/build.make CMakeFiles/test_cpu_pea.dir/mmu_cpu/newcpu.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_ext.dir/build.make CMakeFiles/test_cpu_ext.dir/mmu_cpu/newcpu.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movem.dir/build.make CMakeFiles/test_cpu_movem.dir/mmu_cpu/newcpu.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_tst.dir/build.make CMakeFiles/test_cpu_tst.dir/mmu_cpu/newcpu.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_mul.dir/build.make CMakeFiles/test_cpu_mul.dir/mmu_cpu/newcpu.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_div.dir/build.make CMakeFiles/test_cpu_div.dir/mmu_cpu/newcpu.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unlk.dir/build.make CMakeFiles/test_cpu_unlk.dir/mmu_cpu/newcpu.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_rtx.dir/build.make CMakeFiles/test_cpu_rtx.dir/mmu_cpu/newcpu.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_jmp.dir/build.make CMakeFiles/test_cpu_jmp.dir/mmu_cpu/newcpu.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk.dir/build.make CMakeFiles/test_cpu_chk.dir/mmu_cpu/newcpu.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_lea.dir/build.make CMakeFiles/test_cpu_lea.dir/mmu_cpu/newcpu.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_scc.dir/build.make CMakeFiles/test_cpu_scc.dir/mmu_cpu/newcpu.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_dbcc.dir/build.make CMakeFiles/test_cpu_dbcc.dir/mmu_cpu/newcpu.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_or.dir/build.make CMakeFiles/test_cpu_or.dir/mmu_cpu/newcpu.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sbcd.dir/build.make CMakeFiles/test_cpu_sbcd.dir/mmu_cpu/newcpu.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pack.dir/build.make CMakeFiles/test_cpu_pack.dir/mmu_cpu/newcpu.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unpk.dir/build.make CMakeFiles/test_cpu_unpk.dir/mmu_cpu/newcpu.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sub.dir/build.make CMakeFiles/test_cpu_sub.dir/mmu_cpu/newcpu.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp.dir/build.make CMakeFiles/test_cpu_cmp.dir/mmu_cpu/newcpu.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_eor.dir/build.make CMakeFiles/test_cpu_eor.dir/mmu_cpu/newcpu.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_exg.dir/build.make CMakeFiles/test_cpu_exg.dir/mmu_cpu/newcpu.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_add.dir/build.make CMakeFiles/test_cpu_add.dir/mmu_cpu/newcpu.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_shift.dir/build.make CMakeFiles/test_cpu_shift.dir/mmu_cpu/newcpu.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bitfields.dir/build.make CMakeFiles/test_cpu_bitfields.dir/mmu_cpu/newcpu.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_fmove.dir/build.make CMakeFiles/test_cpu_fmove.dir/mmu_cpu/newcpu.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/mmu_cpu/newcpu.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/newcpu.cpp.o
 .PHONY : mmu_cpu/newcpu.cpp.o
 
 mmu_cpu/newcpu.i: mmu_cpu/newcpu.cpp.i
@@ -2090,52 +499,8 @@ mmu_cpu/newcpu.i: mmu_cpu/newcpu.cpp.i
 
 # target to preprocess a source file
 mmu_cpu/newcpu.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/mmu_cpu/newcpu.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu.dir/build.make CMakeFiles/test_cpu.dir/mmu_cpu/newcpu.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_math.dir/build.make CMakeFiles/test_cpu_math.dir/mmu_cpu/newcpu.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_and.dir/build.make CMakeFiles/test_cpu_and.dir/mmu_cpu/newcpu.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp2.dir/build.make CMakeFiles/test_cpu_cmp2.dir/mmu_cpu/newcpu.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk2.dir/build.make CMakeFiles/test_cpu_chk2.dir/mmu_cpu/newcpu.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_btst.dir/build.make CMakeFiles/test_cpu_btst.dir/mmu_cpu/newcpu.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bchg.dir/build.make CMakeFiles/test_cpu_bchg.dir/mmu_cpu/newcpu.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bclr.dir/build.make CMakeFiles/test_cpu_bclr.dir/mmu_cpu/newcpu.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bset.dir/build.make CMakeFiles/test_cpu_bset.dir/mmu_cpu/newcpu.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas.dir/build.make CMakeFiles/test_cpu_cas.dir/mmu_cpu/newcpu.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas2.dir/build.make CMakeFiles/test_cpu_cas2.dir/mmu_cpu/newcpu.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movep.dir/build.make CMakeFiles/test_cpu_movep.dir/mmu_cpu/newcpu.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_move.dir/build.make CMakeFiles/test_cpu_move.dir/mmu_cpu/newcpu.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_negx.dir/build.make CMakeFiles/test_cpu_negx.dir/mmu_cpu/newcpu.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_clr.dir/build.make CMakeFiles/test_cpu_clr.dir/mmu_cpu/newcpu.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_neg.dir/build.make CMakeFiles/test_cpu_neg.dir/mmu_cpu/newcpu.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_not.dir/build.make CMakeFiles/test_cpu_not.dir/mmu_cpu/newcpu.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_nbcd.dir/build.make CMakeFiles/test_cpu_nbcd.dir/mmu_cpu/newcpu.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_link.dir/build.make CMakeFiles/test_cpu_link.dir/mmu_cpu/newcpu.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_swap.dir/build.make CMakeFiles/test_cpu_swap.dir/mmu_cpu/newcpu.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pea.dir/build.make CMakeFiles/test_cpu_pea.dir/mmu_cpu/newcpu.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_ext.dir/build.make CMakeFiles/test_cpu_ext.dir/mmu_cpu/newcpu.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movem.dir/build.make CMakeFiles/test_cpu_movem.dir/mmu_cpu/newcpu.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_tst.dir/build.make CMakeFiles/test_cpu_tst.dir/mmu_cpu/newcpu.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_mul.dir/build.make CMakeFiles/test_cpu_mul.dir/mmu_cpu/newcpu.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_div.dir/build.make CMakeFiles/test_cpu_div.dir/mmu_cpu/newcpu.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unlk.dir/build.make CMakeFiles/test_cpu_unlk.dir/mmu_cpu/newcpu.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_rtx.dir/build.make CMakeFiles/test_cpu_rtx.dir/mmu_cpu/newcpu.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_jmp.dir/build.make CMakeFiles/test_cpu_jmp.dir/mmu_cpu/newcpu.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk.dir/build.make CMakeFiles/test_cpu_chk.dir/mmu_cpu/newcpu.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_lea.dir/build.make CMakeFiles/test_cpu_lea.dir/mmu_cpu/newcpu.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_scc.dir/build.make CMakeFiles/test_cpu_scc.dir/mmu_cpu/newcpu.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_dbcc.dir/build.make CMakeFiles/test_cpu_dbcc.dir/mmu_cpu/newcpu.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_or.dir/build.make CMakeFiles/test_cpu_or.dir/mmu_cpu/newcpu.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sbcd.dir/build.make CMakeFiles/test_cpu_sbcd.dir/mmu_cpu/newcpu.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pack.dir/build.make CMakeFiles/test_cpu_pack.dir/mmu_cpu/newcpu.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unpk.dir/build.make CMakeFiles/test_cpu_unpk.dir/mmu_cpu/newcpu.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sub.dir/build.make CMakeFiles/test_cpu_sub.dir/mmu_cpu/newcpu.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp.dir/build.make CMakeFiles/test_cpu_cmp.dir/mmu_cpu/newcpu.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_eor.dir/build.make CMakeFiles/test_cpu_eor.dir/mmu_cpu/newcpu.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_exg.dir/build.make CMakeFiles/test_cpu_exg.dir/mmu_cpu/newcpu.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_add.dir/build.make CMakeFiles/test_cpu_add.dir/mmu_cpu/newcpu.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_shift.dir/build.make CMakeFiles/test_cpu_shift.dir/mmu_cpu/newcpu.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bitfields.dir/build.make CMakeFiles/test_cpu_bitfields.dir/mmu_cpu/newcpu.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_fmove.dir/build.make CMakeFiles/test_cpu_fmove.dir/mmu_cpu/newcpu.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/mmu_cpu/newcpu.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/newcpu.cpp.i
 .PHONY : mmu_cpu/newcpu.cpp.i
 
 mmu_cpu/newcpu.s: mmu_cpu/newcpu.cpp.s
@@ -2143,105 +508,44 @@ mmu_cpu/newcpu.s: mmu_cpu/newcpu.cpp.s
 
 # target to generate assembly for a file
 mmu_cpu/newcpu.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/mmu_cpu/newcpu.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu.dir/build.make CMakeFiles/test_cpu.dir/mmu_cpu/newcpu.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_math.dir/build.make CMakeFiles/test_cpu_math.dir/mmu_cpu/newcpu.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_and.dir/build.make CMakeFiles/test_cpu_and.dir/mmu_cpu/newcpu.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp2.dir/build.make CMakeFiles/test_cpu_cmp2.dir/mmu_cpu/newcpu.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk2.dir/build.make CMakeFiles/test_cpu_chk2.dir/mmu_cpu/newcpu.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_btst.dir/build.make CMakeFiles/test_cpu_btst.dir/mmu_cpu/newcpu.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bchg.dir/build.make CMakeFiles/test_cpu_bchg.dir/mmu_cpu/newcpu.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bclr.dir/build.make CMakeFiles/test_cpu_bclr.dir/mmu_cpu/newcpu.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bset.dir/build.make CMakeFiles/test_cpu_bset.dir/mmu_cpu/newcpu.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas.dir/build.make CMakeFiles/test_cpu_cas.dir/mmu_cpu/newcpu.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas2.dir/build.make CMakeFiles/test_cpu_cas2.dir/mmu_cpu/newcpu.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movep.dir/build.make CMakeFiles/test_cpu_movep.dir/mmu_cpu/newcpu.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_move.dir/build.make CMakeFiles/test_cpu_move.dir/mmu_cpu/newcpu.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_negx.dir/build.make CMakeFiles/test_cpu_negx.dir/mmu_cpu/newcpu.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_clr.dir/build.make CMakeFiles/test_cpu_clr.dir/mmu_cpu/newcpu.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_neg.dir/build.make CMakeFiles/test_cpu_neg.dir/mmu_cpu/newcpu.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_not.dir/build.make CMakeFiles/test_cpu_not.dir/mmu_cpu/newcpu.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_nbcd.dir/build.make CMakeFiles/test_cpu_nbcd.dir/mmu_cpu/newcpu.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_link.dir/build.make CMakeFiles/test_cpu_link.dir/mmu_cpu/newcpu.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_swap.dir/build.make CMakeFiles/test_cpu_swap.dir/mmu_cpu/newcpu.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pea.dir/build.make CMakeFiles/test_cpu_pea.dir/mmu_cpu/newcpu.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_ext.dir/build.make CMakeFiles/test_cpu_ext.dir/mmu_cpu/newcpu.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movem.dir/build.make CMakeFiles/test_cpu_movem.dir/mmu_cpu/newcpu.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_tst.dir/build.make CMakeFiles/test_cpu_tst.dir/mmu_cpu/newcpu.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_mul.dir/build.make CMakeFiles/test_cpu_mul.dir/mmu_cpu/newcpu.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_div.dir/build.make CMakeFiles/test_cpu_div.dir/mmu_cpu/newcpu.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unlk.dir/build.make CMakeFiles/test_cpu_unlk.dir/mmu_cpu/newcpu.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_rtx.dir/build.make CMakeFiles/test_cpu_rtx.dir/mmu_cpu/newcpu.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_jmp.dir/build.make CMakeFiles/test_cpu_jmp.dir/mmu_cpu/newcpu.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk.dir/build.make CMakeFiles/test_cpu_chk.dir/mmu_cpu/newcpu.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_lea.dir/build.make CMakeFiles/test_cpu_lea.dir/mmu_cpu/newcpu.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_scc.dir/build.make CMakeFiles/test_cpu_scc.dir/mmu_cpu/newcpu.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_dbcc.dir/build.make CMakeFiles/test_cpu_dbcc.dir/mmu_cpu/newcpu.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_or.dir/build.make CMakeFiles/test_cpu_or.dir/mmu_cpu/newcpu.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sbcd.dir/build.make CMakeFiles/test_cpu_sbcd.dir/mmu_cpu/newcpu.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pack.dir/build.make CMakeFiles/test_cpu_pack.dir/mmu_cpu/newcpu.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unpk.dir/build.make CMakeFiles/test_cpu_unpk.dir/mmu_cpu/newcpu.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sub.dir/build.make CMakeFiles/test_cpu_sub.dir/mmu_cpu/newcpu.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp.dir/build.make CMakeFiles/test_cpu_cmp.dir/mmu_cpu/newcpu.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_eor.dir/build.make CMakeFiles/test_cpu_eor.dir/mmu_cpu/newcpu.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_exg.dir/build.make CMakeFiles/test_cpu_exg.dir/mmu_cpu/newcpu.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_add.dir/build.make CMakeFiles/test_cpu_add.dir/mmu_cpu/newcpu.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_shift.dir/build.make CMakeFiles/test_cpu_shift.dir/mmu_cpu/newcpu.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bitfields.dir/build.make CMakeFiles/test_cpu_bitfields.dir/mmu_cpu/newcpu.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_fmove.dir/build.make CMakeFiles/test_cpu_fmove.dir/mmu_cpu/newcpu.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/mmu_cpu/newcpu.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/newcpu.cpp.s
 .PHONY : mmu_cpu/newcpu.cpp.s
+
+mmu_cpu/op_arithmetic.o: mmu_cpu/op_arithmetic.cpp.o
+.PHONY : mmu_cpu/op_arithmetic.o
+
+# target to build an object file
+mmu_cpu/op_arithmetic.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/mmu_cpu/op_arithmetic.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/op_arithmetic.cpp.o
+.PHONY : mmu_cpu/op_arithmetic.cpp.o
+
+mmu_cpu/op_arithmetic.i: mmu_cpu/op_arithmetic.cpp.i
+.PHONY : mmu_cpu/op_arithmetic.i
+
+# target to preprocess a source file
+mmu_cpu/op_arithmetic.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/mmu_cpu/op_arithmetic.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/op_arithmetic.cpp.i
+.PHONY : mmu_cpu/op_arithmetic.cpp.i
+
+mmu_cpu/op_arithmetic.s: mmu_cpu/op_arithmetic.cpp.s
+.PHONY : mmu_cpu/op_arithmetic.s
+
+# target to generate assembly for a file
+mmu_cpu/op_arithmetic.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/mmu_cpu/op_arithmetic.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/op_arithmetic.cpp.s
+.PHONY : mmu_cpu/op_arithmetic.cpp.s
 
 mmu_cpu/op_bcd.o: mmu_cpu/op_bcd.cpp.o
 .PHONY : mmu_cpu/op_bcd.o
 
 # target to build an object file
 mmu_cpu/op_bcd.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/mmu_cpu/op_bcd.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu.dir/build.make CMakeFiles/test_cpu.dir/mmu_cpu/op_bcd.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_math.dir/build.make CMakeFiles/test_cpu_math.dir/mmu_cpu/op_bcd.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_and.dir/build.make CMakeFiles/test_cpu_and.dir/mmu_cpu/op_bcd.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp2.dir/build.make CMakeFiles/test_cpu_cmp2.dir/mmu_cpu/op_bcd.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk2.dir/build.make CMakeFiles/test_cpu_chk2.dir/mmu_cpu/op_bcd.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_btst.dir/build.make CMakeFiles/test_cpu_btst.dir/mmu_cpu/op_bcd.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bchg.dir/build.make CMakeFiles/test_cpu_bchg.dir/mmu_cpu/op_bcd.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bclr.dir/build.make CMakeFiles/test_cpu_bclr.dir/mmu_cpu/op_bcd.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bset.dir/build.make CMakeFiles/test_cpu_bset.dir/mmu_cpu/op_bcd.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas.dir/build.make CMakeFiles/test_cpu_cas.dir/mmu_cpu/op_bcd.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas2.dir/build.make CMakeFiles/test_cpu_cas2.dir/mmu_cpu/op_bcd.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movep.dir/build.make CMakeFiles/test_cpu_movep.dir/mmu_cpu/op_bcd.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_move.dir/build.make CMakeFiles/test_cpu_move.dir/mmu_cpu/op_bcd.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_negx.dir/build.make CMakeFiles/test_cpu_negx.dir/mmu_cpu/op_bcd.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_clr.dir/build.make CMakeFiles/test_cpu_clr.dir/mmu_cpu/op_bcd.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_neg.dir/build.make CMakeFiles/test_cpu_neg.dir/mmu_cpu/op_bcd.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_not.dir/build.make CMakeFiles/test_cpu_not.dir/mmu_cpu/op_bcd.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_nbcd.dir/build.make CMakeFiles/test_cpu_nbcd.dir/mmu_cpu/op_bcd.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_link.dir/build.make CMakeFiles/test_cpu_link.dir/mmu_cpu/op_bcd.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_swap.dir/build.make CMakeFiles/test_cpu_swap.dir/mmu_cpu/op_bcd.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pea.dir/build.make CMakeFiles/test_cpu_pea.dir/mmu_cpu/op_bcd.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_ext.dir/build.make CMakeFiles/test_cpu_ext.dir/mmu_cpu/op_bcd.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movem.dir/build.make CMakeFiles/test_cpu_movem.dir/mmu_cpu/op_bcd.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_tst.dir/build.make CMakeFiles/test_cpu_tst.dir/mmu_cpu/op_bcd.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_mul.dir/build.make CMakeFiles/test_cpu_mul.dir/mmu_cpu/op_bcd.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_div.dir/build.make CMakeFiles/test_cpu_div.dir/mmu_cpu/op_bcd.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unlk.dir/build.make CMakeFiles/test_cpu_unlk.dir/mmu_cpu/op_bcd.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_rtx.dir/build.make CMakeFiles/test_cpu_rtx.dir/mmu_cpu/op_bcd.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_jmp.dir/build.make CMakeFiles/test_cpu_jmp.dir/mmu_cpu/op_bcd.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk.dir/build.make CMakeFiles/test_cpu_chk.dir/mmu_cpu/op_bcd.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_lea.dir/build.make CMakeFiles/test_cpu_lea.dir/mmu_cpu/op_bcd.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_scc.dir/build.make CMakeFiles/test_cpu_scc.dir/mmu_cpu/op_bcd.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_dbcc.dir/build.make CMakeFiles/test_cpu_dbcc.dir/mmu_cpu/op_bcd.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_or.dir/build.make CMakeFiles/test_cpu_or.dir/mmu_cpu/op_bcd.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sbcd.dir/build.make CMakeFiles/test_cpu_sbcd.dir/mmu_cpu/op_bcd.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pack.dir/build.make CMakeFiles/test_cpu_pack.dir/mmu_cpu/op_bcd.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unpk.dir/build.make CMakeFiles/test_cpu_unpk.dir/mmu_cpu/op_bcd.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sub.dir/build.make CMakeFiles/test_cpu_sub.dir/mmu_cpu/op_bcd.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp.dir/build.make CMakeFiles/test_cpu_cmp.dir/mmu_cpu/op_bcd.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_eor.dir/build.make CMakeFiles/test_cpu_eor.dir/mmu_cpu/op_bcd.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_exg.dir/build.make CMakeFiles/test_cpu_exg.dir/mmu_cpu/op_bcd.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_add.dir/build.make CMakeFiles/test_cpu_add.dir/mmu_cpu/op_bcd.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_shift.dir/build.make CMakeFiles/test_cpu_shift.dir/mmu_cpu/op_bcd.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bitfields.dir/build.make CMakeFiles/test_cpu_bitfields.dir/mmu_cpu/op_bcd.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_fmove.dir/build.make CMakeFiles/test_cpu_fmove.dir/mmu_cpu/op_bcd.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/mmu_cpu/op_bcd.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/op_bcd.cpp.o
 .PHONY : mmu_cpu/op_bcd.cpp.o
 
 mmu_cpu/op_bcd.i: mmu_cpu/op_bcd.cpp.i
@@ -2249,52 +553,8 @@ mmu_cpu/op_bcd.i: mmu_cpu/op_bcd.cpp.i
 
 # target to preprocess a source file
 mmu_cpu/op_bcd.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/mmu_cpu/op_bcd.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu.dir/build.make CMakeFiles/test_cpu.dir/mmu_cpu/op_bcd.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_math.dir/build.make CMakeFiles/test_cpu_math.dir/mmu_cpu/op_bcd.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_and.dir/build.make CMakeFiles/test_cpu_and.dir/mmu_cpu/op_bcd.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp2.dir/build.make CMakeFiles/test_cpu_cmp2.dir/mmu_cpu/op_bcd.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk2.dir/build.make CMakeFiles/test_cpu_chk2.dir/mmu_cpu/op_bcd.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_btst.dir/build.make CMakeFiles/test_cpu_btst.dir/mmu_cpu/op_bcd.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bchg.dir/build.make CMakeFiles/test_cpu_bchg.dir/mmu_cpu/op_bcd.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bclr.dir/build.make CMakeFiles/test_cpu_bclr.dir/mmu_cpu/op_bcd.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bset.dir/build.make CMakeFiles/test_cpu_bset.dir/mmu_cpu/op_bcd.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas.dir/build.make CMakeFiles/test_cpu_cas.dir/mmu_cpu/op_bcd.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas2.dir/build.make CMakeFiles/test_cpu_cas2.dir/mmu_cpu/op_bcd.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movep.dir/build.make CMakeFiles/test_cpu_movep.dir/mmu_cpu/op_bcd.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_move.dir/build.make CMakeFiles/test_cpu_move.dir/mmu_cpu/op_bcd.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_negx.dir/build.make CMakeFiles/test_cpu_negx.dir/mmu_cpu/op_bcd.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_clr.dir/build.make CMakeFiles/test_cpu_clr.dir/mmu_cpu/op_bcd.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_neg.dir/build.make CMakeFiles/test_cpu_neg.dir/mmu_cpu/op_bcd.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_not.dir/build.make CMakeFiles/test_cpu_not.dir/mmu_cpu/op_bcd.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_nbcd.dir/build.make CMakeFiles/test_cpu_nbcd.dir/mmu_cpu/op_bcd.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_link.dir/build.make CMakeFiles/test_cpu_link.dir/mmu_cpu/op_bcd.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_swap.dir/build.make CMakeFiles/test_cpu_swap.dir/mmu_cpu/op_bcd.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pea.dir/build.make CMakeFiles/test_cpu_pea.dir/mmu_cpu/op_bcd.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_ext.dir/build.make CMakeFiles/test_cpu_ext.dir/mmu_cpu/op_bcd.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movem.dir/build.make CMakeFiles/test_cpu_movem.dir/mmu_cpu/op_bcd.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_tst.dir/build.make CMakeFiles/test_cpu_tst.dir/mmu_cpu/op_bcd.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_mul.dir/build.make CMakeFiles/test_cpu_mul.dir/mmu_cpu/op_bcd.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_div.dir/build.make CMakeFiles/test_cpu_div.dir/mmu_cpu/op_bcd.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unlk.dir/build.make CMakeFiles/test_cpu_unlk.dir/mmu_cpu/op_bcd.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_rtx.dir/build.make CMakeFiles/test_cpu_rtx.dir/mmu_cpu/op_bcd.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_jmp.dir/build.make CMakeFiles/test_cpu_jmp.dir/mmu_cpu/op_bcd.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk.dir/build.make CMakeFiles/test_cpu_chk.dir/mmu_cpu/op_bcd.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_lea.dir/build.make CMakeFiles/test_cpu_lea.dir/mmu_cpu/op_bcd.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_scc.dir/build.make CMakeFiles/test_cpu_scc.dir/mmu_cpu/op_bcd.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_dbcc.dir/build.make CMakeFiles/test_cpu_dbcc.dir/mmu_cpu/op_bcd.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_or.dir/build.make CMakeFiles/test_cpu_or.dir/mmu_cpu/op_bcd.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sbcd.dir/build.make CMakeFiles/test_cpu_sbcd.dir/mmu_cpu/op_bcd.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pack.dir/build.make CMakeFiles/test_cpu_pack.dir/mmu_cpu/op_bcd.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unpk.dir/build.make CMakeFiles/test_cpu_unpk.dir/mmu_cpu/op_bcd.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sub.dir/build.make CMakeFiles/test_cpu_sub.dir/mmu_cpu/op_bcd.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp.dir/build.make CMakeFiles/test_cpu_cmp.dir/mmu_cpu/op_bcd.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_eor.dir/build.make CMakeFiles/test_cpu_eor.dir/mmu_cpu/op_bcd.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_exg.dir/build.make CMakeFiles/test_cpu_exg.dir/mmu_cpu/op_bcd.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_add.dir/build.make CMakeFiles/test_cpu_add.dir/mmu_cpu/op_bcd.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_shift.dir/build.make CMakeFiles/test_cpu_shift.dir/mmu_cpu/op_bcd.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bitfields.dir/build.make CMakeFiles/test_cpu_bitfields.dir/mmu_cpu/op_bcd.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_fmove.dir/build.make CMakeFiles/test_cpu_fmove.dir/mmu_cpu/op_bcd.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/mmu_cpu/op_bcd.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/op_bcd.cpp.i
 .PHONY : mmu_cpu/op_bcd.cpp.i
 
 mmu_cpu/op_bcd.s: mmu_cpu/op_bcd.cpp.s
@@ -2302,52 +562,8 @@ mmu_cpu/op_bcd.s: mmu_cpu/op_bcd.cpp.s
 
 # target to generate assembly for a file
 mmu_cpu/op_bcd.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/mmu_cpu/op_bcd.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu.dir/build.make CMakeFiles/test_cpu.dir/mmu_cpu/op_bcd.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_math.dir/build.make CMakeFiles/test_cpu_math.dir/mmu_cpu/op_bcd.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_and.dir/build.make CMakeFiles/test_cpu_and.dir/mmu_cpu/op_bcd.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp2.dir/build.make CMakeFiles/test_cpu_cmp2.dir/mmu_cpu/op_bcd.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk2.dir/build.make CMakeFiles/test_cpu_chk2.dir/mmu_cpu/op_bcd.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_btst.dir/build.make CMakeFiles/test_cpu_btst.dir/mmu_cpu/op_bcd.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bchg.dir/build.make CMakeFiles/test_cpu_bchg.dir/mmu_cpu/op_bcd.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bclr.dir/build.make CMakeFiles/test_cpu_bclr.dir/mmu_cpu/op_bcd.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bset.dir/build.make CMakeFiles/test_cpu_bset.dir/mmu_cpu/op_bcd.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas.dir/build.make CMakeFiles/test_cpu_cas.dir/mmu_cpu/op_bcd.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas2.dir/build.make CMakeFiles/test_cpu_cas2.dir/mmu_cpu/op_bcd.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movep.dir/build.make CMakeFiles/test_cpu_movep.dir/mmu_cpu/op_bcd.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_move.dir/build.make CMakeFiles/test_cpu_move.dir/mmu_cpu/op_bcd.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_negx.dir/build.make CMakeFiles/test_cpu_negx.dir/mmu_cpu/op_bcd.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_clr.dir/build.make CMakeFiles/test_cpu_clr.dir/mmu_cpu/op_bcd.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_neg.dir/build.make CMakeFiles/test_cpu_neg.dir/mmu_cpu/op_bcd.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_not.dir/build.make CMakeFiles/test_cpu_not.dir/mmu_cpu/op_bcd.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_nbcd.dir/build.make CMakeFiles/test_cpu_nbcd.dir/mmu_cpu/op_bcd.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_link.dir/build.make CMakeFiles/test_cpu_link.dir/mmu_cpu/op_bcd.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_swap.dir/build.make CMakeFiles/test_cpu_swap.dir/mmu_cpu/op_bcd.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pea.dir/build.make CMakeFiles/test_cpu_pea.dir/mmu_cpu/op_bcd.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_ext.dir/build.make CMakeFiles/test_cpu_ext.dir/mmu_cpu/op_bcd.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movem.dir/build.make CMakeFiles/test_cpu_movem.dir/mmu_cpu/op_bcd.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_tst.dir/build.make CMakeFiles/test_cpu_tst.dir/mmu_cpu/op_bcd.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_mul.dir/build.make CMakeFiles/test_cpu_mul.dir/mmu_cpu/op_bcd.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_div.dir/build.make CMakeFiles/test_cpu_div.dir/mmu_cpu/op_bcd.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unlk.dir/build.make CMakeFiles/test_cpu_unlk.dir/mmu_cpu/op_bcd.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_rtx.dir/build.make CMakeFiles/test_cpu_rtx.dir/mmu_cpu/op_bcd.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_jmp.dir/build.make CMakeFiles/test_cpu_jmp.dir/mmu_cpu/op_bcd.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk.dir/build.make CMakeFiles/test_cpu_chk.dir/mmu_cpu/op_bcd.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_lea.dir/build.make CMakeFiles/test_cpu_lea.dir/mmu_cpu/op_bcd.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_scc.dir/build.make CMakeFiles/test_cpu_scc.dir/mmu_cpu/op_bcd.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_dbcc.dir/build.make CMakeFiles/test_cpu_dbcc.dir/mmu_cpu/op_bcd.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_or.dir/build.make CMakeFiles/test_cpu_or.dir/mmu_cpu/op_bcd.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sbcd.dir/build.make CMakeFiles/test_cpu_sbcd.dir/mmu_cpu/op_bcd.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pack.dir/build.make CMakeFiles/test_cpu_pack.dir/mmu_cpu/op_bcd.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unpk.dir/build.make CMakeFiles/test_cpu_unpk.dir/mmu_cpu/op_bcd.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sub.dir/build.make CMakeFiles/test_cpu_sub.dir/mmu_cpu/op_bcd.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp.dir/build.make CMakeFiles/test_cpu_cmp.dir/mmu_cpu/op_bcd.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_eor.dir/build.make CMakeFiles/test_cpu_eor.dir/mmu_cpu/op_bcd.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_exg.dir/build.make CMakeFiles/test_cpu_exg.dir/mmu_cpu/op_bcd.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_add.dir/build.make CMakeFiles/test_cpu_add.dir/mmu_cpu/op_bcd.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_shift.dir/build.make CMakeFiles/test_cpu_shift.dir/mmu_cpu/op_bcd.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bitfields.dir/build.make CMakeFiles/test_cpu_bitfields.dir/mmu_cpu/op_bcd.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_fmove.dir/build.make CMakeFiles/test_cpu_fmove.dir/mmu_cpu/op_bcd.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/mmu_cpu/op_bcd.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/op_bcd.cpp.s
 .PHONY : mmu_cpu/op_bcd.cpp.s
 
 mmu_cpu/op_bf.o: mmu_cpu/op_bf.cpp.o
@@ -2355,52 +571,8 @@ mmu_cpu/op_bf.o: mmu_cpu/op_bf.cpp.o
 
 # target to build an object file
 mmu_cpu/op_bf.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/mmu_cpu/op_bf.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu.dir/build.make CMakeFiles/test_cpu.dir/mmu_cpu/op_bf.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_math.dir/build.make CMakeFiles/test_cpu_math.dir/mmu_cpu/op_bf.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_and.dir/build.make CMakeFiles/test_cpu_and.dir/mmu_cpu/op_bf.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp2.dir/build.make CMakeFiles/test_cpu_cmp2.dir/mmu_cpu/op_bf.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk2.dir/build.make CMakeFiles/test_cpu_chk2.dir/mmu_cpu/op_bf.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_btst.dir/build.make CMakeFiles/test_cpu_btst.dir/mmu_cpu/op_bf.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bchg.dir/build.make CMakeFiles/test_cpu_bchg.dir/mmu_cpu/op_bf.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bclr.dir/build.make CMakeFiles/test_cpu_bclr.dir/mmu_cpu/op_bf.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bset.dir/build.make CMakeFiles/test_cpu_bset.dir/mmu_cpu/op_bf.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas.dir/build.make CMakeFiles/test_cpu_cas.dir/mmu_cpu/op_bf.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas2.dir/build.make CMakeFiles/test_cpu_cas2.dir/mmu_cpu/op_bf.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movep.dir/build.make CMakeFiles/test_cpu_movep.dir/mmu_cpu/op_bf.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_move.dir/build.make CMakeFiles/test_cpu_move.dir/mmu_cpu/op_bf.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_negx.dir/build.make CMakeFiles/test_cpu_negx.dir/mmu_cpu/op_bf.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_clr.dir/build.make CMakeFiles/test_cpu_clr.dir/mmu_cpu/op_bf.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_neg.dir/build.make CMakeFiles/test_cpu_neg.dir/mmu_cpu/op_bf.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_not.dir/build.make CMakeFiles/test_cpu_not.dir/mmu_cpu/op_bf.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_nbcd.dir/build.make CMakeFiles/test_cpu_nbcd.dir/mmu_cpu/op_bf.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_link.dir/build.make CMakeFiles/test_cpu_link.dir/mmu_cpu/op_bf.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_swap.dir/build.make CMakeFiles/test_cpu_swap.dir/mmu_cpu/op_bf.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pea.dir/build.make CMakeFiles/test_cpu_pea.dir/mmu_cpu/op_bf.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_ext.dir/build.make CMakeFiles/test_cpu_ext.dir/mmu_cpu/op_bf.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movem.dir/build.make CMakeFiles/test_cpu_movem.dir/mmu_cpu/op_bf.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_tst.dir/build.make CMakeFiles/test_cpu_tst.dir/mmu_cpu/op_bf.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_mul.dir/build.make CMakeFiles/test_cpu_mul.dir/mmu_cpu/op_bf.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_div.dir/build.make CMakeFiles/test_cpu_div.dir/mmu_cpu/op_bf.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unlk.dir/build.make CMakeFiles/test_cpu_unlk.dir/mmu_cpu/op_bf.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_rtx.dir/build.make CMakeFiles/test_cpu_rtx.dir/mmu_cpu/op_bf.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_jmp.dir/build.make CMakeFiles/test_cpu_jmp.dir/mmu_cpu/op_bf.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk.dir/build.make CMakeFiles/test_cpu_chk.dir/mmu_cpu/op_bf.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_lea.dir/build.make CMakeFiles/test_cpu_lea.dir/mmu_cpu/op_bf.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_scc.dir/build.make CMakeFiles/test_cpu_scc.dir/mmu_cpu/op_bf.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_dbcc.dir/build.make CMakeFiles/test_cpu_dbcc.dir/mmu_cpu/op_bf.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_or.dir/build.make CMakeFiles/test_cpu_or.dir/mmu_cpu/op_bf.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sbcd.dir/build.make CMakeFiles/test_cpu_sbcd.dir/mmu_cpu/op_bf.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pack.dir/build.make CMakeFiles/test_cpu_pack.dir/mmu_cpu/op_bf.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unpk.dir/build.make CMakeFiles/test_cpu_unpk.dir/mmu_cpu/op_bf.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sub.dir/build.make CMakeFiles/test_cpu_sub.dir/mmu_cpu/op_bf.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp.dir/build.make CMakeFiles/test_cpu_cmp.dir/mmu_cpu/op_bf.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_eor.dir/build.make CMakeFiles/test_cpu_eor.dir/mmu_cpu/op_bf.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_exg.dir/build.make CMakeFiles/test_cpu_exg.dir/mmu_cpu/op_bf.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_add.dir/build.make CMakeFiles/test_cpu_add.dir/mmu_cpu/op_bf.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_shift.dir/build.make CMakeFiles/test_cpu_shift.dir/mmu_cpu/op_bf.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bitfields.dir/build.make CMakeFiles/test_cpu_bitfields.dir/mmu_cpu/op_bf.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_fmove.dir/build.make CMakeFiles/test_cpu_fmove.dir/mmu_cpu/op_bf.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/mmu_cpu/op_bf.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/op_bf.cpp.o
 .PHONY : mmu_cpu/op_bf.cpp.o
 
 mmu_cpu/op_bf.i: mmu_cpu/op_bf.cpp.i
@@ -2408,52 +580,8 @@ mmu_cpu/op_bf.i: mmu_cpu/op_bf.cpp.i
 
 # target to preprocess a source file
 mmu_cpu/op_bf.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/mmu_cpu/op_bf.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu.dir/build.make CMakeFiles/test_cpu.dir/mmu_cpu/op_bf.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_math.dir/build.make CMakeFiles/test_cpu_math.dir/mmu_cpu/op_bf.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_and.dir/build.make CMakeFiles/test_cpu_and.dir/mmu_cpu/op_bf.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp2.dir/build.make CMakeFiles/test_cpu_cmp2.dir/mmu_cpu/op_bf.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk2.dir/build.make CMakeFiles/test_cpu_chk2.dir/mmu_cpu/op_bf.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_btst.dir/build.make CMakeFiles/test_cpu_btst.dir/mmu_cpu/op_bf.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bchg.dir/build.make CMakeFiles/test_cpu_bchg.dir/mmu_cpu/op_bf.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bclr.dir/build.make CMakeFiles/test_cpu_bclr.dir/mmu_cpu/op_bf.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bset.dir/build.make CMakeFiles/test_cpu_bset.dir/mmu_cpu/op_bf.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas.dir/build.make CMakeFiles/test_cpu_cas.dir/mmu_cpu/op_bf.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas2.dir/build.make CMakeFiles/test_cpu_cas2.dir/mmu_cpu/op_bf.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movep.dir/build.make CMakeFiles/test_cpu_movep.dir/mmu_cpu/op_bf.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_move.dir/build.make CMakeFiles/test_cpu_move.dir/mmu_cpu/op_bf.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_negx.dir/build.make CMakeFiles/test_cpu_negx.dir/mmu_cpu/op_bf.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_clr.dir/build.make CMakeFiles/test_cpu_clr.dir/mmu_cpu/op_bf.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_neg.dir/build.make CMakeFiles/test_cpu_neg.dir/mmu_cpu/op_bf.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_not.dir/build.make CMakeFiles/test_cpu_not.dir/mmu_cpu/op_bf.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_nbcd.dir/build.make CMakeFiles/test_cpu_nbcd.dir/mmu_cpu/op_bf.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_link.dir/build.make CMakeFiles/test_cpu_link.dir/mmu_cpu/op_bf.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_swap.dir/build.make CMakeFiles/test_cpu_swap.dir/mmu_cpu/op_bf.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pea.dir/build.make CMakeFiles/test_cpu_pea.dir/mmu_cpu/op_bf.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_ext.dir/build.make CMakeFiles/test_cpu_ext.dir/mmu_cpu/op_bf.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movem.dir/build.make CMakeFiles/test_cpu_movem.dir/mmu_cpu/op_bf.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_tst.dir/build.make CMakeFiles/test_cpu_tst.dir/mmu_cpu/op_bf.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_mul.dir/build.make CMakeFiles/test_cpu_mul.dir/mmu_cpu/op_bf.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_div.dir/build.make CMakeFiles/test_cpu_div.dir/mmu_cpu/op_bf.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unlk.dir/build.make CMakeFiles/test_cpu_unlk.dir/mmu_cpu/op_bf.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_rtx.dir/build.make CMakeFiles/test_cpu_rtx.dir/mmu_cpu/op_bf.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_jmp.dir/build.make CMakeFiles/test_cpu_jmp.dir/mmu_cpu/op_bf.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk.dir/build.make CMakeFiles/test_cpu_chk.dir/mmu_cpu/op_bf.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_lea.dir/build.make CMakeFiles/test_cpu_lea.dir/mmu_cpu/op_bf.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_scc.dir/build.make CMakeFiles/test_cpu_scc.dir/mmu_cpu/op_bf.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_dbcc.dir/build.make CMakeFiles/test_cpu_dbcc.dir/mmu_cpu/op_bf.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_or.dir/build.make CMakeFiles/test_cpu_or.dir/mmu_cpu/op_bf.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sbcd.dir/build.make CMakeFiles/test_cpu_sbcd.dir/mmu_cpu/op_bf.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pack.dir/build.make CMakeFiles/test_cpu_pack.dir/mmu_cpu/op_bf.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unpk.dir/build.make CMakeFiles/test_cpu_unpk.dir/mmu_cpu/op_bf.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sub.dir/build.make CMakeFiles/test_cpu_sub.dir/mmu_cpu/op_bf.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp.dir/build.make CMakeFiles/test_cpu_cmp.dir/mmu_cpu/op_bf.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_eor.dir/build.make CMakeFiles/test_cpu_eor.dir/mmu_cpu/op_bf.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_exg.dir/build.make CMakeFiles/test_cpu_exg.dir/mmu_cpu/op_bf.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_add.dir/build.make CMakeFiles/test_cpu_add.dir/mmu_cpu/op_bf.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_shift.dir/build.make CMakeFiles/test_cpu_shift.dir/mmu_cpu/op_bf.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bitfields.dir/build.make CMakeFiles/test_cpu_bitfields.dir/mmu_cpu/op_bf.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_fmove.dir/build.make CMakeFiles/test_cpu_fmove.dir/mmu_cpu/op_bf.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/mmu_cpu/op_bf.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/op_bf.cpp.i
 .PHONY : mmu_cpu/op_bf.cpp.i
 
 mmu_cpu/op_bf.s: mmu_cpu/op_bf.cpp.s
@@ -2461,52 +589,8 @@ mmu_cpu/op_bf.s: mmu_cpu/op_bf.cpp.s
 
 # target to generate assembly for a file
 mmu_cpu/op_bf.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/mmu_cpu/op_bf.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu.dir/build.make CMakeFiles/test_cpu.dir/mmu_cpu/op_bf.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_math.dir/build.make CMakeFiles/test_cpu_math.dir/mmu_cpu/op_bf.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_and.dir/build.make CMakeFiles/test_cpu_and.dir/mmu_cpu/op_bf.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp2.dir/build.make CMakeFiles/test_cpu_cmp2.dir/mmu_cpu/op_bf.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk2.dir/build.make CMakeFiles/test_cpu_chk2.dir/mmu_cpu/op_bf.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_btst.dir/build.make CMakeFiles/test_cpu_btst.dir/mmu_cpu/op_bf.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bchg.dir/build.make CMakeFiles/test_cpu_bchg.dir/mmu_cpu/op_bf.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bclr.dir/build.make CMakeFiles/test_cpu_bclr.dir/mmu_cpu/op_bf.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bset.dir/build.make CMakeFiles/test_cpu_bset.dir/mmu_cpu/op_bf.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas.dir/build.make CMakeFiles/test_cpu_cas.dir/mmu_cpu/op_bf.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas2.dir/build.make CMakeFiles/test_cpu_cas2.dir/mmu_cpu/op_bf.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movep.dir/build.make CMakeFiles/test_cpu_movep.dir/mmu_cpu/op_bf.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_move.dir/build.make CMakeFiles/test_cpu_move.dir/mmu_cpu/op_bf.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_negx.dir/build.make CMakeFiles/test_cpu_negx.dir/mmu_cpu/op_bf.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_clr.dir/build.make CMakeFiles/test_cpu_clr.dir/mmu_cpu/op_bf.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_neg.dir/build.make CMakeFiles/test_cpu_neg.dir/mmu_cpu/op_bf.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_not.dir/build.make CMakeFiles/test_cpu_not.dir/mmu_cpu/op_bf.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_nbcd.dir/build.make CMakeFiles/test_cpu_nbcd.dir/mmu_cpu/op_bf.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_link.dir/build.make CMakeFiles/test_cpu_link.dir/mmu_cpu/op_bf.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_swap.dir/build.make CMakeFiles/test_cpu_swap.dir/mmu_cpu/op_bf.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pea.dir/build.make CMakeFiles/test_cpu_pea.dir/mmu_cpu/op_bf.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_ext.dir/build.make CMakeFiles/test_cpu_ext.dir/mmu_cpu/op_bf.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movem.dir/build.make CMakeFiles/test_cpu_movem.dir/mmu_cpu/op_bf.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_tst.dir/build.make CMakeFiles/test_cpu_tst.dir/mmu_cpu/op_bf.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_mul.dir/build.make CMakeFiles/test_cpu_mul.dir/mmu_cpu/op_bf.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_div.dir/build.make CMakeFiles/test_cpu_div.dir/mmu_cpu/op_bf.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unlk.dir/build.make CMakeFiles/test_cpu_unlk.dir/mmu_cpu/op_bf.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_rtx.dir/build.make CMakeFiles/test_cpu_rtx.dir/mmu_cpu/op_bf.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_jmp.dir/build.make CMakeFiles/test_cpu_jmp.dir/mmu_cpu/op_bf.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk.dir/build.make CMakeFiles/test_cpu_chk.dir/mmu_cpu/op_bf.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_lea.dir/build.make CMakeFiles/test_cpu_lea.dir/mmu_cpu/op_bf.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_scc.dir/build.make CMakeFiles/test_cpu_scc.dir/mmu_cpu/op_bf.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_dbcc.dir/build.make CMakeFiles/test_cpu_dbcc.dir/mmu_cpu/op_bf.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_or.dir/build.make CMakeFiles/test_cpu_or.dir/mmu_cpu/op_bf.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sbcd.dir/build.make CMakeFiles/test_cpu_sbcd.dir/mmu_cpu/op_bf.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pack.dir/build.make CMakeFiles/test_cpu_pack.dir/mmu_cpu/op_bf.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unpk.dir/build.make CMakeFiles/test_cpu_unpk.dir/mmu_cpu/op_bf.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sub.dir/build.make CMakeFiles/test_cpu_sub.dir/mmu_cpu/op_bf.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp.dir/build.make CMakeFiles/test_cpu_cmp.dir/mmu_cpu/op_bf.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_eor.dir/build.make CMakeFiles/test_cpu_eor.dir/mmu_cpu/op_bf.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_exg.dir/build.make CMakeFiles/test_cpu_exg.dir/mmu_cpu/op_bf.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_add.dir/build.make CMakeFiles/test_cpu_add.dir/mmu_cpu/op_bf.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_shift.dir/build.make CMakeFiles/test_cpu_shift.dir/mmu_cpu/op_bf.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bitfields.dir/build.make CMakeFiles/test_cpu_bitfields.dir/mmu_cpu/op_bf.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_fmove.dir/build.make CMakeFiles/test_cpu_fmove.dir/mmu_cpu/op_bf.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/mmu_cpu/op_bf.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/op_bf.cpp.s
 .PHONY : mmu_cpu/op_bf.cpp.s
 
 mmu_cpu/op_bits.o: mmu_cpu/op_bits.cpp.o
@@ -2514,52 +598,8 @@ mmu_cpu/op_bits.o: mmu_cpu/op_bits.cpp.o
 
 # target to build an object file
 mmu_cpu/op_bits.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/mmu_cpu/op_bits.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu.dir/build.make CMakeFiles/test_cpu.dir/mmu_cpu/op_bits.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_math.dir/build.make CMakeFiles/test_cpu_math.dir/mmu_cpu/op_bits.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_and.dir/build.make CMakeFiles/test_cpu_and.dir/mmu_cpu/op_bits.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp2.dir/build.make CMakeFiles/test_cpu_cmp2.dir/mmu_cpu/op_bits.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk2.dir/build.make CMakeFiles/test_cpu_chk2.dir/mmu_cpu/op_bits.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_btst.dir/build.make CMakeFiles/test_cpu_btst.dir/mmu_cpu/op_bits.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bchg.dir/build.make CMakeFiles/test_cpu_bchg.dir/mmu_cpu/op_bits.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bclr.dir/build.make CMakeFiles/test_cpu_bclr.dir/mmu_cpu/op_bits.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bset.dir/build.make CMakeFiles/test_cpu_bset.dir/mmu_cpu/op_bits.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas.dir/build.make CMakeFiles/test_cpu_cas.dir/mmu_cpu/op_bits.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas2.dir/build.make CMakeFiles/test_cpu_cas2.dir/mmu_cpu/op_bits.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movep.dir/build.make CMakeFiles/test_cpu_movep.dir/mmu_cpu/op_bits.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_move.dir/build.make CMakeFiles/test_cpu_move.dir/mmu_cpu/op_bits.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_negx.dir/build.make CMakeFiles/test_cpu_negx.dir/mmu_cpu/op_bits.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_clr.dir/build.make CMakeFiles/test_cpu_clr.dir/mmu_cpu/op_bits.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_neg.dir/build.make CMakeFiles/test_cpu_neg.dir/mmu_cpu/op_bits.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_not.dir/build.make CMakeFiles/test_cpu_not.dir/mmu_cpu/op_bits.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_nbcd.dir/build.make CMakeFiles/test_cpu_nbcd.dir/mmu_cpu/op_bits.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_link.dir/build.make CMakeFiles/test_cpu_link.dir/mmu_cpu/op_bits.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_swap.dir/build.make CMakeFiles/test_cpu_swap.dir/mmu_cpu/op_bits.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pea.dir/build.make CMakeFiles/test_cpu_pea.dir/mmu_cpu/op_bits.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_ext.dir/build.make CMakeFiles/test_cpu_ext.dir/mmu_cpu/op_bits.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movem.dir/build.make CMakeFiles/test_cpu_movem.dir/mmu_cpu/op_bits.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_tst.dir/build.make CMakeFiles/test_cpu_tst.dir/mmu_cpu/op_bits.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_mul.dir/build.make CMakeFiles/test_cpu_mul.dir/mmu_cpu/op_bits.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_div.dir/build.make CMakeFiles/test_cpu_div.dir/mmu_cpu/op_bits.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unlk.dir/build.make CMakeFiles/test_cpu_unlk.dir/mmu_cpu/op_bits.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_rtx.dir/build.make CMakeFiles/test_cpu_rtx.dir/mmu_cpu/op_bits.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_jmp.dir/build.make CMakeFiles/test_cpu_jmp.dir/mmu_cpu/op_bits.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk.dir/build.make CMakeFiles/test_cpu_chk.dir/mmu_cpu/op_bits.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_lea.dir/build.make CMakeFiles/test_cpu_lea.dir/mmu_cpu/op_bits.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_scc.dir/build.make CMakeFiles/test_cpu_scc.dir/mmu_cpu/op_bits.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_dbcc.dir/build.make CMakeFiles/test_cpu_dbcc.dir/mmu_cpu/op_bits.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_or.dir/build.make CMakeFiles/test_cpu_or.dir/mmu_cpu/op_bits.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sbcd.dir/build.make CMakeFiles/test_cpu_sbcd.dir/mmu_cpu/op_bits.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pack.dir/build.make CMakeFiles/test_cpu_pack.dir/mmu_cpu/op_bits.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unpk.dir/build.make CMakeFiles/test_cpu_unpk.dir/mmu_cpu/op_bits.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sub.dir/build.make CMakeFiles/test_cpu_sub.dir/mmu_cpu/op_bits.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp.dir/build.make CMakeFiles/test_cpu_cmp.dir/mmu_cpu/op_bits.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_eor.dir/build.make CMakeFiles/test_cpu_eor.dir/mmu_cpu/op_bits.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_exg.dir/build.make CMakeFiles/test_cpu_exg.dir/mmu_cpu/op_bits.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_add.dir/build.make CMakeFiles/test_cpu_add.dir/mmu_cpu/op_bits.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_shift.dir/build.make CMakeFiles/test_cpu_shift.dir/mmu_cpu/op_bits.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bitfields.dir/build.make CMakeFiles/test_cpu_bitfields.dir/mmu_cpu/op_bits.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_fmove.dir/build.make CMakeFiles/test_cpu_fmove.dir/mmu_cpu/op_bits.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/mmu_cpu/op_bits.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/op_bits.cpp.o
 .PHONY : mmu_cpu/op_bits.cpp.o
 
 mmu_cpu/op_bits.i: mmu_cpu/op_bits.cpp.i
@@ -2567,52 +607,8 @@ mmu_cpu/op_bits.i: mmu_cpu/op_bits.cpp.i
 
 # target to preprocess a source file
 mmu_cpu/op_bits.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/mmu_cpu/op_bits.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu.dir/build.make CMakeFiles/test_cpu.dir/mmu_cpu/op_bits.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_math.dir/build.make CMakeFiles/test_cpu_math.dir/mmu_cpu/op_bits.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_and.dir/build.make CMakeFiles/test_cpu_and.dir/mmu_cpu/op_bits.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp2.dir/build.make CMakeFiles/test_cpu_cmp2.dir/mmu_cpu/op_bits.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk2.dir/build.make CMakeFiles/test_cpu_chk2.dir/mmu_cpu/op_bits.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_btst.dir/build.make CMakeFiles/test_cpu_btst.dir/mmu_cpu/op_bits.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bchg.dir/build.make CMakeFiles/test_cpu_bchg.dir/mmu_cpu/op_bits.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bclr.dir/build.make CMakeFiles/test_cpu_bclr.dir/mmu_cpu/op_bits.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bset.dir/build.make CMakeFiles/test_cpu_bset.dir/mmu_cpu/op_bits.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas.dir/build.make CMakeFiles/test_cpu_cas.dir/mmu_cpu/op_bits.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas2.dir/build.make CMakeFiles/test_cpu_cas2.dir/mmu_cpu/op_bits.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movep.dir/build.make CMakeFiles/test_cpu_movep.dir/mmu_cpu/op_bits.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_move.dir/build.make CMakeFiles/test_cpu_move.dir/mmu_cpu/op_bits.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_negx.dir/build.make CMakeFiles/test_cpu_negx.dir/mmu_cpu/op_bits.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_clr.dir/build.make CMakeFiles/test_cpu_clr.dir/mmu_cpu/op_bits.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_neg.dir/build.make CMakeFiles/test_cpu_neg.dir/mmu_cpu/op_bits.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_not.dir/build.make CMakeFiles/test_cpu_not.dir/mmu_cpu/op_bits.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_nbcd.dir/build.make CMakeFiles/test_cpu_nbcd.dir/mmu_cpu/op_bits.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_link.dir/build.make CMakeFiles/test_cpu_link.dir/mmu_cpu/op_bits.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_swap.dir/build.make CMakeFiles/test_cpu_swap.dir/mmu_cpu/op_bits.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pea.dir/build.make CMakeFiles/test_cpu_pea.dir/mmu_cpu/op_bits.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_ext.dir/build.make CMakeFiles/test_cpu_ext.dir/mmu_cpu/op_bits.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movem.dir/build.make CMakeFiles/test_cpu_movem.dir/mmu_cpu/op_bits.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_tst.dir/build.make CMakeFiles/test_cpu_tst.dir/mmu_cpu/op_bits.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_mul.dir/build.make CMakeFiles/test_cpu_mul.dir/mmu_cpu/op_bits.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_div.dir/build.make CMakeFiles/test_cpu_div.dir/mmu_cpu/op_bits.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unlk.dir/build.make CMakeFiles/test_cpu_unlk.dir/mmu_cpu/op_bits.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_rtx.dir/build.make CMakeFiles/test_cpu_rtx.dir/mmu_cpu/op_bits.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_jmp.dir/build.make CMakeFiles/test_cpu_jmp.dir/mmu_cpu/op_bits.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk.dir/build.make CMakeFiles/test_cpu_chk.dir/mmu_cpu/op_bits.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_lea.dir/build.make CMakeFiles/test_cpu_lea.dir/mmu_cpu/op_bits.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_scc.dir/build.make CMakeFiles/test_cpu_scc.dir/mmu_cpu/op_bits.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_dbcc.dir/build.make CMakeFiles/test_cpu_dbcc.dir/mmu_cpu/op_bits.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_or.dir/build.make CMakeFiles/test_cpu_or.dir/mmu_cpu/op_bits.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sbcd.dir/build.make CMakeFiles/test_cpu_sbcd.dir/mmu_cpu/op_bits.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pack.dir/build.make CMakeFiles/test_cpu_pack.dir/mmu_cpu/op_bits.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unpk.dir/build.make CMakeFiles/test_cpu_unpk.dir/mmu_cpu/op_bits.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sub.dir/build.make CMakeFiles/test_cpu_sub.dir/mmu_cpu/op_bits.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp.dir/build.make CMakeFiles/test_cpu_cmp.dir/mmu_cpu/op_bits.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_eor.dir/build.make CMakeFiles/test_cpu_eor.dir/mmu_cpu/op_bits.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_exg.dir/build.make CMakeFiles/test_cpu_exg.dir/mmu_cpu/op_bits.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_add.dir/build.make CMakeFiles/test_cpu_add.dir/mmu_cpu/op_bits.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_shift.dir/build.make CMakeFiles/test_cpu_shift.dir/mmu_cpu/op_bits.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bitfields.dir/build.make CMakeFiles/test_cpu_bitfields.dir/mmu_cpu/op_bits.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_fmove.dir/build.make CMakeFiles/test_cpu_fmove.dir/mmu_cpu/op_bits.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/mmu_cpu/op_bits.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/op_bits.cpp.i
 .PHONY : mmu_cpu/op_bits.cpp.i
 
 mmu_cpu/op_bits.s: mmu_cpu/op_bits.cpp.s
@@ -2620,52 +616,8 @@ mmu_cpu/op_bits.s: mmu_cpu/op_bits.cpp.s
 
 # target to generate assembly for a file
 mmu_cpu/op_bits.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/mmu_cpu/op_bits.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu.dir/build.make CMakeFiles/test_cpu.dir/mmu_cpu/op_bits.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_math.dir/build.make CMakeFiles/test_cpu_math.dir/mmu_cpu/op_bits.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_and.dir/build.make CMakeFiles/test_cpu_and.dir/mmu_cpu/op_bits.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp2.dir/build.make CMakeFiles/test_cpu_cmp2.dir/mmu_cpu/op_bits.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk2.dir/build.make CMakeFiles/test_cpu_chk2.dir/mmu_cpu/op_bits.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_btst.dir/build.make CMakeFiles/test_cpu_btst.dir/mmu_cpu/op_bits.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bchg.dir/build.make CMakeFiles/test_cpu_bchg.dir/mmu_cpu/op_bits.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bclr.dir/build.make CMakeFiles/test_cpu_bclr.dir/mmu_cpu/op_bits.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bset.dir/build.make CMakeFiles/test_cpu_bset.dir/mmu_cpu/op_bits.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas.dir/build.make CMakeFiles/test_cpu_cas.dir/mmu_cpu/op_bits.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas2.dir/build.make CMakeFiles/test_cpu_cas2.dir/mmu_cpu/op_bits.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movep.dir/build.make CMakeFiles/test_cpu_movep.dir/mmu_cpu/op_bits.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_move.dir/build.make CMakeFiles/test_cpu_move.dir/mmu_cpu/op_bits.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_negx.dir/build.make CMakeFiles/test_cpu_negx.dir/mmu_cpu/op_bits.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_clr.dir/build.make CMakeFiles/test_cpu_clr.dir/mmu_cpu/op_bits.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_neg.dir/build.make CMakeFiles/test_cpu_neg.dir/mmu_cpu/op_bits.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_not.dir/build.make CMakeFiles/test_cpu_not.dir/mmu_cpu/op_bits.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_nbcd.dir/build.make CMakeFiles/test_cpu_nbcd.dir/mmu_cpu/op_bits.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_link.dir/build.make CMakeFiles/test_cpu_link.dir/mmu_cpu/op_bits.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_swap.dir/build.make CMakeFiles/test_cpu_swap.dir/mmu_cpu/op_bits.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pea.dir/build.make CMakeFiles/test_cpu_pea.dir/mmu_cpu/op_bits.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_ext.dir/build.make CMakeFiles/test_cpu_ext.dir/mmu_cpu/op_bits.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movem.dir/build.make CMakeFiles/test_cpu_movem.dir/mmu_cpu/op_bits.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_tst.dir/build.make CMakeFiles/test_cpu_tst.dir/mmu_cpu/op_bits.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_mul.dir/build.make CMakeFiles/test_cpu_mul.dir/mmu_cpu/op_bits.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_div.dir/build.make CMakeFiles/test_cpu_div.dir/mmu_cpu/op_bits.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unlk.dir/build.make CMakeFiles/test_cpu_unlk.dir/mmu_cpu/op_bits.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_rtx.dir/build.make CMakeFiles/test_cpu_rtx.dir/mmu_cpu/op_bits.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_jmp.dir/build.make CMakeFiles/test_cpu_jmp.dir/mmu_cpu/op_bits.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk.dir/build.make CMakeFiles/test_cpu_chk.dir/mmu_cpu/op_bits.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_lea.dir/build.make CMakeFiles/test_cpu_lea.dir/mmu_cpu/op_bits.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_scc.dir/build.make CMakeFiles/test_cpu_scc.dir/mmu_cpu/op_bits.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_dbcc.dir/build.make CMakeFiles/test_cpu_dbcc.dir/mmu_cpu/op_bits.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_or.dir/build.make CMakeFiles/test_cpu_or.dir/mmu_cpu/op_bits.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sbcd.dir/build.make CMakeFiles/test_cpu_sbcd.dir/mmu_cpu/op_bits.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pack.dir/build.make CMakeFiles/test_cpu_pack.dir/mmu_cpu/op_bits.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unpk.dir/build.make CMakeFiles/test_cpu_unpk.dir/mmu_cpu/op_bits.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sub.dir/build.make CMakeFiles/test_cpu_sub.dir/mmu_cpu/op_bits.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp.dir/build.make CMakeFiles/test_cpu_cmp.dir/mmu_cpu/op_bits.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_eor.dir/build.make CMakeFiles/test_cpu_eor.dir/mmu_cpu/op_bits.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_exg.dir/build.make CMakeFiles/test_cpu_exg.dir/mmu_cpu/op_bits.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_add.dir/build.make CMakeFiles/test_cpu_add.dir/mmu_cpu/op_bits.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_shift.dir/build.make CMakeFiles/test_cpu_shift.dir/mmu_cpu/op_bits.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bitfields.dir/build.make CMakeFiles/test_cpu_bitfields.dir/mmu_cpu/op_bits.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_fmove.dir/build.make CMakeFiles/test_cpu_fmove.dir/mmu_cpu/op_bits.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/mmu_cpu/op_bits.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/op_bits.cpp.s
 .PHONY : mmu_cpu/op_bits.cpp.s
 
 mmu_cpu/op_branch.o: mmu_cpu/op_branch.cpp.o
@@ -2673,52 +625,8 @@ mmu_cpu/op_branch.o: mmu_cpu/op_branch.cpp.o
 
 # target to build an object file
 mmu_cpu/op_branch.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/mmu_cpu/op_branch.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu.dir/build.make CMakeFiles/test_cpu.dir/mmu_cpu/op_branch.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_math.dir/build.make CMakeFiles/test_cpu_math.dir/mmu_cpu/op_branch.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_and.dir/build.make CMakeFiles/test_cpu_and.dir/mmu_cpu/op_branch.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp2.dir/build.make CMakeFiles/test_cpu_cmp2.dir/mmu_cpu/op_branch.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk2.dir/build.make CMakeFiles/test_cpu_chk2.dir/mmu_cpu/op_branch.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_btst.dir/build.make CMakeFiles/test_cpu_btst.dir/mmu_cpu/op_branch.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bchg.dir/build.make CMakeFiles/test_cpu_bchg.dir/mmu_cpu/op_branch.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bclr.dir/build.make CMakeFiles/test_cpu_bclr.dir/mmu_cpu/op_branch.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bset.dir/build.make CMakeFiles/test_cpu_bset.dir/mmu_cpu/op_branch.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas.dir/build.make CMakeFiles/test_cpu_cas.dir/mmu_cpu/op_branch.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas2.dir/build.make CMakeFiles/test_cpu_cas2.dir/mmu_cpu/op_branch.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movep.dir/build.make CMakeFiles/test_cpu_movep.dir/mmu_cpu/op_branch.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_move.dir/build.make CMakeFiles/test_cpu_move.dir/mmu_cpu/op_branch.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_negx.dir/build.make CMakeFiles/test_cpu_negx.dir/mmu_cpu/op_branch.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_clr.dir/build.make CMakeFiles/test_cpu_clr.dir/mmu_cpu/op_branch.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_neg.dir/build.make CMakeFiles/test_cpu_neg.dir/mmu_cpu/op_branch.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_not.dir/build.make CMakeFiles/test_cpu_not.dir/mmu_cpu/op_branch.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_nbcd.dir/build.make CMakeFiles/test_cpu_nbcd.dir/mmu_cpu/op_branch.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_link.dir/build.make CMakeFiles/test_cpu_link.dir/mmu_cpu/op_branch.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_swap.dir/build.make CMakeFiles/test_cpu_swap.dir/mmu_cpu/op_branch.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pea.dir/build.make CMakeFiles/test_cpu_pea.dir/mmu_cpu/op_branch.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_ext.dir/build.make CMakeFiles/test_cpu_ext.dir/mmu_cpu/op_branch.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movem.dir/build.make CMakeFiles/test_cpu_movem.dir/mmu_cpu/op_branch.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_tst.dir/build.make CMakeFiles/test_cpu_tst.dir/mmu_cpu/op_branch.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_mul.dir/build.make CMakeFiles/test_cpu_mul.dir/mmu_cpu/op_branch.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_div.dir/build.make CMakeFiles/test_cpu_div.dir/mmu_cpu/op_branch.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unlk.dir/build.make CMakeFiles/test_cpu_unlk.dir/mmu_cpu/op_branch.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_rtx.dir/build.make CMakeFiles/test_cpu_rtx.dir/mmu_cpu/op_branch.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_jmp.dir/build.make CMakeFiles/test_cpu_jmp.dir/mmu_cpu/op_branch.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk.dir/build.make CMakeFiles/test_cpu_chk.dir/mmu_cpu/op_branch.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_lea.dir/build.make CMakeFiles/test_cpu_lea.dir/mmu_cpu/op_branch.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_scc.dir/build.make CMakeFiles/test_cpu_scc.dir/mmu_cpu/op_branch.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_dbcc.dir/build.make CMakeFiles/test_cpu_dbcc.dir/mmu_cpu/op_branch.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_or.dir/build.make CMakeFiles/test_cpu_or.dir/mmu_cpu/op_branch.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sbcd.dir/build.make CMakeFiles/test_cpu_sbcd.dir/mmu_cpu/op_branch.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pack.dir/build.make CMakeFiles/test_cpu_pack.dir/mmu_cpu/op_branch.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unpk.dir/build.make CMakeFiles/test_cpu_unpk.dir/mmu_cpu/op_branch.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sub.dir/build.make CMakeFiles/test_cpu_sub.dir/mmu_cpu/op_branch.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp.dir/build.make CMakeFiles/test_cpu_cmp.dir/mmu_cpu/op_branch.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_eor.dir/build.make CMakeFiles/test_cpu_eor.dir/mmu_cpu/op_branch.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_exg.dir/build.make CMakeFiles/test_cpu_exg.dir/mmu_cpu/op_branch.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_add.dir/build.make CMakeFiles/test_cpu_add.dir/mmu_cpu/op_branch.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_shift.dir/build.make CMakeFiles/test_cpu_shift.dir/mmu_cpu/op_branch.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bitfields.dir/build.make CMakeFiles/test_cpu_bitfields.dir/mmu_cpu/op_branch.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_fmove.dir/build.make CMakeFiles/test_cpu_fmove.dir/mmu_cpu/op_branch.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/mmu_cpu/op_branch.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/op_branch.cpp.o
 .PHONY : mmu_cpu/op_branch.cpp.o
 
 mmu_cpu/op_branch.i: mmu_cpu/op_branch.cpp.i
@@ -2726,52 +634,8 @@ mmu_cpu/op_branch.i: mmu_cpu/op_branch.cpp.i
 
 # target to preprocess a source file
 mmu_cpu/op_branch.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/mmu_cpu/op_branch.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu.dir/build.make CMakeFiles/test_cpu.dir/mmu_cpu/op_branch.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_math.dir/build.make CMakeFiles/test_cpu_math.dir/mmu_cpu/op_branch.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_and.dir/build.make CMakeFiles/test_cpu_and.dir/mmu_cpu/op_branch.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp2.dir/build.make CMakeFiles/test_cpu_cmp2.dir/mmu_cpu/op_branch.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk2.dir/build.make CMakeFiles/test_cpu_chk2.dir/mmu_cpu/op_branch.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_btst.dir/build.make CMakeFiles/test_cpu_btst.dir/mmu_cpu/op_branch.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bchg.dir/build.make CMakeFiles/test_cpu_bchg.dir/mmu_cpu/op_branch.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bclr.dir/build.make CMakeFiles/test_cpu_bclr.dir/mmu_cpu/op_branch.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bset.dir/build.make CMakeFiles/test_cpu_bset.dir/mmu_cpu/op_branch.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas.dir/build.make CMakeFiles/test_cpu_cas.dir/mmu_cpu/op_branch.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas2.dir/build.make CMakeFiles/test_cpu_cas2.dir/mmu_cpu/op_branch.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movep.dir/build.make CMakeFiles/test_cpu_movep.dir/mmu_cpu/op_branch.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_move.dir/build.make CMakeFiles/test_cpu_move.dir/mmu_cpu/op_branch.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_negx.dir/build.make CMakeFiles/test_cpu_negx.dir/mmu_cpu/op_branch.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_clr.dir/build.make CMakeFiles/test_cpu_clr.dir/mmu_cpu/op_branch.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_neg.dir/build.make CMakeFiles/test_cpu_neg.dir/mmu_cpu/op_branch.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_not.dir/build.make CMakeFiles/test_cpu_not.dir/mmu_cpu/op_branch.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_nbcd.dir/build.make CMakeFiles/test_cpu_nbcd.dir/mmu_cpu/op_branch.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_link.dir/build.make CMakeFiles/test_cpu_link.dir/mmu_cpu/op_branch.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_swap.dir/build.make CMakeFiles/test_cpu_swap.dir/mmu_cpu/op_branch.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pea.dir/build.make CMakeFiles/test_cpu_pea.dir/mmu_cpu/op_branch.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_ext.dir/build.make CMakeFiles/test_cpu_ext.dir/mmu_cpu/op_branch.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movem.dir/build.make CMakeFiles/test_cpu_movem.dir/mmu_cpu/op_branch.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_tst.dir/build.make CMakeFiles/test_cpu_tst.dir/mmu_cpu/op_branch.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_mul.dir/build.make CMakeFiles/test_cpu_mul.dir/mmu_cpu/op_branch.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_div.dir/build.make CMakeFiles/test_cpu_div.dir/mmu_cpu/op_branch.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unlk.dir/build.make CMakeFiles/test_cpu_unlk.dir/mmu_cpu/op_branch.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_rtx.dir/build.make CMakeFiles/test_cpu_rtx.dir/mmu_cpu/op_branch.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_jmp.dir/build.make CMakeFiles/test_cpu_jmp.dir/mmu_cpu/op_branch.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk.dir/build.make CMakeFiles/test_cpu_chk.dir/mmu_cpu/op_branch.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_lea.dir/build.make CMakeFiles/test_cpu_lea.dir/mmu_cpu/op_branch.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_scc.dir/build.make CMakeFiles/test_cpu_scc.dir/mmu_cpu/op_branch.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_dbcc.dir/build.make CMakeFiles/test_cpu_dbcc.dir/mmu_cpu/op_branch.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_or.dir/build.make CMakeFiles/test_cpu_or.dir/mmu_cpu/op_branch.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sbcd.dir/build.make CMakeFiles/test_cpu_sbcd.dir/mmu_cpu/op_branch.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pack.dir/build.make CMakeFiles/test_cpu_pack.dir/mmu_cpu/op_branch.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unpk.dir/build.make CMakeFiles/test_cpu_unpk.dir/mmu_cpu/op_branch.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sub.dir/build.make CMakeFiles/test_cpu_sub.dir/mmu_cpu/op_branch.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp.dir/build.make CMakeFiles/test_cpu_cmp.dir/mmu_cpu/op_branch.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_eor.dir/build.make CMakeFiles/test_cpu_eor.dir/mmu_cpu/op_branch.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_exg.dir/build.make CMakeFiles/test_cpu_exg.dir/mmu_cpu/op_branch.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_add.dir/build.make CMakeFiles/test_cpu_add.dir/mmu_cpu/op_branch.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_shift.dir/build.make CMakeFiles/test_cpu_shift.dir/mmu_cpu/op_branch.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bitfields.dir/build.make CMakeFiles/test_cpu_bitfields.dir/mmu_cpu/op_branch.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_fmove.dir/build.make CMakeFiles/test_cpu_fmove.dir/mmu_cpu/op_branch.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/mmu_cpu/op_branch.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/op_branch.cpp.i
 .PHONY : mmu_cpu/op_branch.cpp.i
 
 mmu_cpu/op_branch.s: mmu_cpu/op_branch.cpp.s
@@ -2779,264 +643,17 @@ mmu_cpu/op_branch.s: mmu_cpu/op_branch.cpp.s
 
 # target to generate assembly for a file
 mmu_cpu/op_branch.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/mmu_cpu/op_branch.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu.dir/build.make CMakeFiles/test_cpu.dir/mmu_cpu/op_branch.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_math.dir/build.make CMakeFiles/test_cpu_math.dir/mmu_cpu/op_branch.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_and.dir/build.make CMakeFiles/test_cpu_and.dir/mmu_cpu/op_branch.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp2.dir/build.make CMakeFiles/test_cpu_cmp2.dir/mmu_cpu/op_branch.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk2.dir/build.make CMakeFiles/test_cpu_chk2.dir/mmu_cpu/op_branch.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_btst.dir/build.make CMakeFiles/test_cpu_btst.dir/mmu_cpu/op_branch.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bchg.dir/build.make CMakeFiles/test_cpu_bchg.dir/mmu_cpu/op_branch.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bclr.dir/build.make CMakeFiles/test_cpu_bclr.dir/mmu_cpu/op_branch.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bset.dir/build.make CMakeFiles/test_cpu_bset.dir/mmu_cpu/op_branch.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas.dir/build.make CMakeFiles/test_cpu_cas.dir/mmu_cpu/op_branch.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas2.dir/build.make CMakeFiles/test_cpu_cas2.dir/mmu_cpu/op_branch.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movep.dir/build.make CMakeFiles/test_cpu_movep.dir/mmu_cpu/op_branch.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_move.dir/build.make CMakeFiles/test_cpu_move.dir/mmu_cpu/op_branch.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_negx.dir/build.make CMakeFiles/test_cpu_negx.dir/mmu_cpu/op_branch.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_clr.dir/build.make CMakeFiles/test_cpu_clr.dir/mmu_cpu/op_branch.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_neg.dir/build.make CMakeFiles/test_cpu_neg.dir/mmu_cpu/op_branch.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_not.dir/build.make CMakeFiles/test_cpu_not.dir/mmu_cpu/op_branch.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_nbcd.dir/build.make CMakeFiles/test_cpu_nbcd.dir/mmu_cpu/op_branch.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_link.dir/build.make CMakeFiles/test_cpu_link.dir/mmu_cpu/op_branch.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_swap.dir/build.make CMakeFiles/test_cpu_swap.dir/mmu_cpu/op_branch.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pea.dir/build.make CMakeFiles/test_cpu_pea.dir/mmu_cpu/op_branch.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_ext.dir/build.make CMakeFiles/test_cpu_ext.dir/mmu_cpu/op_branch.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movem.dir/build.make CMakeFiles/test_cpu_movem.dir/mmu_cpu/op_branch.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_tst.dir/build.make CMakeFiles/test_cpu_tst.dir/mmu_cpu/op_branch.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_mul.dir/build.make CMakeFiles/test_cpu_mul.dir/mmu_cpu/op_branch.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_div.dir/build.make CMakeFiles/test_cpu_div.dir/mmu_cpu/op_branch.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unlk.dir/build.make CMakeFiles/test_cpu_unlk.dir/mmu_cpu/op_branch.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_rtx.dir/build.make CMakeFiles/test_cpu_rtx.dir/mmu_cpu/op_branch.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_jmp.dir/build.make CMakeFiles/test_cpu_jmp.dir/mmu_cpu/op_branch.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk.dir/build.make CMakeFiles/test_cpu_chk.dir/mmu_cpu/op_branch.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_lea.dir/build.make CMakeFiles/test_cpu_lea.dir/mmu_cpu/op_branch.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_scc.dir/build.make CMakeFiles/test_cpu_scc.dir/mmu_cpu/op_branch.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_dbcc.dir/build.make CMakeFiles/test_cpu_dbcc.dir/mmu_cpu/op_branch.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_or.dir/build.make CMakeFiles/test_cpu_or.dir/mmu_cpu/op_branch.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sbcd.dir/build.make CMakeFiles/test_cpu_sbcd.dir/mmu_cpu/op_branch.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pack.dir/build.make CMakeFiles/test_cpu_pack.dir/mmu_cpu/op_branch.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unpk.dir/build.make CMakeFiles/test_cpu_unpk.dir/mmu_cpu/op_branch.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sub.dir/build.make CMakeFiles/test_cpu_sub.dir/mmu_cpu/op_branch.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp.dir/build.make CMakeFiles/test_cpu_cmp.dir/mmu_cpu/op_branch.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_eor.dir/build.make CMakeFiles/test_cpu_eor.dir/mmu_cpu/op_branch.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_exg.dir/build.make CMakeFiles/test_cpu_exg.dir/mmu_cpu/op_branch.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_add.dir/build.make CMakeFiles/test_cpu_add.dir/mmu_cpu/op_branch.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_shift.dir/build.make CMakeFiles/test_cpu_shift.dir/mmu_cpu/op_branch.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bitfields.dir/build.make CMakeFiles/test_cpu_bitfields.dir/mmu_cpu/op_branch.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_fmove.dir/build.make CMakeFiles/test_cpu_fmove.dir/mmu_cpu/op_branch.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/mmu_cpu/op_branch.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/op_branch.cpp.s
 .PHONY : mmu_cpu/op_branch.cpp.s
-
-mmu_cpu/op_math.o: mmu_cpu/op_math.cpp.o
-.PHONY : mmu_cpu/op_math.o
-
-# target to build an object file
-mmu_cpu/op_math.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/mmu_cpu/op_math.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu.dir/build.make CMakeFiles/test_cpu.dir/mmu_cpu/op_math.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_math.dir/build.make CMakeFiles/test_cpu_math.dir/mmu_cpu/op_math.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_and.dir/build.make CMakeFiles/test_cpu_and.dir/mmu_cpu/op_math.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp2.dir/build.make CMakeFiles/test_cpu_cmp2.dir/mmu_cpu/op_math.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk2.dir/build.make CMakeFiles/test_cpu_chk2.dir/mmu_cpu/op_math.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_btst.dir/build.make CMakeFiles/test_cpu_btst.dir/mmu_cpu/op_math.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bchg.dir/build.make CMakeFiles/test_cpu_bchg.dir/mmu_cpu/op_math.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bclr.dir/build.make CMakeFiles/test_cpu_bclr.dir/mmu_cpu/op_math.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bset.dir/build.make CMakeFiles/test_cpu_bset.dir/mmu_cpu/op_math.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas.dir/build.make CMakeFiles/test_cpu_cas.dir/mmu_cpu/op_math.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas2.dir/build.make CMakeFiles/test_cpu_cas2.dir/mmu_cpu/op_math.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movep.dir/build.make CMakeFiles/test_cpu_movep.dir/mmu_cpu/op_math.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_move.dir/build.make CMakeFiles/test_cpu_move.dir/mmu_cpu/op_math.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_negx.dir/build.make CMakeFiles/test_cpu_negx.dir/mmu_cpu/op_math.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_clr.dir/build.make CMakeFiles/test_cpu_clr.dir/mmu_cpu/op_math.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_neg.dir/build.make CMakeFiles/test_cpu_neg.dir/mmu_cpu/op_math.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_not.dir/build.make CMakeFiles/test_cpu_not.dir/mmu_cpu/op_math.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_nbcd.dir/build.make CMakeFiles/test_cpu_nbcd.dir/mmu_cpu/op_math.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_link.dir/build.make CMakeFiles/test_cpu_link.dir/mmu_cpu/op_math.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_swap.dir/build.make CMakeFiles/test_cpu_swap.dir/mmu_cpu/op_math.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pea.dir/build.make CMakeFiles/test_cpu_pea.dir/mmu_cpu/op_math.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_ext.dir/build.make CMakeFiles/test_cpu_ext.dir/mmu_cpu/op_math.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movem.dir/build.make CMakeFiles/test_cpu_movem.dir/mmu_cpu/op_math.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_tst.dir/build.make CMakeFiles/test_cpu_tst.dir/mmu_cpu/op_math.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_mul.dir/build.make CMakeFiles/test_cpu_mul.dir/mmu_cpu/op_math.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_div.dir/build.make CMakeFiles/test_cpu_div.dir/mmu_cpu/op_math.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unlk.dir/build.make CMakeFiles/test_cpu_unlk.dir/mmu_cpu/op_math.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_rtx.dir/build.make CMakeFiles/test_cpu_rtx.dir/mmu_cpu/op_math.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_jmp.dir/build.make CMakeFiles/test_cpu_jmp.dir/mmu_cpu/op_math.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk.dir/build.make CMakeFiles/test_cpu_chk.dir/mmu_cpu/op_math.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_lea.dir/build.make CMakeFiles/test_cpu_lea.dir/mmu_cpu/op_math.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_scc.dir/build.make CMakeFiles/test_cpu_scc.dir/mmu_cpu/op_math.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_dbcc.dir/build.make CMakeFiles/test_cpu_dbcc.dir/mmu_cpu/op_math.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_or.dir/build.make CMakeFiles/test_cpu_or.dir/mmu_cpu/op_math.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sbcd.dir/build.make CMakeFiles/test_cpu_sbcd.dir/mmu_cpu/op_math.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pack.dir/build.make CMakeFiles/test_cpu_pack.dir/mmu_cpu/op_math.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unpk.dir/build.make CMakeFiles/test_cpu_unpk.dir/mmu_cpu/op_math.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sub.dir/build.make CMakeFiles/test_cpu_sub.dir/mmu_cpu/op_math.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp.dir/build.make CMakeFiles/test_cpu_cmp.dir/mmu_cpu/op_math.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_eor.dir/build.make CMakeFiles/test_cpu_eor.dir/mmu_cpu/op_math.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_exg.dir/build.make CMakeFiles/test_cpu_exg.dir/mmu_cpu/op_math.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_add.dir/build.make CMakeFiles/test_cpu_add.dir/mmu_cpu/op_math.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_shift.dir/build.make CMakeFiles/test_cpu_shift.dir/mmu_cpu/op_math.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bitfields.dir/build.make CMakeFiles/test_cpu_bitfields.dir/mmu_cpu/op_math.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_fmove.dir/build.make CMakeFiles/test_cpu_fmove.dir/mmu_cpu/op_math.cpp.o
-.PHONY : mmu_cpu/op_math.cpp.o
-
-mmu_cpu/op_math.i: mmu_cpu/op_math.cpp.i
-.PHONY : mmu_cpu/op_math.i
-
-# target to preprocess a source file
-mmu_cpu/op_math.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/mmu_cpu/op_math.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu.dir/build.make CMakeFiles/test_cpu.dir/mmu_cpu/op_math.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_math.dir/build.make CMakeFiles/test_cpu_math.dir/mmu_cpu/op_math.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_and.dir/build.make CMakeFiles/test_cpu_and.dir/mmu_cpu/op_math.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp2.dir/build.make CMakeFiles/test_cpu_cmp2.dir/mmu_cpu/op_math.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk2.dir/build.make CMakeFiles/test_cpu_chk2.dir/mmu_cpu/op_math.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_btst.dir/build.make CMakeFiles/test_cpu_btst.dir/mmu_cpu/op_math.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bchg.dir/build.make CMakeFiles/test_cpu_bchg.dir/mmu_cpu/op_math.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bclr.dir/build.make CMakeFiles/test_cpu_bclr.dir/mmu_cpu/op_math.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bset.dir/build.make CMakeFiles/test_cpu_bset.dir/mmu_cpu/op_math.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas.dir/build.make CMakeFiles/test_cpu_cas.dir/mmu_cpu/op_math.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas2.dir/build.make CMakeFiles/test_cpu_cas2.dir/mmu_cpu/op_math.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movep.dir/build.make CMakeFiles/test_cpu_movep.dir/mmu_cpu/op_math.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_move.dir/build.make CMakeFiles/test_cpu_move.dir/mmu_cpu/op_math.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_negx.dir/build.make CMakeFiles/test_cpu_negx.dir/mmu_cpu/op_math.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_clr.dir/build.make CMakeFiles/test_cpu_clr.dir/mmu_cpu/op_math.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_neg.dir/build.make CMakeFiles/test_cpu_neg.dir/mmu_cpu/op_math.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_not.dir/build.make CMakeFiles/test_cpu_not.dir/mmu_cpu/op_math.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_nbcd.dir/build.make CMakeFiles/test_cpu_nbcd.dir/mmu_cpu/op_math.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_link.dir/build.make CMakeFiles/test_cpu_link.dir/mmu_cpu/op_math.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_swap.dir/build.make CMakeFiles/test_cpu_swap.dir/mmu_cpu/op_math.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pea.dir/build.make CMakeFiles/test_cpu_pea.dir/mmu_cpu/op_math.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_ext.dir/build.make CMakeFiles/test_cpu_ext.dir/mmu_cpu/op_math.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movem.dir/build.make CMakeFiles/test_cpu_movem.dir/mmu_cpu/op_math.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_tst.dir/build.make CMakeFiles/test_cpu_tst.dir/mmu_cpu/op_math.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_mul.dir/build.make CMakeFiles/test_cpu_mul.dir/mmu_cpu/op_math.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_div.dir/build.make CMakeFiles/test_cpu_div.dir/mmu_cpu/op_math.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unlk.dir/build.make CMakeFiles/test_cpu_unlk.dir/mmu_cpu/op_math.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_rtx.dir/build.make CMakeFiles/test_cpu_rtx.dir/mmu_cpu/op_math.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_jmp.dir/build.make CMakeFiles/test_cpu_jmp.dir/mmu_cpu/op_math.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk.dir/build.make CMakeFiles/test_cpu_chk.dir/mmu_cpu/op_math.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_lea.dir/build.make CMakeFiles/test_cpu_lea.dir/mmu_cpu/op_math.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_scc.dir/build.make CMakeFiles/test_cpu_scc.dir/mmu_cpu/op_math.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_dbcc.dir/build.make CMakeFiles/test_cpu_dbcc.dir/mmu_cpu/op_math.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_or.dir/build.make CMakeFiles/test_cpu_or.dir/mmu_cpu/op_math.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sbcd.dir/build.make CMakeFiles/test_cpu_sbcd.dir/mmu_cpu/op_math.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pack.dir/build.make CMakeFiles/test_cpu_pack.dir/mmu_cpu/op_math.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unpk.dir/build.make CMakeFiles/test_cpu_unpk.dir/mmu_cpu/op_math.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sub.dir/build.make CMakeFiles/test_cpu_sub.dir/mmu_cpu/op_math.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp.dir/build.make CMakeFiles/test_cpu_cmp.dir/mmu_cpu/op_math.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_eor.dir/build.make CMakeFiles/test_cpu_eor.dir/mmu_cpu/op_math.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_exg.dir/build.make CMakeFiles/test_cpu_exg.dir/mmu_cpu/op_math.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_add.dir/build.make CMakeFiles/test_cpu_add.dir/mmu_cpu/op_math.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_shift.dir/build.make CMakeFiles/test_cpu_shift.dir/mmu_cpu/op_math.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bitfields.dir/build.make CMakeFiles/test_cpu_bitfields.dir/mmu_cpu/op_math.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_fmove.dir/build.make CMakeFiles/test_cpu_fmove.dir/mmu_cpu/op_math.cpp.i
-.PHONY : mmu_cpu/op_math.cpp.i
-
-mmu_cpu/op_math.s: mmu_cpu/op_math.cpp.s
-.PHONY : mmu_cpu/op_math.s
-
-# target to generate assembly for a file
-mmu_cpu/op_math.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/mmu_cpu/op_math.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu.dir/build.make CMakeFiles/test_cpu.dir/mmu_cpu/op_math.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_math.dir/build.make CMakeFiles/test_cpu_math.dir/mmu_cpu/op_math.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_and.dir/build.make CMakeFiles/test_cpu_and.dir/mmu_cpu/op_math.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp2.dir/build.make CMakeFiles/test_cpu_cmp2.dir/mmu_cpu/op_math.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk2.dir/build.make CMakeFiles/test_cpu_chk2.dir/mmu_cpu/op_math.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_btst.dir/build.make CMakeFiles/test_cpu_btst.dir/mmu_cpu/op_math.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bchg.dir/build.make CMakeFiles/test_cpu_bchg.dir/mmu_cpu/op_math.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bclr.dir/build.make CMakeFiles/test_cpu_bclr.dir/mmu_cpu/op_math.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bset.dir/build.make CMakeFiles/test_cpu_bset.dir/mmu_cpu/op_math.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas.dir/build.make CMakeFiles/test_cpu_cas.dir/mmu_cpu/op_math.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas2.dir/build.make CMakeFiles/test_cpu_cas2.dir/mmu_cpu/op_math.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movep.dir/build.make CMakeFiles/test_cpu_movep.dir/mmu_cpu/op_math.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_move.dir/build.make CMakeFiles/test_cpu_move.dir/mmu_cpu/op_math.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_negx.dir/build.make CMakeFiles/test_cpu_negx.dir/mmu_cpu/op_math.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_clr.dir/build.make CMakeFiles/test_cpu_clr.dir/mmu_cpu/op_math.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_neg.dir/build.make CMakeFiles/test_cpu_neg.dir/mmu_cpu/op_math.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_not.dir/build.make CMakeFiles/test_cpu_not.dir/mmu_cpu/op_math.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_nbcd.dir/build.make CMakeFiles/test_cpu_nbcd.dir/mmu_cpu/op_math.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_link.dir/build.make CMakeFiles/test_cpu_link.dir/mmu_cpu/op_math.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_swap.dir/build.make CMakeFiles/test_cpu_swap.dir/mmu_cpu/op_math.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pea.dir/build.make CMakeFiles/test_cpu_pea.dir/mmu_cpu/op_math.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_ext.dir/build.make CMakeFiles/test_cpu_ext.dir/mmu_cpu/op_math.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movem.dir/build.make CMakeFiles/test_cpu_movem.dir/mmu_cpu/op_math.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_tst.dir/build.make CMakeFiles/test_cpu_tst.dir/mmu_cpu/op_math.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_mul.dir/build.make CMakeFiles/test_cpu_mul.dir/mmu_cpu/op_math.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_div.dir/build.make CMakeFiles/test_cpu_div.dir/mmu_cpu/op_math.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unlk.dir/build.make CMakeFiles/test_cpu_unlk.dir/mmu_cpu/op_math.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_rtx.dir/build.make CMakeFiles/test_cpu_rtx.dir/mmu_cpu/op_math.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_jmp.dir/build.make CMakeFiles/test_cpu_jmp.dir/mmu_cpu/op_math.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk.dir/build.make CMakeFiles/test_cpu_chk.dir/mmu_cpu/op_math.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_lea.dir/build.make CMakeFiles/test_cpu_lea.dir/mmu_cpu/op_math.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_scc.dir/build.make CMakeFiles/test_cpu_scc.dir/mmu_cpu/op_math.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_dbcc.dir/build.make CMakeFiles/test_cpu_dbcc.dir/mmu_cpu/op_math.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_or.dir/build.make CMakeFiles/test_cpu_or.dir/mmu_cpu/op_math.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sbcd.dir/build.make CMakeFiles/test_cpu_sbcd.dir/mmu_cpu/op_math.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pack.dir/build.make CMakeFiles/test_cpu_pack.dir/mmu_cpu/op_math.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unpk.dir/build.make CMakeFiles/test_cpu_unpk.dir/mmu_cpu/op_math.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sub.dir/build.make CMakeFiles/test_cpu_sub.dir/mmu_cpu/op_math.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp.dir/build.make CMakeFiles/test_cpu_cmp.dir/mmu_cpu/op_math.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_eor.dir/build.make CMakeFiles/test_cpu_eor.dir/mmu_cpu/op_math.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_exg.dir/build.make CMakeFiles/test_cpu_exg.dir/mmu_cpu/op_math.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_add.dir/build.make CMakeFiles/test_cpu_add.dir/mmu_cpu/op_math.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_shift.dir/build.make CMakeFiles/test_cpu_shift.dir/mmu_cpu/op_math.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bitfields.dir/build.make CMakeFiles/test_cpu_bitfields.dir/mmu_cpu/op_math.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_fmove.dir/build.make CMakeFiles/test_cpu_fmove.dir/mmu_cpu/op_math.cpp.s
-.PHONY : mmu_cpu/op_math.cpp.s
 
 mmu_cpu/op_move.o: mmu_cpu/op_move.cpp.o
 .PHONY : mmu_cpu/op_move.o
 
 # target to build an object file
 mmu_cpu/op_move.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/mmu_cpu/op_move.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu.dir/build.make CMakeFiles/test_cpu.dir/mmu_cpu/op_move.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_math.dir/build.make CMakeFiles/test_cpu_math.dir/mmu_cpu/op_move.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_and.dir/build.make CMakeFiles/test_cpu_and.dir/mmu_cpu/op_move.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp2.dir/build.make CMakeFiles/test_cpu_cmp2.dir/mmu_cpu/op_move.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk2.dir/build.make CMakeFiles/test_cpu_chk2.dir/mmu_cpu/op_move.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_btst.dir/build.make CMakeFiles/test_cpu_btst.dir/mmu_cpu/op_move.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bchg.dir/build.make CMakeFiles/test_cpu_bchg.dir/mmu_cpu/op_move.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bclr.dir/build.make CMakeFiles/test_cpu_bclr.dir/mmu_cpu/op_move.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bset.dir/build.make CMakeFiles/test_cpu_bset.dir/mmu_cpu/op_move.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas.dir/build.make CMakeFiles/test_cpu_cas.dir/mmu_cpu/op_move.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas2.dir/build.make CMakeFiles/test_cpu_cas2.dir/mmu_cpu/op_move.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movep.dir/build.make CMakeFiles/test_cpu_movep.dir/mmu_cpu/op_move.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_move.dir/build.make CMakeFiles/test_cpu_move.dir/mmu_cpu/op_move.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_negx.dir/build.make CMakeFiles/test_cpu_negx.dir/mmu_cpu/op_move.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_clr.dir/build.make CMakeFiles/test_cpu_clr.dir/mmu_cpu/op_move.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_neg.dir/build.make CMakeFiles/test_cpu_neg.dir/mmu_cpu/op_move.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_not.dir/build.make CMakeFiles/test_cpu_not.dir/mmu_cpu/op_move.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_nbcd.dir/build.make CMakeFiles/test_cpu_nbcd.dir/mmu_cpu/op_move.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_link.dir/build.make CMakeFiles/test_cpu_link.dir/mmu_cpu/op_move.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_swap.dir/build.make CMakeFiles/test_cpu_swap.dir/mmu_cpu/op_move.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pea.dir/build.make CMakeFiles/test_cpu_pea.dir/mmu_cpu/op_move.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_ext.dir/build.make CMakeFiles/test_cpu_ext.dir/mmu_cpu/op_move.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movem.dir/build.make CMakeFiles/test_cpu_movem.dir/mmu_cpu/op_move.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_tst.dir/build.make CMakeFiles/test_cpu_tst.dir/mmu_cpu/op_move.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_mul.dir/build.make CMakeFiles/test_cpu_mul.dir/mmu_cpu/op_move.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_div.dir/build.make CMakeFiles/test_cpu_div.dir/mmu_cpu/op_move.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unlk.dir/build.make CMakeFiles/test_cpu_unlk.dir/mmu_cpu/op_move.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_rtx.dir/build.make CMakeFiles/test_cpu_rtx.dir/mmu_cpu/op_move.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_jmp.dir/build.make CMakeFiles/test_cpu_jmp.dir/mmu_cpu/op_move.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk.dir/build.make CMakeFiles/test_cpu_chk.dir/mmu_cpu/op_move.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_lea.dir/build.make CMakeFiles/test_cpu_lea.dir/mmu_cpu/op_move.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_scc.dir/build.make CMakeFiles/test_cpu_scc.dir/mmu_cpu/op_move.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_dbcc.dir/build.make CMakeFiles/test_cpu_dbcc.dir/mmu_cpu/op_move.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_or.dir/build.make CMakeFiles/test_cpu_or.dir/mmu_cpu/op_move.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sbcd.dir/build.make CMakeFiles/test_cpu_sbcd.dir/mmu_cpu/op_move.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pack.dir/build.make CMakeFiles/test_cpu_pack.dir/mmu_cpu/op_move.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unpk.dir/build.make CMakeFiles/test_cpu_unpk.dir/mmu_cpu/op_move.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sub.dir/build.make CMakeFiles/test_cpu_sub.dir/mmu_cpu/op_move.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp.dir/build.make CMakeFiles/test_cpu_cmp.dir/mmu_cpu/op_move.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_eor.dir/build.make CMakeFiles/test_cpu_eor.dir/mmu_cpu/op_move.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_exg.dir/build.make CMakeFiles/test_cpu_exg.dir/mmu_cpu/op_move.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_add.dir/build.make CMakeFiles/test_cpu_add.dir/mmu_cpu/op_move.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_shift.dir/build.make CMakeFiles/test_cpu_shift.dir/mmu_cpu/op_move.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bitfields.dir/build.make CMakeFiles/test_cpu_bitfields.dir/mmu_cpu/op_move.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_fmove.dir/build.make CMakeFiles/test_cpu_fmove.dir/mmu_cpu/op_move.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/mmu_cpu/op_move.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/op_move.cpp.o
 .PHONY : mmu_cpu/op_move.cpp.o
 
 mmu_cpu/op_move.i: mmu_cpu/op_move.cpp.i
@@ -3044,52 +661,8 @@ mmu_cpu/op_move.i: mmu_cpu/op_move.cpp.i
 
 # target to preprocess a source file
 mmu_cpu/op_move.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/mmu_cpu/op_move.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu.dir/build.make CMakeFiles/test_cpu.dir/mmu_cpu/op_move.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_math.dir/build.make CMakeFiles/test_cpu_math.dir/mmu_cpu/op_move.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_and.dir/build.make CMakeFiles/test_cpu_and.dir/mmu_cpu/op_move.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp2.dir/build.make CMakeFiles/test_cpu_cmp2.dir/mmu_cpu/op_move.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk2.dir/build.make CMakeFiles/test_cpu_chk2.dir/mmu_cpu/op_move.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_btst.dir/build.make CMakeFiles/test_cpu_btst.dir/mmu_cpu/op_move.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bchg.dir/build.make CMakeFiles/test_cpu_bchg.dir/mmu_cpu/op_move.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bclr.dir/build.make CMakeFiles/test_cpu_bclr.dir/mmu_cpu/op_move.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bset.dir/build.make CMakeFiles/test_cpu_bset.dir/mmu_cpu/op_move.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas.dir/build.make CMakeFiles/test_cpu_cas.dir/mmu_cpu/op_move.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas2.dir/build.make CMakeFiles/test_cpu_cas2.dir/mmu_cpu/op_move.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movep.dir/build.make CMakeFiles/test_cpu_movep.dir/mmu_cpu/op_move.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_move.dir/build.make CMakeFiles/test_cpu_move.dir/mmu_cpu/op_move.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_negx.dir/build.make CMakeFiles/test_cpu_negx.dir/mmu_cpu/op_move.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_clr.dir/build.make CMakeFiles/test_cpu_clr.dir/mmu_cpu/op_move.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_neg.dir/build.make CMakeFiles/test_cpu_neg.dir/mmu_cpu/op_move.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_not.dir/build.make CMakeFiles/test_cpu_not.dir/mmu_cpu/op_move.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_nbcd.dir/build.make CMakeFiles/test_cpu_nbcd.dir/mmu_cpu/op_move.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_link.dir/build.make CMakeFiles/test_cpu_link.dir/mmu_cpu/op_move.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_swap.dir/build.make CMakeFiles/test_cpu_swap.dir/mmu_cpu/op_move.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pea.dir/build.make CMakeFiles/test_cpu_pea.dir/mmu_cpu/op_move.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_ext.dir/build.make CMakeFiles/test_cpu_ext.dir/mmu_cpu/op_move.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movem.dir/build.make CMakeFiles/test_cpu_movem.dir/mmu_cpu/op_move.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_tst.dir/build.make CMakeFiles/test_cpu_tst.dir/mmu_cpu/op_move.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_mul.dir/build.make CMakeFiles/test_cpu_mul.dir/mmu_cpu/op_move.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_div.dir/build.make CMakeFiles/test_cpu_div.dir/mmu_cpu/op_move.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unlk.dir/build.make CMakeFiles/test_cpu_unlk.dir/mmu_cpu/op_move.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_rtx.dir/build.make CMakeFiles/test_cpu_rtx.dir/mmu_cpu/op_move.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_jmp.dir/build.make CMakeFiles/test_cpu_jmp.dir/mmu_cpu/op_move.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk.dir/build.make CMakeFiles/test_cpu_chk.dir/mmu_cpu/op_move.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_lea.dir/build.make CMakeFiles/test_cpu_lea.dir/mmu_cpu/op_move.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_scc.dir/build.make CMakeFiles/test_cpu_scc.dir/mmu_cpu/op_move.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_dbcc.dir/build.make CMakeFiles/test_cpu_dbcc.dir/mmu_cpu/op_move.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_or.dir/build.make CMakeFiles/test_cpu_or.dir/mmu_cpu/op_move.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sbcd.dir/build.make CMakeFiles/test_cpu_sbcd.dir/mmu_cpu/op_move.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pack.dir/build.make CMakeFiles/test_cpu_pack.dir/mmu_cpu/op_move.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unpk.dir/build.make CMakeFiles/test_cpu_unpk.dir/mmu_cpu/op_move.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sub.dir/build.make CMakeFiles/test_cpu_sub.dir/mmu_cpu/op_move.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp.dir/build.make CMakeFiles/test_cpu_cmp.dir/mmu_cpu/op_move.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_eor.dir/build.make CMakeFiles/test_cpu_eor.dir/mmu_cpu/op_move.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_exg.dir/build.make CMakeFiles/test_cpu_exg.dir/mmu_cpu/op_move.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_add.dir/build.make CMakeFiles/test_cpu_add.dir/mmu_cpu/op_move.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_shift.dir/build.make CMakeFiles/test_cpu_shift.dir/mmu_cpu/op_move.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bitfields.dir/build.make CMakeFiles/test_cpu_bitfields.dir/mmu_cpu/op_move.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_fmove.dir/build.make CMakeFiles/test_cpu_fmove.dir/mmu_cpu/op_move.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/mmu_cpu/op_move.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/op_move.cpp.i
 .PHONY : mmu_cpu/op_move.cpp.i
 
 mmu_cpu/op_move.s: mmu_cpu/op_move.cpp.s
@@ -3097,1268 +670,3424 @@ mmu_cpu/op_move.s: mmu_cpu/op_move.cpp.s
 
 # target to generate assembly for a file
 mmu_cpu/op_move.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/mmu_cpu/op_move.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu.dir/build.make CMakeFiles/test_cpu.dir/mmu_cpu/op_move.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_math.dir/build.make CMakeFiles/test_cpu_math.dir/mmu_cpu/op_move.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_and.dir/build.make CMakeFiles/test_cpu_and.dir/mmu_cpu/op_move.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp2.dir/build.make CMakeFiles/test_cpu_cmp2.dir/mmu_cpu/op_move.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk2.dir/build.make CMakeFiles/test_cpu_chk2.dir/mmu_cpu/op_move.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_btst.dir/build.make CMakeFiles/test_cpu_btst.dir/mmu_cpu/op_move.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bchg.dir/build.make CMakeFiles/test_cpu_bchg.dir/mmu_cpu/op_move.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bclr.dir/build.make CMakeFiles/test_cpu_bclr.dir/mmu_cpu/op_move.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bset.dir/build.make CMakeFiles/test_cpu_bset.dir/mmu_cpu/op_move.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas.dir/build.make CMakeFiles/test_cpu_cas.dir/mmu_cpu/op_move.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas2.dir/build.make CMakeFiles/test_cpu_cas2.dir/mmu_cpu/op_move.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movep.dir/build.make CMakeFiles/test_cpu_movep.dir/mmu_cpu/op_move.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_move.dir/build.make CMakeFiles/test_cpu_move.dir/mmu_cpu/op_move.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_negx.dir/build.make CMakeFiles/test_cpu_negx.dir/mmu_cpu/op_move.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_clr.dir/build.make CMakeFiles/test_cpu_clr.dir/mmu_cpu/op_move.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_neg.dir/build.make CMakeFiles/test_cpu_neg.dir/mmu_cpu/op_move.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_not.dir/build.make CMakeFiles/test_cpu_not.dir/mmu_cpu/op_move.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_nbcd.dir/build.make CMakeFiles/test_cpu_nbcd.dir/mmu_cpu/op_move.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_link.dir/build.make CMakeFiles/test_cpu_link.dir/mmu_cpu/op_move.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_swap.dir/build.make CMakeFiles/test_cpu_swap.dir/mmu_cpu/op_move.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pea.dir/build.make CMakeFiles/test_cpu_pea.dir/mmu_cpu/op_move.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_ext.dir/build.make CMakeFiles/test_cpu_ext.dir/mmu_cpu/op_move.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movem.dir/build.make CMakeFiles/test_cpu_movem.dir/mmu_cpu/op_move.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_tst.dir/build.make CMakeFiles/test_cpu_tst.dir/mmu_cpu/op_move.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_mul.dir/build.make CMakeFiles/test_cpu_mul.dir/mmu_cpu/op_move.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_div.dir/build.make CMakeFiles/test_cpu_div.dir/mmu_cpu/op_move.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unlk.dir/build.make CMakeFiles/test_cpu_unlk.dir/mmu_cpu/op_move.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_rtx.dir/build.make CMakeFiles/test_cpu_rtx.dir/mmu_cpu/op_move.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_jmp.dir/build.make CMakeFiles/test_cpu_jmp.dir/mmu_cpu/op_move.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk.dir/build.make CMakeFiles/test_cpu_chk.dir/mmu_cpu/op_move.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_lea.dir/build.make CMakeFiles/test_cpu_lea.dir/mmu_cpu/op_move.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_scc.dir/build.make CMakeFiles/test_cpu_scc.dir/mmu_cpu/op_move.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_dbcc.dir/build.make CMakeFiles/test_cpu_dbcc.dir/mmu_cpu/op_move.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_or.dir/build.make CMakeFiles/test_cpu_or.dir/mmu_cpu/op_move.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sbcd.dir/build.make CMakeFiles/test_cpu_sbcd.dir/mmu_cpu/op_move.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pack.dir/build.make CMakeFiles/test_cpu_pack.dir/mmu_cpu/op_move.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unpk.dir/build.make CMakeFiles/test_cpu_unpk.dir/mmu_cpu/op_move.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sub.dir/build.make CMakeFiles/test_cpu_sub.dir/mmu_cpu/op_move.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp.dir/build.make CMakeFiles/test_cpu_cmp.dir/mmu_cpu/op_move.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_eor.dir/build.make CMakeFiles/test_cpu_eor.dir/mmu_cpu/op_move.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_exg.dir/build.make CMakeFiles/test_cpu_exg.dir/mmu_cpu/op_move.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_add.dir/build.make CMakeFiles/test_cpu_add.dir/mmu_cpu/op_move.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_shift.dir/build.make CMakeFiles/test_cpu_shift.dir/mmu_cpu/op_move.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bitfields.dir/build.make CMakeFiles/test_cpu_bitfields.dir/mmu_cpu/op_move.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_fmove.dir/build.make CMakeFiles/test_cpu_fmove.dir/mmu_cpu/op_move.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/mmu_cpu/op_move.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/op_move.cpp.s
 .PHONY : mmu_cpu/op_move.cpp.s
 
-mmu_cpu/test/_test_common2.o: mmu_cpu/test/_test_common2.cpp.o
-.PHONY : mmu_cpu/test/_test_common2.o
+mmu_cpu/test/arithmetic/add.o: mmu_cpu/test/arithmetic/add.cpp.o
+.PHONY : mmu_cpu/test/arithmetic/add.o
 
 # target to build an object file
-mmu_cpu/test/_test_common2.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu.dir/build.make CMakeFiles/test_cpu.dir/mmu_cpu/test/_test_common2.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_math.dir/build.make CMakeFiles/test_cpu_math.dir/mmu_cpu/test/_test_common2.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_and.dir/build.make CMakeFiles/test_cpu_and.dir/mmu_cpu/test/_test_common2.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp2.dir/build.make CMakeFiles/test_cpu_cmp2.dir/mmu_cpu/test/_test_common2.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk2.dir/build.make CMakeFiles/test_cpu_chk2.dir/mmu_cpu/test/_test_common2.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_btst.dir/build.make CMakeFiles/test_cpu_btst.dir/mmu_cpu/test/_test_common2.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bchg.dir/build.make CMakeFiles/test_cpu_bchg.dir/mmu_cpu/test/_test_common2.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bclr.dir/build.make CMakeFiles/test_cpu_bclr.dir/mmu_cpu/test/_test_common2.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bset.dir/build.make CMakeFiles/test_cpu_bset.dir/mmu_cpu/test/_test_common2.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas.dir/build.make CMakeFiles/test_cpu_cas.dir/mmu_cpu/test/_test_common2.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas2.dir/build.make CMakeFiles/test_cpu_cas2.dir/mmu_cpu/test/_test_common2.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movep.dir/build.make CMakeFiles/test_cpu_movep.dir/mmu_cpu/test/_test_common2.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_move.dir/build.make CMakeFiles/test_cpu_move.dir/mmu_cpu/test/_test_common2.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_negx.dir/build.make CMakeFiles/test_cpu_negx.dir/mmu_cpu/test/_test_common2.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_clr.dir/build.make CMakeFiles/test_cpu_clr.dir/mmu_cpu/test/_test_common2.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_neg.dir/build.make CMakeFiles/test_cpu_neg.dir/mmu_cpu/test/_test_common2.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_not.dir/build.make CMakeFiles/test_cpu_not.dir/mmu_cpu/test/_test_common2.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_nbcd.dir/build.make CMakeFiles/test_cpu_nbcd.dir/mmu_cpu/test/_test_common2.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_link.dir/build.make CMakeFiles/test_cpu_link.dir/mmu_cpu/test/_test_common2.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_swap.dir/build.make CMakeFiles/test_cpu_swap.dir/mmu_cpu/test/_test_common2.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pea.dir/build.make CMakeFiles/test_cpu_pea.dir/mmu_cpu/test/_test_common2.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_ext.dir/build.make CMakeFiles/test_cpu_ext.dir/mmu_cpu/test/_test_common2.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movem.dir/build.make CMakeFiles/test_cpu_movem.dir/mmu_cpu/test/_test_common2.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_tst.dir/build.make CMakeFiles/test_cpu_tst.dir/mmu_cpu/test/_test_common2.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_mul.dir/build.make CMakeFiles/test_cpu_mul.dir/mmu_cpu/test/_test_common2.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_div.dir/build.make CMakeFiles/test_cpu_div.dir/mmu_cpu/test/_test_common2.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unlk.dir/build.make CMakeFiles/test_cpu_unlk.dir/mmu_cpu/test/_test_common2.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_rtx.dir/build.make CMakeFiles/test_cpu_rtx.dir/mmu_cpu/test/_test_common2.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_jmp.dir/build.make CMakeFiles/test_cpu_jmp.dir/mmu_cpu/test/_test_common2.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk.dir/build.make CMakeFiles/test_cpu_chk.dir/mmu_cpu/test/_test_common2.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_lea.dir/build.make CMakeFiles/test_cpu_lea.dir/mmu_cpu/test/_test_common2.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_scc.dir/build.make CMakeFiles/test_cpu_scc.dir/mmu_cpu/test/_test_common2.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_dbcc.dir/build.make CMakeFiles/test_cpu_dbcc.dir/mmu_cpu/test/_test_common2.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_or.dir/build.make CMakeFiles/test_cpu_or.dir/mmu_cpu/test/_test_common2.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sbcd.dir/build.make CMakeFiles/test_cpu_sbcd.dir/mmu_cpu/test/_test_common2.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pack.dir/build.make CMakeFiles/test_cpu_pack.dir/mmu_cpu/test/_test_common2.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unpk.dir/build.make CMakeFiles/test_cpu_unpk.dir/mmu_cpu/test/_test_common2.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sub.dir/build.make CMakeFiles/test_cpu_sub.dir/mmu_cpu/test/_test_common2.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp.dir/build.make CMakeFiles/test_cpu_cmp.dir/mmu_cpu/test/_test_common2.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_eor.dir/build.make CMakeFiles/test_cpu_eor.dir/mmu_cpu/test/_test_common2.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_exg.dir/build.make CMakeFiles/test_cpu_exg.dir/mmu_cpu/test/_test_common2.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_add.dir/build.make CMakeFiles/test_cpu_add.dir/mmu_cpu/test/_test_common2.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_shift.dir/build.make CMakeFiles/test_cpu_shift.dir/mmu_cpu/test/_test_common2.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bitfields.dir/build.make CMakeFiles/test_cpu_bitfields.dir/mmu_cpu/test/_test_common2.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_fmove.dir/build.make CMakeFiles/test_cpu_fmove.dir/mmu_cpu/test/_test_common2.cpp.o
-.PHONY : mmu_cpu/test/_test_common2.cpp.o
+mmu_cpu/test/arithmetic/add.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/add.cpp.o
+.PHONY : mmu_cpu/test/arithmetic/add.cpp.o
 
-mmu_cpu/test/_test_common2.i: mmu_cpu/test/_test_common2.cpp.i
-.PHONY : mmu_cpu/test/_test_common2.i
+mmu_cpu/test/arithmetic/add.i: mmu_cpu/test/arithmetic/add.cpp.i
+.PHONY : mmu_cpu/test/arithmetic/add.i
 
 # target to preprocess a source file
-mmu_cpu/test/_test_common2.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu.dir/build.make CMakeFiles/test_cpu.dir/mmu_cpu/test/_test_common2.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_math.dir/build.make CMakeFiles/test_cpu_math.dir/mmu_cpu/test/_test_common2.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_and.dir/build.make CMakeFiles/test_cpu_and.dir/mmu_cpu/test/_test_common2.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp2.dir/build.make CMakeFiles/test_cpu_cmp2.dir/mmu_cpu/test/_test_common2.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk2.dir/build.make CMakeFiles/test_cpu_chk2.dir/mmu_cpu/test/_test_common2.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_btst.dir/build.make CMakeFiles/test_cpu_btst.dir/mmu_cpu/test/_test_common2.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bchg.dir/build.make CMakeFiles/test_cpu_bchg.dir/mmu_cpu/test/_test_common2.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bclr.dir/build.make CMakeFiles/test_cpu_bclr.dir/mmu_cpu/test/_test_common2.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bset.dir/build.make CMakeFiles/test_cpu_bset.dir/mmu_cpu/test/_test_common2.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas.dir/build.make CMakeFiles/test_cpu_cas.dir/mmu_cpu/test/_test_common2.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas2.dir/build.make CMakeFiles/test_cpu_cas2.dir/mmu_cpu/test/_test_common2.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movep.dir/build.make CMakeFiles/test_cpu_movep.dir/mmu_cpu/test/_test_common2.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_move.dir/build.make CMakeFiles/test_cpu_move.dir/mmu_cpu/test/_test_common2.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_negx.dir/build.make CMakeFiles/test_cpu_negx.dir/mmu_cpu/test/_test_common2.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_clr.dir/build.make CMakeFiles/test_cpu_clr.dir/mmu_cpu/test/_test_common2.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_neg.dir/build.make CMakeFiles/test_cpu_neg.dir/mmu_cpu/test/_test_common2.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_not.dir/build.make CMakeFiles/test_cpu_not.dir/mmu_cpu/test/_test_common2.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_nbcd.dir/build.make CMakeFiles/test_cpu_nbcd.dir/mmu_cpu/test/_test_common2.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_link.dir/build.make CMakeFiles/test_cpu_link.dir/mmu_cpu/test/_test_common2.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_swap.dir/build.make CMakeFiles/test_cpu_swap.dir/mmu_cpu/test/_test_common2.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pea.dir/build.make CMakeFiles/test_cpu_pea.dir/mmu_cpu/test/_test_common2.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_ext.dir/build.make CMakeFiles/test_cpu_ext.dir/mmu_cpu/test/_test_common2.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movem.dir/build.make CMakeFiles/test_cpu_movem.dir/mmu_cpu/test/_test_common2.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_tst.dir/build.make CMakeFiles/test_cpu_tst.dir/mmu_cpu/test/_test_common2.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_mul.dir/build.make CMakeFiles/test_cpu_mul.dir/mmu_cpu/test/_test_common2.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_div.dir/build.make CMakeFiles/test_cpu_div.dir/mmu_cpu/test/_test_common2.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unlk.dir/build.make CMakeFiles/test_cpu_unlk.dir/mmu_cpu/test/_test_common2.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_rtx.dir/build.make CMakeFiles/test_cpu_rtx.dir/mmu_cpu/test/_test_common2.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_jmp.dir/build.make CMakeFiles/test_cpu_jmp.dir/mmu_cpu/test/_test_common2.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk.dir/build.make CMakeFiles/test_cpu_chk.dir/mmu_cpu/test/_test_common2.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_lea.dir/build.make CMakeFiles/test_cpu_lea.dir/mmu_cpu/test/_test_common2.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_scc.dir/build.make CMakeFiles/test_cpu_scc.dir/mmu_cpu/test/_test_common2.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_dbcc.dir/build.make CMakeFiles/test_cpu_dbcc.dir/mmu_cpu/test/_test_common2.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_or.dir/build.make CMakeFiles/test_cpu_or.dir/mmu_cpu/test/_test_common2.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sbcd.dir/build.make CMakeFiles/test_cpu_sbcd.dir/mmu_cpu/test/_test_common2.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pack.dir/build.make CMakeFiles/test_cpu_pack.dir/mmu_cpu/test/_test_common2.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unpk.dir/build.make CMakeFiles/test_cpu_unpk.dir/mmu_cpu/test/_test_common2.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sub.dir/build.make CMakeFiles/test_cpu_sub.dir/mmu_cpu/test/_test_common2.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp.dir/build.make CMakeFiles/test_cpu_cmp.dir/mmu_cpu/test/_test_common2.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_eor.dir/build.make CMakeFiles/test_cpu_eor.dir/mmu_cpu/test/_test_common2.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_exg.dir/build.make CMakeFiles/test_cpu_exg.dir/mmu_cpu/test/_test_common2.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_add.dir/build.make CMakeFiles/test_cpu_add.dir/mmu_cpu/test/_test_common2.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_shift.dir/build.make CMakeFiles/test_cpu_shift.dir/mmu_cpu/test/_test_common2.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bitfields.dir/build.make CMakeFiles/test_cpu_bitfields.dir/mmu_cpu/test/_test_common2.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_fmove.dir/build.make CMakeFiles/test_cpu_fmove.dir/mmu_cpu/test/_test_common2.cpp.i
-.PHONY : mmu_cpu/test/_test_common2.cpp.i
+mmu_cpu/test/arithmetic/add.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/add.cpp.i
+.PHONY : mmu_cpu/test/arithmetic/add.cpp.i
 
-mmu_cpu/test/_test_common2.s: mmu_cpu/test/_test_common2.cpp.s
-.PHONY : mmu_cpu/test/_test_common2.s
+mmu_cpu/test/arithmetic/add.s: mmu_cpu/test/arithmetic/add.cpp.s
+.PHONY : mmu_cpu/test/arithmetic/add.s
 
 # target to generate assembly for a file
-mmu_cpu/test/_test_common2.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu.dir/build.make CMakeFiles/test_cpu.dir/mmu_cpu/test/_test_common2.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_math.dir/build.make CMakeFiles/test_cpu_math.dir/mmu_cpu/test/_test_common2.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_and.dir/build.make CMakeFiles/test_cpu_and.dir/mmu_cpu/test/_test_common2.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp2.dir/build.make CMakeFiles/test_cpu_cmp2.dir/mmu_cpu/test/_test_common2.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk2.dir/build.make CMakeFiles/test_cpu_chk2.dir/mmu_cpu/test/_test_common2.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_btst.dir/build.make CMakeFiles/test_cpu_btst.dir/mmu_cpu/test/_test_common2.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bchg.dir/build.make CMakeFiles/test_cpu_bchg.dir/mmu_cpu/test/_test_common2.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bclr.dir/build.make CMakeFiles/test_cpu_bclr.dir/mmu_cpu/test/_test_common2.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bset.dir/build.make CMakeFiles/test_cpu_bset.dir/mmu_cpu/test/_test_common2.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas.dir/build.make CMakeFiles/test_cpu_cas.dir/mmu_cpu/test/_test_common2.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas2.dir/build.make CMakeFiles/test_cpu_cas2.dir/mmu_cpu/test/_test_common2.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movep.dir/build.make CMakeFiles/test_cpu_movep.dir/mmu_cpu/test/_test_common2.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_move.dir/build.make CMakeFiles/test_cpu_move.dir/mmu_cpu/test/_test_common2.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_negx.dir/build.make CMakeFiles/test_cpu_negx.dir/mmu_cpu/test/_test_common2.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_clr.dir/build.make CMakeFiles/test_cpu_clr.dir/mmu_cpu/test/_test_common2.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_neg.dir/build.make CMakeFiles/test_cpu_neg.dir/mmu_cpu/test/_test_common2.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_not.dir/build.make CMakeFiles/test_cpu_not.dir/mmu_cpu/test/_test_common2.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_nbcd.dir/build.make CMakeFiles/test_cpu_nbcd.dir/mmu_cpu/test/_test_common2.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_link.dir/build.make CMakeFiles/test_cpu_link.dir/mmu_cpu/test/_test_common2.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_swap.dir/build.make CMakeFiles/test_cpu_swap.dir/mmu_cpu/test/_test_common2.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pea.dir/build.make CMakeFiles/test_cpu_pea.dir/mmu_cpu/test/_test_common2.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_ext.dir/build.make CMakeFiles/test_cpu_ext.dir/mmu_cpu/test/_test_common2.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movem.dir/build.make CMakeFiles/test_cpu_movem.dir/mmu_cpu/test/_test_common2.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_tst.dir/build.make CMakeFiles/test_cpu_tst.dir/mmu_cpu/test/_test_common2.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_mul.dir/build.make CMakeFiles/test_cpu_mul.dir/mmu_cpu/test/_test_common2.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_div.dir/build.make CMakeFiles/test_cpu_div.dir/mmu_cpu/test/_test_common2.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unlk.dir/build.make CMakeFiles/test_cpu_unlk.dir/mmu_cpu/test/_test_common2.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_rtx.dir/build.make CMakeFiles/test_cpu_rtx.dir/mmu_cpu/test/_test_common2.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_jmp.dir/build.make CMakeFiles/test_cpu_jmp.dir/mmu_cpu/test/_test_common2.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk.dir/build.make CMakeFiles/test_cpu_chk.dir/mmu_cpu/test/_test_common2.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_lea.dir/build.make CMakeFiles/test_cpu_lea.dir/mmu_cpu/test/_test_common2.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_scc.dir/build.make CMakeFiles/test_cpu_scc.dir/mmu_cpu/test/_test_common2.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_dbcc.dir/build.make CMakeFiles/test_cpu_dbcc.dir/mmu_cpu/test/_test_common2.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_or.dir/build.make CMakeFiles/test_cpu_or.dir/mmu_cpu/test/_test_common2.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sbcd.dir/build.make CMakeFiles/test_cpu_sbcd.dir/mmu_cpu/test/_test_common2.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pack.dir/build.make CMakeFiles/test_cpu_pack.dir/mmu_cpu/test/_test_common2.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unpk.dir/build.make CMakeFiles/test_cpu_unpk.dir/mmu_cpu/test/_test_common2.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sub.dir/build.make CMakeFiles/test_cpu_sub.dir/mmu_cpu/test/_test_common2.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp.dir/build.make CMakeFiles/test_cpu_cmp.dir/mmu_cpu/test/_test_common2.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_eor.dir/build.make CMakeFiles/test_cpu_eor.dir/mmu_cpu/test/_test_common2.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_exg.dir/build.make CMakeFiles/test_cpu_exg.dir/mmu_cpu/test/_test_common2.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_add.dir/build.make CMakeFiles/test_cpu_add.dir/mmu_cpu/test/_test_common2.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_shift.dir/build.make CMakeFiles/test_cpu_shift.dir/mmu_cpu/test/_test_common2.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bitfields.dir/build.make CMakeFiles/test_cpu_bitfields.dir/mmu_cpu/test/_test_common2.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_fmove.dir/build.make CMakeFiles/test_cpu_fmove.dir/mmu_cpu/test/_test_common2.cpp.s
-.PHONY : mmu_cpu/test/_test_common2.cpp.s
+mmu_cpu/test/arithmetic/add.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/add.cpp.s
+.PHONY : mmu_cpu/test/arithmetic/add.cpp.s
 
-mmu_cpu/test/add.o: mmu_cpu/test/add.cpp.o
-.PHONY : mmu_cpu/test/add.o
+mmu_cpu/test/arithmetic/adda.o: mmu_cpu/test/arithmetic/adda.cpp.o
+.PHONY : mmu_cpu/test/arithmetic/adda.o
 
 # target to build an object file
-mmu_cpu/test/add.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_add.dir/build.make CMakeFiles/test_cpu_add.dir/mmu_cpu/test/add.cpp.o
-.PHONY : mmu_cpu/test/add.cpp.o
+mmu_cpu/test/arithmetic/adda.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/adda.cpp.o
+.PHONY : mmu_cpu/test/arithmetic/adda.cpp.o
 
-mmu_cpu/test/add.i: mmu_cpu/test/add.cpp.i
-.PHONY : mmu_cpu/test/add.i
+mmu_cpu/test/arithmetic/adda.i: mmu_cpu/test/arithmetic/adda.cpp.i
+.PHONY : mmu_cpu/test/arithmetic/adda.i
 
 # target to preprocess a source file
-mmu_cpu/test/add.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_add.dir/build.make CMakeFiles/test_cpu_add.dir/mmu_cpu/test/add.cpp.i
-.PHONY : mmu_cpu/test/add.cpp.i
+mmu_cpu/test/arithmetic/adda.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/adda.cpp.i
+.PHONY : mmu_cpu/test/arithmetic/adda.cpp.i
 
-mmu_cpu/test/add.s: mmu_cpu/test/add.cpp.s
-.PHONY : mmu_cpu/test/add.s
+mmu_cpu/test/arithmetic/adda.s: mmu_cpu/test/arithmetic/adda.cpp.s
+.PHONY : mmu_cpu/test/arithmetic/adda.s
 
 # target to generate assembly for a file
-mmu_cpu/test/add.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_add.dir/build.make CMakeFiles/test_cpu_add.dir/mmu_cpu/test/add.cpp.s
-.PHONY : mmu_cpu/test/add.cpp.s
+mmu_cpu/test/arithmetic/adda.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/adda.cpp.s
+.PHONY : mmu_cpu/test/arithmetic/adda.cpp.s
 
-mmu_cpu/test/and.o: mmu_cpu/test/and.cpp.o
-.PHONY : mmu_cpu/test/and.o
+mmu_cpu/test/arithmetic/addi.o: mmu_cpu/test/arithmetic/addi.cpp.o
+.PHONY : mmu_cpu/test/arithmetic/addi.o
 
 # target to build an object file
-mmu_cpu/test/and.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_and.dir/build.make CMakeFiles/test_cpu_and.dir/mmu_cpu/test/and.cpp.o
-.PHONY : mmu_cpu/test/and.cpp.o
+mmu_cpu/test/arithmetic/addi.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/addi.cpp.o
+.PHONY : mmu_cpu/test/arithmetic/addi.cpp.o
 
-mmu_cpu/test/and.i: mmu_cpu/test/and.cpp.i
-.PHONY : mmu_cpu/test/and.i
+mmu_cpu/test/arithmetic/addi.i: mmu_cpu/test/arithmetic/addi.cpp.i
+.PHONY : mmu_cpu/test/arithmetic/addi.i
 
 # target to preprocess a source file
-mmu_cpu/test/and.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_and.dir/build.make CMakeFiles/test_cpu_and.dir/mmu_cpu/test/and.cpp.i
-.PHONY : mmu_cpu/test/and.cpp.i
+mmu_cpu/test/arithmetic/addi.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/addi.cpp.i
+.PHONY : mmu_cpu/test/arithmetic/addi.cpp.i
 
-mmu_cpu/test/and.s: mmu_cpu/test/and.cpp.s
-.PHONY : mmu_cpu/test/and.s
+mmu_cpu/test/arithmetic/addi.s: mmu_cpu/test/arithmetic/addi.cpp.s
+.PHONY : mmu_cpu/test/arithmetic/addi.s
 
 # target to generate assembly for a file
-mmu_cpu/test/and.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_and.dir/build.make CMakeFiles/test_cpu_and.dir/mmu_cpu/test/and.cpp.s
-.PHONY : mmu_cpu/test/and.cpp.s
+mmu_cpu/test/arithmetic/addi.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/addi.cpp.s
+.PHONY : mmu_cpu/test/arithmetic/addi.cpp.s
 
-mmu_cpu/test/bchg.o: mmu_cpu/test/bchg.cpp.o
-.PHONY : mmu_cpu/test/bchg.o
+mmu_cpu/test/arithmetic/addq.o: mmu_cpu/test/arithmetic/addq.cpp.o
+.PHONY : mmu_cpu/test/arithmetic/addq.o
 
 # target to build an object file
-mmu_cpu/test/bchg.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bchg.dir/build.make CMakeFiles/test_cpu_bchg.dir/mmu_cpu/test/bchg.cpp.o
-.PHONY : mmu_cpu/test/bchg.cpp.o
+mmu_cpu/test/arithmetic/addq.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/addq.cpp.o
+.PHONY : mmu_cpu/test/arithmetic/addq.cpp.o
 
-mmu_cpu/test/bchg.i: mmu_cpu/test/bchg.cpp.i
-.PHONY : mmu_cpu/test/bchg.i
+mmu_cpu/test/arithmetic/addq.i: mmu_cpu/test/arithmetic/addq.cpp.i
+.PHONY : mmu_cpu/test/arithmetic/addq.i
 
 # target to preprocess a source file
-mmu_cpu/test/bchg.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bchg.dir/build.make CMakeFiles/test_cpu_bchg.dir/mmu_cpu/test/bchg.cpp.i
-.PHONY : mmu_cpu/test/bchg.cpp.i
+mmu_cpu/test/arithmetic/addq.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/addq.cpp.i
+.PHONY : mmu_cpu/test/arithmetic/addq.cpp.i
 
-mmu_cpu/test/bchg.s: mmu_cpu/test/bchg.cpp.s
-.PHONY : mmu_cpu/test/bchg.s
+mmu_cpu/test/arithmetic/addq.s: mmu_cpu/test/arithmetic/addq.cpp.s
+.PHONY : mmu_cpu/test/arithmetic/addq.s
 
 # target to generate assembly for a file
-mmu_cpu/test/bchg.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bchg.dir/build.make CMakeFiles/test_cpu_bchg.dir/mmu_cpu/test/bchg.cpp.s
-.PHONY : mmu_cpu/test/bchg.cpp.s
+mmu_cpu/test/arithmetic/addq.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/addq.cpp.s
+.PHONY : mmu_cpu/test/arithmetic/addq.cpp.s
 
-mmu_cpu/test/bclr.o: mmu_cpu/test/bclr.cpp.o
-.PHONY : mmu_cpu/test/bclr.o
+mmu_cpu/test/arithmetic/addx.o: mmu_cpu/test/arithmetic/addx.cpp.o
+.PHONY : mmu_cpu/test/arithmetic/addx.o
 
 # target to build an object file
-mmu_cpu/test/bclr.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bclr.dir/build.make CMakeFiles/test_cpu_bclr.dir/mmu_cpu/test/bclr.cpp.o
-.PHONY : mmu_cpu/test/bclr.cpp.o
+mmu_cpu/test/arithmetic/addx.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/addx.cpp.o
+.PHONY : mmu_cpu/test/arithmetic/addx.cpp.o
 
-mmu_cpu/test/bclr.i: mmu_cpu/test/bclr.cpp.i
-.PHONY : mmu_cpu/test/bclr.i
+mmu_cpu/test/arithmetic/addx.i: mmu_cpu/test/arithmetic/addx.cpp.i
+.PHONY : mmu_cpu/test/arithmetic/addx.i
 
 # target to preprocess a source file
-mmu_cpu/test/bclr.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bclr.dir/build.make CMakeFiles/test_cpu_bclr.dir/mmu_cpu/test/bclr.cpp.i
-.PHONY : mmu_cpu/test/bclr.cpp.i
+mmu_cpu/test/arithmetic/addx.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/addx.cpp.i
+.PHONY : mmu_cpu/test/arithmetic/addx.cpp.i
 
-mmu_cpu/test/bclr.s: mmu_cpu/test/bclr.cpp.s
-.PHONY : mmu_cpu/test/bclr.s
+mmu_cpu/test/arithmetic/addx.s: mmu_cpu/test/arithmetic/addx.cpp.s
+.PHONY : mmu_cpu/test/arithmetic/addx.s
 
 # target to generate assembly for a file
-mmu_cpu/test/bclr.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bclr.dir/build.make CMakeFiles/test_cpu_bclr.dir/mmu_cpu/test/bclr.cpp.s
-.PHONY : mmu_cpu/test/bclr.cpp.s
+mmu_cpu/test/arithmetic/addx.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/addx.cpp.s
+.PHONY : mmu_cpu/test/arithmetic/addx.cpp.s
 
-mmu_cpu/test/bitfields.o: mmu_cpu/test/bitfields.cpp.o
-.PHONY : mmu_cpu/test/bitfields.o
+mmu_cpu/test/arithmetic/cas.o: mmu_cpu/test/arithmetic/cas.cpp.o
+.PHONY : mmu_cpu/test/arithmetic/cas.o
 
 # target to build an object file
-mmu_cpu/test/bitfields.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bitfields.dir/build.make CMakeFiles/test_cpu_bitfields.dir/mmu_cpu/test/bitfields.cpp.o
-.PHONY : mmu_cpu/test/bitfields.cpp.o
+mmu_cpu/test/arithmetic/cas.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/cas.cpp.o
+.PHONY : mmu_cpu/test/arithmetic/cas.cpp.o
 
-mmu_cpu/test/bitfields.i: mmu_cpu/test/bitfields.cpp.i
-.PHONY : mmu_cpu/test/bitfields.i
+mmu_cpu/test/arithmetic/cas.i: mmu_cpu/test/arithmetic/cas.cpp.i
+.PHONY : mmu_cpu/test/arithmetic/cas.i
 
 # target to preprocess a source file
-mmu_cpu/test/bitfields.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bitfields.dir/build.make CMakeFiles/test_cpu_bitfields.dir/mmu_cpu/test/bitfields.cpp.i
-.PHONY : mmu_cpu/test/bitfields.cpp.i
+mmu_cpu/test/arithmetic/cas.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/cas.cpp.i
+.PHONY : mmu_cpu/test/arithmetic/cas.cpp.i
 
-mmu_cpu/test/bitfields.s: mmu_cpu/test/bitfields.cpp.s
-.PHONY : mmu_cpu/test/bitfields.s
+mmu_cpu/test/arithmetic/cas.s: mmu_cpu/test/arithmetic/cas.cpp.s
+.PHONY : mmu_cpu/test/arithmetic/cas.s
 
 # target to generate assembly for a file
-mmu_cpu/test/bitfields.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bitfields.dir/build.make CMakeFiles/test_cpu_bitfields.dir/mmu_cpu/test/bitfields.cpp.s
-.PHONY : mmu_cpu/test/bitfields.cpp.s
+mmu_cpu/test/arithmetic/cas.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/cas.cpp.s
+.PHONY : mmu_cpu/test/arithmetic/cas.cpp.s
 
-mmu_cpu/test/bset.o: mmu_cpu/test/bset.cpp.o
-.PHONY : mmu_cpu/test/bset.o
+mmu_cpu/test/arithmetic/cas2.o: mmu_cpu/test/arithmetic/cas2.cpp.o
+.PHONY : mmu_cpu/test/arithmetic/cas2.o
 
 # target to build an object file
-mmu_cpu/test/bset.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bset.dir/build.make CMakeFiles/test_cpu_bset.dir/mmu_cpu/test/bset.cpp.o
-.PHONY : mmu_cpu/test/bset.cpp.o
+mmu_cpu/test/arithmetic/cas2.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/cas2.cpp.o
+.PHONY : mmu_cpu/test/arithmetic/cas2.cpp.o
 
-mmu_cpu/test/bset.i: mmu_cpu/test/bset.cpp.i
-.PHONY : mmu_cpu/test/bset.i
+mmu_cpu/test/arithmetic/cas2.i: mmu_cpu/test/arithmetic/cas2.cpp.i
+.PHONY : mmu_cpu/test/arithmetic/cas2.i
 
 # target to preprocess a source file
-mmu_cpu/test/bset.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bset.dir/build.make CMakeFiles/test_cpu_bset.dir/mmu_cpu/test/bset.cpp.i
-.PHONY : mmu_cpu/test/bset.cpp.i
+mmu_cpu/test/arithmetic/cas2.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/cas2.cpp.i
+.PHONY : mmu_cpu/test/arithmetic/cas2.cpp.i
 
-mmu_cpu/test/bset.s: mmu_cpu/test/bset.cpp.s
-.PHONY : mmu_cpu/test/bset.s
+mmu_cpu/test/arithmetic/cas2.s: mmu_cpu/test/arithmetic/cas2.cpp.s
+.PHONY : mmu_cpu/test/arithmetic/cas2.s
 
 # target to generate assembly for a file
-mmu_cpu/test/bset.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bset.dir/build.make CMakeFiles/test_cpu_bset.dir/mmu_cpu/test/bset.cpp.s
-.PHONY : mmu_cpu/test/bset.cpp.s
+mmu_cpu/test/arithmetic/cas2.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/cas2.cpp.s
+.PHONY : mmu_cpu/test/arithmetic/cas2.cpp.s
 
-mmu_cpu/test/btst.o: mmu_cpu/test/btst.cpp.o
-.PHONY : mmu_cpu/test/btst.o
+mmu_cpu/test/arithmetic/chk.o: mmu_cpu/test/arithmetic/chk.cpp.o
+.PHONY : mmu_cpu/test/arithmetic/chk.o
 
 # target to build an object file
-mmu_cpu/test/btst.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_btst.dir/build.make CMakeFiles/test_cpu_btst.dir/mmu_cpu/test/btst.cpp.o
-.PHONY : mmu_cpu/test/btst.cpp.o
+mmu_cpu/test/arithmetic/chk.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/chk.cpp.o
+.PHONY : mmu_cpu/test/arithmetic/chk.cpp.o
 
-mmu_cpu/test/btst.i: mmu_cpu/test/btst.cpp.i
-.PHONY : mmu_cpu/test/btst.i
+mmu_cpu/test/arithmetic/chk.i: mmu_cpu/test/arithmetic/chk.cpp.i
+.PHONY : mmu_cpu/test/arithmetic/chk.i
 
 # target to preprocess a source file
-mmu_cpu/test/btst.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_btst.dir/build.make CMakeFiles/test_cpu_btst.dir/mmu_cpu/test/btst.cpp.i
-.PHONY : mmu_cpu/test/btst.cpp.i
+mmu_cpu/test/arithmetic/chk.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/chk.cpp.i
+.PHONY : mmu_cpu/test/arithmetic/chk.cpp.i
 
-mmu_cpu/test/btst.s: mmu_cpu/test/btst.cpp.s
-.PHONY : mmu_cpu/test/btst.s
+mmu_cpu/test/arithmetic/chk.s: mmu_cpu/test/arithmetic/chk.cpp.s
+.PHONY : mmu_cpu/test/arithmetic/chk.s
 
 # target to generate assembly for a file
-mmu_cpu/test/btst.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_btst.dir/build.make CMakeFiles/test_cpu_btst.dir/mmu_cpu/test/btst.cpp.s
-.PHONY : mmu_cpu/test/btst.cpp.s
+mmu_cpu/test/arithmetic/chk.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/chk.cpp.s
+.PHONY : mmu_cpu/test/arithmetic/chk.cpp.s
 
-mmu_cpu/test/cas.o: mmu_cpu/test/cas.cpp.o
-.PHONY : mmu_cpu/test/cas.o
+mmu_cpu/test/arithmetic/chk2.o: mmu_cpu/test/arithmetic/chk2.cpp.o
+.PHONY : mmu_cpu/test/arithmetic/chk2.o
 
 # target to build an object file
-mmu_cpu/test/cas.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas.dir/build.make CMakeFiles/test_cpu_cas.dir/mmu_cpu/test/cas.cpp.o
-.PHONY : mmu_cpu/test/cas.cpp.o
+mmu_cpu/test/arithmetic/chk2.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/chk2.cpp.o
+.PHONY : mmu_cpu/test/arithmetic/chk2.cpp.o
 
-mmu_cpu/test/cas.i: mmu_cpu/test/cas.cpp.i
-.PHONY : mmu_cpu/test/cas.i
+mmu_cpu/test/arithmetic/chk2.i: mmu_cpu/test/arithmetic/chk2.cpp.i
+.PHONY : mmu_cpu/test/arithmetic/chk2.i
 
 # target to preprocess a source file
-mmu_cpu/test/cas.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas.dir/build.make CMakeFiles/test_cpu_cas.dir/mmu_cpu/test/cas.cpp.i
-.PHONY : mmu_cpu/test/cas.cpp.i
+mmu_cpu/test/arithmetic/chk2.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/chk2.cpp.i
+.PHONY : mmu_cpu/test/arithmetic/chk2.cpp.i
 
-mmu_cpu/test/cas.s: mmu_cpu/test/cas.cpp.s
-.PHONY : mmu_cpu/test/cas.s
+mmu_cpu/test/arithmetic/chk2.s: mmu_cpu/test/arithmetic/chk2.cpp.s
+.PHONY : mmu_cpu/test/arithmetic/chk2.s
 
 # target to generate assembly for a file
-mmu_cpu/test/cas.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas.dir/build.make CMakeFiles/test_cpu_cas.dir/mmu_cpu/test/cas.cpp.s
-.PHONY : mmu_cpu/test/cas.cpp.s
+mmu_cpu/test/arithmetic/chk2.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/chk2.cpp.s
+.PHONY : mmu_cpu/test/arithmetic/chk2.cpp.s
 
-mmu_cpu/test/cas2.o: mmu_cpu/test/cas2.cpp.o
-.PHONY : mmu_cpu/test/cas2.o
+mmu_cpu/test/arithmetic/cmp.o: mmu_cpu/test/arithmetic/cmp.cpp.o
+.PHONY : mmu_cpu/test/arithmetic/cmp.o
 
 # target to build an object file
-mmu_cpu/test/cas2.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas2.dir/build.make CMakeFiles/test_cpu_cas2.dir/mmu_cpu/test/cas2.cpp.o
-.PHONY : mmu_cpu/test/cas2.cpp.o
+mmu_cpu/test/arithmetic/cmp.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/cmp.cpp.o
+.PHONY : mmu_cpu/test/arithmetic/cmp.cpp.o
 
-mmu_cpu/test/cas2.i: mmu_cpu/test/cas2.cpp.i
-.PHONY : mmu_cpu/test/cas2.i
+mmu_cpu/test/arithmetic/cmp.i: mmu_cpu/test/arithmetic/cmp.cpp.i
+.PHONY : mmu_cpu/test/arithmetic/cmp.i
 
 # target to preprocess a source file
-mmu_cpu/test/cas2.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas2.dir/build.make CMakeFiles/test_cpu_cas2.dir/mmu_cpu/test/cas2.cpp.i
-.PHONY : mmu_cpu/test/cas2.cpp.i
+mmu_cpu/test/arithmetic/cmp.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/cmp.cpp.i
+.PHONY : mmu_cpu/test/arithmetic/cmp.cpp.i
 
-mmu_cpu/test/cas2.s: mmu_cpu/test/cas2.cpp.s
-.PHONY : mmu_cpu/test/cas2.s
+mmu_cpu/test/arithmetic/cmp.s: mmu_cpu/test/arithmetic/cmp.cpp.s
+.PHONY : mmu_cpu/test/arithmetic/cmp.s
 
 # target to generate assembly for a file
-mmu_cpu/test/cas2.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas2.dir/build.make CMakeFiles/test_cpu_cas2.dir/mmu_cpu/test/cas2.cpp.s
-.PHONY : mmu_cpu/test/cas2.cpp.s
+mmu_cpu/test/arithmetic/cmp.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/cmp.cpp.s
+.PHONY : mmu_cpu/test/arithmetic/cmp.cpp.s
 
-mmu_cpu/test/chk.o: mmu_cpu/test/chk.cpp.o
-.PHONY : mmu_cpu/test/chk.o
+mmu_cpu/test/arithmetic/cmp2.o: mmu_cpu/test/arithmetic/cmp2.cpp.o
+.PHONY : mmu_cpu/test/arithmetic/cmp2.o
 
 # target to build an object file
-mmu_cpu/test/chk.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk.dir/build.make CMakeFiles/test_cpu_chk.dir/mmu_cpu/test/chk.cpp.o
-.PHONY : mmu_cpu/test/chk.cpp.o
+mmu_cpu/test/arithmetic/cmp2.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/cmp2.cpp.o
+.PHONY : mmu_cpu/test/arithmetic/cmp2.cpp.o
 
-mmu_cpu/test/chk.i: mmu_cpu/test/chk.cpp.i
-.PHONY : mmu_cpu/test/chk.i
+mmu_cpu/test/arithmetic/cmp2.i: mmu_cpu/test/arithmetic/cmp2.cpp.i
+.PHONY : mmu_cpu/test/arithmetic/cmp2.i
 
 # target to preprocess a source file
-mmu_cpu/test/chk.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk.dir/build.make CMakeFiles/test_cpu_chk.dir/mmu_cpu/test/chk.cpp.i
-.PHONY : mmu_cpu/test/chk.cpp.i
+mmu_cpu/test/arithmetic/cmp2.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/cmp2.cpp.i
+.PHONY : mmu_cpu/test/arithmetic/cmp2.cpp.i
 
-mmu_cpu/test/chk.s: mmu_cpu/test/chk.cpp.s
-.PHONY : mmu_cpu/test/chk.s
+mmu_cpu/test/arithmetic/cmp2.s: mmu_cpu/test/arithmetic/cmp2.cpp.s
+.PHONY : mmu_cpu/test/arithmetic/cmp2.s
 
 # target to generate assembly for a file
-mmu_cpu/test/chk.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk.dir/build.make CMakeFiles/test_cpu_chk.dir/mmu_cpu/test/chk.cpp.s
-.PHONY : mmu_cpu/test/chk.cpp.s
+mmu_cpu/test/arithmetic/cmp2.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/cmp2.cpp.s
+.PHONY : mmu_cpu/test/arithmetic/cmp2.cpp.s
 
-mmu_cpu/test/chk2.o: mmu_cpu/test/chk2.cpp.o
-.PHONY : mmu_cpu/test/chk2.o
+mmu_cpu/test/arithmetic/cmpa.o: mmu_cpu/test/arithmetic/cmpa.cpp.o
+.PHONY : mmu_cpu/test/arithmetic/cmpa.o
 
 # target to build an object file
-mmu_cpu/test/chk2.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk2.dir/build.make CMakeFiles/test_cpu_chk2.dir/mmu_cpu/test/chk2.cpp.o
-.PHONY : mmu_cpu/test/chk2.cpp.o
+mmu_cpu/test/arithmetic/cmpa.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/cmpa.cpp.o
+.PHONY : mmu_cpu/test/arithmetic/cmpa.cpp.o
 
-mmu_cpu/test/chk2.i: mmu_cpu/test/chk2.cpp.i
-.PHONY : mmu_cpu/test/chk2.i
+mmu_cpu/test/arithmetic/cmpa.i: mmu_cpu/test/arithmetic/cmpa.cpp.i
+.PHONY : mmu_cpu/test/arithmetic/cmpa.i
 
 # target to preprocess a source file
-mmu_cpu/test/chk2.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk2.dir/build.make CMakeFiles/test_cpu_chk2.dir/mmu_cpu/test/chk2.cpp.i
-.PHONY : mmu_cpu/test/chk2.cpp.i
+mmu_cpu/test/arithmetic/cmpa.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/cmpa.cpp.i
+.PHONY : mmu_cpu/test/arithmetic/cmpa.cpp.i
 
-mmu_cpu/test/chk2.s: mmu_cpu/test/chk2.cpp.s
-.PHONY : mmu_cpu/test/chk2.s
+mmu_cpu/test/arithmetic/cmpa.s: mmu_cpu/test/arithmetic/cmpa.cpp.s
+.PHONY : mmu_cpu/test/arithmetic/cmpa.s
 
 # target to generate assembly for a file
-mmu_cpu/test/chk2.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk2.dir/build.make CMakeFiles/test_cpu_chk2.dir/mmu_cpu/test/chk2.cpp.s
-.PHONY : mmu_cpu/test/chk2.cpp.s
+mmu_cpu/test/arithmetic/cmpa.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/cmpa.cpp.s
+.PHONY : mmu_cpu/test/arithmetic/cmpa.cpp.s
 
-mmu_cpu/test/clr.o: mmu_cpu/test/clr.cpp.o
-.PHONY : mmu_cpu/test/clr.o
+mmu_cpu/test/arithmetic/cmpi.o: mmu_cpu/test/arithmetic/cmpi.cpp.o
+.PHONY : mmu_cpu/test/arithmetic/cmpi.o
 
 # target to build an object file
-mmu_cpu/test/clr.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_clr.dir/build.make CMakeFiles/test_cpu_clr.dir/mmu_cpu/test/clr.cpp.o
-.PHONY : mmu_cpu/test/clr.cpp.o
+mmu_cpu/test/arithmetic/cmpi.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/cmpi.cpp.o
+.PHONY : mmu_cpu/test/arithmetic/cmpi.cpp.o
 
-mmu_cpu/test/clr.i: mmu_cpu/test/clr.cpp.i
-.PHONY : mmu_cpu/test/clr.i
+mmu_cpu/test/arithmetic/cmpi.i: mmu_cpu/test/arithmetic/cmpi.cpp.i
+.PHONY : mmu_cpu/test/arithmetic/cmpi.i
 
 # target to preprocess a source file
-mmu_cpu/test/clr.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_clr.dir/build.make CMakeFiles/test_cpu_clr.dir/mmu_cpu/test/clr.cpp.i
-.PHONY : mmu_cpu/test/clr.cpp.i
+mmu_cpu/test/arithmetic/cmpi.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/cmpi.cpp.i
+.PHONY : mmu_cpu/test/arithmetic/cmpi.cpp.i
 
-mmu_cpu/test/clr.s: mmu_cpu/test/clr.cpp.s
-.PHONY : mmu_cpu/test/clr.s
+mmu_cpu/test/arithmetic/cmpi.s: mmu_cpu/test/arithmetic/cmpi.cpp.s
+.PHONY : mmu_cpu/test/arithmetic/cmpi.s
 
 # target to generate assembly for a file
-mmu_cpu/test/clr.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_clr.dir/build.make CMakeFiles/test_cpu_clr.dir/mmu_cpu/test/clr.cpp.s
-.PHONY : mmu_cpu/test/clr.cpp.s
+mmu_cpu/test/arithmetic/cmpi.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/cmpi.cpp.s
+.PHONY : mmu_cpu/test/arithmetic/cmpi.cpp.s
 
-mmu_cpu/test/cmp.o: mmu_cpu/test/cmp.cpp.o
-.PHONY : mmu_cpu/test/cmp.o
+mmu_cpu/test/arithmetic/cmpm.o: mmu_cpu/test/arithmetic/cmpm.cpp.o
+.PHONY : mmu_cpu/test/arithmetic/cmpm.o
 
 # target to build an object file
-mmu_cpu/test/cmp.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp.dir/build.make CMakeFiles/test_cpu_cmp.dir/mmu_cpu/test/cmp.cpp.o
-.PHONY : mmu_cpu/test/cmp.cpp.o
+mmu_cpu/test/arithmetic/cmpm.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/cmpm.cpp.o
+.PHONY : mmu_cpu/test/arithmetic/cmpm.cpp.o
 
-mmu_cpu/test/cmp.i: mmu_cpu/test/cmp.cpp.i
-.PHONY : mmu_cpu/test/cmp.i
+mmu_cpu/test/arithmetic/cmpm.i: mmu_cpu/test/arithmetic/cmpm.cpp.i
+.PHONY : mmu_cpu/test/arithmetic/cmpm.i
 
 # target to preprocess a source file
-mmu_cpu/test/cmp.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp.dir/build.make CMakeFiles/test_cpu_cmp.dir/mmu_cpu/test/cmp.cpp.i
-.PHONY : mmu_cpu/test/cmp.cpp.i
+mmu_cpu/test/arithmetic/cmpm.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/cmpm.cpp.i
+.PHONY : mmu_cpu/test/arithmetic/cmpm.cpp.i
 
-mmu_cpu/test/cmp.s: mmu_cpu/test/cmp.cpp.s
-.PHONY : mmu_cpu/test/cmp.s
+mmu_cpu/test/arithmetic/cmpm.s: mmu_cpu/test/arithmetic/cmpm.cpp.s
+.PHONY : mmu_cpu/test/arithmetic/cmpm.s
 
 # target to generate assembly for a file
-mmu_cpu/test/cmp.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp.dir/build.make CMakeFiles/test_cpu_cmp.dir/mmu_cpu/test/cmp.cpp.s
-.PHONY : mmu_cpu/test/cmp.cpp.s
+mmu_cpu/test/arithmetic/cmpm.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/cmpm.cpp.s
+.PHONY : mmu_cpu/test/arithmetic/cmpm.cpp.s
 
-mmu_cpu/test/cmp2.o: mmu_cpu/test/cmp2.cpp.o
-.PHONY : mmu_cpu/test/cmp2.o
+mmu_cpu/test/arithmetic/divs.o: mmu_cpu/test/arithmetic/divs.cpp.o
+.PHONY : mmu_cpu/test/arithmetic/divs.o
 
 # target to build an object file
-mmu_cpu/test/cmp2.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp2.dir/build.make CMakeFiles/test_cpu_cmp2.dir/mmu_cpu/test/cmp2.cpp.o
-.PHONY : mmu_cpu/test/cmp2.cpp.o
+mmu_cpu/test/arithmetic/divs.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/divs.cpp.o
+.PHONY : mmu_cpu/test/arithmetic/divs.cpp.o
 
-mmu_cpu/test/cmp2.i: mmu_cpu/test/cmp2.cpp.i
-.PHONY : mmu_cpu/test/cmp2.i
+mmu_cpu/test/arithmetic/divs.i: mmu_cpu/test/arithmetic/divs.cpp.i
+.PHONY : mmu_cpu/test/arithmetic/divs.i
 
 # target to preprocess a source file
-mmu_cpu/test/cmp2.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp2.dir/build.make CMakeFiles/test_cpu_cmp2.dir/mmu_cpu/test/cmp2.cpp.i
-.PHONY : mmu_cpu/test/cmp2.cpp.i
+mmu_cpu/test/arithmetic/divs.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/divs.cpp.i
+.PHONY : mmu_cpu/test/arithmetic/divs.cpp.i
 
-mmu_cpu/test/cmp2.s: mmu_cpu/test/cmp2.cpp.s
-.PHONY : mmu_cpu/test/cmp2.s
+mmu_cpu/test/arithmetic/divs.s: mmu_cpu/test/arithmetic/divs.cpp.s
+.PHONY : mmu_cpu/test/arithmetic/divs.s
 
 # target to generate assembly for a file
-mmu_cpu/test/cmp2.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp2.dir/build.make CMakeFiles/test_cpu_cmp2.dir/mmu_cpu/test/cmp2.cpp.s
-.PHONY : mmu_cpu/test/cmp2.cpp.s
+mmu_cpu/test/arithmetic/divs.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/divs.cpp.s
+.PHONY : mmu_cpu/test/arithmetic/divs.cpp.s
 
-mmu_cpu/test/cpu1.o: mmu_cpu/test/cpu1.cpp.o
-.PHONY : mmu_cpu/test/cpu1.o
+mmu_cpu/test/arithmetic/divu.o: mmu_cpu/test/arithmetic/divu.cpp.o
+.PHONY : mmu_cpu/test/arithmetic/divu.o
 
 # target to build an object file
-mmu_cpu/test/cpu1.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu.dir/build.make CMakeFiles/test_cpu.dir/mmu_cpu/test/cpu1.cpp.o
-.PHONY : mmu_cpu/test/cpu1.cpp.o
+mmu_cpu/test/arithmetic/divu.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/divu.cpp.o
+.PHONY : mmu_cpu/test/arithmetic/divu.cpp.o
 
-mmu_cpu/test/cpu1.i: mmu_cpu/test/cpu1.cpp.i
-.PHONY : mmu_cpu/test/cpu1.i
+mmu_cpu/test/arithmetic/divu.i: mmu_cpu/test/arithmetic/divu.cpp.i
+.PHONY : mmu_cpu/test/arithmetic/divu.i
 
 # target to preprocess a source file
-mmu_cpu/test/cpu1.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu.dir/build.make CMakeFiles/test_cpu.dir/mmu_cpu/test/cpu1.cpp.i
-.PHONY : mmu_cpu/test/cpu1.cpp.i
+mmu_cpu/test/arithmetic/divu.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/divu.cpp.i
+.PHONY : mmu_cpu/test/arithmetic/divu.cpp.i
 
-mmu_cpu/test/cpu1.s: mmu_cpu/test/cpu1.cpp.s
-.PHONY : mmu_cpu/test/cpu1.s
+mmu_cpu/test/arithmetic/divu.s: mmu_cpu/test/arithmetic/divu.cpp.s
+.PHONY : mmu_cpu/test/arithmetic/divu.s
 
 # target to generate assembly for a file
-mmu_cpu/test/cpu1.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu.dir/build.make CMakeFiles/test_cpu.dir/mmu_cpu/test/cpu1.cpp.s
-.PHONY : mmu_cpu/test/cpu1.cpp.s
+mmu_cpu/test/arithmetic/divu.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/divu.cpp.s
+.PHONY : mmu_cpu/test/arithmetic/divu.cpp.s
 
-mmu_cpu/test/dbcc.o: mmu_cpu/test/dbcc.cpp.o
-.PHONY : mmu_cpu/test/dbcc.o
+mmu_cpu/test/arithmetic/muls.o: mmu_cpu/test/arithmetic/muls.cpp.o
+.PHONY : mmu_cpu/test/arithmetic/muls.o
 
 # target to build an object file
-mmu_cpu/test/dbcc.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_dbcc.dir/build.make CMakeFiles/test_cpu_dbcc.dir/mmu_cpu/test/dbcc.cpp.o
-.PHONY : mmu_cpu/test/dbcc.cpp.o
+mmu_cpu/test/arithmetic/muls.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/muls.cpp.o
+.PHONY : mmu_cpu/test/arithmetic/muls.cpp.o
 
-mmu_cpu/test/dbcc.i: mmu_cpu/test/dbcc.cpp.i
-.PHONY : mmu_cpu/test/dbcc.i
+mmu_cpu/test/arithmetic/muls.i: mmu_cpu/test/arithmetic/muls.cpp.i
+.PHONY : mmu_cpu/test/arithmetic/muls.i
 
 # target to preprocess a source file
-mmu_cpu/test/dbcc.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_dbcc.dir/build.make CMakeFiles/test_cpu_dbcc.dir/mmu_cpu/test/dbcc.cpp.i
-.PHONY : mmu_cpu/test/dbcc.cpp.i
+mmu_cpu/test/arithmetic/muls.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/muls.cpp.i
+.PHONY : mmu_cpu/test/arithmetic/muls.cpp.i
 
-mmu_cpu/test/dbcc.s: mmu_cpu/test/dbcc.cpp.s
-.PHONY : mmu_cpu/test/dbcc.s
+mmu_cpu/test/arithmetic/muls.s: mmu_cpu/test/arithmetic/muls.cpp.s
+.PHONY : mmu_cpu/test/arithmetic/muls.s
 
 # target to generate assembly for a file
-mmu_cpu/test/dbcc.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_dbcc.dir/build.make CMakeFiles/test_cpu_dbcc.dir/mmu_cpu/test/dbcc.cpp.s
-.PHONY : mmu_cpu/test/dbcc.cpp.s
+mmu_cpu/test/arithmetic/muls.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/muls.cpp.s
+.PHONY : mmu_cpu/test/arithmetic/muls.cpp.s
 
-mmu_cpu/test/div.o: mmu_cpu/test/div.cpp.o
-.PHONY : mmu_cpu/test/div.o
+mmu_cpu/test/arithmetic/mulu.o: mmu_cpu/test/arithmetic/mulu.cpp.o
+.PHONY : mmu_cpu/test/arithmetic/mulu.o
 
 # target to build an object file
-mmu_cpu/test/div.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_div.dir/build.make CMakeFiles/test_cpu_div.dir/mmu_cpu/test/div.cpp.o
-.PHONY : mmu_cpu/test/div.cpp.o
+mmu_cpu/test/arithmetic/mulu.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/mulu.cpp.o
+.PHONY : mmu_cpu/test/arithmetic/mulu.cpp.o
 
-mmu_cpu/test/div.i: mmu_cpu/test/div.cpp.i
-.PHONY : mmu_cpu/test/div.i
+mmu_cpu/test/arithmetic/mulu.i: mmu_cpu/test/arithmetic/mulu.cpp.i
+.PHONY : mmu_cpu/test/arithmetic/mulu.i
 
 # target to preprocess a source file
-mmu_cpu/test/div.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_div.dir/build.make CMakeFiles/test_cpu_div.dir/mmu_cpu/test/div.cpp.i
-.PHONY : mmu_cpu/test/div.cpp.i
+mmu_cpu/test/arithmetic/mulu.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/mulu.cpp.i
+.PHONY : mmu_cpu/test/arithmetic/mulu.cpp.i
 
-mmu_cpu/test/div.s: mmu_cpu/test/div.cpp.s
-.PHONY : mmu_cpu/test/div.s
+mmu_cpu/test/arithmetic/mulu.s: mmu_cpu/test/arithmetic/mulu.cpp.s
+.PHONY : mmu_cpu/test/arithmetic/mulu.s
 
 # target to generate assembly for a file
-mmu_cpu/test/div.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_div.dir/build.make CMakeFiles/test_cpu_div.dir/mmu_cpu/test/div.cpp.s
-.PHONY : mmu_cpu/test/div.cpp.s
+mmu_cpu/test/arithmetic/mulu.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/mulu.cpp.s
+.PHONY : mmu_cpu/test/arithmetic/mulu.cpp.s
 
-mmu_cpu/test/eor.o: mmu_cpu/test/eor.cpp.o
-.PHONY : mmu_cpu/test/eor.o
+mmu_cpu/test/arithmetic/neg.o: mmu_cpu/test/arithmetic/neg.cpp.o
+.PHONY : mmu_cpu/test/arithmetic/neg.o
 
 # target to build an object file
-mmu_cpu/test/eor.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_eor.dir/build.make CMakeFiles/test_cpu_eor.dir/mmu_cpu/test/eor.cpp.o
-.PHONY : mmu_cpu/test/eor.cpp.o
+mmu_cpu/test/arithmetic/neg.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/neg.cpp.o
+.PHONY : mmu_cpu/test/arithmetic/neg.cpp.o
 
-mmu_cpu/test/eor.i: mmu_cpu/test/eor.cpp.i
-.PHONY : mmu_cpu/test/eor.i
+mmu_cpu/test/arithmetic/neg.i: mmu_cpu/test/arithmetic/neg.cpp.i
+.PHONY : mmu_cpu/test/arithmetic/neg.i
 
 # target to preprocess a source file
-mmu_cpu/test/eor.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_eor.dir/build.make CMakeFiles/test_cpu_eor.dir/mmu_cpu/test/eor.cpp.i
-.PHONY : mmu_cpu/test/eor.cpp.i
+mmu_cpu/test/arithmetic/neg.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/neg.cpp.i
+.PHONY : mmu_cpu/test/arithmetic/neg.cpp.i
 
-mmu_cpu/test/eor.s: mmu_cpu/test/eor.cpp.s
-.PHONY : mmu_cpu/test/eor.s
+mmu_cpu/test/arithmetic/neg.s: mmu_cpu/test/arithmetic/neg.cpp.s
+.PHONY : mmu_cpu/test/arithmetic/neg.s
 
 # target to generate assembly for a file
-mmu_cpu/test/eor.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_eor.dir/build.make CMakeFiles/test_cpu_eor.dir/mmu_cpu/test/eor.cpp.s
-.PHONY : mmu_cpu/test/eor.cpp.s
+mmu_cpu/test/arithmetic/neg.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/neg.cpp.s
+.PHONY : mmu_cpu/test/arithmetic/neg.cpp.s
 
-mmu_cpu/test/exg.o: mmu_cpu/test/exg.cpp.o
-.PHONY : mmu_cpu/test/exg.o
+mmu_cpu/test/arithmetic/negx.o: mmu_cpu/test/arithmetic/negx.cpp.o
+.PHONY : mmu_cpu/test/arithmetic/negx.o
 
 # target to build an object file
-mmu_cpu/test/exg.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_exg.dir/build.make CMakeFiles/test_cpu_exg.dir/mmu_cpu/test/exg.cpp.o
-.PHONY : mmu_cpu/test/exg.cpp.o
+mmu_cpu/test/arithmetic/negx.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/negx.cpp.o
+.PHONY : mmu_cpu/test/arithmetic/negx.cpp.o
 
-mmu_cpu/test/exg.i: mmu_cpu/test/exg.cpp.i
-.PHONY : mmu_cpu/test/exg.i
+mmu_cpu/test/arithmetic/negx.i: mmu_cpu/test/arithmetic/negx.cpp.i
+.PHONY : mmu_cpu/test/arithmetic/negx.i
 
 # target to preprocess a source file
-mmu_cpu/test/exg.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_exg.dir/build.make CMakeFiles/test_cpu_exg.dir/mmu_cpu/test/exg.cpp.i
-.PHONY : mmu_cpu/test/exg.cpp.i
+mmu_cpu/test/arithmetic/negx.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/negx.cpp.i
+.PHONY : mmu_cpu/test/arithmetic/negx.cpp.i
 
-mmu_cpu/test/exg.s: mmu_cpu/test/exg.cpp.s
-.PHONY : mmu_cpu/test/exg.s
+mmu_cpu/test/arithmetic/negx.s: mmu_cpu/test/arithmetic/negx.cpp.s
+.PHONY : mmu_cpu/test/arithmetic/negx.s
 
 # target to generate assembly for a file
-mmu_cpu/test/exg.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_exg.dir/build.make CMakeFiles/test_cpu_exg.dir/mmu_cpu/test/exg.cpp.s
-.PHONY : mmu_cpu/test/exg.cpp.s
+mmu_cpu/test/arithmetic/negx.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/negx.cpp.s
+.PHONY : mmu_cpu/test/arithmetic/negx.cpp.s
 
-mmu_cpu/test/ext.o: mmu_cpu/test/ext.cpp.o
-.PHONY : mmu_cpu/test/ext.o
+mmu_cpu/test/arithmetic/sub.o: mmu_cpu/test/arithmetic/sub.cpp.o
+.PHONY : mmu_cpu/test/arithmetic/sub.o
 
 # target to build an object file
-mmu_cpu/test/ext.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_ext.dir/build.make CMakeFiles/test_cpu_ext.dir/mmu_cpu/test/ext.cpp.o
-.PHONY : mmu_cpu/test/ext.cpp.o
+mmu_cpu/test/arithmetic/sub.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/sub.cpp.o
+.PHONY : mmu_cpu/test/arithmetic/sub.cpp.o
 
-mmu_cpu/test/ext.i: mmu_cpu/test/ext.cpp.i
-.PHONY : mmu_cpu/test/ext.i
+mmu_cpu/test/arithmetic/sub.i: mmu_cpu/test/arithmetic/sub.cpp.i
+.PHONY : mmu_cpu/test/arithmetic/sub.i
 
 # target to preprocess a source file
-mmu_cpu/test/ext.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_ext.dir/build.make CMakeFiles/test_cpu_ext.dir/mmu_cpu/test/ext.cpp.i
-.PHONY : mmu_cpu/test/ext.cpp.i
+mmu_cpu/test/arithmetic/sub.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/sub.cpp.i
+.PHONY : mmu_cpu/test/arithmetic/sub.cpp.i
 
-mmu_cpu/test/ext.s: mmu_cpu/test/ext.cpp.s
-.PHONY : mmu_cpu/test/ext.s
+mmu_cpu/test/arithmetic/sub.s: mmu_cpu/test/arithmetic/sub.cpp.s
+.PHONY : mmu_cpu/test/arithmetic/sub.s
 
 # target to generate assembly for a file
-mmu_cpu/test/ext.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_ext.dir/build.make CMakeFiles/test_cpu_ext.dir/mmu_cpu/test/ext.cpp.s
-.PHONY : mmu_cpu/test/ext.cpp.s
+mmu_cpu/test/arithmetic/sub.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/sub.cpp.s
+.PHONY : mmu_cpu/test/arithmetic/sub.cpp.s
 
-mmu_cpu/test/fmove.o: mmu_cpu/test/fmove.cpp.o
-.PHONY : mmu_cpu/test/fmove.o
+mmu_cpu/test/arithmetic/suba.o: mmu_cpu/test/arithmetic/suba.cpp.o
+.PHONY : mmu_cpu/test/arithmetic/suba.o
 
 # target to build an object file
-mmu_cpu/test/fmove.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_fmove.dir/build.make CMakeFiles/test_cpu_fmove.dir/mmu_cpu/test/fmove.cpp.o
-.PHONY : mmu_cpu/test/fmove.cpp.o
+mmu_cpu/test/arithmetic/suba.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/suba.cpp.o
+.PHONY : mmu_cpu/test/arithmetic/suba.cpp.o
 
-mmu_cpu/test/fmove.i: mmu_cpu/test/fmove.cpp.i
-.PHONY : mmu_cpu/test/fmove.i
+mmu_cpu/test/arithmetic/suba.i: mmu_cpu/test/arithmetic/suba.cpp.i
+.PHONY : mmu_cpu/test/arithmetic/suba.i
 
 # target to preprocess a source file
-mmu_cpu/test/fmove.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_fmove.dir/build.make CMakeFiles/test_cpu_fmove.dir/mmu_cpu/test/fmove.cpp.i
-.PHONY : mmu_cpu/test/fmove.cpp.i
+mmu_cpu/test/arithmetic/suba.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/suba.cpp.i
+.PHONY : mmu_cpu/test/arithmetic/suba.cpp.i
 
-mmu_cpu/test/fmove.s: mmu_cpu/test/fmove.cpp.s
-.PHONY : mmu_cpu/test/fmove.s
+mmu_cpu/test/arithmetic/suba.s: mmu_cpu/test/arithmetic/suba.cpp.s
+.PHONY : mmu_cpu/test/arithmetic/suba.s
 
 # target to generate assembly for a file
-mmu_cpu/test/fmove.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_fmove.dir/build.make CMakeFiles/test_cpu_fmove.dir/mmu_cpu/test/fmove.cpp.s
-.PHONY : mmu_cpu/test/fmove.cpp.s
+mmu_cpu/test/arithmetic/suba.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/suba.cpp.s
+.PHONY : mmu_cpu/test/arithmetic/suba.cpp.s
 
-mmu_cpu/test/jmp.o: mmu_cpu/test/jmp.cpp.o
-.PHONY : mmu_cpu/test/jmp.o
+mmu_cpu/test/arithmetic/subi.o: mmu_cpu/test/arithmetic/subi.cpp.o
+.PHONY : mmu_cpu/test/arithmetic/subi.o
 
 # target to build an object file
-mmu_cpu/test/jmp.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_jmp.dir/build.make CMakeFiles/test_cpu_jmp.dir/mmu_cpu/test/jmp.cpp.o
-.PHONY : mmu_cpu/test/jmp.cpp.o
+mmu_cpu/test/arithmetic/subi.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/subi.cpp.o
+.PHONY : mmu_cpu/test/arithmetic/subi.cpp.o
 
-mmu_cpu/test/jmp.i: mmu_cpu/test/jmp.cpp.i
-.PHONY : mmu_cpu/test/jmp.i
+mmu_cpu/test/arithmetic/subi.i: mmu_cpu/test/arithmetic/subi.cpp.i
+.PHONY : mmu_cpu/test/arithmetic/subi.i
 
 # target to preprocess a source file
-mmu_cpu/test/jmp.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_jmp.dir/build.make CMakeFiles/test_cpu_jmp.dir/mmu_cpu/test/jmp.cpp.i
-.PHONY : mmu_cpu/test/jmp.cpp.i
+mmu_cpu/test/arithmetic/subi.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/subi.cpp.i
+.PHONY : mmu_cpu/test/arithmetic/subi.cpp.i
 
-mmu_cpu/test/jmp.s: mmu_cpu/test/jmp.cpp.s
-.PHONY : mmu_cpu/test/jmp.s
+mmu_cpu/test/arithmetic/subi.s: mmu_cpu/test/arithmetic/subi.cpp.s
+.PHONY : mmu_cpu/test/arithmetic/subi.s
 
 # target to generate assembly for a file
-mmu_cpu/test/jmp.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_jmp.dir/build.make CMakeFiles/test_cpu_jmp.dir/mmu_cpu/test/jmp.cpp.s
-.PHONY : mmu_cpu/test/jmp.cpp.s
+mmu_cpu/test/arithmetic/subi.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/subi.cpp.s
+.PHONY : mmu_cpu/test/arithmetic/subi.cpp.s
 
-mmu_cpu/test/lea.o: mmu_cpu/test/lea.cpp.o
-.PHONY : mmu_cpu/test/lea.o
+mmu_cpu/test/arithmetic/subq.o: mmu_cpu/test/arithmetic/subq.cpp.o
+.PHONY : mmu_cpu/test/arithmetic/subq.o
 
 # target to build an object file
-mmu_cpu/test/lea.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_lea.dir/build.make CMakeFiles/test_cpu_lea.dir/mmu_cpu/test/lea.cpp.o
-.PHONY : mmu_cpu/test/lea.cpp.o
+mmu_cpu/test/arithmetic/subq.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/subq.cpp.o
+.PHONY : mmu_cpu/test/arithmetic/subq.cpp.o
 
-mmu_cpu/test/lea.i: mmu_cpu/test/lea.cpp.i
-.PHONY : mmu_cpu/test/lea.i
+mmu_cpu/test/arithmetic/subq.i: mmu_cpu/test/arithmetic/subq.cpp.i
+.PHONY : mmu_cpu/test/arithmetic/subq.i
 
 # target to preprocess a source file
-mmu_cpu/test/lea.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_lea.dir/build.make CMakeFiles/test_cpu_lea.dir/mmu_cpu/test/lea.cpp.i
-.PHONY : mmu_cpu/test/lea.cpp.i
+mmu_cpu/test/arithmetic/subq.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/subq.cpp.i
+.PHONY : mmu_cpu/test/arithmetic/subq.cpp.i
 
-mmu_cpu/test/lea.s: mmu_cpu/test/lea.cpp.s
-.PHONY : mmu_cpu/test/lea.s
+mmu_cpu/test/arithmetic/subq.s: mmu_cpu/test/arithmetic/subq.cpp.s
+.PHONY : mmu_cpu/test/arithmetic/subq.s
 
 # target to generate assembly for a file
-mmu_cpu/test/lea.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_lea.dir/build.make CMakeFiles/test_cpu_lea.dir/mmu_cpu/test/lea.cpp.s
-.PHONY : mmu_cpu/test/lea.cpp.s
+mmu_cpu/test/arithmetic/subq.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/subq.cpp.s
+.PHONY : mmu_cpu/test/arithmetic/subq.cpp.s
 
-mmu_cpu/test/link.o: mmu_cpu/test/link.cpp.o
-.PHONY : mmu_cpu/test/link.o
+mmu_cpu/test/arithmetic/subx.o: mmu_cpu/test/arithmetic/subx.cpp.o
+.PHONY : mmu_cpu/test/arithmetic/subx.o
 
 # target to build an object file
-mmu_cpu/test/link.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_link.dir/build.make CMakeFiles/test_cpu_link.dir/mmu_cpu/test/link.cpp.o
-.PHONY : mmu_cpu/test/link.cpp.o
+mmu_cpu/test/arithmetic/subx.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/subx.cpp.o
+.PHONY : mmu_cpu/test/arithmetic/subx.cpp.o
 
-mmu_cpu/test/link.i: mmu_cpu/test/link.cpp.i
-.PHONY : mmu_cpu/test/link.i
+mmu_cpu/test/arithmetic/subx.i: mmu_cpu/test/arithmetic/subx.cpp.i
+.PHONY : mmu_cpu/test/arithmetic/subx.i
 
 # target to preprocess a source file
-mmu_cpu/test/link.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_link.dir/build.make CMakeFiles/test_cpu_link.dir/mmu_cpu/test/link.cpp.i
-.PHONY : mmu_cpu/test/link.cpp.i
+mmu_cpu/test/arithmetic/subx.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/subx.cpp.i
+.PHONY : mmu_cpu/test/arithmetic/subx.cpp.i
 
-mmu_cpu/test/link.s: mmu_cpu/test/link.cpp.s
-.PHONY : mmu_cpu/test/link.s
+mmu_cpu/test/arithmetic/subx.s: mmu_cpu/test/arithmetic/subx.cpp.s
+.PHONY : mmu_cpu/test/arithmetic/subx.s
 
 # target to generate assembly for a file
-mmu_cpu/test/link.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_link.dir/build.make CMakeFiles/test_cpu_link.dir/mmu_cpu/test/link.cpp.s
-.PHONY : mmu_cpu/test/link.cpp.s
+mmu_cpu/test/arithmetic/subx.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/arithmetic/subx.cpp.s
+.PHONY : mmu_cpu/test/arithmetic/subx.cpp.s
 
-mmu_cpu/test/math.o: mmu_cpu/test/math.cpp.o
-.PHONY : mmu_cpu/test/math.o
+mmu_cpu/test/bcd/abcd.o: mmu_cpu/test/bcd/abcd.cpp.o
+.PHONY : mmu_cpu/test/bcd/abcd.o
 
 # target to build an object file
-mmu_cpu/test/math.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_math.dir/build.make CMakeFiles/test_cpu_math.dir/mmu_cpu/test/math.cpp.o
-.PHONY : mmu_cpu/test/math.cpp.o
+mmu_cpu/test/bcd/abcd.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bcd/abcd.cpp.o
+.PHONY : mmu_cpu/test/bcd/abcd.cpp.o
 
-mmu_cpu/test/math.i: mmu_cpu/test/math.cpp.i
-.PHONY : mmu_cpu/test/math.i
+mmu_cpu/test/bcd/abcd.i: mmu_cpu/test/bcd/abcd.cpp.i
+.PHONY : mmu_cpu/test/bcd/abcd.i
 
 # target to preprocess a source file
-mmu_cpu/test/math.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_math.dir/build.make CMakeFiles/test_cpu_math.dir/mmu_cpu/test/math.cpp.i
-.PHONY : mmu_cpu/test/math.cpp.i
+mmu_cpu/test/bcd/abcd.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bcd/abcd.cpp.i
+.PHONY : mmu_cpu/test/bcd/abcd.cpp.i
 
-mmu_cpu/test/math.s: mmu_cpu/test/math.cpp.s
-.PHONY : mmu_cpu/test/math.s
+mmu_cpu/test/bcd/abcd.s: mmu_cpu/test/bcd/abcd.cpp.s
+.PHONY : mmu_cpu/test/bcd/abcd.s
 
 # target to generate assembly for a file
-mmu_cpu/test/math.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_math.dir/build.make CMakeFiles/test_cpu_math.dir/mmu_cpu/test/math.cpp.s
-.PHONY : mmu_cpu/test/math.cpp.s
+mmu_cpu/test/bcd/abcd.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bcd/abcd.cpp.s
+.PHONY : mmu_cpu/test/bcd/abcd.cpp.s
 
-mmu_cpu/test/move.o: mmu_cpu/test/move.cpp.o
-.PHONY : mmu_cpu/test/move.o
+mmu_cpu/test/bcd/nbcd.o: mmu_cpu/test/bcd/nbcd.cpp.o
+.PHONY : mmu_cpu/test/bcd/nbcd.o
 
 # target to build an object file
-mmu_cpu/test/move.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_move.dir/build.make CMakeFiles/test_cpu_move.dir/mmu_cpu/test/move.cpp.o
-.PHONY : mmu_cpu/test/move.cpp.o
+mmu_cpu/test/bcd/nbcd.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bcd/nbcd.cpp.o
+.PHONY : mmu_cpu/test/bcd/nbcd.cpp.o
 
-mmu_cpu/test/move.i: mmu_cpu/test/move.cpp.i
-.PHONY : mmu_cpu/test/move.i
+mmu_cpu/test/bcd/nbcd.i: mmu_cpu/test/bcd/nbcd.cpp.i
+.PHONY : mmu_cpu/test/bcd/nbcd.i
 
 # target to preprocess a source file
-mmu_cpu/test/move.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_move.dir/build.make CMakeFiles/test_cpu_move.dir/mmu_cpu/test/move.cpp.i
-.PHONY : mmu_cpu/test/move.cpp.i
+mmu_cpu/test/bcd/nbcd.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bcd/nbcd.cpp.i
+.PHONY : mmu_cpu/test/bcd/nbcd.cpp.i
 
-mmu_cpu/test/move.s: mmu_cpu/test/move.cpp.s
-.PHONY : mmu_cpu/test/move.s
+mmu_cpu/test/bcd/nbcd.s: mmu_cpu/test/bcd/nbcd.cpp.s
+.PHONY : mmu_cpu/test/bcd/nbcd.s
 
 # target to generate assembly for a file
-mmu_cpu/test/move.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_move.dir/build.make CMakeFiles/test_cpu_move.dir/mmu_cpu/test/move.cpp.s
-.PHONY : mmu_cpu/test/move.cpp.s
+mmu_cpu/test/bcd/nbcd.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bcd/nbcd.cpp.s
+.PHONY : mmu_cpu/test/bcd/nbcd.cpp.s
 
-mmu_cpu/test/movem.o: mmu_cpu/test/movem.cpp.o
-.PHONY : mmu_cpu/test/movem.o
+mmu_cpu/test/bcd/pack.o: mmu_cpu/test/bcd/pack.cpp.o
+.PHONY : mmu_cpu/test/bcd/pack.o
 
 # target to build an object file
-mmu_cpu/test/movem.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movem.dir/build.make CMakeFiles/test_cpu_movem.dir/mmu_cpu/test/movem.cpp.o
-.PHONY : mmu_cpu/test/movem.cpp.o
+mmu_cpu/test/bcd/pack.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bcd/pack.cpp.o
+.PHONY : mmu_cpu/test/bcd/pack.cpp.o
 
-mmu_cpu/test/movem.i: mmu_cpu/test/movem.cpp.i
-.PHONY : mmu_cpu/test/movem.i
+mmu_cpu/test/bcd/pack.i: mmu_cpu/test/bcd/pack.cpp.i
+.PHONY : mmu_cpu/test/bcd/pack.i
 
 # target to preprocess a source file
-mmu_cpu/test/movem.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movem.dir/build.make CMakeFiles/test_cpu_movem.dir/mmu_cpu/test/movem.cpp.i
-.PHONY : mmu_cpu/test/movem.cpp.i
+mmu_cpu/test/bcd/pack.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bcd/pack.cpp.i
+.PHONY : mmu_cpu/test/bcd/pack.cpp.i
 
-mmu_cpu/test/movem.s: mmu_cpu/test/movem.cpp.s
-.PHONY : mmu_cpu/test/movem.s
+mmu_cpu/test/bcd/pack.s: mmu_cpu/test/bcd/pack.cpp.s
+.PHONY : mmu_cpu/test/bcd/pack.s
 
 # target to generate assembly for a file
-mmu_cpu/test/movem.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movem.dir/build.make CMakeFiles/test_cpu_movem.dir/mmu_cpu/test/movem.cpp.s
-.PHONY : mmu_cpu/test/movem.cpp.s
+mmu_cpu/test/bcd/pack.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bcd/pack.cpp.s
+.PHONY : mmu_cpu/test/bcd/pack.cpp.s
 
-mmu_cpu/test/movep.o: mmu_cpu/test/movep.cpp.o
-.PHONY : mmu_cpu/test/movep.o
+mmu_cpu/test/bcd/sbcd.o: mmu_cpu/test/bcd/sbcd.cpp.o
+.PHONY : mmu_cpu/test/bcd/sbcd.o
 
 # target to build an object file
-mmu_cpu/test/movep.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movep.dir/build.make CMakeFiles/test_cpu_movep.dir/mmu_cpu/test/movep.cpp.o
-.PHONY : mmu_cpu/test/movep.cpp.o
+mmu_cpu/test/bcd/sbcd.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bcd/sbcd.cpp.o
+.PHONY : mmu_cpu/test/bcd/sbcd.cpp.o
 
-mmu_cpu/test/movep.i: mmu_cpu/test/movep.cpp.i
-.PHONY : mmu_cpu/test/movep.i
+mmu_cpu/test/bcd/sbcd.i: mmu_cpu/test/bcd/sbcd.cpp.i
+.PHONY : mmu_cpu/test/bcd/sbcd.i
 
 # target to preprocess a source file
-mmu_cpu/test/movep.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movep.dir/build.make CMakeFiles/test_cpu_movep.dir/mmu_cpu/test/movep.cpp.i
-.PHONY : mmu_cpu/test/movep.cpp.i
+mmu_cpu/test/bcd/sbcd.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bcd/sbcd.cpp.i
+.PHONY : mmu_cpu/test/bcd/sbcd.cpp.i
 
-mmu_cpu/test/movep.s: mmu_cpu/test/movep.cpp.s
-.PHONY : mmu_cpu/test/movep.s
+mmu_cpu/test/bcd/sbcd.s: mmu_cpu/test/bcd/sbcd.cpp.s
+.PHONY : mmu_cpu/test/bcd/sbcd.s
 
 # target to generate assembly for a file
-mmu_cpu/test/movep.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movep.dir/build.make CMakeFiles/test_cpu_movep.dir/mmu_cpu/test/movep.cpp.s
-.PHONY : mmu_cpu/test/movep.cpp.s
+mmu_cpu/test/bcd/sbcd.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bcd/sbcd.cpp.s
+.PHONY : mmu_cpu/test/bcd/sbcd.cpp.s
 
-mmu_cpu/test/mul.o: mmu_cpu/test/mul.cpp.o
-.PHONY : mmu_cpu/test/mul.o
+mmu_cpu/test/bcd/unpk.o: mmu_cpu/test/bcd/unpk.cpp.o
+.PHONY : mmu_cpu/test/bcd/unpk.o
 
 # target to build an object file
-mmu_cpu/test/mul.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_mul.dir/build.make CMakeFiles/test_cpu_mul.dir/mmu_cpu/test/mul.cpp.o
-.PHONY : mmu_cpu/test/mul.cpp.o
+mmu_cpu/test/bcd/unpk.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bcd/unpk.cpp.o
+.PHONY : mmu_cpu/test/bcd/unpk.cpp.o
 
-mmu_cpu/test/mul.i: mmu_cpu/test/mul.cpp.i
-.PHONY : mmu_cpu/test/mul.i
+mmu_cpu/test/bcd/unpk.i: mmu_cpu/test/bcd/unpk.cpp.i
+.PHONY : mmu_cpu/test/bcd/unpk.i
 
 # target to preprocess a source file
-mmu_cpu/test/mul.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_mul.dir/build.make CMakeFiles/test_cpu_mul.dir/mmu_cpu/test/mul.cpp.i
-.PHONY : mmu_cpu/test/mul.cpp.i
+mmu_cpu/test/bcd/unpk.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bcd/unpk.cpp.i
+.PHONY : mmu_cpu/test/bcd/unpk.cpp.i
 
-mmu_cpu/test/mul.s: mmu_cpu/test/mul.cpp.s
-.PHONY : mmu_cpu/test/mul.s
+mmu_cpu/test/bcd/unpk.s: mmu_cpu/test/bcd/unpk.cpp.s
+.PHONY : mmu_cpu/test/bcd/unpk.s
 
 # target to generate assembly for a file
-mmu_cpu/test/mul.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_mul.dir/build.make CMakeFiles/test_cpu_mul.dir/mmu_cpu/test/mul.cpp.s
-.PHONY : mmu_cpu/test/mul.cpp.s
+mmu_cpu/test/bcd/unpk.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bcd/unpk.cpp.s
+.PHONY : mmu_cpu/test/bcd/unpk.cpp.s
 
-mmu_cpu/test/nbcd.o: mmu_cpu/test/nbcd.cpp.o
-.PHONY : mmu_cpu/test/nbcd.o
+mmu_cpu/test/bits/and.o: mmu_cpu/test/bits/and.cpp.o
+.PHONY : mmu_cpu/test/bits/and.o
 
 # target to build an object file
-mmu_cpu/test/nbcd.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_nbcd.dir/build.make CMakeFiles/test_cpu_nbcd.dir/mmu_cpu/test/nbcd.cpp.o
-.PHONY : mmu_cpu/test/nbcd.cpp.o
+mmu_cpu/test/bits/and.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/and.cpp.o
+.PHONY : mmu_cpu/test/bits/and.cpp.o
 
-mmu_cpu/test/nbcd.i: mmu_cpu/test/nbcd.cpp.i
-.PHONY : mmu_cpu/test/nbcd.i
+mmu_cpu/test/bits/and.i: mmu_cpu/test/bits/and.cpp.i
+.PHONY : mmu_cpu/test/bits/and.i
 
 # target to preprocess a source file
-mmu_cpu/test/nbcd.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_nbcd.dir/build.make CMakeFiles/test_cpu_nbcd.dir/mmu_cpu/test/nbcd.cpp.i
-.PHONY : mmu_cpu/test/nbcd.cpp.i
+mmu_cpu/test/bits/and.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/and.cpp.i
+.PHONY : mmu_cpu/test/bits/and.cpp.i
 
-mmu_cpu/test/nbcd.s: mmu_cpu/test/nbcd.cpp.s
-.PHONY : mmu_cpu/test/nbcd.s
+mmu_cpu/test/bits/and.s: mmu_cpu/test/bits/and.cpp.s
+.PHONY : mmu_cpu/test/bits/and.s
 
 # target to generate assembly for a file
-mmu_cpu/test/nbcd.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_nbcd.dir/build.make CMakeFiles/test_cpu_nbcd.dir/mmu_cpu/test/nbcd.cpp.s
-.PHONY : mmu_cpu/test/nbcd.cpp.s
+mmu_cpu/test/bits/and.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/and.cpp.s
+.PHONY : mmu_cpu/test/bits/and.cpp.s
 
-mmu_cpu/test/neg.o: mmu_cpu/test/neg.cpp.o
-.PHONY : mmu_cpu/test/neg.o
+mmu_cpu/test/bits/andi.o: mmu_cpu/test/bits/andi.cpp.o
+.PHONY : mmu_cpu/test/bits/andi.o
 
 # target to build an object file
-mmu_cpu/test/neg.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_neg.dir/build.make CMakeFiles/test_cpu_neg.dir/mmu_cpu/test/neg.cpp.o
-.PHONY : mmu_cpu/test/neg.cpp.o
+mmu_cpu/test/bits/andi.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/andi.cpp.o
+.PHONY : mmu_cpu/test/bits/andi.cpp.o
 
-mmu_cpu/test/neg.i: mmu_cpu/test/neg.cpp.i
-.PHONY : mmu_cpu/test/neg.i
+mmu_cpu/test/bits/andi.i: mmu_cpu/test/bits/andi.cpp.i
+.PHONY : mmu_cpu/test/bits/andi.i
 
 # target to preprocess a source file
-mmu_cpu/test/neg.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_neg.dir/build.make CMakeFiles/test_cpu_neg.dir/mmu_cpu/test/neg.cpp.i
-.PHONY : mmu_cpu/test/neg.cpp.i
+mmu_cpu/test/bits/andi.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/andi.cpp.i
+.PHONY : mmu_cpu/test/bits/andi.cpp.i
 
-mmu_cpu/test/neg.s: mmu_cpu/test/neg.cpp.s
-.PHONY : mmu_cpu/test/neg.s
+mmu_cpu/test/bits/andi.s: mmu_cpu/test/bits/andi.cpp.s
+.PHONY : mmu_cpu/test/bits/andi.s
 
 # target to generate assembly for a file
-mmu_cpu/test/neg.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_neg.dir/build.make CMakeFiles/test_cpu_neg.dir/mmu_cpu/test/neg.cpp.s
-.PHONY : mmu_cpu/test/neg.cpp.s
+mmu_cpu/test/bits/andi.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/andi.cpp.s
+.PHONY : mmu_cpu/test/bits/andi.cpp.s
 
-mmu_cpu/test/negx.o: mmu_cpu/test/negx.cpp.o
-.PHONY : mmu_cpu/test/negx.o
+mmu_cpu/test/bits/asl.o: mmu_cpu/test/bits/asl.cpp.o
+.PHONY : mmu_cpu/test/bits/asl.o
 
 # target to build an object file
-mmu_cpu/test/negx.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_negx.dir/build.make CMakeFiles/test_cpu_negx.dir/mmu_cpu/test/negx.cpp.o
-.PHONY : mmu_cpu/test/negx.cpp.o
+mmu_cpu/test/bits/asl.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/asl.cpp.o
+.PHONY : mmu_cpu/test/bits/asl.cpp.o
 
-mmu_cpu/test/negx.i: mmu_cpu/test/negx.cpp.i
-.PHONY : mmu_cpu/test/negx.i
+mmu_cpu/test/bits/asl.i: mmu_cpu/test/bits/asl.cpp.i
+.PHONY : mmu_cpu/test/bits/asl.i
 
 # target to preprocess a source file
-mmu_cpu/test/negx.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_negx.dir/build.make CMakeFiles/test_cpu_negx.dir/mmu_cpu/test/negx.cpp.i
-.PHONY : mmu_cpu/test/negx.cpp.i
+mmu_cpu/test/bits/asl.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/asl.cpp.i
+.PHONY : mmu_cpu/test/bits/asl.cpp.i
 
-mmu_cpu/test/negx.s: mmu_cpu/test/negx.cpp.s
-.PHONY : mmu_cpu/test/negx.s
+mmu_cpu/test/bits/asl.s: mmu_cpu/test/bits/asl.cpp.s
+.PHONY : mmu_cpu/test/bits/asl.s
 
 # target to generate assembly for a file
-mmu_cpu/test/negx.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_negx.dir/build.make CMakeFiles/test_cpu_negx.dir/mmu_cpu/test/negx.cpp.s
-.PHONY : mmu_cpu/test/negx.cpp.s
+mmu_cpu/test/bits/asl.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/asl.cpp.s
+.PHONY : mmu_cpu/test/bits/asl.cpp.s
 
-mmu_cpu/test/not.o: mmu_cpu/test/not.cpp.o
-.PHONY : mmu_cpu/test/not.o
+mmu_cpu/test/bits/asr.o: mmu_cpu/test/bits/asr.cpp.o
+.PHONY : mmu_cpu/test/bits/asr.o
 
 # target to build an object file
-mmu_cpu/test/not.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_not.dir/build.make CMakeFiles/test_cpu_not.dir/mmu_cpu/test/not.cpp.o
-.PHONY : mmu_cpu/test/not.cpp.o
+mmu_cpu/test/bits/asr.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/asr.cpp.o
+.PHONY : mmu_cpu/test/bits/asr.cpp.o
 
-mmu_cpu/test/not.i: mmu_cpu/test/not.cpp.i
-.PHONY : mmu_cpu/test/not.i
+mmu_cpu/test/bits/asr.i: mmu_cpu/test/bits/asr.cpp.i
+.PHONY : mmu_cpu/test/bits/asr.i
 
 # target to preprocess a source file
-mmu_cpu/test/not.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_not.dir/build.make CMakeFiles/test_cpu_not.dir/mmu_cpu/test/not.cpp.i
-.PHONY : mmu_cpu/test/not.cpp.i
+mmu_cpu/test/bits/asr.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/asr.cpp.i
+.PHONY : mmu_cpu/test/bits/asr.cpp.i
 
-mmu_cpu/test/not.s: mmu_cpu/test/not.cpp.s
-.PHONY : mmu_cpu/test/not.s
+mmu_cpu/test/bits/asr.s: mmu_cpu/test/bits/asr.cpp.s
+.PHONY : mmu_cpu/test/bits/asr.s
 
 # target to generate assembly for a file
-mmu_cpu/test/not.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_not.dir/build.make CMakeFiles/test_cpu_not.dir/mmu_cpu/test/not.cpp.s
-.PHONY : mmu_cpu/test/not.cpp.s
+mmu_cpu/test/bits/asr.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/asr.cpp.s
+.PHONY : mmu_cpu/test/bits/asr.cpp.s
 
-mmu_cpu/test/or.o: mmu_cpu/test/or.cpp.o
-.PHONY : mmu_cpu/test/or.o
+mmu_cpu/test/bits/bchg.o: mmu_cpu/test/bits/bchg.cpp.o
+.PHONY : mmu_cpu/test/bits/bchg.o
 
 # target to build an object file
-mmu_cpu/test/or.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_or.dir/build.make CMakeFiles/test_cpu_or.dir/mmu_cpu/test/or.cpp.o
-.PHONY : mmu_cpu/test/or.cpp.o
+mmu_cpu/test/bits/bchg.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/bchg.cpp.o
+.PHONY : mmu_cpu/test/bits/bchg.cpp.o
 
-mmu_cpu/test/or.i: mmu_cpu/test/or.cpp.i
-.PHONY : mmu_cpu/test/or.i
+mmu_cpu/test/bits/bchg.i: mmu_cpu/test/bits/bchg.cpp.i
+.PHONY : mmu_cpu/test/bits/bchg.i
 
 # target to preprocess a source file
-mmu_cpu/test/or.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_or.dir/build.make CMakeFiles/test_cpu_or.dir/mmu_cpu/test/or.cpp.i
-.PHONY : mmu_cpu/test/or.cpp.i
+mmu_cpu/test/bits/bchg.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/bchg.cpp.i
+.PHONY : mmu_cpu/test/bits/bchg.cpp.i
 
-mmu_cpu/test/or.s: mmu_cpu/test/or.cpp.s
-.PHONY : mmu_cpu/test/or.s
+mmu_cpu/test/bits/bchg.s: mmu_cpu/test/bits/bchg.cpp.s
+.PHONY : mmu_cpu/test/bits/bchg.s
 
 # target to generate assembly for a file
-mmu_cpu/test/or.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_or.dir/build.make CMakeFiles/test_cpu_or.dir/mmu_cpu/test/or.cpp.s
-.PHONY : mmu_cpu/test/or.cpp.s
+mmu_cpu/test/bits/bchg.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/bchg.cpp.s
+.PHONY : mmu_cpu/test/bits/bchg.cpp.s
 
-mmu_cpu/test/pack.o: mmu_cpu/test/pack.cpp.o
-.PHONY : mmu_cpu/test/pack.o
+mmu_cpu/test/bits/bclr.o: mmu_cpu/test/bits/bclr.cpp.o
+.PHONY : mmu_cpu/test/bits/bclr.o
 
 # target to build an object file
-mmu_cpu/test/pack.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pack.dir/build.make CMakeFiles/test_cpu_pack.dir/mmu_cpu/test/pack.cpp.o
-.PHONY : mmu_cpu/test/pack.cpp.o
+mmu_cpu/test/bits/bclr.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/bclr.cpp.o
+.PHONY : mmu_cpu/test/bits/bclr.cpp.o
 
-mmu_cpu/test/pack.i: mmu_cpu/test/pack.cpp.i
-.PHONY : mmu_cpu/test/pack.i
+mmu_cpu/test/bits/bclr.i: mmu_cpu/test/bits/bclr.cpp.i
+.PHONY : mmu_cpu/test/bits/bclr.i
 
 # target to preprocess a source file
-mmu_cpu/test/pack.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pack.dir/build.make CMakeFiles/test_cpu_pack.dir/mmu_cpu/test/pack.cpp.i
-.PHONY : mmu_cpu/test/pack.cpp.i
+mmu_cpu/test/bits/bclr.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/bclr.cpp.i
+.PHONY : mmu_cpu/test/bits/bclr.cpp.i
 
-mmu_cpu/test/pack.s: mmu_cpu/test/pack.cpp.s
-.PHONY : mmu_cpu/test/pack.s
+mmu_cpu/test/bits/bclr.s: mmu_cpu/test/bits/bclr.cpp.s
+.PHONY : mmu_cpu/test/bits/bclr.s
 
 # target to generate assembly for a file
-mmu_cpu/test/pack.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pack.dir/build.make CMakeFiles/test_cpu_pack.dir/mmu_cpu/test/pack.cpp.s
-.PHONY : mmu_cpu/test/pack.cpp.s
+mmu_cpu/test/bits/bclr.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/bclr.cpp.s
+.PHONY : mmu_cpu/test/bits/bclr.cpp.s
 
-mmu_cpu/test/pea.o: mmu_cpu/test/pea.cpp.o
-.PHONY : mmu_cpu/test/pea.o
+mmu_cpu/test/bits/bfchg.o: mmu_cpu/test/bits/bfchg.cpp.o
+.PHONY : mmu_cpu/test/bits/bfchg.o
 
 # target to build an object file
-mmu_cpu/test/pea.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pea.dir/build.make CMakeFiles/test_cpu_pea.dir/mmu_cpu/test/pea.cpp.o
-.PHONY : mmu_cpu/test/pea.cpp.o
+mmu_cpu/test/bits/bfchg.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/bfchg.cpp.o
+.PHONY : mmu_cpu/test/bits/bfchg.cpp.o
 
-mmu_cpu/test/pea.i: mmu_cpu/test/pea.cpp.i
-.PHONY : mmu_cpu/test/pea.i
+mmu_cpu/test/bits/bfchg.i: mmu_cpu/test/bits/bfchg.cpp.i
+.PHONY : mmu_cpu/test/bits/bfchg.i
 
 # target to preprocess a source file
-mmu_cpu/test/pea.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pea.dir/build.make CMakeFiles/test_cpu_pea.dir/mmu_cpu/test/pea.cpp.i
-.PHONY : mmu_cpu/test/pea.cpp.i
+mmu_cpu/test/bits/bfchg.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/bfchg.cpp.i
+.PHONY : mmu_cpu/test/bits/bfchg.cpp.i
 
-mmu_cpu/test/pea.s: mmu_cpu/test/pea.cpp.s
-.PHONY : mmu_cpu/test/pea.s
+mmu_cpu/test/bits/bfchg.s: mmu_cpu/test/bits/bfchg.cpp.s
+.PHONY : mmu_cpu/test/bits/bfchg.s
 
 # target to generate assembly for a file
-mmu_cpu/test/pea.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pea.dir/build.make CMakeFiles/test_cpu_pea.dir/mmu_cpu/test/pea.cpp.s
-.PHONY : mmu_cpu/test/pea.cpp.s
+mmu_cpu/test/bits/bfchg.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/bfchg.cpp.s
+.PHONY : mmu_cpu/test/bits/bfchg.cpp.s
 
-mmu_cpu/test/rtx.o: mmu_cpu/test/rtx.cpp.o
-.PHONY : mmu_cpu/test/rtx.o
+mmu_cpu/test/bits/bfclr.o: mmu_cpu/test/bits/bfclr.cpp.o
+.PHONY : mmu_cpu/test/bits/bfclr.o
 
 # target to build an object file
-mmu_cpu/test/rtx.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_rtx.dir/build.make CMakeFiles/test_cpu_rtx.dir/mmu_cpu/test/rtx.cpp.o
-.PHONY : mmu_cpu/test/rtx.cpp.o
+mmu_cpu/test/bits/bfclr.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/bfclr.cpp.o
+.PHONY : mmu_cpu/test/bits/bfclr.cpp.o
 
-mmu_cpu/test/rtx.i: mmu_cpu/test/rtx.cpp.i
-.PHONY : mmu_cpu/test/rtx.i
+mmu_cpu/test/bits/bfclr.i: mmu_cpu/test/bits/bfclr.cpp.i
+.PHONY : mmu_cpu/test/bits/bfclr.i
 
 # target to preprocess a source file
-mmu_cpu/test/rtx.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_rtx.dir/build.make CMakeFiles/test_cpu_rtx.dir/mmu_cpu/test/rtx.cpp.i
-.PHONY : mmu_cpu/test/rtx.cpp.i
+mmu_cpu/test/bits/bfclr.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/bfclr.cpp.i
+.PHONY : mmu_cpu/test/bits/bfclr.cpp.i
 
-mmu_cpu/test/rtx.s: mmu_cpu/test/rtx.cpp.s
-.PHONY : mmu_cpu/test/rtx.s
+mmu_cpu/test/bits/bfclr.s: mmu_cpu/test/bits/bfclr.cpp.s
+.PHONY : mmu_cpu/test/bits/bfclr.s
 
 # target to generate assembly for a file
-mmu_cpu/test/rtx.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_rtx.dir/build.make CMakeFiles/test_cpu_rtx.dir/mmu_cpu/test/rtx.cpp.s
-.PHONY : mmu_cpu/test/rtx.cpp.s
+mmu_cpu/test/bits/bfclr.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/bfclr.cpp.s
+.PHONY : mmu_cpu/test/bits/bfclr.cpp.s
 
-mmu_cpu/test/sbcd.o: mmu_cpu/test/sbcd.cpp.o
-.PHONY : mmu_cpu/test/sbcd.o
+mmu_cpu/test/bits/bfexts.o: mmu_cpu/test/bits/bfexts.cpp.o
+.PHONY : mmu_cpu/test/bits/bfexts.o
 
 # target to build an object file
-mmu_cpu/test/sbcd.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sbcd.dir/build.make CMakeFiles/test_cpu_sbcd.dir/mmu_cpu/test/sbcd.cpp.o
-.PHONY : mmu_cpu/test/sbcd.cpp.o
+mmu_cpu/test/bits/bfexts.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/bfexts.cpp.o
+.PHONY : mmu_cpu/test/bits/bfexts.cpp.o
 
-mmu_cpu/test/sbcd.i: mmu_cpu/test/sbcd.cpp.i
-.PHONY : mmu_cpu/test/sbcd.i
+mmu_cpu/test/bits/bfexts.i: mmu_cpu/test/bits/bfexts.cpp.i
+.PHONY : mmu_cpu/test/bits/bfexts.i
 
 # target to preprocess a source file
-mmu_cpu/test/sbcd.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sbcd.dir/build.make CMakeFiles/test_cpu_sbcd.dir/mmu_cpu/test/sbcd.cpp.i
-.PHONY : mmu_cpu/test/sbcd.cpp.i
+mmu_cpu/test/bits/bfexts.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/bfexts.cpp.i
+.PHONY : mmu_cpu/test/bits/bfexts.cpp.i
 
-mmu_cpu/test/sbcd.s: mmu_cpu/test/sbcd.cpp.s
-.PHONY : mmu_cpu/test/sbcd.s
+mmu_cpu/test/bits/bfexts.s: mmu_cpu/test/bits/bfexts.cpp.s
+.PHONY : mmu_cpu/test/bits/bfexts.s
 
 # target to generate assembly for a file
-mmu_cpu/test/sbcd.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sbcd.dir/build.make CMakeFiles/test_cpu_sbcd.dir/mmu_cpu/test/sbcd.cpp.s
-.PHONY : mmu_cpu/test/sbcd.cpp.s
+mmu_cpu/test/bits/bfexts.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/bfexts.cpp.s
+.PHONY : mmu_cpu/test/bits/bfexts.cpp.s
 
-mmu_cpu/test/scc.o: mmu_cpu/test/scc.cpp.o
-.PHONY : mmu_cpu/test/scc.o
+mmu_cpu/test/bits/bfextu.o: mmu_cpu/test/bits/bfextu.cpp.o
+.PHONY : mmu_cpu/test/bits/bfextu.o
 
 # target to build an object file
-mmu_cpu/test/scc.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_scc.dir/build.make CMakeFiles/test_cpu_scc.dir/mmu_cpu/test/scc.cpp.o
-.PHONY : mmu_cpu/test/scc.cpp.o
+mmu_cpu/test/bits/bfextu.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/bfextu.cpp.o
+.PHONY : mmu_cpu/test/bits/bfextu.cpp.o
 
-mmu_cpu/test/scc.i: mmu_cpu/test/scc.cpp.i
-.PHONY : mmu_cpu/test/scc.i
+mmu_cpu/test/bits/bfextu.i: mmu_cpu/test/bits/bfextu.cpp.i
+.PHONY : mmu_cpu/test/bits/bfextu.i
 
 # target to preprocess a source file
-mmu_cpu/test/scc.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_scc.dir/build.make CMakeFiles/test_cpu_scc.dir/mmu_cpu/test/scc.cpp.i
-.PHONY : mmu_cpu/test/scc.cpp.i
+mmu_cpu/test/bits/bfextu.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/bfextu.cpp.i
+.PHONY : mmu_cpu/test/bits/bfextu.cpp.i
 
-mmu_cpu/test/scc.s: mmu_cpu/test/scc.cpp.s
-.PHONY : mmu_cpu/test/scc.s
+mmu_cpu/test/bits/bfextu.s: mmu_cpu/test/bits/bfextu.cpp.s
+.PHONY : mmu_cpu/test/bits/bfextu.s
 
 # target to generate assembly for a file
-mmu_cpu/test/scc.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_scc.dir/build.make CMakeFiles/test_cpu_scc.dir/mmu_cpu/test/scc.cpp.s
-.PHONY : mmu_cpu/test/scc.cpp.s
+mmu_cpu/test/bits/bfextu.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/bfextu.cpp.s
+.PHONY : mmu_cpu/test/bits/bfextu.cpp.s
 
-mmu_cpu/test/shift.o: mmu_cpu/test/shift.cpp.o
-.PHONY : mmu_cpu/test/shift.o
+mmu_cpu/test/bits/bfffo.o: mmu_cpu/test/bits/bfffo.cpp.o
+.PHONY : mmu_cpu/test/bits/bfffo.o
 
 # target to build an object file
-mmu_cpu/test/shift.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_shift.dir/build.make CMakeFiles/test_cpu_shift.dir/mmu_cpu/test/shift.cpp.o
-.PHONY : mmu_cpu/test/shift.cpp.o
+mmu_cpu/test/bits/bfffo.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/bfffo.cpp.o
+.PHONY : mmu_cpu/test/bits/bfffo.cpp.o
 
-mmu_cpu/test/shift.i: mmu_cpu/test/shift.cpp.i
-.PHONY : mmu_cpu/test/shift.i
+mmu_cpu/test/bits/bfffo.i: mmu_cpu/test/bits/bfffo.cpp.i
+.PHONY : mmu_cpu/test/bits/bfffo.i
 
 # target to preprocess a source file
-mmu_cpu/test/shift.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_shift.dir/build.make CMakeFiles/test_cpu_shift.dir/mmu_cpu/test/shift.cpp.i
-.PHONY : mmu_cpu/test/shift.cpp.i
+mmu_cpu/test/bits/bfffo.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/bfffo.cpp.i
+.PHONY : mmu_cpu/test/bits/bfffo.cpp.i
 
-mmu_cpu/test/shift.s: mmu_cpu/test/shift.cpp.s
-.PHONY : mmu_cpu/test/shift.s
+mmu_cpu/test/bits/bfffo.s: mmu_cpu/test/bits/bfffo.cpp.s
+.PHONY : mmu_cpu/test/bits/bfffo.s
 
 # target to generate assembly for a file
-mmu_cpu/test/shift.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_shift.dir/build.make CMakeFiles/test_cpu_shift.dir/mmu_cpu/test/shift.cpp.s
-.PHONY : mmu_cpu/test/shift.cpp.s
+mmu_cpu/test/bits/bfffo.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/bfffo.cpp.s
+.PHONY : mmu_cpu/test/bits/bfffo.cpp.s
 
-mmu_cpu/test/sub.o: mmu_cpu/test/sub.cpp.o
-.PHONY : mmu_cpu/test/sub.o
+mmu_cpu/test/bits/bfins.o: mmu_cpu/test/bits/bfins.cpp.o
+.PHONY : mmu_cpu/test/bits/bfins.o
 
 # target to build an object file
-mmu_cpu/test/sub.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sub.dir/build.make CMakeFiles/test_cpu_sub.dir/mmu_cpu/test/sub.cpp.o
-.PHONY : mmu_cpu/test/sub.cpp.o
+mmu_cpu/test/bits/bfins.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/bfins.cpp.o
+.PHONY : mmu_cpu/test/bits/bfins.cpp.o
 
-mmu_cpu/test/sub.i: mmu_cpu/test/sub.cpp.i
-.PHONY : mmu_cpu/test/sub.i
+mmu_cpu/test/bits/bfins.i: mmu_cpu/test/bits/bfins.cpp.i
+.PHONY : mmu_cpu/test/bits/bfins.i
 
 # target to preprocess a source file
-mmu_cpu/test/sub.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sub.dir/build.make CMakeFiles/test_cpu_sub.dir/mmu_cpu/test/sub.cpp.i
-.PHONY : mmu_cpu/test/sub.cpp.i
+mmu_cpu/test/bits/bfins.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/bfins.cpp.i
+.PHONY : mmu_cpu/test/bits/bfins.cpp.i
 
-mmu_cpu/test/sub.s: mmu_cpu/test/sub.cpp.s
-.PHONY : mmu_cpu/test/sub.s
+mmu_cpu/test/bits/bfins.s: mmu_cpu/test/bits/bfins.cpp.s
+.PHONY : mmu_cpu/test/bits/bfins.s
 
 # target to generate assembly for a file
-mmu_cpu/test/sub.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sub.dir/build.make CMakeFiles/test_cpu_sub.dir/mmu_cpu/test/sub.cpp.s
-.PHONY : mmu_cpu/test/sub.cpp.s
+mmu_cpu/test/bits/bfins.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/bfins.cpp.s
+.PHONY : mmu_cpu/test/bits/bfins.cpp.s
 
-mmu_cpu/test/swap.o: mmu_cpu/test/swap.cpp.o
-.PHONY : mmu_cpu/test/swap.o
+mmu_cpu/test/bits/bfset.o: mmu_cpu/test/bits/bfset.cpp.o
+.PHONY : mmu_cpu/test/bits/bfset.o
 
 # target to build an object file
-mmu_cpu/test/swap.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_swap.dir/build.make CMakeFiles/test_cpu_swap.dir/mmu_cpu/test/swap.cpp.o
-.PHONY : mmu_cpu/test/swap.cpp.o
+mmu_cpu/test/bits/bfset.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/bfset.cpp.o
+.PHONY : mmu_cpu/test/bits/bfset.cpp.o
 
-mmu_cpu/test/swap.i: mmu_cpu/test/swap.cpp.i
-.PHONY : mmu_cpu/test/swap.i
+mmu_cpu/test/bits/bfset.i: mmu_cpu/test/bits/bfset.cpp.i
+.PHONY : mmu_cpu/test/bits/bfset.i
 
 # target to preprocess a source file
-mmu_cpu/test/swap.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_swap.dir/build.make CMakeFiles/test_cpu_swap.dir/mmu_cpu/test/swap.cpp.i
-.PHONY : mmu_cpu/test/swap.cpp.i
+mmu_cpu/test/bits/bfset.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/bfset.cpp.i
+.PHONY : mmu_cpu/test/bits/bfset.cpp.i
 
-mmu_cpu/test/swap.s: mmu_cpu/test/swap.cpp.s
-.PHONY : mmu_cpu/test/swap.s
+mmu_cpu/test/bits/bfset.s: mmu_cpu/test/bits/bfset.cpp.s
+.PHONY : mmu_cpu/test/bits/bfset.s
 
 # target to generate assembly for a file
-mmu_cpu/test/swap.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_swap.dir/build.make CMakeFiles/test_cpu_swap.dir/mmu_cpu/test/swap.cpp.s
-.PHONY : mmu_cpu/test/swap.cpp.s
+mmu_cpu/test/bits/bfset.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/bfset.cpp.s
+.PHONY : mmu_cpu/test/bits/bfset.cpp.s
+
+mmu_cpu/test/bits/bftst.o: mmu_cpu/test/bits/bftst.cpp.o
+.PHONY : mmu_cpu/test/bits/bftst.o
+
+# target to build an object file
+mmu_cpu/test/bits/bftst.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/bftst.cpp.o
+.PHONY : mmu_cpu/test/bits/bftst.cpp.o
+
+mmu_cpu/test/bits/bftst.i: mmu_cpu/test/bits/bftst.cpp.i
+.PHONY : mmu_cpu/test/bits/bftst.i
+
+# target to preprocess a source file
+mmu_cpu/test/bits/bftst.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/bftst.cpp.i
+.PHONY : mmu_cpu/test/bits/bftst.cpp.i
+
+mmu_cpu/test/bits/bftst.s: mmu_cpu/test/bits/bftst.cpp.s
+.PHONY : mmu_cpu/test/bits/bftst.s
+
+# target to generate assembly for a file
+mmu_cpu/test/bits/bftst.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/bftst.cpp.s
+.PHONY : mmu_cpu/test/bits/bftst.cpp.s
+
+mmu_cpu/test/bits/bset.o: mmu_cpu/test/bits/bset.cpp.o
+.PHONY : mmu_cpu/test/bits/bset.o
+
+# target to build an object file
+mmu_cpu/test/bits/bset.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/bset.cpp.o
+.PHONY : mmu_cpu/test/bits/bset.cpp.o
+
+mmu_cpu/test/bits/bset.i: mmu_cpu/test/bits/bset.cpp.i
+.PHONY : mmu_cpu/test/bits/bset.i
+
+# target to preprocess a source file
+mmu_cpu/test/bits/bset.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/bset.cpp.i
+.PHONY : mmu_cpu/test/bits/bset.cpp.i
+
+mmu_cpu/test/bits/bset.s: mmu_cpu/test/bits/bset.cpp.s
+.PHONY : mmu_cpu/test/bits/bset.s
+
+# target to generate assembly for a file
+mmu_cpu/test/bits/bset.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/bset.cpp.s
+.PHONY : mmu_cpu/test/bits/bset.cpp.s
+
+mmu_cpu/test/bits/btst.o: mmu_cpu/test/bits/btst.cpp.o
+.PHONY : mmu_cpu/test/bits/btst.o
+
+# target to build an object file
+mmu_cpu/test/bits/btst.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/btst.cpp.o
+.PHONY : mmu_cpu/test/bits/btst.cpp.o
+
+mmu_cpu/test/bits/btst.i: mmu_cpu/test/bits/btst.cpp.i
+.PHONY : mmu_cpu/test/bits/btst.i
+
+# target to preprocess a source file
+mmu_cpu/test/bits/btst.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/btst.cpp.i
+.PHONY : mmu_cpu/test/bits/btst.cpp.i
+
+mmu_cpu/test/bits/btst.s: mmu_cpu/test/bits/btst.cpp.s
+.PHONY : mmu_cpu/test/bits/btst.s
+
+# target to generate assembly for a file
+mmu_cpu/test/bits/btst.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/btst.cpp.s
+.PHONY : mmu_cpu/test/bits/btst.cpp.s
+
+mmu_cpu/test/bits/clr.o: mmu_cpu/test/bits/clr.cpp.o
+.PHONY : mmu_cpu/test/bits/clr.o
+
+# target to build an object file
+mmu_cpu/test/bits/clr.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/clr.cpp.o
+.PHONY : mmu_cpu/test/bits/clr.cpp.o
+
+mmu_cpu/test/bits/clr.i: mmu_cpu/test/bits/clr.cpp.i
+.PHONY : mmu_cpu/test/bits/clr.i
+
+# target to preprocess a source file
+mmu_cpu/test/bits/clr.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/clr.cpp.i
+.PHONY : mmu_cpu/test/bits/clr.cpp.i
+
+mmu_cpu/test/bits/clr.s: mmu_cpu/test/bits/clr.cpp.s
+.PHONY : mmu_cpu/test/bits/clr.s
+
+# target to generate assembly for a file
+mmu_cpu/test/bits/clr.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/clr.cpp.s
+.PHONY : mmu_cpu/test/bits/clr.cpp.s
+
+mmu_cpu/test/bits/eor.o: mmu_cpu/test/bits/eor.cpp.o
+.PHONY : mmu_cpu/test/bits/eor.o
+
+# target to build an object file
+mmu_cpu/test/bits/eor.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/eor.cpp.o
+.PHONY : mmu_cpu/test/bits/eor.cpp.o
+
+mmu_cpu/test/bits/eor.i: mmu_cpu/test/bits/eor.cpp.i
+.PHONY : mmu_cpu/test/bits/eor.i
+
+# target to preprocess a source file
+mmu_cpu/test/bits/eor.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/eor.cpp.i
+.PHONY : mmu_cpu/test/bits/eor.cpp.i
+
+mmu_cpu/test/bits/eor.s: mmu_cpu/test/bits/eor.cpp.s
+.PHONY : mmu_cpu/test/bits/eor.s
+
+# target to generate assembly for a file
+mmu_cpu/test/bits/eor.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/eor.cpp.s
+.PHONY : mmu_cpu/test/bits/eor.cpp.s
+
+mmu_cpu/test/bits/eori.o: mmu_cpu/test/bits/eori.cpp.o
+.PHONY : mmu_cpu/test/bits/eori.o
+
+# target to build an object file
+mmu_cpu/test/bits/eori.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/eori.cpp.o
+.PHONY : mmu_cpu/test/bits/eori.cpp.o
+
+mmu_cpu/test/bits/eori.i: mmu_cpu/test/bits/eori.cpp.i
+.PHONY : mmu_cpu/test/bits/eori.i
+
+# target to preprocess a source file
+mmu_cpu/test/bits/eori.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/eori.cpp.i
+.PHONY : mmu_cpu/test/bits/eori.cpp.i
+
+mmu_cpu/test/bits/eori.s: mmu_cpu/test/bits/eori.cpp.s
+.PHONY : mmu_cpu/test/bits/eori.s
+
+# target to generate assembly for a file
+mmu_cpu/test/bits/eori.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/eori.cpp.s
+.PHONY : mmu_cpu/test/bits/eori.cpp.s
+
+mmu_cpu/test/bits/ext.o: mmu_cpu/test/bits/ext.cpp.o
+.PHONY : mmu_cpu/test/bits/ext.o
+
+# target to build an object file
+mmu_cpu/test/bits/ext.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/ext.cpp.o
+.PHONY : mmu_cpu/test/bits/ext.cpp.o
+
+mmu_cpu/test/bits/ext.i: mmu_cpu/test/bits/ext.cpp.i
+.PHONY : mmu_cpu/test/bits/ext.i
+
+# target to preprocess a source file
+mmu_cpu/test/bits/ext.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/ext.cpp.i
+.PHONY : mmu_cpu/test/bits/ext.cpp.i
+
+mmu_cpu/test/bits/ext.s: mmu_cpu/test/bits/ext.cpp.s
+.PHONY : mmu_cpu/test/bits/ext.s
+
+# target to generate assembly for a file
+mmu_cpu/test/bits/ext.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/ext.cpp.s
+.PHONY : mmu_cpu/test/bits/ext.cpp.s
+
+mmu_cpu/test/bits/extb.o: mmu_cpu/test/bits/extb.cpp.o
+.PHONY : mmu_cpu/test/bits/extb.o
+
+# target to build an object file
+mmu_cpu/test/bits/extb.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/extb.cpp.o
+.PHONY : mmu_cpu/test/bits/extb.cpp.o
+
+mmu_cpu/test/bits/extb.i: mmu_cpu/test/bits/extb.cpp.i
+.PHONY : mmu_cpu/test/bits/extb.i
+
+# target to preprocess a source file
+mmu_cpu/test/bits/extb.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/extb.cpp.i
+.PHONY : mmu_cpu/test/bits/extb.cpp.i
+
+mmu_cpu/test/bits/extb.s: mmu_cpu/test/bits/extb.cpp.s
+.PHONY : mmu_cpu/test/bits/extb.s
+
+# target to generate assembly for a file
+mmu_cpu/test/bits/extb.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/extb.cpp.s
+.PHONY : mmu_cpu/test/bits/extb.cpp.s
+
+mmu_cpu/test/bits/lsl.o: mmu_cpu/test/bits/lsl.cpp.o
+.PHONY : mmu_cpu/test/bits/lsl.o
+
+# target to build an object file
+mmu_cpu/test/bits/lsl.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/lsl.cpp.o
+.PHONY : mmu_cpu/test/bits/lsl.cpp.o
+
+mmu_cpu/test/bits/lsl.i: mmu_cpu/test/bits/lsl.cpp.i
+.PHONY : mmu_cpu/test/bits/lsl.i
+
+# target to preprocess a source file
+mmu_cpu/test/bits/lsl.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/lsl.cpp.i
+.PHONY : mmu_cpu/test/bits/lsl.cpp.i
+
+mmu_cpu/test/bits/lsl.s: mmu_cpu/test/bits/lsl.cpp.s
+.PHONY : mmu_cpu/test/bits/lsl.s
+
+# target to generate assembly for a file
+mmu_cpu/test/bits/lsl.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/lsl.cpp.s
+.PHONY : mmu_cpu/test/bits/lsl.cpp.s
+
+mmu_cpu/test/bits/lsr.o: mmu_cpu/test/bits/lsr.cpp.o
+.PHONY : mmu_cpu/test/bits/lsr.o
+
+# target to build an object file
+mmu_cpu/test/bits/lsr.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/lsr.cpp.o
+.PHONY : mmu_cpu/test/bits/lsr.cpp.o
+
+mmu_cpu/test/bits/lsr.i: mmu_cpu/test/bits/lsr.cpp.i
+.PHONY : mmu_cpu/test/bits/lsr.i
+
+# target to preprocess a source file
+mmu_cpu/test/bits/lsr.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/lsr.cpp.i
+.PHONY : mmu_cpu/test/bits/lsr.cpp.i
+
+mmu_cpu/test/bits/lsr.s: mmu_cpu/test/bits/lsr.cpp.s
+.PHONY : mmu_cpu/test/bits/lsr.s
+
+# target to generate assembly for a file
+mmu_cpu/test/bits/lsr.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/lsr.cpp.s
+.PHONY : mmu_cpu/test/bits/lsr.cpp.s
+
+mmu_cpu/test/bits/not.o: mmu_cpu/test/bits/not.cpp.o
+.PHONY : mmu_cpu/test/bits/not.o
+
+# target to build an object file
+mmu_cpu/test/bits/not.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/not.cpp.o
+.PHONY : mmu_cpu/test/bits/not.cpp.o
+
+mmu_cpu/test/bits/not.i: mmu_cpu/test/bits/not.cpp.i
+.PHONY : mmu_cpu/test/bits/not.i
+
+# target to preprocess a source file
+mmu_cpu/test/bits/not.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/not.cpp.i
+.PHONY : mmu_cpu/test/bits/not.cpp.i
+
+mmu_cpu/test/bits/not.s: mmu_cpu/test/bits/not.cpp.s
+.PHONY : mmu_cpu/test/bits/not.s
+
+# target to generate assembly for a file
+mmu_cpu/test/bits/not.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/not.cpp.s
+.PHONY : mmu_cpu/test/bits/not.cpp.s
+
+mmu_cpu/test/bits/or.o: mmu_cpu/test/bits/or.cpp.o
+.PHONY : mmu_cpu/test/bits/or.o
+
+# target to build an object file
+mmu_cpu/test/bits/or.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/or.cpp.o
+.PHONY : mmu_cpu/test/bits/or.cpp.o
+
+mmu_cpu/test/bits/or.i: mmu_cpu/test/bits/or.cpp.i
+.PHONY : mmu_cpu/test/bits/or.i
+
+# target to preprocess a source file
+mmu_cpu/test/bits/or.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/or.cpp.i
+.PHONY : mmu_cpu/test/bits/or.cpp.i
+
+mmu_cpu/test/bits/or.s: mmu_cpu/test/bits/or.cpp.s
+.PHONY : mmu_cpu/test/bits/or.s
+
+# target to generate assembly for a file
+mmu_cpu/test/bits/or.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/or.cpp.s
+.PHONY : mmu_cpu/test/bits/or.cpp.s
+
+mmu_cpu/test/bits/ori.o: mmu_cpu/test/bits/ori.cpp.o
+.PHONY : mmu_cpu/test/bits/ori.o
+
+# target to build an object file
+mmu_cpu/test/bits/ori.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/ori.cpp.o
+.PHONY : mmu_cpu/test/bits/ori.cpp.o
+
+mmu_cpu/test/bits/ori.i: mmu_cpu/test/bits/ori.cpp.i
+.PHONY : mmu_cpu/test/bits/ori.i
+
+# target to preprocess a source file
+mmu_cpu/test/bits/ori.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/ori.cpp.i
+.PHONY : mmu_cpu/test/bits/ori.cpp.i
+
+mmu_cpu/test/bits/ori.s: mmu_cpu/test/bits/ori.cpp.s
+.PHONY : mmu_cpu/test/bits/ori.s
+
+# target to generate assembly for a file
+mmu_cpu/test/bits/ori.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/ori.cpp.s
+.PHONY : mmu_cpu/test/bits/ori.cpp.s
+
+mmu_cpu/test/bits/rol.o: mmu_cpu/test/bits/rol.cpp.o
+.PHONY : mmu_cpu/test/bits/rol.o
+
+# target to build an object file
+mmu_cpu/test/bits/rol.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/rol.cpp.o
+.PHONY : mmu_cpu/test/bits/rol.cpp.o
+
+mmu_cpu/test/bits/rol.i: mmu_cpu/test/bits/rol.cpp.i
+.PHONY : mmu_cpu/test/bits/rol.i
+
+# target to preprocess a source file
+mmu_cpu/test/bits/rol.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/rol.cpp.i
+.PHONY : mmu_cpu/test/bits/rol.cpp.i
+
+mmu_cpu/test/bits/rol.s: mmu_cpu/test/bits/rol.cpp.s
+.PHONY : mmu_cpu/test/bits/rol.s
+
+# target to generate assembly for a file
+mmu_cpu/test/bits/rol.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/rol.cpp.s
+.PHONY : mmu_cpu/test/bits/rol.cpp.s
+
+mmu_cpu/test/bits/ror.o: mmu_cpu/test/bits/ror.cpp.o
+.PHONY : mmu_cpu/test/bits/ror.o
+
+# target to build an object file
+mmu_cpu/test/bits/ror.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/ror.cpp.o
+.PHONY : mmu_cpu/test/bits/ror.cpp.o
+
+mmu_cpu/test/bits/ror.i: mmu_cpu/test/bits/ror.cpp.i
+.PHONY : mmu_cpu/test/bits/ror.i
+
+# target to preprocess a source file
+mmu_cpu/test/bits/ror.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/ror.cpp.i
+.PHONY : mmu_cpu/test/bits/ror.cpp.i
+
+mmu_cpu/test/bits/ror.s: mmu_cpu/test/bits/ror.cpp.s
+.PHONY : mmu_cpu/test/bits/ror.s
+
+# target to generate assembly for a file
+mmu_cpu/test/bits/ror.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/ror.cpp.s
+.PHONY : mmu_cpu/test/bits/ror.cpp.s
+
+mmu_cpu/test/bits/roxl.o: mmu_cpu/test/bits/roxl.cpp.o
+.PHONY : mmu_cpu/test/bits/roxl.o
+
+# target to build an object file
+mmu_cpu/test/bits/roxl.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/roxl.cpp.o
+.PHONY : mmu_cpu/test/bits/roxl.cpp.o
+
+mmu_cpu/test/bits/roxl.i: mmu_cpu/test/bits/roxl.cpp.i
+.PHONY : mmu_cpu/test/bits/roxl.i
+
+# target to preprocess a source file
+mmu_cpu/test/bits/roxl.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/roxl.cpp.i
+.PHONY : mmu_cpu/test/bits/roxl.cpp.i
+
+mmu_cpu/test/bits/roxl.s: mmu_cpu/test/bits/roxl.cpp.s
+.PHONY : mmu_cpu/test/bits/roxl.s
+
+# target to generate assembly for a file
+mmu_cpu/test/bits/roxl.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/roxl.cpp.s
+.PHONY : mmu_cpu/test/bits/roxl.cpp.s
+
+mmu_cpu/test/bits/roxr.o: mmu_cpu/test/bits/roxr.cpp.o
+.PHONY : mmu_cpu/test/bits/roxr.o
+
+# target to build an object file
+mmu_cpu/test/bits/roxr.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/roxr.cpp.o
+.PHONY : mmu_cpu/test/bits/roxr.cpp.o
+
+mmu_cpu/test/bits/roxr.i: mmu_cpu/test/bits/roxr.cpp.i
+.PHONY : mmu_cpu/test/bits/roxr.i
+
+# target to preprocess a source file
+mmu_cpu/test/bits/roxr.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/roxr.cpp.i
+.PHONY : mmu_cpu/test/bits/roxr.cpp.i
+
+mmu_cpu/test/bits/roxr.s: mmu_cpu/test/bits/roxr.cpp.s
+.PHONY : mmu_cpu/test/bits/roxr.s
+
+# target to generate assembly for a file
+mmu_cpu/test/bits/roxr.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/roxr.cpp.s
+.PHONY : mmu_cpu/test/bits/roxr.cpp.s
+
+mmu_cpu/test/bits/swap.o: mmu_cpu/test/bits/swap.cpp.o
+.PHONY : mmu_cpu/test/bits/swap.o
+
+# target to build an object file
+mmu_cpu/test/bits/swap.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/swap.cpp.o
+.PHONY : mmu_cpu/test/bits/swap.cpp.o
+
+mmu_cpu/test/bits/swap.i: mmu_cpu/test/bits/swap.cpp.i
+.PHONY : mmu_cpu/test/bits/swap.i
+
+# target to preprocess a source file
+mmu_cpu/test/bits/swap.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/swap.cpp.i
+.PHONY : mmu_cpu/test/bits/swap.cpp.i
+
+mmu_cpu/test/bits/swap.s: mmu_cpu/test/bits/swap.cpp.s
+.PHONY : mmu_cpu/test/bits/swap.s
+
+# target to generate assembly for a file
+mmu_cpu/test/bits/swap.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/swap.cpp.s
+.PHONY : mmu_cpu/test/bits/swap.cpp.s
+
+mmu_cpu/test/bits/tas.o: mmu_cpu/test/bits/tas.cpp.o
+.PHONY : mmu_cpu/test/bits/tas.o
+
+# target to build an object file
+mmu_cpu/test/bits/tas.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/tas.cpp.o
+.PHONY : mmu_cpu/test/bits/tas.cpp.o
+
+mmu_cpu/test/bits/tas.i: mmu_cpu/test/bits/tas.cpp.i
+.PHONY : mmu_cpu/test/bits/tas.i
+
+# target to preprocess a source file
+mmu_cpu/test/bits/tas.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/tas.cpp.i
+.PHONY : mmu_cpu/test/bits/tas.cpp.i
+
+mmu_cpu/test/bits/tas.s: mmu_cpu/test/bits/tas.cpp.s
+.PHONY : mmu_cpu/test/bits/tas.s
+
+# target to generate assembly for a file
+mmu_cpu/test/bits/tas.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/tas.cpp.s
+.PHONY : mmu_cpu/test/bits/tas.cpp.s
+
+mmu_cpu/test/bits/tst.o: mmu_cpu/test/bits/tst.cpp.o
+.PHONY : mmu_cpu/test/bits/tst.o
+
+# target to build an object file
+mmu_cpu/test/bits/tst.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/tst.cpp.o
+.PHONY : mmu_cpu/test/bits/tst.cpp.o
+
+mmu_cpu/test/bits/tst.i: mmu_cpu/test/bits/tst.cpp.i
+.PHONY : mmu_cpu/test/bits/tst.i
+
+# target to preprocess a source file
+mmu_cpu/test/bits/tst.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/tst.cpp.i
+.PHONY : mmu_cpu/test/bits/tst.cpp.i
+
+mmu_cpu/test/bits/tst.s: mmu_cpu/test/bits/tst.cpp.s
+.PHONY : mmu_cpu/test/bits/tst.s
+
+# target to generate assembly for a file
+mmu_cpu/test/bits/tst.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/bits/tst.cpp.s
+.PHONY : mmu_cpu/test/bits/tst.cpp.s
+
+mmu_cpu/test/branch/bcc.o: mmu_cpu/test/branch/bcc.cpp.o
+.PHONY : mmu_cpu/test/branch/bcc.o
+
+# target to build an object file
+mmu_cpu/test/branch/bcc.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/branch/bcc.cpp.o
+.PHONY : mmu_cpu/test/branch/bcc.cpp.o
+
+mmu_cpu/test/branch/bcc.i: mmu_cpu/test/branch/bcc.cpp.i
+.PHONY : mmu_cpu/test/branch/bcc.i
+
+# target to preprocess a source file
+mmu_cpu/test/branch/bcc.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/branch/bcc.cpp.i
+.PHONY : mmu_cpu/test/branch/bcc.cpp.i
+
+mmu_cpu/test/branch/bcc.s: mmu_cpu/test/branch/bcc.cpp.s
+.PHONY : mmu_cpu/test/branch/bcc.s
+
+# target to generate assembly for a file
+mmu_cpu/test/branch/bcc.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/branch/bcc.cpp.s
+.PHONY : mmu_cpu/test/branch/bcc.cpp.s
+
+mmu_cpu/test/branch/bkpt.o: mmu_cpu/test/branch/bkpt.cpp.o
+.PHONY : mmu_cpu/test/branch/bkpt.o
+
+# target to build an object file
+mmu_cpu/test/branch/bkpt.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/branch/bkpt.cpp.o
+.PHONY : mmu_cpu/test/branch/bkpt.cpp.o
+
+mmu_cpu/test/branch/bkpt.i: mmu_cpu/test/branch/bkpt.cpp.i
+.PHONY : mmu_cpu/test/branch/bkpt.i
+
+# target to preprocess a source file
+mmu_cpu/test/branch/bkpt.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/branch/bkpt.cpp.i
+.PHONY : mmu_cpu/test/branch/bkpt.cpp.i
+
+mmu_cpu/test/branch/bkpt.s: mmu_cpu/test/branch/bkpt.cpp.s
+.PHONY : mmu_cpu/test/branch/bkpt.s
+
+# target to generate assembly for a file
+mmu_cpu/test/branch/bkpt.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/branch/bkpt.cpp.s
+.PHONY : mmu_cpu/test/branch/bkpt.cpp.s
+
+mmu_cpu/test/branch/bra.o: mmu_cpu/test/branch/bra.cpp.o
+.PHONY : mmu_cpu/test/branch/bra.o
+
+# target to build an object file
+mmu_cpu/test/branch/bra.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/branch/bra.cpp.o
+.PHONY : mmu_cpu/test/branch/bra.cpp.o
+
+mmu_cpu/test/branch/bra.i: mmu_cpu/test/branch/bra.cpp.i
+.PHONY : mmu_cpu/test/branch/bra.i
+
+# target to preprocess a source file
+mmu_cpu/test/branch/bra.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/branch/bra.cpp.i
+.PHONY : mmu_cpu/test/branch/bra.cpp.i
+
+mmu_cpu/test/branch/bra.s: mmu_cpu/test/branch/bra.cpp.s
+.PHONY : mmu_cpu/test/branch/bra.s
+
+# target to generate assembly for a file
+mmu_cpu/test/branch/bra.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/branch/bra.cpp.s
+.PHONY : mmu_cpu/test/branch/bra.cpp.s
+
+mmu_cpu/test/branch/bsr.o: mmu_cpu/test/branch/bsr.cpp.o
+.PHONY : mmu_cpu/test/branch/bsr.o
+
+# target to build an object file
+mmu_cpu/test/branch/bsr.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/branch/bsr.cpp.o
+.PHONY : mmu_cpu/test/branch/bsr.cpp.o
+
+mmu_cpu/test/branch/bsr.i: mmu_cpu/test/branch/bsr.cpp.i
+.PHONY : mmu_cpu/test/branch/bsr.i
+
+# target to preprocess a source file
+mmu_cpu/test/branch/bsr.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/branch/bsr.cpp.i
+.PHONY : mmu_cpu/test/branch/bsr.cpp.i
+
+mmu_cpu/test/branch/bsr.s: mmu_cpu/test/branch/bsr.cpp.s
+.PHONY : mmu_cpu/test/branch/bsr.s
+
+# target to generate assembly for a file
+mmu_cpu/test/branch/bsr.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/branch/bsr.cpp.s
+.PHONY : mmu_cpu/test/branch/bsr.cpp.s
+
+mmu_cpu/test/branch/dbcc.o: mmu_cpu/test/branch/dbcc.cpp.o
+.PHONY : mmu_cpu/test/branch/dbcc.o
+
+# target to build an object file
+mmu_cpu/test/branch/dbcc.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/branch/dbcc.cpp.o
+.PHONY : mmu_cpu/test/branch/dbcc.cpp.o
+
+mmu_cpu/test/branch/dbcc.i: mmu_cpu/test/branch/dbcc.cpp.i
+.PHONY : mmu_cpu/test/branch/dbcc.i
+
+# target to preprocess a source file
+mmu_cpu/test/branch/dbcc.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/branch/dbcc.cpp.i
+.PHONY : mmu_cpu/test/branch/dbcc.cpp.i
+
+mmu_cpu/test/branch/dbcc.s: mmu_cpu/test/branch/dbcc.cpp.s
+.PHONY : mmu_cpu/test/branch/dbcc.s
+
+# target to generate assembly for a file
+mmu_cpu/test/branch/dbcc.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/branch/dbcc.cpp.s
+.PHONY : mmu_cpu/test/branch/dbcc.cpp.s
+
+mmu_cpu/test/branch/illegal.o: mmu_cpu/test/branch/illegal.cpp.o
+.PHONY : mmu_cpu/test/branch/illegal.o
+
+# target to build an object file
+mmu_cpu/test/branch/illegal.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/branch/illegal.cpp.o
+.PHONY : mmu_cpu/test/branch/illegal.cpp.o
+
+mmu_cpu/test/branch/illegal.i: mmu_cpu/test/branch/illegal.cpp.i
+.PHONY : mmu_cpu/test/branch/illegal.i
+
+# target to preprocess a source file
+mmu_cpu/test/branch/illegal.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/branch/illegal.cpp.i
+.PHONY : mmu_cpu/test/branch/illegal.cpp.i
+
+mmu_cpu/test/branch/illegal.s: mmu_cpu/test/branch/illegal.cpp.s
+.PHONY : mmu_cpu/test/branch/illegal.s
+
+# target to generate assembly for a file
+mmu_cpu/test/branch/illegal.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/branch/illegal.cpp.s
+.PHONY : mmu_cpu/test/branch/illegal.cpp.s
+
+mmu_cpu/test/branch/jmp.o: mmu_cpu/test/branch/jmp.cpp.o
+.PHONY : mmu_cpu/test/branch/jmp.o
+
+# target to build an object file
+mmu_cpu/test/branch/jmp.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/branch/jmp.cpp.o
+.PHONY : mmu_cpu/test/branch/jmp.cpp.o
+
+mmu_cpu/test/branch/jmp.i: mmu_cpu/test/branch/jmp.cpp.i
+.PHONY : mmu_cpu/test/branch/jmp.i
+
+# target to preprocess a source file
+mmu_cpu/test/branch/jmp.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/branch/jmp.cpp.i
+.PHONY : mmu_cpu/test/branch/jmp.cpp.i
+
+mmu_cpu/test/branch/jmp.s: mmu_cpu/test/branch/jmp.cpp.s
+.PHONY : mmu_cpu/test/branch/jmp.s
+
+# target to generate assembly for a file
+mmu_cpu/test/branch/jmp.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/branch/jmp.cpp.s
+.PHONY : mmu_cpu/test/branch/jmp.cpp.s
+
+mmu_cpu/test/branch/jsr.o: mmu_cpu/test/branch/jsr.cpp.o
+.PHONY : mmu_cpu/test/branch/jsr.o
+
+# target to build an object file
+mmu_cpu/test/branch/jsr.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/branch/jsr.cpp.o
+.PHONY : mmu_cpu/test/branch/jsr.cpp.o
+
+mmu_cpu/test/branch/jsr.i: mmu_cpu/test/branch/jsr.cpp.i
+.PHONY : mmu_cpu/test/branch/jsr.i
+
+# target to preprocess a source file
+mmu_cpu/test/branch/jsr.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/branch/jsr.cpp.i
+.PHONY : mmu_cpu/test/branch/jsr.cpp.i
+
+mmu_cpu/test/branch/jsr.s: mmu_cpu/test/branch/jsr.cpp.s
+.PHONY : mmu_cpu/test/branch/jsr.s
+
+# target to generate assembly for a file
+mmu_cpu/test/branch/jsr.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/branch/jsr.cpp.s
+.PHONY : mmu_cpu/test/branch/jsr.cpp.s
+
+mmu_cpu/test/branch/link.o: mmu_cpu/test/branch/link.cpp.o
+.PHONY : mmu_cpu/test/branch/link.o
+
+# target to build an object file
+mmu_cpu/test/branch/link.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/branch/link.cpp.o
+.PHONY : mmu_cpu/test/branch/link.cpp.o
+
+mmu_cpu/test/branch/link.i: mmu_cpu/test/branch/link.cpp.i
+.PHONY : mmu_cpu/test/branch/link.i
+
+# target to preprocess a source file
+mmu_cpu/test/branch/link.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/branch/link.cpp.i
+.PHONY : mmu_cpu/test/branch/link.cpp.i
+
+mmu_cpu/test/branch/link.s: mmu_cpu/test/branch/link.cpp.s
+.PHONY : mmu_cpu/test/branch/link.s
+
+# target to generate assembly for a file
+mmu_cpu/test/branch/link.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/branch/link.cpp.s
+.PHONY : mmu_cpu/test/branch/link.cpp.s
+
+mmu_cpu/test/branch/nop.o: mmu_cpu/test/branch/nop.cpp.o
+.PHONY : mmu_cpu/test/branch/nop.o
+
+# target to build an object file
+mmu_cpu/test/branch/nop.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/branch/nop.cpp.o
+.PHONY : mmu_cpu/test/branch/nop.cpp.o
+
+mmu_cpu/test/branch/nop.i: mmu_cpu/test/branch/nop.cpp.i
+.PHONY : mmu_cpu/test/branch/nop.i
+
+# target to preprocess a source file
+mmu_cpu/test/branch/nop.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/branch/nop.cpp.i
+.PHONY : mmu_cpu/test/branch/nop.cpp.i
+
+mmu_cpu/test/branch/nop.s: mmu_cpu/test/branch/nop.cpp.s
+.PHONY : mmu_cpu/test/branch/nop.s
+
+# target to generate assembly for a file
+mmu_cpu/test/branch/nop.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/branch/nop.cpp.s
+.PHONY : mmu_cpu/test/branch/nop.cpp.s
+
+mmu_cpu/test/branch/reset.o: mmu_cpu/test/branch/reset.cpp.o
+.PHONY : mmu_cpu/test/branch/reset.o
+
+# target to build an object file
+mmu_cpu/test/branch/reset.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/branch/reset.cpp.o
+.PHONY : mmu_cpu/test/branch/reset.cpp.o
+
+mmu_cpu/test/branch/reset.i: mmu_cpu/test/branch/reset.cpp.i
+.PHONY : mmu_cpu/test/branch/reset.i
+
+# target to preprocess a source file
+mmu_cpu/test/branch/reset.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/branch/reset.cpp.i
+.PHONY : mmu_cpu/test/branch/reset.cpp.i
+
+mmu_cpu/test/branch/reset.s: mmu_cpu/test/branch/reset.cpp.s
+.PHONY : mmu_cpu/test/branch/reset.s
+
+# target to generate assembly for a file
+mmu_cpu/test/branch/reset.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/branch/reset.cpp.s
+.PHONY : mmu_cpu/test/branch/reset.cpp.s
+
+mmu_cpu/test/branch/rtd.o: mmu_cpu/test/branch/rtd.cpp.o
+.PHONY : mmu_cpu/test/branch/rtd.o
+
+# target to build an object file
+mmu_cpu/test/branch/rtd.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/branch/rtd.cpp.o
+.PHONY : mmu_cpu/test/branch/rtd.cpp.o
+
+mmu_cpu/test/branch/rtd.i: mmu_cpu/test/branch/rtd.cpp.i
+.PHONY : mmu_cpu/test/branch/rtd.i
+
+# target to preprocess a source file
+mmu_cpu/test/branch/rtd.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/branch/rtd.cpp.i
+.PHONY : mmu_cpu/test/branch/rtd.cpp.i
+
+mmu_cpu/test/branch/rtd.s: mmu_cpu/test/branch/rtd.cpp.s
+.PHONY : mmu_cpu/test/branch/rtd.s
+
+# target to generate assembly for a file
+mmu_cpu/test/branch/rtd.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/branch/rtd.cpp.s
+.PHONY : mmu_cpu/test/branch/rtd.cpp.s
+
+mmu_cpu/test/branch/rte.o: mmu_cpu/test/branch/rte.cpp.o
+.PHONY : mmu_cpu/test/branch/rte.o
+
+# target to build an object file
+mmu_cpu/test/branch/rte.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/branch/rte.cpp.o
+.PHONY : mmu_cpu/test/branch/rte.cpp.o
+
+mmu_cpu/test/branch/rte.i: mmu_cpu/test/branch/rte.cpp.i
+.PHONY : mmu_cpu/test/branch/rte.i
+
+# target to preprocess a source file
+mmu_cpu/test/branch/rte.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/branch/rte.cpp.i
+.PHONY : mmu_cpu/test/branch/rte.cpp.i
+
+mmu_cpu/test/branch/rte.s: mmu_cpu/test/branch/rte.cpp.s
+.PHONY : mmu_cpu/test/branch/rte.s
+
+# target to generate assembly for a file
+mmu_cpu/test/branch/rte.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/branch/rte.cpp.s
+.PHONY : mmu_cpu/test/branch/rte.cpp.s
+
+mmu_cpu/test/branch/rtr.o: mmu_cpu/test/branch/rtr.cpp.o
+.PHONY : mmu_cpu/test/branch/rtr.o
+
+# target to build an object file
+mmu_cpu/test/branch/rtr.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/branch/rtr.cpp.o
+.PHONY : mmu_cpu/test/branch/rtr.cpp.o
+
+mmu_cpu/test/branch/rtr.i: mmu_cpu/test/branch/rtr.cpp.i
+.PHONY : mmu_cpu/test/branch/rtr.i
+
+# target to preprocess a source file
+mmu_cpu/test/branch/rtr.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/branch/rtr.cpp.i
+.PHONY : mmu_cpu/test/branch/rtr.cpp.i
+
+mmu_cpu/test/branch/rtr.s: mmu_cpu/test/branch/rtr.cpp.s
+.PHONY : mmu_cpu/test/branch/rtr.s
+
+# target to generate assembly for a file
+mmu_cpu/test/branch/rtr.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/branch/rtr.cpp.s
+.PHONY : mmu_cpu/test/branch/rtr.cpp.s
+
+mmu_cpu/test/branch/rts.o: mmu_cpu/test/branch/rts.cpp.o
+.PHONY : mmu_cpu/test/branch/rts.o
+
+# target to build an object file
+mmu_cpu/test/branch/rts.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/branch/rts.cpp.o
+.PHONY : mmu_cpu/test/branch/rts.cpp.o
+
+mmu_cpu/test/branch/rts.i: mmu_cpu/test/branch/rts.cpp.i
+.PHONY : mmu_cpu/test/branch/rts.i
+
+# target to preprocess a source file
+mmu_cpu/test/branch/rts.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/branch/rts.cpp.i
+.PHONY : mmu_cpu/test/branch/rts.cpp.i
+
+mmu_cpu/test/branch/rts.s: mmu_cpu/test/branch/rts.cpp.s
+.PHONY : mmu_cpu/test/branch/rts.s
+
+# target to generate assembly for a file
+mmu_cpu/test/branch/rts.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/branch/rts.cpp.s
+.PHONY : mmu_cpu/test/branch/rts.cpp.s
+
+mmu_cpu/test/branch/trap.o: mmu_cpu/test/branch/trap.cpp.o
+.PHONY : mmu_cpu/test/branch/trap.o
+
+# target to build an object file
+mmu_cpu/test/branch/trap.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/branch/trap.cpp.o
+.PHONY : mmu_cpu/test/branch/trap.cpp.o
+
+mmu_cpu/test/branch/trap.i: mmu_cpu/test/branch/trap.cpp.i
+.PHONY : mmu_cpu/test/branch/trap.i
+
+# target to preprocess a source file
+mmu_cpu/test/branch/trap.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/branch/trap.cpp.i
+.PHONY : mmu_cpu/test/branch/trap.cpp.i
+
+mmu_cpu/test/branch/trap.s: mmu_cpu/test/branch/trap.cpp.s
+.PHONY : mmu_cpu/test/branch/trap.s
+
+# target to generate assembly for a file
+mmu_cpu/test/branch/trap.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/branch/trap.cpp.s
+.PHONY : mmu_cpu/test/branch/trap.cpp.s
+
+mmu_cpu/test/branch/trapcc.o: mmu_cpu/test/branch/trapcc.cpp.o
+.PHONY : mmu_cpu/test/branch/trapcc.o
+
+# target to build an object file
+mmu_cpu/test/branch/trapcc.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/branch/trapcc.cpp.o
+.PHONY : mmu_cpu/test/branch/trapcc.cpp.o
+
+mmu_cpu/test/branch/trapcc.i: mmu_cpu/test/branch/trapcc.cpp.i
+.PHONY : mmu_cpu/test/branch/trapcc.i
+
+# target to preprocess a source file
+mmu_cpu/test/branch/trapcc.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/branch/trapcc.cpp.i
+.PHONY : mmu_cpu/test/branch/trapcc.cpp.i
+
+mmu_cpu/test/branch/trapcc.s: mmu_cpu/test/branch/trapcc.cpp.s
+.PHONY : mmu_cpu/test/branch/trapcc.s
+
+# target to generate assembly for a file
+mmu_cpu/test/branch/trapcc.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/branch/trapcc.cpp.s
+.PHONY : mmu_cpu/test/branch/trapcc.cpp.s
+
+mmu_cpu/test/branch/trapv.o: mmu_cpu/test/branch/trapv.cpp.o
+.PHONY : mmu_cpu/test/branch/trapv.o
+
+# target to build an object file
+mmu_cpu/test/branch/trapv.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/branch/trapv.cpp.o
+.PHONY : mmu_cpu/test/branch/trapv.cpp.o
+
+mmu_cpu/test/branch/trapv.i: mmu_cpu/test/branch/trapv.cpp.i
+.PHONY : mmu_cpu/test/branch/trapv.i
+
+# target to preprocess a source file
+mmu_cpu/test/branch/trapv.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/branch/trapv.cpp.i
+.PHONY : mmu_cpu/test/branch/trapv.cpp.i
+
+mmu_cpu/test/branch/trapv.s: mmu_cpu/test/branch/trapv.cpp.s
+.PHONY : mmu_cpu/test/branch/trapv.s
+
+# target to generate assembly for a file
+mmu_cpu/test/branch/trapv.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/branch/trapv.cpp.s
+.PHONY : mmu_cpu/test/branch/trapv.cpp.s
+
+mmu_cpu/test/branch/unlk.o: mmu_cpu/test/branch/unlk.cpp.o
+.PHONY : mmu_cpu/test/branch/unlk.o
+
+# target to build an object file
+mmu_cpu/test/branch/unlk.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/branch/unlk.cpp.o
+.PHONY : mmu_cpu/test/branch/unlk.cpp.o
+
+mmu_cpu/test/branch/unlk.i: mmu_cpu/test/branch/unlk.cpp.i
+.PHONY : mmu_cpu/test/branch/unlk.i
+
+# target to preprocess a source file
+mmu_cpu/test/branch/unlk.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/branch/unlk.cpp.i
+.PHONY : mmu_cpu/test/branch/unlk.cpp.i
+
+mmu_cpu/test/branch/unlk.s: mmu_cpu/test/branch/unlk.cpp.s
+.PHONY : mmu_cpu/test/branch/unlk.s
+
+# target to generate assembly for a file
+mmu_cpu/test/branch/unlk.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/branch/unlk.cpp.s
+.PHONY : mmu_cpu/test/branch/unlk.cpp.s
+
+mmu_cpu/test/cpu_impl.o: mmu_cpu/test/cpu_impl.cpp.o
+.PHONY : mmu_cpu/test/cpu_impl.o
+
+# target to build an object file
+mmu_cpu/test/cpu_impl.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/cpu_impl.cpp.o
+.PHONY : mmu_cpu/test/cpu_impl.cpp.o
+
+mmu_cpu/test/cpu_impl.i: mmu_cpu/test/cpu_impl.cpp.i
+.PHONY : mmu_cpu/test/cpu_impl.i
+
+# target to preprocess a source file
+mmu_cpu/test/cpu_impl.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/cpu_impl.cpp.i
+.PHONY : mmu_cpu/test/cpu_impl.cpp.i
+
+mmu_cpu/test/cpu_impl.s: mmu_cpu/test/cpu_impl.cpp.s
+.PHONY : mmu_cpu/test/cpu_impl.s
+
+# target to generate assembly for a file
+mmu_cpu/test/cpu_impl.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/cpu_impl.cpp.s
+.PHONY : mmu_cpu/test/cpu_impl.cpp.s
+
+mmu_cpu/test/exception.o: mmu_cpu/test/exception.cpp.o
+.PHONY : mmu_cpu/test/exception.o
+
+# target to build an object file
+mmu_cpu/test/exception.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/exception.cpp.o
+.PHONY : mmu_cpu/test/exception.cpp.o
+
+mmu_cpu/test/exception.i: mmu_cpu/test/exception.cpp.i
+.PHONY : mmu_cpu/test/exception.i
+
+# target to preprocess a source file
+mmu_cpu/test/exception.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/exception.cpp.i
+.PHONY : mmu_cpu/test/exception.cpp.i
+
+mmu_cpu/test/exception.s: mmu_cpu/test/exception.cpp.s
+.PHONY : mmu_cpu/test/exception.s
+
+# target to generate assembly for a file
+mmu_cpu/test/exception.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/exception.cpp.s
+.PHONY : mmu_cpu/test/exception.cpp.s
+
+mmu_cpu/test/fpu/fabs.o: mmu_cpu/test/fpu/fabs.cpp.o
+.PHONY : mmu_cpu/test/fpu/fabs.o
+
+# target to build an object file
+mmu_cpu/test/fpu/fabs.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fabs.cpp.o
+.PHONY : mmu_cpu/test/fpu/fabs.cpp.o
+
+mmu_cpu/test/fpu/fabs.i: mmu_cpu/test/fpu/fabs.cpp.i
+.PHONY : mmu_cpu/test/fpu/fabs.i
+
+# target to preprocess a source file
+mmu_cpu/test/fpu/fabs.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fabs.cpp.i
+.PHONY : mmu_cpu/test/fpu/fabs.cpp.i
+
+mmu_cpu/test/fpu/fabs.s: mmu_cpu/test/fpu/fabs.cpp.s
+.PHONY : mmu_cpu/test/fpu/fabs.s
+
+# target to generate assembly for a file
+mmu_cpu/test/fpu/fabs.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fabs.cpp.s
+.PHONY : mmu_cpu/test/fpu/fabs.cpp.s
+
+mmu_cpu/test/fpu/facos.o: mmu_cpu/test/fpu/facos.cpp.o
+.PHONY : mmu_cpu/test/fpu/facos.o
+
+# target to build an object file
+mmu_cpu/test/fpu/facos.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/facos.cpp.o
+.PHONY : mmu_cpu/test/fpu/facos.cpp.o
+
+mmu_cpu/test/fpu/facos.i: mmu_cpu/test/fpu/facos.cpp.i
+.PHONY : mmu_cpu/test/fpu/facos.i
+
+# target to preprocess a source file
+mmu_cpu/test/fpu/facos.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/facos.cpp.i
+.PHONY : mmu_cpu/test/fpu/facos.cpp.i
+
+mmu_cpu/test/fpu/facos.s: mmu_cpu/test/fpu/facos.cpp.s
+.PHONY : mmu_cpu/test/fpu/facos.s
+
+# target to generate assembly for a file
+mmu_cpu/test/fpu/facos.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/facos.cpp.s
+.PHONY : mmu_cpu/test/fpu/facos.cpp.s
+
+mmu_cpu/test/fpu/fadd.o: mmu_cpu/test/fpu/fadd.cpp.o
+.PHONY : mmu_cpu/test/fpu/fadd.o
+
+# target to build an object file
+mmu_cpu/test/fpu/fadd.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fadd.cpp.o
+.PHONY : mmu_cpu/test/fpu/fadd.cpp.o
+
+mmu_cpu/test/fpu/fadd.i: mmu_cpu/test/fpu/fadd.cpp.i
+.PHONY : mmu_cpu/test/fpu/fadd.i
+
+# target to preprocess a source file
+mmu_cpu/test/fpu/fadd.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fadd.cpp.i
+.PHONY : mmu_cpu/test/fpu/fadd.cpp.i
+
+mmu_cpu/test/fpu/fadd.s: mmu_cpu/test/fpu/fadd.cpp.s
+.PHONY : mmu_cpu/test/fpu/fadd.s
+
+# target to generate assembly for a file
+mmu_cpu/test/fpu/fadd.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fadd.cpp.s
+.PHONY : mmu_cpu/test/fpu/fadd.cpp.s
+
+mmu_cpu/test/fpu/fasin.o: mmu_cpu/test/fpu/fasin.cpp.o
+.PHONY : mmu_cpu/test/fpu/fasin.o
+
+# target to build an object file
+mmu_cpu/test/fpu/fasin.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fasin.cpp.o
+.PHONY : mmu_cpu/test/fpu/fasin.cpp.o
+
+mmu_cpu/test/fpu/fasin.i: mmu_cpu/test/fpu/fasin.cpp.i
+.PHONY : mmu_cpu/test/fpu/fasin.i
+
+# target to preprocess a source file
+mmu_cpu/test/fpu/fasin.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fasin.cpp.i
+.PHONY : mmu_cpu/test/fpu/fasin.cpp.i
+
+mmu_cpu/test/fpu/fasin.s: mmu_cpu/test/fpu/fasin.cpp.s
+.PHONY : mmu_cpu/test/fpu/fasin.s
+
+# target to generate assembly for a file
+mmu_cpu/test/fpu/fasin.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fasin.cpp.s
+.PHONY : mmu_cpu/test/fpu/fasin.cpp.s
+
+mmu_cpu/test/fpu/fatan.o: mmu_cpu/test/fpu/fatan.cpp.o
+.PHONY : mmu_cpu/test/fpu/fatan.o
+
+# target to build an object file
+mmu_cpu/test/fpu/fatan.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fatan.cpp.o
+.PHONY : mmu_cpu/test/fpu/fatan.cpp.o
+
+mmu_cpu/test/fpu/fatan.i: mmu_cpu/test/fpu/fatan.cpp.i
+.PHONY : mmu_cpu/test/fpu/fatan.i
+
+# target to preprocess a source file
+mmu_cpu/test/fpu/fatan.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fatan.cpp.i
+.PHONY : mmu_cpu/test/fpu/fatan.cpp.i
+
+mmu_cpu/test/fpu/fatan.s: mmu_cpu/test/fpu/fatan.cpp.s
+.PHONY : mmu_cpu/test/fpu/fatan.s
+
+# target to generate assembly for a file
+mmu_cpu/test/fpu/fatan.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fatan.cpp.s
+.PHONY : mmu_cpu/test/fpu/fatan.cpp.s
+
+mmu_cpu/test/fpu/fatanh.o: mmu_cpu/test/fpu/fatanh.cpp.o
+.PHONY : mmu_cpu/test/fpu/fatanh.o
+
+# target to build an object file
+mmu_cpu/test/fpu/fatanh.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fatanh.cpp.o
+.PHONY : mmu_cpu/test/fpu/fatanh.cpp.o
+
+mmu_cpu/test/fpu/fatanh.i: mmu_cpu/test/fpu/fatanh.cpp.i
+.PHONY : mmu_cpu/test/fpu/fatanh.i
+
+# target to preprocess a source file
+mmu_cpu/test/fpu/fatanh.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fatanh.cpp.i
+.PHONY : mmu_cpu/test/fpu/fatanh.cpp.i
+
+mmu_cpu/test/fpu/fatanh.s: mmu_cpu/test/fpu/fatanh.cpp.s
+.PHONY : mmu_cpu/test/fpu/fatanh.s
+
+# target to generate assembly for a file
+mmu_cpu/test/fpu/fatanh.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fatanh.cpp.s
+.PHONY : mmu_cpu/test/fpu/fatanh.cpp.s
+
+mmu_cpu/test/fpu/fbcc.o: mmu_cpu/test/fpu/fbcc.cpp.o
+.PHONY : mmu_cpu/test/fpu/fbcc.o
+
+# target to build an object file
+mmu_cpu/test/fpu/fbcc.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fbcc.cpp.o
+.PHONY : mmu_cpu/test/fpu/fbcc.cpp.o
+
+mmu_cpu/test/fpu/fbcc.i: mmu_cpu/test/fpu/fbcc.cpp.i
+.PHONY : mmu_cpu/test/fpu/fbcc.i
+
+# target to preprocess a source file
+mmu_cpu/test/fpu/fbcc.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fbcc.cpp.i
+.PHONY : mmu_cpu/test/fpu/fbcc.cpp.i
+
+mmu_cpu/test/fpu/fbcc.s: mmu_cpu/test/fpu/fbcc.cpp.s
+.PHONY : mmu_cpu/test/fpu/fbcc.s
+
+# target to generate assembly for a file
+mmu_cpu/test/fpu/fbcc.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fbcc.cpp.s
+.PHONY : mmu_cpu/test/fpu/fbcc.cpp.s
+
+mmu_cpu/test/fpu/fcmp.o: mmu_cpu/test/fpu/fcmp.cpp.o
+.PHONY : mmu_cpu/test/fpu/fcmp.o
+
+# target to build an object file
+mmu_cpu/test/fpu/fcmp.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fcmp.cpp.o
+.PHONY : mmu_cpu/test/fpu/fcmp.cpp.o
+
+mmu_cpu/test/fpu/fcmp.i: mmu_cpu/test/fpu/fcmp.cpp.i
+.PHONY : mmu_cpu/test/fpu/fcmp.i
+
+# target to preprocess a source file
+mmu_cpu/test/fpu/fcmp.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fcmp.cpp.i
+.PHONY : mmu_cpu/test/fpu/fcmp.cpp.i
+
+mmu_cpu/test/fpu/fcmp.s: mmu_cpu/test/fpu/fcmp.cpp.s
+.PHONY : mmu_cpu/test/fpu/fcmp.s
+
+# target to generate assembly for a file
+mmu_cpu/test/fpu/fcmp.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fcmp.cpp.s
+.PHONY : mmu_cpu/test/fpu/fcmp.cpp.s
+
+mmu_cpu/test/fpu/fcos.o: mmu_cpu/test/fpu/fcos.cpp.o
+.PHONY : mmu_cpu/test/fpu/fcos.o
+
+# target to build an object file
+mmu_cpu/test/fpu/fcos.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fcos.cpp.o
+.PHONY : mmu_cpu/test/fpu/fcos.cpp.o
+
+mmu_cpu/test/fpu/fcos.i: mmu_cpu/test/fpu/fcos.cpp.i
+.PHONY : mmu_cpu/test/fpu/fcos.i
+
+# target to preprocess a source file
+mmu_cpu/test/fpu/fcos.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fcos.cpp.i
+.PHONY : mmu_cpu/test/fpu/fcos.cpp.i
+
+mmu_cpu/test/fpu/fcos.s: mmu_cpu/test/fpu/fcos.cpp.s
+.PHONY : mmu_cpu/test/fpu/fcos.s
+
+# target to generate assembly for a file
+mmu_cpu/test/fpu/fcos.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fcos.cpp.s
+.PHONY : mmu_cpu/test/fpu/fcos.cpp.s
+
+mmu_cpu/test/fpu/fcosh.o: mmu_cpu/test/fpu/fcosh.cpp.o
+.PHONY : mmu_cpu/test/fpu/fcosh.o
+
+# target to build an object file
+mmu_cpu/test/fpu/fcosh.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fcosh.cpp.o
+.PHONY : mmu_cpu/test/fpu/fcosh.cpp.o
+
+mmu_cpu/test/fpu/fcosh.i: mmu_cpu/test/fpu/fcosh.cpp.i
+.PHONY : mmu_cpu/test/fpu/fcosh.i
+
+# target to preprocess a source file
+mmu_cpu/test/fpu/fcosh.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fcosh.cpp.i
+.PHONY : mmu_cpu/test/fpu/fcosh.cpp.i
+
+mmu_cpu/test/fpu/fcosh.s: mmu_cpu/test/fpu/fcosh.cpp.s
+.PHONY : mmu_cpu/test/fpu/fcosh.s
+
+# target to generate assembly for a file
+mmu_cpu/test/fpu/fcosh.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fcosh.cpp.s
+.PHONY : mmu_cpu/test/fpu/fcosh.cpp.s
+
+mmu_cpu/test/fpu/fdbcc.o: mmu_cpu/test/fpu/fdbcc.cpp.o
+.PHONY : mmu_cpu/test/fpu/fdbcc.o
+
+# target to build an object file
+mmu_cpu/test/fpu/fdbcc.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fdbcc.cpp.o
+.PHONY : mmu_cpu/test/fpu/fdbcc.cpp.o
+
+mmu_cpu/test/fpu/fdbcc.i: mmu_cpu/test/fpu/fdbcc.cpp.i
+.PHONY : mmu_cpu/test/fpu/fdbcc.i
+
+# target to preprocess a source file
+mmu_cpu/test/fpu/fdbcc.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fdbcc.cpp.i
+.PHONY : mmu_cpu/test/fpu/fdbcc.cpp.i
+
+mmu_cpu/test/fpu/fdbcc.s: mmu_cpu/test/fpu/fdbcc.cpp.s
+.PHONY : mmu_cpu/test/fpu/fdbcc.s
+
+# target to generate assembly for a file
+mmu_cpu/test/fpu/fdbcc.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fdbcc.cpp.s
+.PHONY : mmu_cpu/test/fpu/fdbcc.cpp.s
+
+mmu_cpu/test/fpu/fdiv.o: mmu_cpu/test/fpu/fdiv.cpp.o
+.PHONY : mmu_cpu/test/fpu/fdiv.o
+
+# target to build an object file
+mmu_cpu/test/fpu/fdiv.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fdiv.cpp.o
+.PHONY : mmu_cpu/test/fpu/fdiv.cpp.o
+
+mmu_cpu/test/fpu/fdiv.i: mmu_cpu/test/fpu/fdiv.cpp.i
+.PHONY : mmu_cpu/test/fpu/fdiv.i
+
+# target to preprocess a source file
+mmu_cpu/test/fpu/fdiv.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fdiv.cpp.i
+.PHONY : mmu_cpu/test/fpu/fdiv.cpp.i
+
+mmu_cpu/test/fpu/fdiv.s: mmu_cpu/test/fpu/fdiv.cpp.s
+.PHONY : mmu_cpu/test/fpu/fdiv.s
+
+# target to generate assembly for a file
+mmu_cpu/test/fpu/fdiv.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fdiv.cpp.s
+.PHONY : mmu_cpu/test/fpu/fdiv.cpp.s
+
+mmu_cpu/test/fpu/fetox.o: mmu_cpu/test/fpu/fetox.cpp.o
+.PHONY : mmu_cpu/test/fpu/fetox.o
+
+# target to build an object file
+mmu_cpu/test/fpu/fetox.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fetox.cpp.o
+.PHONY : mmu_cpu/test/fpu/fetox.cpp.o
+
+mmu_cpu/test/fpu/fetox.i: mmu_cpu/test/fpu/fetox.cpp.i
+.PHONY : mmu_cpu/test/fpu/fetox.i
+
+# target to preprocess a source file
+mmu_cpu/test/fpu/fetox.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fetox.cpp.i
+.PHONY : mmu_cpu/test/fpu/fetox.cpp.i
+
+mmu_cpu/test/fpu/fetox.s: mmu_cpu/test/fpu/fetox.cpp.s
+.PHONY : mmu_cpu/test/fpu/fetox.s
+
+# target to generate assembly for a file
+mmu_cpu/test/fpu/fetox.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fetox.cpp.s
+.PHONY : mmu_cpu/test/fpu/fetox.cpp.s
+
+mmu_cpu/test/fpu/fetoxm1.o: mmu_cpu/test/fpu/fetoxm1.cpp.o
+.PHONY : mmu_cpu/test/fpu/fetoxm1.o
+
+# target to build an object file
+mmu_cpu/test/fpu/fetoxm1.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fetoxm1.cpp.o
+.PHONY : mmu_cpu/test/fpu/fetoxm1.cpp.o
+
+mmu_cpu/test/fpu/fetoxm1.i: mmu_cpu/test/fpu/fetoxm1.cpp.i
+.PHONY : mmu_cpu/test/fpu/fetoxm1.i
+
+# target to preprocess a source file
+mmu_cpu/test/fpu/fetoxm1.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fetoxm1.cpp.i
+.PHONY : mmu_cpu/test/fpu/fetoxm1.cpp.i
+
+mmu_cpu/test/fpu/fetoxm1.s: mmu_cpu/test/fpu/fetoxm1.cpp.s
+.PHONY : mmu_cpu/test/fpu/fetoxm1.s
+
+# target to generate assembly for a file
+mmu_cpu/test/fpu/fetoxm1.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fetoxm1.cpp.s
+.PHONY : mmu_cpu/test/fpu/fetoxm1.cpp.s
+
+mmu_cpu/test/fpu/fgetexp.o: mmu_cpu/test/fpu/fgetexp.cpp.o
+.PHONY : mmu_cpu/test/fpu/fgetexp.o
+
+# target to build an object file
+mmu_cpu/test/fpu/fgetexp.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fgetexp.cpp.o
+.PHONY : mmu_cpu/test/fpu/fgetexp.cpp.o
+
+mmu_cpu/test/fpu/fgetexp.i: mmu_cpu/test/fpu/fgetexp.cpp.i
+.PHONY : mmu_cpu/test/fpu/fgetexp.i
+
+# target to preprocess a source file
+mmu_cpu/test/fpu/fgetexp.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fgetexp.cpp.i
+.PHONY : mmu_cpu/test/fpu/fgetexp.cpp.i
+
+mmu_cpu/test/fpu/fgetexp.s: mmu_cpu/test/fpu/fgetexp.cpp.s
+.PHONY : mmu_cpu/test/fpu/fgetexp.s
+
+# target to generate assembly for a file
+mmu_cpu/test/fpu/fgetexp.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fgetexp.cpp.s
+.PHONY : mmu_cpu/test/fpu/fgetexp.cpp.s
+
+mmu_cpu/test/fpu/fgetman.o: mmu_cpu/test/fpu/fgetman.cpp.o
+.PHONY : mmu_cpu/test/fpu/fgetman.o
+
+# target to build an object file
+mmu_cpu/test/fpu/fgetman.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fgetman.cpp.o
+.PHONY : mmu_cpu/test/fpu/fgetman.cpp.o
+
+mmu_cpu/test/fpu/fgetman.i: mmu_cpu/test/fpu/fgetman.cpp.i
+.PHONY : mmu_cpu/test/fpu/fgetman.i
+
+# target to preprocess a source file
+mmu_cpu/test/fpu/fgetman.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fgetman.cpp.i
+.PHONY : mmu_cpu/test/fpu/fgetman.cpp.i
+
+mmu_cpu/test/fpu/fgetman.s: mmu_cpu/test/fpu/fgetman.cpp.s
+.PHONY : mmu_cpu/test/fpu/fgetman.s
+
+# target to generate assembly for a file
+mmu_cpu/test/fpu/fgetman.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fgetman.cpp.s
+.PHONY : mmu_cpu/test/fpu/fgetman.cpp.s
+
+mmu_cpu/test/fpu/fint.o: mmu_cpu/test/fpu/fint.cpp.o
+.PHONY : mmu_cpu/test/fpu/fint.o
+
+# target to build an object file
+mmu_cpu/test/fpu/fint.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fint.cpp.o
+.PHONY : mmu_cpu/test/fpu/fint.cpp.o
+
+mmu_cpu/test/fpu/fint.i: mmu_cpu/test/fpu/fint.cpp.i
+.PHONY : mmu_cpu/test/fpu/fint.i
+
+# target to preprocess a source file
+mmu_cpu/test/fpu/fint.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fint.cpp.i
+.PHONY : mmu_cpu/test/fpu/fint.cpp.i
+
+mmu_cpu/test/fpu/fint.s: mmu_cpu/test/fpu/fint.cpp.s
+.PHONY : mmu_cpu/test/fpu/fint.s
+
+# target to generate assembly for a file
+mmu_cpu/test/fpu/fint.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fint.cpp.s
+.PHONY : mmu_cpu/test/fpu/fint.cpp.s
+
+mmu_cpu/test/fpu/fintrz.o: mmu_cpu/test/fpu/fintrz.cpp.o
+.PHONY : mmu_cpu/test/fpu/fintrz.o
+
+# target to build an object file
+mmu_cpu/test/fpu/fintrz.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fintrz.cpp.o
+.PHONY : mmu_cpu/test/fpu/fintrz.cpp.o
+
+mmu_cpu/test/fpu/fintrz.i: mmu_cpu/test/fpu/fintrz.cpp.i
+.PHONY : mmu_cpu/test/fpu/fintrz.i
+
+# target to preprocess a source file
+mmu_cpu/test/fpu/fintrz.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fintrz.cpp.i
+.PHONY : mmu_cpu/test/fpu/fintrz.cpp.i
+
+mmu_cpu/test/fpu/fintrz.s: mmu_cpu/test/fpu/fintrz.cpp.s
+.PHONY : mmu_cpu/test/fpu/fintrz.s
+
+# target to generate assembly for a file
+mmu_cpu/test/fpu/fintrz.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fintrz.cpp.s
+.PHONY : mmu_cpu/test/fpu/fintrz.cpp.s
+
+mmu_cpu/test/fpu/flog10.o: mmu_cpu/test/fpu/flog10.cpp.o
+.PHONY : mmu_cpu/test/fpu/flog10.o
+
+# target to build an object file
+mmu_cpu/test/fpu/flog10.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/flog10.cpp.o
+.PHONY : mmu_cpu/test/fpu/flog10.cpp.o
+
+mmu_cpu/test/fpu/flog10.i: mmu_cpu/test/fpu/flog10.cpp.i
+.PHONY : mmu_cpu/test/fpu/flog10.i
+
+# target to preprocess a source file
+mmu_cpu/test/fpu/flog10.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/flog10.cpp.i
+.PHONY : mmu_cpu/test/fpu/flog10.cpp.i
+
+mmu_cpu/test/fpu/flog10.s: mmu_cpu/test/fpu/flog10.cpp.s
+.PHONY : mmu_cpu/test/fpu/flog10.s
+
+# target to generate assembly for a file
+mmu_cpu/test/fpu/flog10.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/flog10.cpp.s
+.PHONY : mmu_cpu/test/fpu/flog10.cpp.s
+
+mmu_cpu/test/fpu/flog2.o: mmu_cpu/test/fpu/flog2.cpp.o
+.PHONY : mmu_cpu/test/fpu/flog2.o
+
+# target to build an object file
+mmu_cpu/test/fpu/flog2.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/flog2.cpp.o
+.PHONY : mmu_cpu/test/fpu/flog2.cpp.o
+
+mmu_cpu/test/fpu/flog2.i: mmu_cpu/test/fpu/flog2.cpp.i
+.PHONY : mmu_cpu/test/fpu/flog2.i
+
+# target to preprocess a source file
+mmu_cpu/test/fpu/flog2.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/flog2.cpp.i
+.PHONY : mmu_cpu/test/fpu/flog2.cpp.i
+
+mmu_cpu/test/fpu/flog2.s: mmu_cpu/test/fpu/flog2.cpp.s
+.PHONY : mmu_cpu/test/fpu/flog2.s
+
+# target to generate assembly for a file
+mmu_cpu/test/fpu/flog2.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/flog2.cpp.s
+.PHONY : mmu_cpu/test/fpu/flog2.cpp.s
+
+mmu_cpu/test/fpu/flogn.o: mmu_cpu/test/fpu/flogn.cpp.o
+.PHONY : mmu_cpu/test/fpu/flogn.o
+
+# target to build an object file
+mmu_cpu/test/fpu/flogn.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/flogn.cpp.o
+.PHONY : mmu_cpu/test/fpu/flogn.cpp.o
+
+mmu_cpu/test/fpu/flogn.i: mmu_cpu/test/fpu/flogn.cpp.i
+.PHONY : mmu_cpu/test/fpu/flogn.i
+
+# target to preprocess a source file
+mmu_cpu/test/fpu/flogn.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/flogn.cpp.i
+.PHONY : mmu_cpu/test/fpu/flogn.cpp.i
+
+mmu_cpu/test/fpu/flogn.s: mmu_cpu/test/fpu/flogn.cpp.s
+.PHONY : mmu_cpu/test/fpu/flogn.s
+
+# target to generate assembly for a file
+mmu_cpu/test/fpu/flogn.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/flogn.cpp.s
+.PHONY : mmu_cpu/test/fpu/flogn.cpp.s
+
+mmu_cpu/test/fpu/flognp1.o: mmu_cpu/test/fpu/flognp1.cpp.o
+.PHONY : mmu_cpu/test/fpu/flognp1.o
+
+# target to build an object file
+mmu_cpu/test/fpu/flognp1.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/flognp1.cpp.o
+.PHONY : mmu_cpu/test/fpu/flognp1.cpp.o
+
+mmu_cpu/test/fpu/flognp1.i: mmu_cpu/test/fpu/flognp1.cpp.i
+.PHONY : mmu_cpu/test/fpu/flognp1.i
+
+# target to preprocess a source file
+mmu_cpu/test/fpu/flognp1.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/flognp1.cpp.i
+.PHONY : mmu_cpu/test/fpu/flognp1.cpp.i
+
+mmu_cpu/test/fpu/flognp1.s: mmu_cpu/test/fpu/flognp1.cpp.s
+.PHONY : mmu_cpu/test/fpu/flognp1.s
+
+# target to generate assembly for a file
+mmu_cpu/test/fpu/flognp1.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/flognp1.cpp.s
+.PHONY : mmu_cpu/test/fpu/flognp1.cpp.s
+
+mmu_cpu/test/fpu/fmod.o: mmu_cpu/test/fpu/fmod.cpp.o
+.PHONY : mmu_cpu/test/fpu/fmod.o
+
+# target to build an object file
+mmu_cpu/test/fpu/fmod.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fmod.cpp.o
+.PHONY : mmu_cpu/test/fpu/fmod.cpp.o
+
+mmu_cpu/test/fpu/fmod.i: mmu_cpu/test/fpu/fmod.cpp.i
+.PHONY : mmu_cpu/test/fpu/fmod.i
+
+# target to preprocess a source file
+mmu_cpu/test/fpu/fmod.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fmod.cpp.i
+.PHONY : mmu_cpu/test/fpu/fmod.cpp.i
+
+mmu_cpu/test/fpu/fmod.s: mmu_cpu/test/fpu/fmod.cpp.s
+.PHONY : mmu_cpu/test/fpu/fmod.s
+
+# target to generate assembly for a file
+mmu_cpu/test/fpu/fmod.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fmod.cpp.s
+.PHONY : mmu_cpu/test/fpu/fmod.cpp.s
+
+mmu_cpu/test/fpu/fmove.o: mmu_cpu/test/fpu/fmove.cpp.o
+.PHONY : mmu_cpu/test/fpu/fmove.o
+
+# target to build an object file
+mmu_cpu/test/fpu/fmove.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fmove.cpp.o
+.PHONY : mmu_cpu/test/fpu/fmove.cpp.o
+
+mmu_cpu/test/fpu/fmove.i: mmu_cpu/test/fpu/fmove.cpp.i
+.PHONY : mmu_cpu/test/fpu/fmove.i
+
+# target to preprocess a source file
+mmu_cpu/test/fpu/fmove.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fmove.cpp.i
+.PHONY : mmu_cpu/test/fpu/fmove.cpp.i
+
+mmu_cpu/test/fpu/fmove.s: mmu_cpu/test/fpu/fmove.cpp.s
+.PHONY : mmu_cpu/test/fpu/fmove.s
+
+# target to generate assembly for a file
+mmu_cpu/test/fpu/fmove.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fmove.cpp.s
+.PHONY : mmu_cpu/test/fpu/fmove.cpp.s
+
+mmu_cpu/test/fpu/fmovecr.o: mmu_cpu/test/fpu/fmovecr.cpp.o
+.PHONY : mmu_cpu/test/fpu/fmovecr.o
+
+# target to build an object file
+mmu_cpu/test/fpu/fmovecr.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fmovecr.cpp.o
+.PHONY : mmu_cpu/test/fpu/fmovecr.cpp.o
+
+mmu_cpu/test/fpu/fmovecr.i: mmu_cpu/test/fpu/fmovecr.cpp.i
+.PHONY : mmu_cpu/test/fpu/fmovecr.i
+
+# target to preprocess a source file
+mmu_cpu/test/fpu/fmovecr.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fmovecr.cpp.i
+.PHONY : mmu_cpu/test/fpu/fmovecr.cpp.i
+
+mmu_cpu/test/fpu/fmovecr.s: mmu_cpu/test/fpu/fmovecr.cpp.s
+.PHONY : mmu_cpu/test/fpu/fmovecr.s
+
+# target to generate assembly for a file
+mmu_cpu/test/fpu/fmovecr.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fmovecr.cpp.s
+.PHONY : mmu_cpu/test/fpu/fmovecr.cpp.s
+
+mmu_cpu/test/fpu/fmovem.o: mmu_cpu/test/fpu/fmovem.cpp.o
+.PHONY : mmu_cpu/test/fpu/fmovem.o
+
+# target to build an object file
+mmu_cpu/test/fpu/fmovem.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fmovem.cpp.o
+.PHONY : mmu_cpu/test/fpu/fmovem.cpp.o
+
+mmu_cpu/test/fpu/fmovem.i: mmu_cpu/test/fpu/fmovem.cpp.i
+.PHONY : mmu_cpu/test/fpu/fmovem.i
+
+# target to preprocess a source file
+mmu_cpu/test/fpu/fmovem.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fmovem.cpp.i
+.PHONY : mmu_cpu/test/fpu/fmovem.cpp.i
+
+mmu_cpu/test/fpu/fmovem.s: mmu_cpu/test/fpu/fmovem.cpp.s
+.PHONY : mmu_cpu/test/fpu/fmovem.s
+
+# target to generate assembly for a file
+mmu_cpu/test/fpu/fmovem.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fmovem.cpp.s
+.PHONY : mmu_cpu/test/fpu/fmovem.cpp.s
+
+mmu_cpu/test/fpu/fmul.o: mmu_cpu/test/fpu/fmul.cpp.o
+.PHONY : mmu_cpu/test/fpu/fmul.o
+
+# target to build an object file
+mmu_cpu/test/fpu/fmul.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fmul.cpp.o
+.PHONY : mmu_cpu/test/fpu/fmul.cpp.o
+
+mmu_cpu/test/fpu/fmul.i: mmu_cpu/test/fpu/fmul.cpp.i
+.PHONY : mmu_cpu/test/fpu/fmul.i
+
+# target to preprocess a source file
+mmu_cpu/test/fpu/fmul.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fmul.cpp.i
+.PHONY : mmu_cpu/test/fpu/fmul.cpp.i
+
+mmu_cpu/test/fpu/fmul.s: mmu_cpu/test/fpu/fmul.cpp.s
+.PHONY : mmu_cpu/test/fpu/fmul.s
+
+# target to generate assembly for a file
+mmu_cpu/test/fpu/fmul.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fmul.cpp.s
+.PHONY : mmu_cpu/test/fpu/fmul.cpp.s
+
+mmu_cpu/test/fpu/fneg.o: mmu_cpu/test/fpu/fneg.cpp.o
+.PHONY : mmu_cpu/test/fpu/fneg.o
+
+# target to build an object file
+mmu_cpu/test/fpu/fneg.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fneg.cpp.o
+.PHONY : mmu_cpu/test/fpu/fneg.cpp.o
+
+mmu_cpu/test/fpu/fneg.i: mmu_cpu/test/fpu/fneg.cpp.i
+.PHONY : mmu_cpu/test/fpu/fneg.i
+
+# target to preprocess a source file
+mmu_cpu/test/fpu/fneg.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fneg.cpp.i
+.PHONY : mmu_cpu/test/fpu/fneg.cpp.i
+
+mmu_cpu/test/fpu/fneg.s: mmu_cpu/test/fpu/fneg.cpp.s
+.PHONY : mmu_cpu/test/fpu/fneg.s
+
+# target to generate assembly for a file
+mmu_cpu/test/fpu/fneg.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fneg.cpp.s
+.PHONY : mmu_cpu/test/fpu/fneg.cpp.s
+
+mmu_cpu/test/fpu/fnop.o: mmu_cpu/test/fpu/fnop.cpp.o
+.PHONY : mmu_cpu/test/fpu/fnop.o
+
+# target to build an object file
+mmu_cpu/test/fpu/fnop.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fnop.cpp.o
+.PHONY : mmu_cpu/test/fpu/fnop.cpp.o
+
+mmu_cpu/test/fpu/fnop.i: mmu_cpu/test/fpu/fnop.cpp.i
+.PHONY : mmu_cpu/test/fpu/fnop.i
+
+# target to preprocess a source file
+mmu_cpu/test/fpu/fnop.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fnop.cpp.i
+.PHONY : mmu_cpu/test/fpu/fnop.cpp.i
+
+mmu_cpu/test/fpu/fnop.s: mmu_cpu/test/fpu/fnop.cpp.s
+.PHONY : mmu_cpu/test/fpu/fnop.s
+
+# target to generate assembly for a file
+mmu_cpu/test/fpu/fnop.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fnop.cpp.s
+.PHONY : mmu_cpu/test/fpu/fnop.cpp.s
+
+mmu_cpu/test/fpu/frem.o: mmu_cpu/test/fpu/frem.cpp.o
+.PHONY : mmu_cpu/test/fpu/frem.o
+
+# target to build an object file
+mmu_cpu/test/fpu/frem.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/frem.cpp.o
+.PHONY : mmu_cpu/test/fpu/frem.cpp.o
+
+mmu_cpu/test/fpu/frem.i: mmu_cpu/test/fpu/frem.cpp.i
+.PHONY : mmu_cpu/test/fpu/frem.i
+
+# target to preprocess a source file
+mmu_cpu/test/fpu/frem.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/frem.cpp.i
+.PHONY : mmu_cpu/test/fpu/frem.cpp.i
+
+mmu_cpu/test/fpu/frem.s: mmu_cpu/test/fpu/frem.cpp.s
+.PHONY : mmu_cpu/test/fpu/frem.s
+
+# target to generate assembly for a file
+mmu_cpu/test/fpu/frem.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/frem.cpp.s
+.PHONY : mmu_cpu/test/fpu/frem.cpp.s
+
+mmu_cpu/test/fpu/fscale.o: mmu_cpu/test/fpu/fscale.cpp.o
+.PHONY : mmu_cpu/test/fpu/fscale.o
+
+# target to build an object file
+mmu_cpu/test/fpu/fscale.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fscale.cpp.o
+.PHONY : mmu_cpu/test/fpu/fscale.cpp.o
+
+mmu_cpu/test/fpu/fscale.i: mmu_cpu/test/fpu/fscale.cpp.i
+.PHONY : mmu_cpu/test/fpu/fscale.i
+
+# target to preprocess a source file
+mmu_cpu/test/fpu/fscale.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fscale.cpp.i
+.PHONY : mmu_cpu/test/fpu/fscale.cpp.i
+
+mmu_cpu/test/fpu/fscale.s: mmu_cpu/test/fpu/fscale.cpp.s
+.PHONY : mmu_cpu/test/fpu/fscale.s
+
+# target to generate assembly for a file
+mmu_cpu/test/fpu/fscale.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fscale.cpp.s
+.PHONY : mmu_cpu/test/fpu/fscale.cpp.s
+
+mmu_cpu/test/fpu/fscc.o: mmu_cpu/test/fpu/fscc.cpp.o
+.PHONY : mmu_cpu/test/fpu/fscc.o
+
+# target to build an object file
+mmu_cpu/test/fpu/fscc.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fscc.cpp.o
+.PHONY : mmu_cpu/test/fpu/fscc.cpp.o
+
+mmu_cpu/test/fpu/fscc.i: mmu_cpu/test/fpu/fscc.cpp.i
+.PHONY : mmu_cpu/test/fpu/fscc.i
+
+# target to preprocess a source file
+mmu_cpu/test/fpu/fscc.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fscc.cpp.i
+.PHONY : mmu_cpu/test/fpu/fscc.cpp.i
+
+mmu_cpu/test/fpu/fscc.s: mmu_cpu/test/fpu/fscc.cpp.s
+.PHONY : mmu_cpu/test/fpu/fscc.s
+
+# target to generate assembly for a file
+mmu_cpu/test/fpu/fscc.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fscc.cpp.s
+.PHONY : mmu_cpu/test/fpu/fscc.cpp.s
+
+mmu_cpu/test/fpu/fsgldiv.o: mmu_cpu/test/fpu/fsgldiv.cpp.o
+.PHONY : mmu_cpu/test/fpu/fsgldiv.o
+
+# target to build an object file
+mmu_cpu/test/fpu/fsgldiv.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fsgldiv.cpp.o
+.PHONY : mmu_cpu/test/fpu/fsgldiv.cpp.o
+
+mmu_cpu/test/fpu/fsgldiv.i: mmu_cpu/test/fpu/fsgldiv.cpp.i
+.PHONY : mmu_cpu/test/fpu/fsgldiv.i
+
+# target to preprocess a source file
+mmu_cpu/test/fpu/fsgldiv.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fsgldiv.cpp.i
+.PHONY : mmu_cpu/test/fpu/fsgldiv.cpp.i
+
+mmu_cpu/test/fpu/fsgldiv.s: mmu_cpu/test/fpu/fsgldiv.cpp.s
+.PHONY : mmu_cpu/test/fpu/fsgldiv.s
+
+# target to generate assembly for a file
+mmu_cpu/test/fpu/fsgldiv.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fsgldiv.cpp.s
+.PHONY : mmu_cpu/test/fpu/fsgldiv.cpp.s
+
+mmu_cpu/test/fpu/fsglmul.o: mmu_cpu/test/fpu/fsglmul.cpp.o
+.PHONY : mmu_cpu/test/fpu/fsglmul.o
+
+# target to build an object file
+mmu_cpu/test/fpu/fsglmul.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fsglmul.cpp.o
+.PHONY : mmu_cpu/test/fpu/fsglmul.cpp.o
+
+mmu_cpu/test/fpu/fsglmul.i: mmu_cpu/test/fpu/fsglmul.cpp.i
+.PHONY : mmu_cpu/test/fpu/fsglmul.i
+
+# target to preprocess a source file
+mmu_cpu/test/fpu/fsglmul.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fsglmul.cpp.i
+.PHONY : mmu_cpu/test/fpu/fsglmul.cpp.i
+
+mmu_cpu/test/fpu/fsglmul.s: mmu_cpu/test/fpu/fsglmul.cpp.s
+.PHONY : mmu_cpu/test/fpu/fsglmul.s
+
+# target to generate assembly for a file
+mmu_cpu/test/fpu/fsglmul.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fsglmul.cpp.s
+.PHONY : mmu_cpu/test/fpu/fsglmul.cpp.s
+
+mmu_cpu/test/fpu/fsin.o: mmu_cpu/test/fpu/fsin.cpp.o
+.PHONY : mmu_cpu/test/fpu/fsin.o
+
+# target to build an object file
+mmu_cpu/test/fpu/fsin.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fsin.cpp.o
+.PHONY : mmu_cpu/test/fpu/fsin.cpp.o
+
+mmu_cpu/test/fpu/fsin.i: mmu_cpu/test/fpu/fsin.cpp.i
+.PHONY : mmu_cpu/test/fpu/fsin.i
+
+# target to preprocess a source file
+mmu_cpu/test/fpu/fsin.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fsin.cpp.i
+.PHONY : mmu_cpu/test/fpu/fsin.cpp.i
+
+mmu_cpu/test/fpu/fsin.s: mmu_cpu/test/fpu/fsin.cpp.s
+.PHONY : mmu_cpu/test/fpu/fsin.s
+
+# target to generate assembly for a file
+mmu_cpu/test/fpu/fsin.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fsin.cpp.s
+.PHONY : mmu_cpu/test/fpu/fsin.cpp.s
+
+mmu_cpu/test/fpu/fsincos.o: mmu_cpu/test/fpu/fsincos.cpp.o
+.PHONY : mmu_cpu/test/fpu/fsincos.o
+
+# target to build an object file
+mmu_cpu/test/fpu/fsincos.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fsincos.cpp.o
+.PHONY : mmu_cpu/test/fpu/fsincos.cpp.o
+
+mmu_cpu/test/fpu/fsincos.i: mmu_cpu/test/fpu/fsincos.cpp.i
+.PHONY : mmu_cpu/test/fpu/fsincos.i
+
+# target to preprocess a source file
+mmu_cpu/test/fpu/fsincos.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fsincos.cpp.i
+.PHONY : mmu_cpu/test/fpu/fsincos.cpp.i
+
+mmu_cpu/test/fpu/fsincos.s: mmu_cpu/test/fpu/fsincos.cpp.s
+.PHONY : mmu_cpu/test/fpu/fsincos.s
+
+# target to generate assembly for a file
+mmu_cpu/test/fpu/fsincos.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fsincos.cpp.s
+.PHONY : mmu_cpu/test/fpu/fsincos.cpp.s
+
+mmu_cpu/test/fpu/fsinh.o: mmu_cpu/test/fpu/fsinh.cpp.o
+.PHONY : mmu_cpu/test/fpu/fsinh.o
+
+# target to build an object file
+mmu_cpu/test/fpu/fsinh.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fsinh.cpp.o
+.PHONY : mmu_cpu/test/fpu/fsinh.cpp.o
+
+mmu_cpu/test/fpu/fsinh.i: mmu_cpu/test/fpu/fsinh.cpp.i
+.PHONY : mmu_cpu/test/fpu/fsinh.i
+
+# target to preprocess a source file
+mmu_cpu/test/fpu/fsinh.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fsinh.cpp.i
+.PHONY : mmu_cpu/test/fpu/fsinh.cpp.i
+
+mmu_cpu/test/fpu/fsinh.s: mmu_cpu/test/fpu/fsinh.cpp.s
+.PHONY : mmu_cpu/test/fpu/fsinh.s
+
+# target to generate assembly for a file
+mmu_cpu/test/fpu/fsinh.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fsinh.cpp.s
+.PHONY : mmu_cpu/test/fpu/fsinh.cpp.s
+
+mmu_cpu/test/fpu/fsqrt.o: mmu_cpu/test/fpu/fsqrt.cpp.o
+.PHONY : mmu_cpu/test/fpu/fsqrt.o
+
+# target to build an object file
+mmu_cpu/test/fpu/fsqrt.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fsqrt.cpp.o
+.PHONY : mmu_cpu/test/fpu/fsqrt.cpp.o
+
+mmu_cpu/test/fpu/fsqrt.i: mmu_cpu/test/fpu/fsqrt.cpp.i
+.PHONY : mmu_cpu/test/fpu/fsqrt.i
+
+# target to preprocess a source file
+mmu_cpu/test/fpu/fsqrt.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fsqrt.cpp.i
+.PHONY : mmu_cpu/test/fpu/fsqrt.cpp.i
+
+mmu_cpu/test/fpu/fsqrt.s: mmu_cpu/test/fpu/fsqrt.cpp.s
+.PHONY : mmu_cpu/test/fpu/fsqrt.s
+
+# target to generate assembly for a file
+mmu_cpu/test/fpu/fsqrt.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fsqrt.cpp.s
+.PHONY : mmu_cpu/test/fpu/fsqrt.cpp.s
+
+mmu_cpu/test/fpu/fsub.o: mmu_cpu/test/fpu/fsub.cpp.o
+.PHONY : mmu_cpu/test/fpu/fsub.o
+
+# target to build an object file
+mmu_cpu/test/fpu/fsub.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fsub.cpp.o
+.PHONY : mmu_cpu/test/fpu/fsub.cpp.o
+
+mmu_cpu/test/fpu/fsub.i: mmu_cpu/test/fpu/fsub.cpp.i
+.PHONY : mmu_cpu/test/fpu/fsub.i
+
+# target to preprocess a source file
+mmu_cpu/test/fpu/fsub.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fsub.cpp.i
+.PHONY : mmu_cpu/test/fpu/fsub.cpp.i
+
+mmu_cpu/test/fpu/fsub.s: mmu_cpu/test/fpu/fsub.cpp.s
+.PHONY : mmu_cpu/test/fpu/fsub.s
+
+# target to generate assembly for a file
+mmu_cpu/test/fpu/fsub.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/fsub.cpp.s
+.PHONY : mmu_cpu/test/fpu/fsub.cpp.s
+
+mmu_cpu/test/fpu/ftan.o: mmu_cpu/test/fpu/ftan.cpp.o
+.PHONY : mmu_cpu/test/fpu/ftan.o
+
+# target to build an object file
+mmu_cpu/test/fpu/ftan.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/ftan.cpp.o
+.PHONY : mmu_cpu/test/fpu/ftan.cpp.o
+
+mmu_cpu/test/fpu/ftan.i: mmu_cpu/test/fpu/ftan.cpp.i
+.PHONY : mmu_cpu/test/fpu/ftan.i
+
+# target to preprocess a source file
+mmu_cpu/test/fpu/ftan.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/ftan.cpp.i
+.PHONY : mmu_cpu/test/fpu/ftan.cpp.i
+
+mmu_cpu/test/fpu/ftan.s: mmu_cpu/test/fpu/ftan.cpp.s
+.PHONY : mmu_cpu/test/fpu/ftan.s
+
+# target to generate assembly for a file
+mmu_cpu/test/fpu/ftan.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/ftan.cpp.s
+.PHONY : mmu_cpu/test/fpu/ftan.cpp.s
+
+mmu_cpu/test/fpu/ftanh.o: mmu_cpu/test/fpu/ftanh.cpp.o
+.PHONY : mmu_cpu/test/fpu/ftanh.o
+
+# target to build an object file
+mmu_cpu/test/fpu/ftanh.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/ftanh.cpp.o
+.PHONY : mmu_cpu/test/fpu/ftanh.cpp.o
+
+mmu_cpu/test/fpu/ftanh.i: mmu_cpu/test/fpu/ftanh.cpp.i
+.PHONY : mmu_cpu/test/fpu/ftanh.i
+
+# target to preprocess a source file
+mmu_cpu/test/fpu/ftanh.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/ftanh.cpp.i
+.PHONY : mmu_cpu/test/fpu/ftanh.cpp.i
+
+mmu_cpu/test/fpu/ftanh.s: mmu_cpu/test/fpu/ftanh.cpp.s
+.PHONY : mmu_cpu/test/fpu/ftanh.s
+
+# target to generate assembly for a file
+mmu_cpu/test/fpu/ftanh.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/ftanh.cpp.s
+.PHONY : mmu_cpu/test/fpu/ftanh.cpp.s
+
+mmu_cpu/test/fpu/ftentox.o: mmu_cpu/test/fpu/ftentox.cpp.o
+.PHONY : mmu_cpu/test/fpu/ftentox.o
+
+# target to build an object file
+mmu_cpu/test/fpu/ftentox.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/ftentox.cpp.o
+.PHONY : mmu_cpu/test/fpu/ftentox.cpp.o
+
+mmu_cpu/test/fpu/ftentox.i: mmu_cpu/test/fpu/ftentox.cpp.i
+.PHONY : mmu_cpu/test/fpu/ftentox.i
+
+# target to preprocess a source file
+mmu_cpu/test/fpu/ftentox.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/ftentox.cpp.i
+.PHONY : mmu_cpu/test/fpu/ftentox.cpp.i
+
+mmu_cpu/test/fpu/ftentox.s: mmu_cpu/test/fpu/ftentox.cpp.s
+.PHONY : mmu_cpu/test/fpu/ftentox.s
+
+# target to generate assembly for a file
+mmu_cpu/test/fpu/ftentox.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/ftentox.cpp.s
+.PHONY : mmu_cpu/test/fpu/ftentox.cpp.s
+
+mmu_cpu/test/fpu/ftst.o: mmu_cpu/test/fpu/ftst.cpp.o
+.PHONY : mmu_cpu/test/fpu/ftst.o
+
+# target to build an object file
+mmu_cpu/test/fpu/ftst.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/ftst.cpp.o
+.PHONY : mmu_cpu/test/fpu/ftst.cpp.o
+
+mmu_cpu/test/fpu/ftst.i: mmu_cpu/test/fpu/ftst.cpp.i
+.PHONY : mmu_cpu/test/fpu/ftst.i
+
+# target to preprocess a source file
+mmu_cpu/test/fpu/ftst.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/ftst.cpp.i
+.PHONY : mmu_cpu/test/fpu/ftst.cpp.i
+
+mmu_cpu/test/fpu/ftst.s: mmu_cpu/test/fpu/ftst.cpp.s
+.PHONY : mmu_cpu/test/fpu/ftst.s
+
+# target to generate assembly for a file
+mmu_cpu/test/fpu/ftst.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/ftst.cpp.s
+.PHONY : mmu_cpu/test/fpu/ftst.cpp.s
+
+mmu_cpu/test/fpu/ftwotox.o: mmu_cpu/test/fpu/ftwotox.cpp.o
+.PHONY : mmu_cpu/test/fpu/ftwotox.o
+
+# target to build an object file
+mmu_cpu/test/fpu/ftwotox.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/ftwotox.cpp.o
+.PHONY : mmu_cpu/test/fpu/ftwotox.cpp.o
+
+mmu_cpu/test/fpu/ftwotox.i: mmu_cpu/test/fpu/ftwotox.cpp.i
+.PHONY : mmu_cpu/test/fpu/ftwotox.i
+
+# target to preprocess a source file
+mmu_cpu/test/fpu/ftwotox.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/ftwotox.cpp.i
+.PHONY : mmu_cpu/test/fpu/ftwotox.cpp.i
+
+mmu_cpu/test/fpu/ftwotox.s: mmu_cpu/test/fpu/ftwotox.cpp.s
+.PHONY : mmu_cpu/test/fpu/ftwotox.s
+
+# target to generate assembly for a file
+mmu_cpu/test/fpu/ftwotox.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/ftwotox.cpp.s
+.PHONY : mmu_cpu/test/fpu/ftwotox.cpp.s
+
+mmu_cpu/test/fpu/nan.o: mmu_cpu/test/fpu/nan.cpp.o
+.PHONY : mmu_cpu/test/fpu/nan.o
+
+# target to build an object file
+mmu_cpu/test/fpu/nan.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/nan.cpp.o
+.PHONY : mmu_cpu/test/fpu/nan.cpp.o
+
+mmu_cpu/test/fpu/nan.i: mmu_cpu/test/fpu/nan.cpp.i
+.PHONY : mmu_cpu/test/fpu/nan.i
+
+# target to preprocess a source file
+mmu_cpu/test/fpu/nan.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/nan.cpp.i
+.PHONY : mmu_cpu/test/fpu/nan.cpp.i
+
+mmu_cpu/test/fpu/nan.s: mmu_cpu/test/fpu/nan.cpp.s
+.PHONY : mmu_cpu/test/fpu/nan.s
+
+# target to generate assembly for a file
+mmu_cpu/test/fpu/nan.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/fpu/nan.cpp.s
+.PHONY : mmu_cpu/test/fpu/nan.cpp.s
+
+mmu_cpu/test/mmu.o: mmu_cpu/test/mmu.cpp.o
+.PHONY : mmu_cpu/test/mmu.o
+
+# target to build an object file
+mmu_cpu/test/mmu.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/mmu.cpp.o
+.PHONY : mmu_cpu/test/mmu.cpp.o
+
+mmu_cpu/test/mmu.i: mmu_cpu/test/mmu.cpp.i
+.PHONY : mmu_cpu/test/mmu.i
+
+# target to preprocess a source file
+mmu_cpu/test/mmu.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/mmu.cpp.i
+.PHONY : mmu_cpu/test/mmu.cpp.i
+
+mmu_cpu/test/mmu.s: mmu_cpu/test/mmu.cpp.s
+.PHONY : mmu_cpu/test/mmu.s
+
+# target to generate assembly for a file
+mmu_cpu/test/mmu.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/mmu.cpp.s
+.PHONY : mmu_cpu/test/mmu.cpp.s
+
+mmu_cpu/test/move/exg.o: mmu_cpu/test/move/exg.cpp.o
+.PHONY : mmu_cpu/test/move/exg.o
+
+# target to build an object file
+mmu_cpu/test/move/exg.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/move/exg.cpp.o
+.PHONY : mmu_cpu/test/move/exg.cpp.o
+
+mmu_cpu/test/move/exg.i: mmu_cpu/test/move/exg.cpp.i
+.PHONY : mmu_cpu/test/move/exg.i
+
+# target to preprocess a source file
+mmu_cpu/test/move/exg.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/move/exg.cpp.i
+.PHONY : mmu_cpu/test/move/exg.cpp.i
+
+mmu_cpu/test/move/exg.s: mmu_cpu/test/move/exg.cpp.s
+.PHONY : mmu_cpu/test/move/exg.s
+
+# target to generate assembly for a file
+mmu_cpu/test/move/exg.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/move/exg.cpp.s
+.PHONY : mmu_cpu/test/move/exg.cpp.s
+
+mmu_cpu/test/move/lea.o: mmu_cpu/test/move/lea.cpp.o
+.PHONY : mmu_cpu/test/move/lea.o
+
+# target to build an object file
+mmu_cpu/test/move/lea.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/move/lea.cpp.o
+.PHONY : mmu_cpu/test/move/lea.cpp.o
+
+mmu_cpu/test/move/lea.i: mmu_cpu/test/move/lea.cpp.i
+.PHONY : mmu_cpu/test/move/lea.i
+
+# target to preprocess a source file
+mmu_cpu/test/move/lea.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/move/lea.cpp.i
+.PHONY : mmu_cpu/test/move/lea.cpp.i
+
+mmu_cpu/test/move/lea.s: mmu_cpu/test/move/lea.cpp.s
+.PHONY : mmu_cpu/test/move/lea.s
+
+# target to generate assembly for a file
+mmu_cpu/test/move/lea.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/move/lea.cpp.s
+.PHONY : mmu_cpu/test/move/lea.cpp.s
+
+mmu_cpu/test/move/move.o: mmu_cpu/test/move/move.cpp.o
+.PHONY : mmu_cpu/test/move/move.o
+
+# target to build an object file
+mmu_cpu/test/move/move.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/move/move.cpp.o
+.PHONY : mmu_cpu/test/move/move.cpp.o
+
+mmu_cpu/test/move/move.i: mmu_cpu/test/move/move.cpp.i
+.PHONY : mmu_cpu/test/move/move.i
+
+# target to preprocess a source file
+mmu_cpu/test/move/move.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/move/move.cpp.i
+.PHONY : mmu_cpu/test/move/move.cpp.i
+
+mmu_cpu/test/move/move.s: mmu_cpu/test/move/move.cpp.s
+.PHONY : mmu_cpu/test/move/move.s
+
+# target to generate assembly for a file
+mmu_cpu/test/move/move.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/move/move.cpp.s
+.PHONY : mmu_cpu/test/move/move.cpp.s
+
+mmu_cpu/test/move/move16.o: mmu_cpu/test/move/move16.cpp.o
+.PHONY : mmu_cpu/test/move/move16.o
+
+# target to build an object file
+mmu_cpu/test/move/move16.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/move/move16.cpp.o
+.PHONY : mmu_cpu/test/move/move16.cpp.o
+
+mmu_cpu/test/move/move16.i: mmu_cpu/test/move/move16.cpp.i
+.PHONY : mmu_cpu/test/move/move16.i
+
+# target to preprocess a source file
+mmu_cpu/test/move/move16.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/move/move16.cpp.i
+.PHONY : mmu_cpu/test/move/move16.cpp.i
+
+mmu_cpu/test/move/move16.s: mmu_cpu/test/move/move16.cpp.s
+.PHONY : mmu_cpu/test/move/move16.s
+
+# target to generate assembly for a file
+mmu_cpu/test/move/move16.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/move/move16.cpp.s
+.PHONY : mmu_cpu/test/move/move16.cpp.s
+
+mmu_cpu/test/move/movea.o: mmu_cpu/test/move/movea.cpp.o
+.PHONY : mmu_cpu/test/move/movea.o
+
+# target to build an object file
+mmu_cpu/test/move/movea.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/move/movea.cpp.o
+.PHONY : mmu_cpu/test/move/movea.cpp.o
+
+mmu_cpu/test/move/movea.i: mmu_cpu/test/move/movea.cpp.i
+.PHONY : mmu_cpu/test/move/movea.i
+
+# target to preprocess a source file
+mmu_cpu/test/move/movea.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/move/movea.cpp.i
+.PHONY : mmu_cpu/test/move/movea.cpp.i
+
+mmu_cpu/test/move/movea.s: mmu_cpu/test/move/movea.cpp.s
+.PHONY : mmu_cpu/test/move/movea.s
+
+# target to generate assembly for a file
+mmu_cpu/test/move/movea.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/move/movea.cpp.s
+.PHONY : mmu_cpu/test/move/movea.cpp.s
+
+mmu_cpu/test/move/movec.o: mmu_cpu/test/move/movec.cpp.o
+.PHONY : mmu_cpu/test/move/movec.o
+
+# target to build an object file
+mmu_cpu/test/move/movec.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/move/movec.cpp.o
+.PHONY : mmu_cpu/test/move/movec.cpp.o
+
+mmu_cpu/test/move/movec.i: mmu_cpu/test/move/movec.cpp.i
+.PHONY : mmu_cpu/test/move/movec.i
+
+# target to preprocess a source file
+mmu_cpu/test/move/movec.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/move/movec.cpp.i
+.PHONY : mmu_cpu/test/move/movec.cpp.i
+
+mmu_cpu/test/move/movec.s: mmu_cpu/test/move/movec.cpp.s
+.PHONY : mmu_cpu/test/move/movec.s
+
+# target to generate assembly for a file
+mmu_cpu/test/move/movec.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/move/movec.cpp.s
+.PHONY : mmu_cpu/test/move/movec.cpp.s
+
+mmu_cpu/test/move/movem.o: mmu_cpu/test/move/movem.cpp.o
+.PHONY : mmu_cpu/test/move/movem.o
+
+# target to build an object file
+mmu_cpu/test/move/movem.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/move/movem.cpp.o
+.PHONY : mmu_cpu/test/move/movem.cpp.o
+
+mmu_cpu/test/move/movem.i: mmu_cpu/test/move/movem.cpp.i
+.PHONY : mmu_cpu/test/move/movem.i
+
+# target to preprocess a source file
+mmu_cpu/test/move/movem.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/move/movem.cpp.i
+.PHONY : mmu_cpu/test/move/movem.cpp.i
+
+mmu_cpu/test/move/movem.s: mmu_cpu/test/move/movem.cpp.s
+.PHONY : mmu_cpu/test/move/movem.s
+
+# target to generate assembly for a file
+mmu_cpu/test/move/movem.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/move/movem.cpp.s
+.PHONY : mmu_cpu/test/move/movem.cpp.s
+
+mmu_cpu/test/move/movep.o: mmu_cpu/test/move/movep.cpp.o
+.PHONY : mmu_cpu/test/move/movep.o
+
+# target to build an object file
+mmu_cpu/test/move/movep.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/move/movep.cpp.o
+.PHONY : mmu_cpu/test/move/movep.cpp.o
+
+mmu_cpu/test/move/movep.i: mmu_cpu/test/move/movep.cpp.i
+.PHONY : mmu_cpu/test/move/movep.i
+
+# target to preprocess a source file
+mmu_cpu/test/move/movep.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/move/movep.cpp.i
+.PHONY : mmu_cpu/test/move/movep.cpp.i
+
+mmu_cpu/test/move/movep.s: mmu_cpu/test/move/movep.cpp.s
+.PHONY : mmu_cpu/test/move/movep.s
+
+# target to generate assembly for a file
+mmu_cpu/test/move/movep.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/move/movep.cpp.s
+.PHONY : mmu_cpu/test/move/movep.cpp.s
+
+mmu_cpu/test/move/moveq.o: mmu_cpu/test/move/moveq.cpp.o
+.PHONY : mmu_cpu/test/move/moveq.o
+
+# target to build an object file
+mmu_cpu/test/move/moveq.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/move/moveq.cpp.o
+.PHONY : mmu_cpu/test/move/moveq.cpp.o
+
+mmu_cpu/test/move/moveq.i: mmu_cpu/test/move/moveq.cpp.i
+.PHONY : mmu_cpu/test/move/moveq.i
+
+# target to preprocess a source file
+mmu_cpu/test/move/moveq.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/move/moveq.cpp.i
+.PHONY : mmu_cpu/test/move/moveq.cpp.i
+
+mmu_cpu/test/move/moveq.s: mmu_cpu/test/move/moveq.cpp.s
+.PHONY : mmu_cpu/test/move/moveq.s
+
+# target to generate assembly for a file
+mmu_cpu/test/move/moveq.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/move/moveq.cpp.s
+.PHONY : mmu_cpu/test/move/moveq.cpp.s
+
+mmu_cpu/test/move/moves.o: mmu_cpu/test/move/moves.cpp.o
+.PHONY : mmu_cpu/test/move/moves.o
+
+# target to build an object file
+mmu_cpu/test/move/moves.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/move/moves.cpp.o
+.PHONY : mmu_cpu/test/move/moves.cpp.o
+
+mmu_cpu/test/move/moves.i: mmu_cpu/test/move/moves.cpp.i
+.PHONY : mmu_cpu/test/move/moves.i
+
+# target to preprocess a source file
+mmu_cpu/test/move/moves.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/move/moves.cpp.i
+.PHONY : mmu_cpu/test/move/moves.cpp.i
+
+mmu_cpu/test/move/moves.s: mmu_cpu/test/move/moves.cpp.s
+.PHONY : mmu_cpu/test/move/moves.s
+
+# target to generate assembly for a file
+mmu_cpu/test/move/moves.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/move/moves.cpp.s
+.PHONY : mmu_cpu/test/move/moves.cpp.s
+
+mmu_cpu/test/move/pea.o: mmu_cpu/test/move/pea.cpp.o
+.PHONY : mmu_cpu/test/move/pea.o
+
+# target to build an object file
+mmu_cpu/test/move/pea.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/move/pea.cpp.o
+.PHONY : mmu_cpu/test/move/pea.cpp.o
+
+mmu_cpu/test/move/pea.i: mmu_cpu/test/move/pea.cpp.i
+.PHONY : mmu_cpu/test/move/pea.i
+
+# target to preprocess a source file
+mmu_cpu/test/move/pea.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/move/pea.cpp.i
+.PHONY : mmu_cpu/test/move/pea.cpp.i
+
+mmu_cpu/test/move/pea.s: mmu_cpu/test/move/pea.cpp.s
+.PHONY : mmu_cpu/test/move/pea.s
+
+# target to generate assembly for a file
+mmu_cpu/test/move/pea.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/move/pea.cpp.s
+.PHONY : mmu_cpu/test/move/pea.cpp.s
+
+mmu_cpu/test/move/scc.o: mmu_cpu/test/move/scc.cpp.o
+.PHONY : mmu_cpu/test/move/scc.o
+
+# target to build an object file
+mmu_cpu/test/move/scc.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/move/scc.cpp.o
+.PHONY : mmu_cpu/test/move/scc.cpp.o
+
+mmu_cpu/test/move/scc.i: mmu_cpu/test/move/scc.cpp.i
+.PHONY : mmu_cpu/test/move/scc.i
+
+# target to preprocess a source file
+mmu_cpu/test/move/scc.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/move/scc.cpp.i
+.PHONY : mmu_cpu/test/move/scc.cpp.i
+
+mmu_cpu/test/move/scc.s: mmu_cpu/test/move/scc.cpp.s
+.PHONY : mmu_cpu/test/move/scc.s
+
+# target to generate assembly for a file
+mmu_cpu/test/move/scc.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/move/scc.cpp.s
+.PHONY : mmu_cpu/test/move/scc.cpp.s
 
 mmu_cpu/test/test_common.o: mmu_cpu/test/test_common.cpp.o
 .PHONY : mmu_cpu/test/test_common.o
 
 # target to build an object file
 mmu_cpu/test/test_common.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu.dir/build.make CMakeFiles/test_cpu.dir/mmu_cpu/test/test_common.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_math.dir/build.make CMakeFiles/test_cpu_math.dir/mmu_cpu/test/test_common.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_and.dir/build.make CMakeFiles/test_cpu_and.dir/mmu_cpu/test/test_common.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp2.dir/build.make CMakeFiles/test_cpu_cmp2.dir/mmu_cpu/test/test_common.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk2.dir/build.make CMakeFiles/test_cpu_chk2.dir/mmu_cpu/test/test_common.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_btst.dir/build.make CMakeFiles/test_cpu_btst.dir/mmu_cpu/test/test_common.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bchg.dir/build.make CMakeFiles/test_cpu_bchg.dir/mmu_cpu/test/test_common.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bclr.dir/build.make CMakeFiles/test_cpu_bclr.dir/mmu_cpu/test/test_common.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bset.dir/build.make CMakeFiles/test_cpu_bset.dir/mmu_cpu/test/test_common.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas.dir/build.make CMakeFiles/test_cpu_cas.dir/mmu_cpu/test/test_common.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas2.dir/build.make CMakeFiles/test_cpu_cas2.dir/mmu_cpu/test/test_common.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movep.dir/build.make CMakeFiles/test_cpu_movep.dir/mmu_cpu/test/test_common.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_move.dir/build.make CMakeFiles/test_cpu_move.dir/mmu_cpu/test/test_common.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_negx.dir/build.make CMakeFiles/test_cpu_negx.dir/mmu_cpu/test/test_common.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_clr.dir/build.make CMakeFiles/test_cpu_clr.dir/mmu_cpu/test/test_common.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_neg.dir/build.make CMakeFiles/test_cpu_neg.dir/mmu_cpu/test/test_common.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_not.dir/build.make CMakeFiles/test_cpu_not.dir/mmu_cpu/test/test_common.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_nbcd.dir/build.make CMakeFiles/test_cpu_nbcd.dir/mmu_cpu/test/test_common.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_link.dir/build.make CMakeFiles/test_cpu_link.dir/mmu_cpu/test/test_common.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_swap.dir/build.make CMakeFiles/test_cpu_swap.dir/mmu_cpu/test/test_common.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pea.dir/build.make CMakeFiles/test_cpu_pea.dir/mmu_cpu/test/test_common.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_ext.dir/build.make CMakeFiles/test_cpu_ext.dir/mmu_cpu/test/test_common.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movem.dir/build.make CMakeFiles/test_cpu_movem.dir/mmu_cpu/test/test_common.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_tst.dir/build.make CMakeFiles/test_cpu_tst.dir/mmu_cpu/test/test_common.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_mul.dir/build.make CMakeFiles/test_cpu_mul.dir/mmu_cpu/test/test_common.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_div.dir/build.make CMakeFiles/test_cpu_div.dir/mmu_cpu/test/test_common.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unlk.dir/build.make CMakeFiles/test_cpu_unlk.dir/mmu_cpu/test/test_common.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_rtx.dir/build.make CMakeFiles/test_cpu_rtx.dir/mmu_cpu/test/test_common.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_jmp.dir/build.make CMakeFiles/test_cpu_jmp.dir/mmu_cpu/test/test_common.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk.dir/build.make CMakeFiles/test_cpu_chk.dir/mmu_cpu/test/test_common.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_lea.dir/build.make CMakeFiles/test_cpu_lea.dir/mmu_cpu/test/test_common.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_scc.dir/build.make CMakeFiles/test_cpu_scc.dir/mmu_cpu/test/test_common.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_dbcc.dir/build.make CMakeFiles/test_cpu_dbcc.dir/mmu_cpu/test/test_common.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_or.dir/build.make CMakeFiles/test_cpu_or.dir/mmu_cpu/test/test_common.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sbcd.dir/build.make CMakeFiles/test_cpu_sbcd.dir/mmu_cpu/test/test_common.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pack.dir/build.make CMakeFiles/test_cpu_pack.dir/mmu_cpu/test/test_common.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unpk.dir/build.make CMakeFiles/test_cpu_unpk.dir/mmu_cpu/test/test_common.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sub.dir/build.make CMakeFiles/test_cpu_sub.dir/mmu_cpu/test/test_common.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp.dir/build.make CMakeFiles/test_cpu_cmp.dir/mmu_cpu/test/test_common.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_eor.dir/build.make CMakeFiles/test_cpu_eor.dir/mmu_cpu/test/test_common.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_exg.dir/build.make CMakeFiles/test_cpu_exg.dir/mmu_cpu/test/test_common.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_add.dir/build.make CMakeFiles/test_cpu_add.dir/mmu_cpu/test/test_common.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_shift.dir/build.make CMakeFiles/test_cpu_shift.dir/mmu_cpu/test/test_common.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bitfields.dir/build.make CMakeFiles/test_cpu_bitfields.dir/mmu_cpu/test/test_common.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_fmove.dir/build.make CMakeFiles/test_cpu_fmove.dir/mmu_cpu/test/test_common.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/test_common.cpp.o
 .PHONY : mmu_cpu/test/test_common.cpp.o
 
 mmu_cpu/test/test_common.i: mmu_cpu/test/test_common.cpp.i
@@ -4366,51 +4095,7 @@ mmu_cpu/test/test_common.i: mmu_cpu/test/test_common.cpp.i
 
 # target to preprocess a source file
 mmu_cpu/test/test_common.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu.dir/build.make CMakeFiles/test_cpu.dir/mmu_cpu/test/test_common.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_math.dir/build.make CMakeFiles/test_cpu_math.dir/mmu_cpu/test/test_common.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_and.dir/build.make CMakeFiles/test_cpu_and.dir/mmu_cpu/test/test_common.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp2.dir/build.make CMakeFiles/test_cpu_cmp2.dir/mmu_cpu/test/test_common.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk2.dir/build.make CMakeFiles/test_cpu_chk2.dir/mmu_cpu/test/test_common.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_btst.dir/build.make CMakeFiles/test_cpu_btst.dir/mmu_cpu/test/test_common.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bchg.dir/build.make CMakeFiles/test_cpu_bchg.dir/mmu_cpu/test/test_common.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bclr.dir/build.make CMakeFiles/test_cpu_bclr.dir/mmu_cpu/test/test_common.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bset.dir/build.make CMakeFiles/test_cpu_bset.dir/mmu_cpu/test/test_common.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas.dir/build.make CMakeFiles/test_cpu_cas.dir/mmu_cpu/test/test_common.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas2.dir/build.make CMakeFiles/test_cpu_cas2.dir/mmu_cpu/test/test_common.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movep.dir/build.make CMakeFiles/test_cpu_movep.dir/mmu_cpu/test/test_common.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_move.dir/build.make CMakeFiles/test_cpu_move.dir/mmu_cpu/test/test_common.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_negx.dir/build.make CMakeFiles/test_cpu_negx.dir/mmu_cpu/test/test_common.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_clr.dir/build.make CMakeFiles/test_cpu_clr.dir/mmu_cpu/test/test_common.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_neg.dir/build.make CMakeFiles/test_cpu_neg.dir/mmu_cpu/test/test_common.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_not.dir/build.make CMakeFiles/test_cpu_not.dir/mmu_cpu/test/test_common.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_nbcd.dir/build.make CMakeFiles/test_cpu_nbcd.dir/mmu_cpu/test/test_common.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_link.dir/build.make CMakeFiles/test_cpu_link.dir/mmu_cpu/test/test_common.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_swap.dir/build.make CMakeFiles/test_cpu_swap.dir/mmu_cpu/test/test_common.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pea.dir/build.make CMakeFiles/test_cpu_pea.dir/mmu_cpu/test/test_common.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_ext.dir/build.make CMakeFiles/test_cpu_ext.dir/mmu_cpu/test/test_common.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movem.dir/build.make CMakeFiles/test_cpu_movem.dir/mmu_cpu/test/test_common.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_tst.dir/build.make CMakeFiles/test_cpu_tst.dir/mmu_cpu/test/test_common.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_mul.dir/build.make CMakeFiles/test_cpu_mul.dir/mmu_cpu/test/test_common.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_div.dir/build.make CMakeFiles/test_cpu_div.dir/mmu_cpu/test/test_common.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unlk.dir/build.make CMakeFiles/test_cpu_unlk.dir/mmu_cpu/test/test_common.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_rtx.dir/build.make CMakeFiles/test_cpu_rtx.dir/mmu_cpu/test/test_common.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_jmp.dir/build.make CMakeFiles/test_cpu_jmp.dir/mmu_cpu/test/test_common.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk.dir/build.make CMakeFiles/test_cpu_chk.dir/mmu_cpu/test/test_common.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_lea.dir/build.make CMakeFiles/test_cpu_lea.dir/mmu_cpu/test/test_common.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_scc.dir/build.make CMakeFiles/test_cpu_scc.dir/mmu_cpu/test/test_common.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_dbcc.dir/build.make CMakeFiles/test_cpu_dbcc.dir/mmu_cpu/test/test_common.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_or.dir/build.make CMakeFiles/test_cpu_or.dir/mmu_cpu/test/test_common.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sbcd.dir/build.make CMakeFiles/test_cpu_sbcd.dir/mmu_cpu/test/test_common.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pack.dir/build.make CMakeFiles/test_cpu_pack.dir/mmu_cpu/test/test_common.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unpk.dir/build.make CMakeFiles/test_cpu_unpk.dir/mmu_cpu/test/test_common.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sub.dir/build.make CMakeFiles/test_cpu_sub.dir/mmu_cpu/test/test_common.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp.dir/build.make CMakeFiles/test_cpu_cmp.dir/mmu_cpu/test/test_common.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_eor.dir/build.make CMakeFiles/test_cpu_eor.dir/mmu_cpu/test/test_common.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_exg.dir/build.make CMakeFiles/test_cpu_exg.dir/mmu_cpu/test/test_common.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_add.dir/build.make CMakeFiles/test_cpu_add.dir/mmu_cpu/test/test_common.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_shift.dir/build.make CMakeFiles/test_cpu_shift.dir/mmu_cpu/test/test_common.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bitfields.dir/build.make CMakeFiles/test_cpu_bitfields.dir/mmu_cpu/test/test_common.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_fmove.dir/build.make CMakeFiles/test_cpu_fmove.dir/mmu_cpu/test/test_common.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/test_common.cpp.i
 .PHONY : mmu_cpu/test/test_common.cpp.i
 
 mmu_cpu/test/test_common.s: mmu_cpu/test/test_common.cpp.s
@@ -4418,412 +4103,104 @@ mmu_cpu/test/test_common.s: mmu_cpu/test/test_common.cpp.s
 
 # target to generate assembly for a file
 mmu_cpu/test/test_common.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu.dir/build.make CMakeFiles/test_cpu.dir/mmu_cpu/test/test_common.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_math.dir/build.make CMakeFiles/test_cpu_math.dir/mmu_cpu/test/test_common.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_and.dir/build.make CMakeFiles/test_cpu_and.dir/mmu_cpu/test/test_common.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp2.dir/build.make CMakeFiles/test_cpu_cmp2.dir/mmu_cpu/test/test_common.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk2.dir/build.make CMakeFiles/test_cpu_chk2.dir/mmu_cpu/test/test_common.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_btst.dir/build.make CMakeFiles/test_cpu_btst.dir/mmu_cpu/test/test_common.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bchg.dir/build.make CMakeFiles/test_cpu_bchg.dir/mmu_cpu/test/test_common.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bclr.dir/build.make CMakeFiles/test_cpu_bclr.dir/mmu_cpu/test/test_common.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bset.dir/build.make CMakeFiles/test_cpu_bset.dir/mmu_cpu/test/test_common.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas.dir/build.make CMakeFiles/test_cpu_cas.dir/mmu_cpu/test/test_common.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cas2.dir/build.make CMakeFiles/test_cpu_cas2.dir/mmu_cpu/test/test_common.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movep.dir/build.make CMakeFiles/test_cpu_movep.dir/mmu_cpu/test/test_common.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_move.dir/build.make CMakeFiles/test_cpu_move.dir/mmu_cpu/test/test_common.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_negx.dir/build.make CMakeFiles/test_cpu_negx.dir/mmu_cpu/test/test_common.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_clr.dir/build.make CMakeFiles/test_cpu_clr.dir/mmu_cpu/test/test_common.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_neg.dir/build.make CMakeFiles/test_cpu_neg.dir/mmu_cpu/test/test_common.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_not.dir/build.make CMakeFiles/test_cpu_not.dir/mmu_cpu/test/test_common.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_nbcd.dir/build.make CMakeFiles/test_cpu_nbcd.dir/mmu_cpu/test/test_common.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_link.dir/build.make CMakeFiles/test_cpu_link.dir/mmu_cpu/test/test_common.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_swap.dir/build.make CMakeFiles/test_cpu_swap.dir/mmu_cpu/test/test_common.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pea.dir/build.make CMakeFiles/test_cpu_pea.dir/mmu_cpu/test/test_common.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_ext.dir/build.make CMakeFiles/test_cpu_ext.dir/mmu_cpu/test/test_common.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_movem.dir/build.make CMakeFiles/test_cpu_movem.dir/mmu_cpu/test/test_common.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_tst.dir/build.make CMakeFiles/test_cpu_tst.dir/mmu_cpu/test/test_common.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_mul.dir/build.make CMakeFiles/test_cpu_mul.dir/mmu_cpu/test/test_common.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_div.dir/build.make CMakeFiles/test_cpu_div.dir/mmu_cpu/test/test_common.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unlk.dir/build.make CMakeFiles/test_cpu_unlk.dir/mmu_cpu/test/test_common.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_rtx.dir/build.make CMakeFiles/test_cpu_rtx.dir/mmu_cpu/test/test_common.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_jmp.dir/build.make CMakeFiles/test_cpu_jmp.dir/mmu_cpu/test/test_common.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_chk.dir/build.make CMakeFiles/test_cpu_chk.dir/mmu_cpu/test/test_common.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_lea.dir/build.make CMakeFiles/test_cpu_lea.dir/mmu_cpu/test/test_common.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_scc.dir/build.make CMakeFiles/test_cpu_scc.dir/mmu_cpu/test/test_common.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_dbcc.dir/build.make CMakeFiles/test_cpu_dbcc.dir/mmu_cpu/test/test_common.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_or.dir/build.make CMakeFiles/test_cpu_or.dir/mmu_cpu/test/test_common.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sbcd.dir/build.make CMakeFiles/test_cpu_sbcd.dir/mmu_cpu/test/test_common.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_pack.dir/build.make CMakeFiles/test_cpu_pack.dir/mmu_cpu/test/test_common.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unpk.dir/build.make CMakeFiles/test_cpu_unpk.dir/mmu_cpu/test/test_common.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_sub.dir/build.make CMakeFiles/test_cpu_sub.dir/mmu_cpu/test/test_common.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_cmp.dir/build.make CMakeFiles/test_cpu_cmp.dir/mmu_cpu/test/test_common.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_eor.dir/build.make CMakeFiles/test_cpu_eor.dir/mmu_cpu/test/test_common.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_exg.dir/build.make CMakeFiles/test_cpu_exg.dir/mmu_cpu/test/test_common.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_add.dir/build.make CMakeFiles/test_cpu_add.dir/mmu_cpu/test/test_common.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_shift.dir/build.make CMakeFiles/test_cpu_shift.dir/mmu_cpu/test/test_common.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_bitfields.dir/build.make CMakeFiles/test_cpu_bitfields.dir/mmu_cpu/test/test_common.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_fmove.dir/build.make CMakeFiles/test_cpu_fmove.dir/mmu_cpu/test/test_common.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ut.dir/build.make CMakeFiles/ut.dir/mmu_cpu/test/test_common.cpp.s
 .PHONY : mmu_cpu/test/test_common.cpp.s
 
-mmu_cpu/test/tst.o: mmu_cpu/test/tst.cpp.o
-.PHONY : mmu_cpu/test/tst.o
+rom/boot.o: rom/boot.cpp.o
+.PHONY : rom/boot.o
 
 # target to build an object file
-mmu_cpu/test/tst.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_tst.dir/build.make CMakeFiles/test_cpu_tst.dir/mmu_cpu/test/tst.cpp.o
-.PHONY : mmu_cpu/test/tst.cpp.o
+rom/boot.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/rom/boot.cpp.o
+.PHONY : rom/boot.cpp.o
 
-mmu_cpu/test/tst.i: mmu_cpu/test/tst.cpp.i
-.PHONY : mmu_cpu/test/tst.i
+rom/boot.i: rom/boot.cpp.i
+.PHONY : rom/boot.i
 
 # target to preprocess a source file
-mmu_cpu/test/tst.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_tst.dir/build.make CMakeFiles/test_cpu_tst.dir/mmu_cpu/test/tst.cpp.i
-.PHONY : mmu_cpu/test/tst.cpp.i
+rom/boot.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/rom/boot.cpp.i
+.PHONY : rom/boot.cpp.i
 
-mmu_cpu/test/tst.s: mmu_cpu/test/tst.cpp.s
-.PHONY : mmu_cpu/test/tst.s
+rom/boot.s: rom/boot.cpp.s
+.PHONY : rom/boot.s
 
 # target to generate assembly for a file
-mmu_cpu/test/tst.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_tst.dir/build.make CMakeFiles/test_cpu_tst.dir/mmu_cpu/test/tst.cpp.s
-.PHONY : mmu_cpu/test/tst.cpp.s
+rom/boot.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/rom/boot.cpp.s
+.PHONY : rom/boot.cpp.s
 
-mmu_cpu/test/unlk.o: mmu_cpu/test/unlk.cpp.o
-.PHONY : mmu_cpu/test/unlk.o
+rom/boot2.o: rom/boot2.cpp.o
+.PHONY : rom/boot2.o
 
 # target to build an object file
-mmu_cpu/test/unlk.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unlk.dir/build.make CMakeFiles/test_cpu_unlk.dir/mmu_cpu/test/unlk.cpp.o
-.PHONY : mmu_cpu/test/unlk.cpp.o
+rom/boot2.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/rom/boot2.cpp.o
+.PHONY : rom/boot2.cpp.o
 
-mmu_cpu/test/unlk.i: mmu_cpu/test/unlk.cpp.i
-.PHONY : mmu_cpu/test/unlk.i
+rom/boot2.i: rom/boot2.cpp.i
+.PHONY : rom/boot2.i
 
 # target to preprocess a source file
-mmu_cpu/test/unlk.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unlk.dir/build.make CMakeFiles/test_cpu_unlk.dir/mmu_cpu/test/unlk.cpp.i
-.PHONY : mmu_cpu/test/unlk.cpp.i
+rom/boot2.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/rom/boot2.cpp.i
+.PHONY : rom/boot2.cpp.i
 
-mmu_cpu/test/unlk.s: mmu_cpu/test/unlk.cpp.s
-.PHONY : mmu_cpu/test/unlk.s
+rom/boot2.s: rom/boot2.cpp.s
+.PHONY : rom/boot2.s
 
 # target to generate assembly for a file
-mmu_cpu/test/unlk.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unlk.dir/build.make CMakeFiles/test_cpu_unlk.dir/mmu_cpu/test/unlk.cpp.s
-.PHONY : mmu_cpu/test/unlk.cpp.s
+rom/boot2.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/rom/boot2.cpp.s
+.PHONY : rom/boot2.cpp.s
 
-mmu_cpu/test/unpk.o: mmu_cpu/test/unpk.cpp.o
-.PHONY : mmu_cpu/test/unpk.o
+rom/romdata.o: rom/romdata.cpp.o
+.PHONY : rom/romdata.o
 
 # target to build an object file
-mmu_cpu/test/unpk.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unpk.dir/build.make CMakeFiles/test_cpu_unpk.dir/mmu_cpu/test/unpk.cpp.o
-.PHONY : mmu_cpu/test/unpk.cpp.o
+rom/romdata.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/rom/romdata.cpp.o
+.PHONY : rom/romdata.cpp.o
 
-mmu_cpu/test/unpk.i: mmu_cpu/test/unpk.cpp.i
-.PHONY : mmu_cpu/test/unpk.i
+rom/romdata.i: rom/romdata.cpp.i
+.PHONY : rom/romdata.i
 
 # target to preprocess a source file
-mmu_cpu/test/unpk.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unpk.dir/build.make CMakeFiles/test_cpu_unpk.dir/mmu_cpu/test/unpk.cpp.i
-.PHONY : mmu_cpu/test/unpk.cpp.i
+rom/romdata.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/rom/romdata.cpp.i
+.PHONY : rom/romdata.cpp.i
 
-mmu_cpu/test/unpk.s: mmu_cpu/test/unpk.cpp.s
-.PHONY : mmu_cpu/test/unpk.s
+rom/romdata.s: rom/romdata.cpp.s
+.PHONY : rom/romdata.s
 
 # target to generate assembly for a file
-mmu_cpu/test/unpk.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_cpu_unpk.dir/build.make CMakeFiles/test_cpu_unpk.dir/mmu_cpu/test/unpk.cpp.s
-.PHONY : mmu_cpu/test/unpk.cpp.s
+rom/romdata.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/rom/romdata.cpp.s
+.PHONY : rom/romdata.cpp.s
 
-prefs.o: prefs.cpp.o
-.PHONY : prefs.o
+yame.o: yame.cpp.o
+.PHONY : yame.o
 
 # target to build an object file
-prefs.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/prefs.cpp.o
-.PHONY : prefs.cpp.o
+yame.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/yame.cpp.o
+.PHONY : yame.cpp.o
 
-prefs.i: prefs.cpp.i
-.PHONY : prefs.i
-
-# target to preprocess a source file
-prefs.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/prefs.cpp.i
-.PHONY : prefs.cpp.i
-
-prefs.s: prefs.cpp.s
-.PHONY : prefs.s
-
-# target to generate assembly for a file
-prefs.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/prefs.cpp.s
-.PHONY : prefs.cpp.s
-
-prefs_items.o: prefs_items.cpp.o
-.PHONY : prefs_items.o
-
-# target to build an object file
-prefs_items.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/prefs_items.cpp.o
-.PHONY : prefs_items.cpp.o
-
-prefs_items.i: prefs_items.cpp.i
-.PHONY : prefs_items.i
+yame.i: yame.cpp.i
+.PHONY : yame.i
 
 # target to preprocess a source file
-prefs_items.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/prefs_items.cpp.i
-.PHONY : prefs_items.cpp.i
+yame.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/yame.cpp.i
+.PHONY : yame.cpp.i
 
-prefs_items.s: prefs_items.cpp.s
-.PHONY : prefs_items.s
-
-# target to generate assembly for a file
-prefs_items.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/prefs_items.cpp.s
-.PHONY : prefs_items.cpp.s
-
-rom_patches.o: rom_patches.cpp.o
-.PHONY : rom_patches.o
-
-# target to build an object file
-rom_patches.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/rom_patches.cpp.o
-.PHONY : rom_patches.cpp.o
-
-rom_patches.i: rom_patches.cpp.i
-.PHONY : rom_patches.i
-
-# target to preprocess a source file
-rom_patches.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/rom_patches.cpp.i
-.PHONY : rom_patches.cpp.i
-
-rom_patches.s: rom_patches.cpp.s
-.PHONY : rom_patches.s
+yame.s: yame.cpp.s
+.PHONY : yame.s
 
 # target to generate assembly for a file
-rom_patches.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/rom_patches.cpp.s
-.PHONY : rom_patches.cpp.s
-
-rsrc_patches.o: rsrc_patches.cpp.o
-.PHONY : rsrc_patches.o
-
-# target to build an object file
-rsrc_patches.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/rsrc_patches.cpp.o
-.PHONY : rsrc_patches.cpp.o
-
-rsrc_patches.i: rsrc_patches.cpp.i
-.PHONY : rsrc_patches.i
-
-# target to preprocess a source file
-rsrc_patches.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/rsrc_patches.cpp.i
-.PHONY : rsrc_patches.cpp.i
-
-rsrc_patches.s: rsrc_patches.cpp.s
-.PHONY : rsrc_patches.s
-
-# target to generate assembly for a file
-rsrc_patches.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/rsrc_patches.cpp.s
-.PHONY : rsrc_patches.cpp.s
-
-scsi.o: scsi.cpp.o
-.PHONY : scsi.o
-
-# target to build an object file
-scsi.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/scsi.cpp.o
-.PHONY : scsi.cpp.o
-
-scsi.i: scsi.cpp.i
-.PHONY : scsi.i
-
-# target to preprocess a source file
-scsi.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/scsi.cpp.i
-.PHONY : scsi.cpp.i
-
-scsi.s: scsi.cpp.s
-.PHONY : scsi.s
-
-# target to generate assembly for a file
-scsi.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/scsi.cpp.s
-.PHONY : scsi.cpp.s
-
-serial.o: serial.cpp.o
-.PHONY : serial.o
-
-# target to build an object file
-serial.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/serial.cpp.o
-.PHONY : serial.cpp.o
-
-serial.i: serial.cpp.i
-.PHONY : serial.i
-
-# target to preprocess a source file
-serial.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/serial.cpp.i
-.PHONY : serial.cpp.i
-
-serial.s: serial.cpp.s
-.PHONY : serial.s
-
-# target to generate assembly for a file
-serial.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/serial.cpp.s
-.PHONY : serial.cpp.s
-
-slot_rom.o: slot_rom.cpp.o
-.PHONY : slot_rom.o
-
-# target to build an object file
-slot_rom.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/slot_rom.cpp.o
-.PHONY : slot_rom.cpp.o
-
-slot_rom.i: slot_rom.cpp.i
-.PHONY : slot_rom.i
-
-# target to preprocess a source file
-slot_rom.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/slot_rom.cpp.i
-.PHONY : slot_rom.cpp.i
-
-slot_rom.s: slot_rom.cpp.s
-.PHONY : slot_rom.s
-
-# target to generate assembly for a file
-slot_rom.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/slot_rom.cpp.s
-.PHONY : slot_rom.cpp.s
-
-sony.o: sony.cpp.o
-.PHONY : sony.o
-
-# target to build an object file
-sony.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/sony.cpp.o
-.PHONY : sony.cpp.o
-
-sony.i: sony.cpp.i
-.PHONY : sony.i
-
-# target to preprocess a source file
-sony.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/sony.cpp.i
-.PHONY : sony.cpp.i
-
-sony.s: sony.cpp.s
-.PHONY : sony.s
-
-# target to generate assembly for a file
-sony.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/sony.cpp.s
-.PHONY : sony.cpp.s
-
-timer.o: timer.cpp.o
-.PHONY : timer.o
-
-# target to build an object file
-timer.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/timer.cpp.o
-.PHONY : timer.cpp.o
-
-timer.i: timer.cpp.i
-.PHONY : timer.i
-
-# target to preprocess a source file
-timer.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/timer.cpp.i
-.PHONY : timer.cpp.i
-
-timer.s: timer.cpp.s
-.PHONY : timer.s
-
-# target to generate assembly for a file
-timer.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/timer.cpp.s
-.PHONY : timer.cpp.s
-
-user_strings.o: user_strings.cpp.o
-.PHONY : user_strings.o
-
-# target to build an object file
-user_strings.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/user_strings.cpp.o
-.PHONY : user_strings.cpp.o
-
-user_strings.i: user_strings.cpp.i
-.PHONY : user_strings.i
-
-# target to preprocess a source file
-user_strings.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/user_strings.cpp.i
-.PHONY : user_strings.cpp.i
-
-user_strings.s: user_strings.cpp.s
-.PHONY : user_strings.s
-
-# target to generate assembly for a file
-user_strings.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/user_strings.cpp.s
-.PHONY : user_strings.cpp.s
-
-video.o: video.cpp.o
-.PHONY : video.o
-
-# target to build an object file
-video.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/video.cpp.o
-.PHONY : video.cpp.o
-
-video.i: video.cpp.i
-.PHONY : video.i
-
-# target to preprocess a source file
-video.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/video.cpp.i
-.PHONY : video.cpp.i
-
-video.s: video.cpp.s
-.PHONY : video.s
-
-# target to generate assembly for a file
-video.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/video.cpp.s
-.PHONY : video.cpp.s
-
-xpram.o: xpram.cpp.o
-.PHONY : xpram.o
-
-# target to build an object file
-xpram.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/xpram.cpp.o
-.PHONY : xpram.cpp.o
-
-xpram.i: xpram.cpp.i
-.PHONY : xpram.i
-
-# target to preprocess a source file
-xpram.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/xpram.cpp.i
-.PHONY : xpram.cpp.i
-
-xpram.s: xpram.cpp.s
-.PHONY : xpram.s
-
-# target to generate assembly for a file
-xpram.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Basillisk2.dir/build.make CMakeFiles/Basillisk2.dir/xpram.cpp.s
-.PHONY : xpram.cpp.s
+yame.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Yame.dir/build.make CMakeFiles/Yame.dir/yame.cpp.s
+.PHONY : yame.cpp.s
 
 # Help Target
 help:
@@ -4834,151 +4211,53 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... test"
-	@echo "... Basillisk2"
-	@echo "... test_cpu"
-	@echo "... test_cpu_add"
-	@echo "... test_cpu_and"
-	@echo "... test_cpu_bchg"
-	@echo "... test_cpu_bclr"
-	@echo "... test_cpu_bitfields"
-	@echo "... test_cpu_bset"
-	@echo "... test_cpu_btst"
-	@echo "... test_cpu_cas"
-	@echo "... test_cpu_cas2"
-	@echo "... test_cpu_chk"
-	@echo "... test_cpu_chk2"
-	@echo "... test_cpu_clr"
-	@echo "... test_cpu_cmp"
-	@echo "... test_cpu_cmp2"
-	@echo "... test_cpu_dbcc"
-	@echo "... test_cpu_div"
-	@echo "... test_cpu_eor"
-	@echo "... test_cpu_exg"
-	@echo "... test_cpu_ext"
-	@echo "... test_cpu_fmove"
-	@echo "... test_cpu_jmp"
-	@echo "... test_cpu_lea"
-	@echo "... test_cpu_link"
-	@echo "... test_cpu_math"
-	@echo "... test_cpu_move"
-	@echo "... test_cpu_movem"
-	@echo "... test_cpu_movep"
-	@echo "... test_cpu_mul"
-	@echo "... test_cpu_nbcd"
-	@echo "... test_cpu_neg"
-	@echo "... test_cpu_negx"
-	@echo "... test_cpu_not"
-	@echo "... test_cpu_or"
-	@echo "... test_cpu_pack"
-	@echo "... test_cpu_pea"
-	@echo "... test_cpu_rtx"
-	@echo "... test_cpu_sbcd"
-	@echo "... test_cpu_scc"
-	@echo "... test_cpu_shift"
-	@echo "... test_cpu_sub"
-	@echo "... test_cpu_swap"
-	@echo "... test_cpu_tst"
-	@echo "... test_cpu_unlk"
-	@echo "... test_cpu_unpk"
-	@echo "... CrossPlatform/video_blit.o"
-	@echo "... CrossPlatform/video_blit.i"
-	@echo "... CrossPlatform/video_blit.s"
-	@echo "... CrossPlatform/vm_alloc.o"
-	@echo "... CrossPlatform/vm_alloc.i"
-	@echo "... CrossPlatform/vm_alloc.s"
-	@echo "... SDL/audio_sdl.o"
-	@echo "... SDL/audio_sdl.i"
-	@echo "... SDL/audio_sdl.s"
-	@echo "... SDL/common.o"
-	@echo "... SDL/common.i"
-	@echo "... SDL/common.s"
-	@echo "... SDL/video_sdl2.o"
-	@echo "... SDL/video_sdl2.i"
-	@echo "... SDL/video_sdl2.s"
-	@echo "... Unix/Linux/scsi_linux.o"
-	@echo "... Unix/Linux/scsi_linux.i"
-	@echo "... Unix/Linux/scsi_linux.s"
-	@echo "... Unix/disk_sparsebundle.o"
-	@echo "... Unix/disk_sparsebundle.i"
-	@echo "... Unix/disk_sparsebundle.s"
-	@echo "... Unix/ether_unix.o"
-	@echo "... Unix/ether_unix.i"
-	@echo "... Unix/ether_unix.s"
-	@echo "... Unix/extfs_unix.o"
-	@echo "... Unix/extfs_unix.i"
-	@echo "... Unix/extfs_unix.s"
-	@echo "... Unix/main_unix.o"
-	@echo "... Unix/main_unix.i"
-	@echo "... Unix/main_unix.s"
-	@echo "... Unix/prefs_unix.o"
-	@echo "... Unix/prefs_unix.i"
-	@echo "... Unix/prefs_unix.s"
-	@echo "... Unix/serial_unix.o"
-	@echo "... Unix/serial_unix.i"
-	@echo "... Unix/serial_unix.s"
-	@echo "... Unix/sys_unix.o"
-	@echo "... Unix/sys_unix.i"
-	@echo "... Unix/sys_unix.s"
-	@echo "... Unix/timer_unix.o"
-	@echo "... Unix/timer_unix.i"
-	@echo "... Unix/timer_unix.s"
-	@echo "... Unix/tinyxml2.o"
-	@echo "... Unix/tinyxml2.i"
-	@echo "... Unix/tinyxml2.s"
-	@echo "... Unix/user_strings_unix.o"
-	@echo "... Unix/user_strings_unix.i"
-	@echo "... Unix/user_strings_unix.s"
-	@echo "... Unix/xpram_unix.o"
-	@echo "... Unix/xpram_unix.i"
-	@echo "... Unix/xpram_unix.s"
-	@echo "... adb.o"
-	@echo "... adb.i"
-	@echo "... adb.s"
-	@echo "... audio.o"
-	@echo "... audio.i"
-	@echo "... audio.s"
-	@echo "... cdrom.o"
-	@echo "... cdrom.i"
-	@echo "... cdrom.s"
-	@echo "... disk.o"
-	@echo "... disk.i"
-	@echo "... disk.s"
-	@echo "... dummy/clip_dummy.o"
-	@echo "... dummy/clip_dummy.i"
-	@echo "... dummy/clip_dummy.s"
-	@echo "... emul_op.o"
-	@echo "... emul_op.i"
-	@echo "... emul_op.s"
-	@echo "... ether.o"
-	@echo "... ether.i"
-	@echo "... ether.s"
-	@echo "... extfs.o"
-	@echo "... extfs.i"
-	@echo "... extfs.s"
-	@echo "... macos_util.o"
-	@echo "... macos_util.i"
-	@echo "... macos_util.s"
-	@echo "... main.o"
-	@echo "... main.i"
-	@echo "... main.s"
+	@echo "... Yame"
+	@echo "... ut"
+	@echo "... chips/io.o"
+	@echo "... chips/io.i"
+	@echo "... chips/io.s"
+	@echo "... chips/iop.o"
+	@echo "... chips/iop.i"
+	@echo "... chips/iop.s"
+	@echo "... chips/mcu.o"
+	@echo "... chips/mcu.i"
+	@echo "... chips/mcu.s"
+	@echo "... chips/via.o"
+	@echo "... chips/via.i"
+	@echo "... chips/via.s"
 	@echo "... mmu_cpu/basilisk_glue.o"
 	@echo "... mmu_cpu/basilisk_glue.i"
 	@echo "... mmu_cpu/basilisk_glue.s"
+	@echo "... mmu_cpu/compiler/jit.o"
+	@echo "... mmu_cpu/compiler/jit.i"
+	@echo "... mmu_cpu/compiler/jit.s"
+	@echo "... mmu_cpu/disasm.o"
+	@echo "... mmu_cpu/disasm.i"
+	@echo "... mmu_cpu/disasm.s"
 	@echo "... mmu_cpu/ea.o"
 	@echo "... mmu_cpu/ea.i"
 	@echo "... mmu_cpu/ea.s"
 	@echo "... mmu_cpu/exception.o"
 	@echo "... mmu_cpu/exception.i"
 	@echo "... mmu_cpu/exception.s"
-	@echo "... mmu_cpu/fpu/fpu_ieee.o"
-	@echo "... mmu_cpu/fpu/fpu_ieee.i"
-	@echo "... mmu_cpu/fpu/fpu_ieee.s"
+	@echo "... mmu_cpu/fpu/fpu_mpfr.o"
+	@echo "... mmu_cpu/fpu/fpu_mpfr.i"
+	@echo "... mmu_cpu/fpu/fpu_mpfr.s"
+	@echo "... mmu_cpu/mbus.o"
+	@echo "... mmu_cpu/mbus.i"
+	@echo "... mmu_cpu/mbus.s"
 	@echo "... mmu_cpu/memory.o"
 	@echo "... mmu_cpu/memory.i"
 	@echo "... mmu_cpu/memory.s"
+	@echo "... mmu_cpu/mmu/mmu_68040.o"
+	@echo "... mmu_cpu/mmu/mmu_68040.i"
+	@echo "... mmu_cpu/mmu/mmu_68040.s"
 	@echo "... mmu_cpu/newcpu.o"
 	@echo "... mmu_cpu/newcpu.i"
 	@echo "... mmu_cpu/newcpu.s"
+	@echo "... mmu_cpu/op_arithmetic.o"
+	@echo "... mmu_cpu/op_arithmetic.i"
+	@echo "... mmu_cpu/op_arithmetic.s"
 	@echo "... mmu_cpu/op_bcd.o"
 	@echo "... mmu_cpu/op_bcd.i"
 	@echo "... mmu_cpu/op_bcd.s"
@@ -4991,189 +4270,450 @@ help:
 	@echo "... mmu_cpu/op_branch.o"
 	@echo "... mmu_cpu/op_branch.i"
 	@echo "... mmu_cpu/op_branch.s"
-	@echo "... mmu_cpu/op_math.o"
-	@echo "... mmu_cpu/op_math.i"
-	@echo "... mmu_cpu/op_math.s"
 	@echo "... mmu_cpu/op_move.o"
 	@echo "... mmu_cpu/op_move.i"
 	@echo "... mmu_cpu/op_move.s"
-	@echo "... mmu_cpu/test/_test_common2.o"
-	@echo "... mmu_cpu/test/_test_common2.i"
-	@echo "... mmu_cpu/test/_test_common2.s"
-	@echo "... mmu_cpu/test/add.o"
-	@echo "... mmu_cpu/test/add.i"
-	@echo "... mmu_cpu/test/add.s"
-	@echo "... mmu_cpu/test/and.o"
-	@echo "... mmu_cpu/test/and.i"
-	@echo "... mmu_cpu/test/and.s"
-	@echo "... mmu_cpu/test/bchg.o"
-	@echo "... mmu_cpu/test/bchg.i"
-	@echo "... mmu_cpu/test/bchg.s"
-	@echo "... mmu_cpu/test/bclr.o"
-	@echo "... mmu_cpu/test/bclr.i"
-	@echo "... mmu_cpu/test/bclr.s"
-	@echo "... mmu_cpu/test/bitfields.o"
-	@echo "... mmu_cpu/test/bitfields.i"
-	@echo "... mmu_cpu/test/bitfields.s"
-	@echo "... mmu_cpu/test/bset.o"
-	@echo "... mmu_cpu/test/bset.i"
-	@echo "... mmu_cpu/test/bset.s"
-	@echo "... mmu_cpu/test/btst.o"
-	@echo "... mmu_cpu/test/btst.i"
-	@echo "... mmu_cpu/test/btst.s"
-	@echo "... mmu_cpu/test/cas.o"
-	@echo "... mmu_cpu/test/cas.i"
-	@echo "... mmu_cpu/test/cas.s"
-	@echo "... mmu_cpu/test/cas2.o"
-	@echo "... mmu_cpu/test/cas2.i"
-	@echo "... mmu_cpu/test/cas2.s"
-	@echo "... mmu_cpu/test/chk.o"
-	@echo "... mmu_cpu/test/chk.i"
-	@echo "... mmu_cpu/test/chk.s"
-	@echo "... mmu_cpu/test/chk2.o"
-	@echo "... mmu_cpu/test/chk2.i"
-	@echo "... mmu_cpu/test/chk2.s"
-	@echo "... mmu_cpu/test/clr.o"
-	@echo "... mmu_cpu/test/clr.i"
-	@echo "... mmu_cpu/test/clr.s"
-	@echo "... mmu_cpu/test/cmp.o"
-	@echo "... mmu_cpu/test/cmp.i"
-	@echo "... mmu_cpu/test/cmp.s"
-	@echo "... mmu_cpu/test/cmp2.o"
-	@echo "... mmu_cpu/test/cmp2.i"
-	@echo "... mmu_cpu/test/cmp2.s"
-	@echo "... mmu_cpu/test/cpu1.o"
-	@echo "... mmu_cpu/test/cpu1.i"
-	@echo "... mmu_cpu/test/cpu1.s"
-	@echo "... mmu_cpu/test/dbcc.o"
-	@echo "... mmu_cpu/test/dbcc.i"
-	@echo "... mmu_cpu/test/dbcc.s"
-	@echo "... mmu_cpu/test/div.o"
-	@echo "... mmu_cpu/test/div.i"
-	@echo "... mmu_cpu/test/div.s"
-	@echo "... mmu_cpu/test/eor.o"
-	@echo "... mmu_cpu/test/eor.i"
-	@echo "... mmu_cpu/test/eor.s"
-	@echo "... mmu_cpu/test/exg.o"
-	@echo "... mmu_cpu/test/exg.i"
-	@echo "... mmu_cpu/test/exg.s"
-	@echo "... mmu_cpu/test/ext.o"
-	@echo "... mmu_cpu/test/ext.i"
-	@echo "... mmu_cpu/test/ext.s"
-	@echo "... mmu_cpu/test/fmove.o"
-	@echo "... mmu_cpu/test/fmove.i"
-	@echo "... mmu_cpu/test/fmove.s"
-	@echo "... mmu_cpu/test/jmp.o"
-	@echo "... mmu_cpu/test/jmp.i"
-	@echo "... mmu_cpu/test/jmp.s"
-	@echo "... mmu_cpu/test/lea.o"
-	@echo "... mmu_cpu/test/lea.i"
-	@echo "... mmu_cpu/test/lea.s"
-	@echo "... mmu_cpu/test/link.o"
-	@echo "... mmu_cpu/test/link.i"
-	@echo "... mmu_cpu/test/link.s"
-	@echo "... mmu_cpu/test/math.o"
-	@echo "... mmu_cpu/test/math.i"
-	@echo "... mmu_cpu/test/math.s"
-	@echo "... mmu_cpu/test/move.o"
-	@echo "... mmu_cpu/test/move.i"
-	@echo "... mmu_cpu/test/move.s"
-	@echo "... mmu_cpu/test/movem.o"
-	@echo "... mmu_cpu/test/movem.i"
-	@echo "... mmu_cpu/test/movem.s"
-	@echo "... mmu_cpu/test/movep.o"
-	@echo "... mmu_cpu/test/movep.i"
-	@echo "... mmu_cpu/test/movep.s"
-	@echo "... mmu_cpu/test/mul.o"
-	@echo "... mmu_cpu/test/mul.i"
-	@echo "... mmu_cpu/test/mul.s"
-	@echo "... mmu_cpu/test/nbcd.o"
-	@echo "... mmu_cpu/test/nbcd.i"
-	@echo "... mmu_cpu/test/nbcd.s"
-	@echo "... mmu_cpu/test/neg.o"
-	@echo "... mmu_cpu/test/neg.i"
-	@echo "... mmu_cpu/test/neg.s"
-	@echo "... mmu_cpu/test/negx.o"
-	@echo "... mmu_cpu/test/negx.i"
-	@echo "... mmu_cpu/test/negx.s"
-	@echo "... mmu_cpu/test/not.o"
-	@echo "... mmu_cpu/test/not.i"
-	@echo "... mmu_cpu/test/not.s"
-	@echo "... mmu_cpu/test/or.o"
-	@echo "... mmu_cpu/test/or.i"
-	@echo "... mmu_cpu/test/or.s"
-	@echo "... mmu_cpu/test/pack.o"
-	@echo "... mmu_cpu/test/pack.i"
-	@echo "... mmu_cpu/test/pack.s"
-	@echo "... mmu_cpu/test/pea.o"
-	@echo "... mmu_cpu/test/pea.i"
-	@echo "... mmu_cpu/test/pea.s"
-	@echo "... mmu_cpu/test/rtx.o"
-	@echo "... mmu_cpu/test/rtx.i"
-	@echo "... mmu_cpu/test/rtx.s"
-	@echo "... mmu_cpu/test/sbcd.o"
-	@echo "... mmu_cpu/test/sbcd.i"
-	@echo "... mmu_cpu/test/sbcd.s"
-	@echo "... mmu_cpu/test/scc.o"
-	@echo "... mmu_cpu/test/scc.i"
-	@echo "... mmu_cpu/test/scc.s"
-	@echo "... mmu_cpu/test/shift.o"
-	@echo "... mmu_cpu/test/shift.i"
-	@echo "... mmu_cpu/test/shift.s"
-	@echo "... mmu_cpu/test/sub.o"
-	@echo "... mmu_cpu/test/sub.i"
-	@echo "... mmu_cpu/test/sub.s"
-	@echo "... mmu_cpu/test/swap.o"
-	@echo "... mmu_cpu/test/swap.i"
-	@echo "... mmu_cpu/test/swap.s"
+	@echo "... mmu_cpu/test/arithmetic/add.o"
+	@echo "... mmu_cpu/test/arithmetic/add.i"
+	@echo "... mmu_cpu/test/arithmetic/add.s"
+	@echo "... mmu_cpu/test/arithmetic/adda.o"
+	@echo "... mmu_cpu/test/arithmetic/adda.i"
+	@echo "... mmu_cpu/test/arithmetic/adda.s"
+	@echo "... mmu_cpu/test/arithmetic/addi.o"
+	@echo "... mmu_cpu/test/arithmetic/addi.i"
+	@echo "... mmu_cpu/test/arithmetic/addi.s"
+	@echo "... mmu_cpu/test/arithmetic/addq.o"
+	@echo "... mmu_cpu/test/arithmetic/addq.i"
+	@echo "... mmu_cpu/test/arithmetic/addq.s"
+	@echo "... mmu_cpu/test/arithmetic/addx.o"
+	@echo "... mmu_cpu/test/arithmetic/addx.i"
+	@echo "... mmu_cpu/test/arithmetic/addx.s"
+	@echo "... mmu_cpu/test/arithmetic/cas.o"
+	@echo "... mmu_cpu/test/arithmetic/cas.i"
+	@echo "... mmu_cpu/test/arithmetic/cas.s"
+	@echo "... mmu_cpu/test/arithmetic/cas2.o"
+	@echo "... mmu_cpu/test/arithmetic/cas2.i"
+	@echo "... mmu_cpu/test/arithmetic/cas2.s"
+	@echo "... mmu_cpu/test/arithmetic/chk.o"
+	@echo "... mmu_cpu/test/arithmetic/chk.i"
+	@echo "... mmu_cpu/test/arithmetic/chk.s"
+	@echo "... mmu_cpu/test/arithmetic/chk2.o"
+	@echo "... mmu_cpu/test/arithmetic/chk2.i"
+	@echo "... mmu_cpu/test/arithmetic/chk2.s"
+	@echo "... mmu_cpu/test/arithmetic/cmp.o"
+	@echo "... mmu_cpu/test/arithmetic/cmp.i"
+	@echo "... mmu_cpu/test/arithmetic/cmp.s"
+	@echo "... mmu_cpu/test/arithmetic/cmp2.o"
+	@echo "... mmu_cpu/test/arithmetic/cmp2.i"
+	@echo "... mmu_cpu/test/arithmetic/cmp2.s"
+	@echo "... mmu_cpu/test/arithmetic/cmpa.o"
+	@echo "... mmu_cpu/test/arithmetic/cmpa.i"
+	@echo "... mmu_cpu/test/arithmetic/cmpa.s"
+	@echo "... mmu_cpu/test/arithmetic/cmpi.o"
+	@echo "... mmu_cpu/test/arithmetic/cmpi.i"
+	@echo "... mmu_cpu/test/arithmetic/cmpi.s"
+	@echo "... mmu_cpu/test/arithmetic/cmpm.o"
+	@echo "... mmu_cpu/test/arithmetic/cmpm.i"
+	@echo "... mmu_cpu/test/arithmetic/cmpm.s"
+	@echo "... mmu_cpu/test/arithmetic/divs.o"
+	@echo "... mmu_cpu/test/arithmetic/divs.i"
+	@echo "... mmu_cpu/test/arithmetic/divs.s"
+	@echo "... mmu_cpu/test/arithmetic/divu.o"
+	@echo "... mmu_cpu/test/arithmetic/divu.i"
+	@echo "... mmu_cpu/test/arithmetic/divu.s"
+	@echo "... mmu_cpu/test/arithmetic/muls.o"
+	@echo "... mmu_cpu/test/arithmetic/muls.i"
+	@echo "... mmu_cpu/test/arithmetic/muls.s"
+	@echo "... mmu_cpu/test/arithmetic/mulu.o"
+	@echo "... mmu_cpu/test/arithmetic/mulu.i"
+	@echo "... mmu_cpu/test/arithmetic/mulu.s"
+	@echo "... mmu_cpu/test/arithmetic/neg.o"
+	@echo "... mmu_cpu/test/arithmetic/neg.i"
+	@echo "... mmu_cpu/test/arithmetic/neg.s"
+	@echo "... mmu_cpu/test/arithmetic/negx.o"
+	@echo "... mmu_cpu/test/arithmetic/negx.i"
+	@echo "... mmu_cpu/test/arithmetic/negx.s"
+	@echo "... mmu_cpu/test/arithmetic/sub.o"
+	@echo "... mmu_cpu/test/arithmetic/sub.i"
+	@echo "... mmu_cpu/test/arithmetic/sub.s"
+	@echo "... mmu_cpu/test/arithmetic/suba.o"
+	@echo "... mmu_cpu/test/arithmetic/suba.i"
+	@echo "... mmu_cpu/test/arithmetic/suba.s"
+	@echo "... mmu_cpu/test/arithmetic/subi.o"
+	@echo "... mmu_cpu/test/arithmetic/subi.i"
+	@echo "... mmu_cpu/test/arithmetic/subi.s"
+	@echo "... mmu_cpu/test/arithmetic/subq.o"
+	@echo "... mmu_cpu/test/arithmetic/subq.i"
+	@echo "... mmu_cpu/test/arithmetic/subq.s"
+	@echo "... mmu_cpu/test/arithmetic/subx.o"
+	@echo "... mmu_cpu/test/arithmetic/subx.i"
+	@echo "... mmu_cpu/test/arithmetic/subx.s"
+	@echo "... mmu_cpu/test/bcd/abcd.o"
+	@echo "... mmu_cpu/test/bcd/abcd.i"
+	@echo "... mmu_cpu/test/bcd/abcd.s"
+	@echo "... mmu_cpu/test/bcd/nbcd.o"
+	@echo "... mmu_cpu/test/bcd/nbcd.i"
+	@echo "... mmu_cpu/test/bcd/nbcd.s"
+	@echo "... mmu_cpu/test/bcd/pack.o"
+	@echo "... mmu_cpu/test/bcd/pack.i"
+	@echo "... mmu_cpu/test/bcd/pack.s"
+	@echo "... mmu_cpu/test/bcd/sbcd.o"
+	@echo "... mmu_cpu/test/bcd/sbcd.i"
+	@echo "... mmu_cpu/test/bcd/sbcd.s"
+	@echo "... mmu_cpu/test/bcd/unpk.o"
+	@echo "... mmu_cpu/test/bcd/unpk.i"
+	@echo "... mmu_cpu/test/bcd/unpk.s"
+	@echo "... mmu_cpu/test/bits/and.o"
+	@echo "... mmu_cpu/test/bits/and.i"
+	@echo "... mmu_cpu/test/bits/and.s"
+	@echo "... mmu_cpu/test/bits/andi.o"
+	@echo "... mmu_cpu/test/bits/andi.i"
+	@echo "... mmu_cpu/test/bits/andi.s"
+	@echo "... mmu_cpu/test/bits/asl.o"
+	@echo "... mmu_cpu/test/bits/asl.i"
+	@echo "... mmu_cpu/test/bits/asl.s"
+	@echo "... mmu_cpu/test/bits/asr.o"
+	@echo "... mmu_cpu/test/bits/asr.i"
+	@echo "... mmu_cpu/test/bits/asr.s"
+	@echo "... mmu_cpu/test/bits/bchg.o"
+	@echo "... mmu_cpu/test/bits/bchg.i"
+	@echo "... mmu_cpu/test/bits/bchg.s"
+	@echo "... mmu_cpu/test/bits/bclr.o"
+	@echo "... mmu_cpu/test/bits/bclr.i"
+	@echo "... mmu_cpu/test/bits/bclr.s"
+	@echo "... mmu_cpu/test/bits/bfchg.o"
+	@echo "... mmu_cpu/test/bits/bfchg.i"
+	@echo "... mmu_cpu/test/bits/bfchg.s"
+	@echo "... mmu_cpu/test/bits/bfclr.o"
+	@echo "... mmu_cpu/test/bits/bfclr.i"
+	@echo "... mmu_cpu/test/bits/bfclr.s"
+	@echo "... mmu_cpu/test/bits/bfexts.o"
+	@echo "... mmu_cpu/test/bits/bfexts.i"
+	@echo "... mmu_cpu/test/bits/bfexts.s"
+	@echo "... mmu_cpu/test/bits/bfextu.o"
+	@echo "... mmu_cpu/test/bits/bfextu.i"
+	@echo "... mmu_cpu/test/bits/bfextu.s"
+	@echo "... mmu_cpu/test/bits/bfffo.o"
+	@echo "... mmu_cpu/test/bits/bfffo.i"
+	@echo "... mmu_cpu/test/bits/bfffo.s"
+	@echo "... mmu_cpu/test/bits/bfins.o"
+	@echo "... mmu_cpu/test/bits/bfins.i"
+	@echo "... mmu_cpu/test/bits/bfins.s"
+	@echo "... mmu_cpu/test/bits/bfset.o"
+	@echo "... mmu_cpu/test/bits/bfset.i"
+	@echo "... mmu_cpu/test/bits/bfset.s"
+	@echo "... mmu_cpu/test/bits/bftst.o"
+	@echo "... mmu_cpu/test/bits/bftst.i"
+	@echo "... mmu_cpu/test/bits/bftst.s"
+	@echo "... mmu_cpu/test/bits/bset.o"
+	@echo "... mmu_cpu/test/bits/bset.i"
+	@echo "... mmu_cpu/test/bits/bset.s"
+	@echo "... mmu_cpu/test/bits/btst.o"
+	@echo "... mmu_cpu/test/bits/btst.i"
+	@echo "... mmu_cpu/test/bits/btst.s"
+	@echo "... mmu_cpu/test/bits/clr.o"
+	@echo "... mmu_cpu/test/bits/clr.i"
+	@echo "... mmu_cpu/test/bits/clr.s"
+	@echo "... mmu_cpu/test/bits/eor.o"
+	@echo "... mmu_cpu/test/bits/eor.i"
+	@echo "... mmu_cpu/test/bits/eor.s"
+	@echo "... mmu_cpu/test/bits/eori.o"
+	@echo "... mmu_cpu/test/bits/eori.i"
+	@echo "... mmu_cpu/test/bits/eori.s"
+	@echo "... mmu_cpu/test/bits/ext.o"
+	@echo "... mmu_cpu/test/bits/ext.i"
+	@echo "... mmu_cpu/test/bits/ext.s"
+	@echo "... mmu_cpu/test/bits/extb.o"
+	@echo "... mmu_cpu/test/bits/extb.i"
+	@echo "... mmu_cpu/test/bits/extb.s"
+	@echo "... mmu_cpu/test/bits/lsl.o"
+	@echo "... mmu_cpu/test/bits/lsl.i"
+	@echo "... mmu_cpu/test/bits/lsl.s"
+	@echo "... mmu_cpu/test/bits/lsr.o"
+	@echo "... mmu_cpu/test/bits/lsr.i"
+	@echo "... mmu_cpu/test/bits/lsr.s"
+	@echo "... mmu_cpu/test/bits/not.o"
+	@echo "... mmu_cpu/test/bits/not.i"
+	@echo "... mmu_cpu/test/bits/not.s"
+	@echo "... mmu_cpu/test/bits/or.o"
+	@echo "... mmu_cpu/test/bits/or.i"
+	@echo "... mmu_cpu/test/bits/or.s"
+	@echo "... mmu_cpu/test/bits/ori.o"
+	@echo "... mmu_cpu/test/bits/ori.i"
+	@echo "... mmu_cpu/test/bits/ori.s"
+	@echo "... mmu_cpu/test/bits/rol.o"
+	@echo "... mmu_cpu/test/bits/rol.i"
+	@echo "... mmu_cpu/test/bits/rol.s"
+	@echo "... mmu_cpu/test/bits/ror.o"
+	@echo "... mmu_cpu/test/bits/ror.i"
+	@echo "... mmu_cpu/test/bits/ror.s"
+	@echo "... mmu_cpu/test/bits/roxl.o"
+	@echo "... mmu_cpu/test/bits/roxl.i"
+	@echo "... mmu_cpu/test/bits/roxl.s"
+	@echo "... mmu_cpu/test/bits/roxr.o"
+	@echo "... mmu_cpu/test/bits/roxr.i"
+	@echo "... mmu_cpu/test/bits/roxr.s"
+	@echo "... mmu_cpu/test/bits/swap.o"
+	@echo "... mmu_cpu/test/bits/swap.i"
+	@echo "... mmu_cpu/test/bits/swap.s"
+	@echo "... mmu_cpu/test/bits/tas.o"
+	@echo "... mmu_cpu/test/bits/tas.i"
+	@echo "... mmu_cpu/test/bits/tas.s"
+	@echo "... mmu_cpu/test/bits/tst.o"
+	@echo "... mmu_cpu/test/bits/tst.i"
+	@echo "... mmu_cpu/test/bits/tst.s"
+	@echo "... mmu_cpu/test/branch/bcc.o"
+	@echo "... mmu_cpu/test/branch/bcc.i"
+	@echo "... mmu_cpu/test/branch/bcc.s"
+	@echo "... mmu_cpu/test/branch/bkpt.o"
+	@echo "... mmu_cpu/test/branch/bkpt.i"
+	@echo "... mmu_cpu/test/branch/bkpt.s"
+	@echo "... mmu_cpu/test/branch/bra.o"
+	@echo "... mmu_cpu/test/branch/bra.i"
+	@echo "... mmu_cpu/test/branch/bra.s"
+	@echo "... mmu_cpu/test/branch/bsr.o"
+	@echo "... mmu_cpu/test/branch/bsr.i"
+	@echo "... mmu_cpu/test/branch/bsr.s"
+	@echo "... mmu_cpu/test/branch/dbcc.o"
+	@echo "... mmu_cpu/test/branch/dbcc.i"
+	@echo "... mmu_cpu/test/branch/dbcc.s"
+	@echo "... mmu_cpu/test/branch/illegal.o"
+	@echo "... mmu_cpu/test/branch/illegal.i"
+	@echo "... mmu_cpu/test/branch/illegal.s"
+	@echo "... mmu_cpu/test/branch/jmp.o"
+	@echo "... mmu_cpu/test/branch/jmp.i"
+	@echo "... mmu_cpu/test/branch/jmp.s"
+	@echo "... mmu_cpu/test/branch/jsr.o"
+	@echo "... mmu_cpu/test/branch/jsr.i"
+	@echo "... mmu_cpu/test/branch/jsr.s"
+	@echo "... mmu_cpu/test/branch/link.o"
+	@echo "... mmu_cpu/test/branch/link.i"
+	@echo "... mmu_cpu/test/branch/link.s"
+	@echo "... mmu_cpu/test/branch/nop.o"
+	@echo "... mmu_cpu/test/branch/nop.i"
+	@echo "... mmu_cpu/test/branch/nop.s"
+	@echo "... mmu_cpu/test/branch/reset.o"
+	@echo "... mmu_cpu/test/branch/reset.i"
+	@echo "... mmu_cpu/test/branch/reset.s"
+	@echo "... mmu_cpu/test/branch/rtd.o"
+	@echo "... mmu_cpu/test/branch/rtd.i"
+	@echo "... mmu_cpu/test/branch/rtd.s"
+	@echo "... mmu_cpu/test/branch/rte.o"
+	@echo "... mmu_cpu/test/branch/rte.i"
+	@echo "... mmu_cpu/test/branch/rte.s"
+	@echo "... mmu_cpu/test/branch/rtr.o"
+	@echo "... mmu_cpu/test/branch/rtr.i"
+	@echo "... mmu_cpu/test/branch/rtr.s"
+	@echo "... mmu_cpu/test/branch/rts.o"
+	@echo "... mmu_cpu/test/branch/rts.i"
+	@echo "... mmu_cpu/test/branch/rts.s"
+	@echo "... mmu_cpu/test/branch/trap.o"
+	@echo "... mmu_cpu/test/branch/trap.i"
+	@echo "... mmu_cpu/test/branch/trap.s"
+	@echo "... mmu_cpu/test/branch/trapcc.o"
+	@echo "... mmu_cpu/test/branch/trapcc.i"
+	@echo "... mmu_cpu/test/branch/trapcc.s"
+	@echo "... mmu_cpu/test/branch/trapv.o"
+	@echo "... mmu_cpu/test/branch/trapv.i"
+	@echo "... mmu_cpu/test/branch/trapv.s"
+	@echo "... mmu_cpu/test/branch/unlk.o"
+	@echo "... mmu_cpu/test/branch/unlk.i"
+	@echo "... mmu_cpu/test/branch/unlk.s"
+	@echo "... mmu_cpu/test/cpu_impl.o"
+	@echo "... mmu_cpu/test/cpu_impl.i"
+	@echo "... mmu_cpu/test/cpu_impl.s"
+	@echo "... mmu_cpu/test/exception.o"
+	@echo "... mmu_cpu/test/exception.i"
+	@echo "... mmu_cpu/test/exception.s"
+	@echo "... mmu_cpu/test/fpu/fabs.o"
+	@echo "... mmu_cpu/test/fpu/fabs.i"
+	@echo "... mmu_cpu/test/fpu/fabs.s"
+	@echo "... mmu_cpu/test/fpu/facos.o"
+	@echo "... mmu_cpu/test/fpu/facos.i"
+	@echo "... mmu_cpu/test/fpu/facos.s"
+	@echo "... mmu_cpu/test/fpu/fadd.o"
+	@echo "... mmu_cpu/test/fpu/fadd.i"
+	@echo "... mmu_cpu/test/fpu/fadd.s"
+	@echo "... mmu_cpu/test/fpu/fasin.o"
+	@echo "... mmu_cpu/test/fpu/fasin.i"
+	@echo "... mmu_cpu/test/fpu/fasin.s"
+	@echo "... mmu_cpu/test/fpu/fatan.o"
+	@echo "... mmu_cpu/test/fpu/fatan.i"
+	@echo "... mmu_cpu/test/fpu/fatan.s"
+	@echo "... mmu_cpu/test/fpu/fatanh.o"
+	@echo "... mmu_cpu/test/fpu/fatanh.i"
+	@echo "... mmu_cpu/test/fpu/fatanh.s"
+	@echo "... mmu_cpu/test/fpu/fbcc.o"
+	@echo "... mmu_cpu/test/fpu/fbcc.i"
+	@echo "... mmu_cpu/test/fpu/fbcc.s"
+	@echo "... mmu_cpu/test/fpu/fcmp.o"
+	@echo "... mmu_cpu/test/fpu/fcmp.i"
+	@echo "... mmu_cpu/test/fpu/fcmp.s"
+	@echo "... mmu_cpu/test/fpu/fcos.o"
+	@echo "... mmu_cpu/test/fpu/fcos.i"
+	@echo "... mmu_cpu/test/fpu/fcos.s"
+	@echo "... mmu_cpu/test/fpu/fcosh.o"
+	@echo "... mmu_cpu/test/fpu/fcosh.i"
+	@echo "... mmu_cpu/test/fpu/fcosh.s"
+	@echo "... mmu_cpu/test/fpu/fdbcc.o"
+	@echo "... mmu_cpu/test/fpu/fdbcc.i"
+	@echo "... mmu_cpu/test/fpu/fdbcc.s"
+	@echo "... mmu_cpu/test/fpu/fdiv.o"
+	@echo "... mmu_cpu/test/fpu/fdiv.i"
+	@echo "... mmu_cpu/test/fpu/fdiv.s"
+	@echo "... mmu_cpu/test/fpu/fetox.o"
+	@echo "... mmu_cpu/test/fpu/fetox.i"
+	@echo "... mmu_cpu/test/fpu/fetox.s"
+	@echo "... mmu_cpu/test/fpu/fetoxm1.o"
+	@echo "... mmu_cpu/test/fpu/fetoxm1.i"
+	@echo "... mmu_cpu/test/fpu/fetoxm1.s"
+	@echo "... mmu_cpu/test/fpu/fgetexp.o"
+	@echo "... mmu_cpu/test/fpu/fgetexp.i"
+	@echo "... mmu_cpu/test/fpu/fgetexp.s"
+	@echo "... mmu_cpu/test/fpu/fgetman.o"
+	@echo "... mmu_cpu/test/fpu/fgetman.i"
+	@echo "... mmu_cpu/test/fpu/fgetman.s"
+	@echo "... mmu_cpu/test/fpu/fint.o"
+	@echo "... mmu_cpu/test/fpu/fint.i"
+	@echo "... mmu_cpu/test/fpu/fint.s"
+	@echo "... mmu_cpu/test/fpu/fintrz.o"
+	@echo "... mmu_cpu/test/fpu/fintrz.i"
+	@echo "... mmu_cpu/test/fpu/fintrz.s"
+	@echo "... mmu_cpu/test/fpu/flog10.o"
+	@echo "... mmu_cpu/test/fpu/flog10.i"
+	@echo "... mmu_cpu/test/fpu/flog10.s"
+	@echo "... mmu_cpu/test/fpu/flog2.o"
+	@echo "... mmu_cpu/test/fpu/flog2.i"
+	@echo "... mmu_cpu/test/fpu/flog2.s"
+	@echo "... mmu_cpu/test/fpu/flogn.o"
+	@echo "... mmu_cpu/test/fpu/flogn.i"
+	@echo "... mmu_cpu/test/fpu/flogn.s"
+	@echo "... mmu_cpu/test/fpu/flognp1.o"
+	@echo "... mmu_cpu/test/fpu/flognp1.i"
+	@echo "... mmu_cpu/test/fpu/flognp1.s"
+	@echo "... mmu_cpu/test/fpu/fmod.o"
+	@echo "... mmu_cpu/test/fpu/fmod.i"
+	@echo "... mmu_cpu/test/fpu/fmod.s"
+	@echo "... mmu_cpu/test/fpu/fmove.o"
+	@echo "... mmu_cpu/test/fpu/fmove.i"
+	@echo "... mmu_cpu/test/fpu/fmove.s"
+	@echo "... mmu_cpu/test/fpu/fmovecr.o"
+	@echo "... mmu_cpu/test/fpu/fmovecr.i"
+	@echo "... mmu_cpu/test/fpu/fmovecr.s"
+	@echo "... mmu_cpu/test/fpu/fmovem.o"
+	@echo "... mmu_cpu/test/fpu/fmovem.i"
+	@echo "... mmu_cpu/test/fpu/fmovem.s"
+	@echo "... mmu_cpu/test/fpu/fmul.o"
+	@echo "... mmu_cpu/test/fpu/fmul.i"
+	@echo "... mmu_cpu/test/fpu/fmul.s"
+	@echo "... mmu_cpu/test/fpu/fneg.o"
+	@echo "... mmu_cpu/test/fpu/fneg.i"
+	@echo "... mmu_cpu/test/fpu/fneg.s"
+	@echo "... mmu_cpu/test/fpu/fnop.o"
+	@echo "... mmu_cpu/test/fpu/fnop.i"
+	@echo "... mmu_cpu/test/fpu/fnop.s"
+	@echo "... mmu_cpu/test/fpu/frem.o"
+	@echo "... mmu_cpu/test/fpu/frem.i"
+	@echo "... mmu_cpu/test/fpu/frem.s"
+	@echo "... mmu_cpu/test/fpu/fscale.o"
+	@echo "... mmu_cpu/test/fpu/fscale.i"
+	@echo "... mmu_cpu/test/fpu/fscale.s"
+	@echo "... mmu_cpu/test/fpu/fscc.o"
+	@echo "... mmu_cpu/test/fpu/fscc.i"
+	@echo "... mmu_cpu/test/fpu/fscc.s"
+	@echo "... mmu_cpu/test/fpu/fsgldiv.o"
+	@echo "... mmu_cpu/test/fpu/fsgldiv.i"
+	@echo "... mmu_cpu/test/fpu/fsgldiv.s"
+	@echo "... mmu_cpu/test/fpu/fsglmul.o"
+	@echo "... mmu_cpu/test/fpu/fsglmul.i"
+	@echo "... mmu_cpu/test/fpu/fsglmul.s"
+	@echo "... mmu_cpu/test/fpu/fsin.o"
+	@echo "... mmu_cpu/test/fpu/fsin.i"
+	@echo "... mmu_cpu/test/fpu/fsin.s"
+	@echo "... mmu_cpu/test/fpu/fsincos.o"
+	@echo "... mmu_cpu/test/fpu/fsincos.i"
+	@echo "... mmu_cpu/test/fpu/fsincos.s"
+	@echo "... mmu_cpu/test/fpu/fsinh.o"
+	@echo "... mmu_cpu/test/fpu/fsinh.i"
+	@echo "... mmu_cpu/test/fpu/fsinh.s"
+	@echo "... mmu_cpu/test/fpu/fsqrt.o"
+	@echo "... mmu_cpu/test/fpu/fsqrt.i"
+	@echo "... mmu_cpu/test/fpu/fsqrt.s"
+	@echo "... mmu_cpu/test/fpu/fsub.o"
+	@echo "... mmu_cpu/test/fpu/fsub.i"
+	@echo "... mmu_cpu/test/fpu/fsub.s"
+	@echo "... mmu_cpu/test/fpu/ftan.o"
+	@echo "... mmu_cpu/test/fpu/ftan.i"
+	@echo "... mmu_cpu/test/fpu/ftan.s"
+	@echo "... mmu_cpu/test/fpu/ftanh.o"
+	@echo "... mmu_cpu/test/fpu/ftanh.i"
+	@echo "... mmu_cpu/test/fpu/ftanh.s"
+	@echo "... mmu_cpu/test/fpu/ftentox.o"
+	@echo "... mmu_cpu/test/fpu/ftentox.i"
+	@echo "... mmu_cpu/test/fpu/ftentox.s"
+	@echo "... mmu_cpu/test/fpu/ftst.o"
+	@echo "... mmu_cpu/test/fpu/ftst.i"
+	@echo "... mmu_cpu/test/fpu/ftst.s"
+	@echo "... mmu_cpu/test/fpu/ftwotox.o"
+	@echo "... mmu_cpu/test/fpu/ftwotox.i"
+	@echo "... mmu_cpu/test/fpu/ftwotox.s"
+	@echo "... mmu_cpu/test/fpu/nan.o"
+	@echo "... mmu_cpu/test/fpu/nan.i"
+	@echo "... mmu_cpu/test/fpu/nan.s"
+	@echo "... mmu_cpu/test/mmu.o"
+	@echo "... mmu_cpu/test/mmu.i"
+	@echo "... mmu_cpu/test/mmu.s"
+	@echo "... mmu_cpu/test/move/exg.o"
+	@echo "... mmu_cpu/test/move/exg.i"
+	@echo "... mmu_cpu/test/move/exg.s"
+	@echo "... mmu_cpu/test/move/lea.o"
+	@echo "... mmu_cpu/test/move/lea.i"
+	@echo "... mmu_cpu/test/move/lea.s"
+	@echo "... mmu_cpu/test/move/move.o"
+	@echo "... mmu_cpu/test/move/move.i"
+	@echo "... mmu_cpu/test/move/move.s"
+	@echo "... mmu_cpu/test/move/move16.o"
+	@echo "... mmu_cpu/test/move/move16.i"
+	@echo "... mmu_cpu/test/move/move16.s"
+	@echo "... mmu_cpu/test/move/movea.o"
+	@echo "... mmu_cpu/test/move/movea.i"
+	@echo "... mmu_cpu/test/move/movea.s"
+	@echo "... mmu_cpu/test/move/movec.o"
+	@echo "... mmu_cpu/test/move/movec.i"
+	@echo "... mmu_cpu/test/move/movec.s"
+	@echo "... mmu_cpu/test/move/movem.o"
+	@echo "... mmu_cpu/test/move/movem.i"
+	@echo "... mmu_cpu/test/move/movem.s"
+	@echo "... mmu_cpu/test/move/movep.o"
+	@echo "... mmu_cpu/test/move/movep.i"
+	@echo "... mmu_cpu/test/move/movep.s"
+	@echo "... mmu_cpu/test/move/moveq.o"
+	@echo "... mmu_cpu/test/move/moveq.i"
+	@echo "... mmu_cpu/test/move/moveq.s"
+	@echo "... mmu_cpu/test/move/moves.o"
+	@echo "... mmu_cpu/test/move/moves.i"
+	@echo "... mmu_cpu/test/move/moves.s"
+	@echo "... mmu_cpu/test/move/pea.o"
+	@echo "... mmu_cpu/test/move/pea.i"
+	@echo "... mmu_cpu/test/move/pea.s"
+	@echo "... mmu_cpu/test/move/scc.o"
+	@echo "... mmu_cpu/test/move/scc.i"
+	@echo "... mmu_cpu/test/move/scc.s"
 	@echo "... mmu_cpu/test/test_common.o"
 	@echo "... mmu_cpu/test/test_common.i"
 	@echo "... mmu_cpu/test/test_common.s"
-	@echo "... mmu_cpu/test/tst.o"
-	@echo "... mmu_cpu/test/tst.i"
-	@echo "... mmu_cpu/test/tst.s"
-	@echo "... mmu_cpu/test/unlk.o"
-	@echo "... mmu_cpu/test/unlk.i"
-	@echo "... mmu_cpu/test/unlk.s"
-	@echo "... mmu_cpu/test/unpk.o"
-	@echo "... mmu_cpu/test/unpk.i"
-	@echo "... mmu_cpu/test/unpk.s"
-	@echo "... prefs.o"
-	@echo "... prefs.i"
-	@echo "... prefs.s"
-	@echo "... prefs_items.o"
-	@echo "... prefs_items.i"
-	@echo "... prefs_items.s"
-	@echo "... rom_patches.o"
-	@echo "... rom_patches.i"
-	@echo "... rom_patches.s"
-	@echo "... rsrc_patches.o"
-	@echo "... rsrc_patches.i"
-	@echo "... rsrc_patches.s"
-	@echo "... scsi.o"
-	@echo "... scsi.i"
-	@echo "... scsi.s"
-	@echo "... serial.o"
-	@echo "... serial.i"
-	@echo "... serial.s"
-	@echo "... slot_rom.o"
-	@echo "... slot_rom.i"
-	@echo "... slot_rom.s"
-	@echo "... sony.o"
-	@echo "... sony.i"
-	@echo "... sony.s"
-	@echo "... timer.o"
-	@echo "... timer.i"
-	@echo "... timer.s"
-	@echo "... user_strings.o"
-	@echo "... user_strings.i"
-	@echo "... user_strings.s"
-	@echo "... video.o"
-	@echo "... video.i"
-	@echo "... video.s"
-	@echo "... xpram.o"
-	@echo "... xpram.i"
-	@echo "... xpram.s"
+	@echo "... rom/boot.o"
+	@echo "... rom/boot.i"
+	@echo "... rom/boot.s"
+	@echo "... rom/boot2.o"
+	@echo "... rom/boot2.i"
+	@echo "... rom/boot2.s"
+	@echo "... rom/romdata.o"
+	@echo "... rom/romdata.i"
+	@echo "... rom/romdata.s"
+	@echo "... yame.o"
+	@echo "... yame.i"
+	@echo "... yame.s"
 .PHONY : help
 
 

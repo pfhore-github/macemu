@@ -8,10 +8,12 @@
 void run_m68k(uint32_t until);
 void run_m68k(const std::vector<uint32_t> &until);
 void call(uint32_t addr, uint32_t ret);
-void get_hwinfo();
 extern bool rom_overlay;
 extern uint32_t special_rom;
+namespace ROM {
+void get_hwinfo();
 void get_scc_addr();
+#if 0
 void init_second() {
     // $008E0 -> $46C06
     regs.a[7] = 0x2600;
@@ -42,8 +44,8 @@ void init_second() {
         regs.d[2] = 0;
         call(0x470ba, 0x49b08);
         if(regs.d[7] & 1 << 26) {
-            regs.a[3] = constant::MCU.asc_addr;
-            regs.a[5] = constant::MCU.via1_addr;
+//            regs.a[3] = constant::MCU.asc_addr;
+//            regs.a[5] = constant::MCU.via1_addr;
             call(0x45c1c, 0x49b24);
         } else {
             if(special_rom) {
@@ -63,7 +65,7 @@ void init_second() {
     // 4A7E6
     regs.d[2] = 0;
     call(0x470ba, 0x46c8e);
-    regs.a[2] = constant::MCU.via1_addr;
+//    regs.a[2] = constant::MCU.via1_addr;
     if(regs.d[2] & 1 << 24) {
         call(0x471c6, 0x4a802);
     }
@@ -76,10 +78,10 @@ void _477c4() {
     write8(regs.a[3] - 28, 50);
     regs.d[0] = 17;
     write16(regs.a[3] - 31, 0x7fee);
-    for( auto v : v_47804 ) {
-        write8(regs.a[3]-31, v);
+    for(auto v : v_47804) {
+        write8(regs.a[3] - 31, v);
     }
- }
+}
 // $4AE28
 void get_scc_addr() {
     regs.a[3] = regs.a[6];
@@ -97,3 +99,5 @@ void get_scc_addr() {
     regs.pc = regs.a[6];
     return;
 }
+#endif
+} // namespace ROM

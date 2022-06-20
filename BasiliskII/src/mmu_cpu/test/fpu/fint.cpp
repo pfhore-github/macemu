@@ -23,22 +23,22 @@ static double to_zero[] = { 3.0, 2.0, 2.0, 2.0, -3.0, -2.0, -2.0, -2.0};
 static double downward[] = { 3.0, 2.0, 2.0, 2.0, -3.0, -3.0, -3.0, -3.0};
 static double upward[] = { 3.0, 3.0, 3.0, 3.0, -3.0, -2.0, -2.0, -2.0};
 BOOST_DATA_TEST_CASE(TO_NEAREST, test_values ^ to_nearest, value, expected) {
-    regs.fpu.rnd_mode = MPFR_RNDN;
+    mpfr_set_default_rounding_mode(MPFR_RNDN);
     fpu_test(0x01, value, 0.0, expected);
 }
 
 BOOST_DATA_TEST_CASE(TO_ZERO, test_values ^ to_zero, value, expected) {
-    regs.fpu.rnd_mode = MPFR_RNDZ;
+    mpfr_set_default_rounding_mode(MPFR_RNDZ);
     fpu_test(0x01, value, 0.0, expected);
 }
 
 BOOST_DATA_TEST_CASE(DOWNWARD, test_values ^ downward, value, expected) {
-    regs.fpu.rnd_mode = MPFR_RNDD;
+    mpfr_set_default_rounding_mode(MPFR_RNDD);
     fpu_test(0x01, value, 0.0, expected);
 }
 
 BOOST_DATA_TEST_CASE(UPWARD, test_values ^ upward, value, expected) {
-    regs.fpu.rnd_mode = MPFR_RNDU;
+    mpfr_set_default_rounding_mode(MPFR_RNDU);
     fpu_test(0x01, value, 0.0, expected);
 }
 BOOST_AUTO_TEST_SUITE_END()

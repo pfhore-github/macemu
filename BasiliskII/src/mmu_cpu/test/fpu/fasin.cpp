@@ -16,13 +16,13 @@ BOOST_DATA_TEST_CASE(zero, SIGN, sg) {
 
 BOOST_DATA_TEST_CASE(inf, SIGN, sg) {
     fpu_test<double>(0x0C, copysign(INFINITY, sg), 0.0, NAN);
-    BOOST_TEST(regs.fpu.FPSR.operr);
+    BOOST_TEST(fpu.FPSR.operr);
 }
 
 BOOST_AUTO_TEST_CASE(nan_) { fpu_test<double>(0x0C, NAN, 0.0, NAN); }
 
 BOOST_AUTO_TEST_CASE(operr) {
     fpu_test<double>(0x0C, 2.0, 0.0, NAN);
-    BOOST_TEST(regs.fpu.FPSR.operr);
+    BOOST_TEST(fpu.FPSR.operr);
 }
 BOOST_AUTO_TEST_SUITE_END()

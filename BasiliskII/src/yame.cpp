@@ -5,8 +5,12 @@
 extern bool debug;
 std::vector<std::byte> RAM;
 void m68k_execute();
+void reset_via();
 void EmulOp(uint16_t opcode, M68kRegisters *r) {}
-void reset_all() {}
+void reset_all() {
+    reset_via();
+
+}
 void idle_resume() {}
 bool Init680x0();
 std::atomic<uint32_t> InterruptFlags;
@@ -30,8 +34,7 @@ int main() {
         SDL_LoadFile_RW(SDL_RWFromFile("quadra950.ROM", "r"), &ROMSize, 1));
 
     Init680x0();
-    regs.pc = 0x2a;
-    rom_overlay = true;
+    regs.pc = 0x4080002a;
     debug = true;
     m68k_execute();
     SDL_Event e;

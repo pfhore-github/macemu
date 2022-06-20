@@ -7,7 +7,7 @@ BOOST_FIXTURE_TEST_SUITE(FINTRZ, InitFix)
 static double test_values[] = { 3.0, 2.8, 2.5, 2.3, -3.0, -2.8, -2.5, -2.3};
 static double to_zero[] = { 3.0, 2.0, 2.0, 2.0, -3.0, -2.0, -2.0, -2.0};
 BOOST_DATA_TEST_CASE(values, test_values ^ to_zero, value, expected) {
-    regs.fpu.rnd_mode = MPFR_RNDZ;
+    mpfr_set_default_rounding_mode(MPFR_RNDZ);
     fpu_test(0x03, value, 0.0, expected);
 }
 

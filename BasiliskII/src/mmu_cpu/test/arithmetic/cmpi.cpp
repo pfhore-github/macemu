@@ -5,16 +5,6 @@
 
 BOOST_FIXTURE_TEST_SUITE(CMPI, InitFix)
 BOOST_AUTO_TEST_SUITE(Byte)
-BOOST_AUTO_TEST_CASE(operand) {
-    auto ea = rand_reg();
-    auto v1 = get_v8();
-    auto v2 = get_v8();
-    regs.d[ea] = v1;
-    raw_write16(0, 0006000 | ea);
-    raw_write16(2, v2);
-    m68k_do_execute();
-    BOOST_TEST(regs.z == (v1 == v2));
-}
 BOOST_AUTO_TEST_CASE(z) {
     regs.d[1] = 24;
     raw_write16(0, 0006001);
@@ -47,16 +37,6 @@ BOOST_AUTO_TEST_CASE(c) {
 BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_AUTO_TEST_SUITE(Word)
-BOOST_AUTO_TEST_CASE(operand) {
-    auto ea = rand_reg();
-    auto v1 = get_v16();
-    auto v2 = get_v16();
-    regs.d[ea] = v1;
-    raw_write16(0, 0006100 | ea);
-    raw_write16(2, v2);
-    m68k_do_execute();
-    BOOST_TEST(regs.z == (v1 == v2));
-}
 BOOST_AUTO_TEST_CASE(z) {
     regs.d[1] = 2400;
     raw_write16(0, 0006101);
@@ -90,16 +70,6 @@ BOOST_AUTO_TEST_CASE(c) {
 BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_AUTO_TEST_SUITE(Long)
-BOOST_AUTO_TEST_CASE(operand) {
-    auto ea = rand_reg();
-    auto v1 = get_v32();
-    auto v2 = get_v32();
-    regs.d[ea] = v1;
-    raw_write16(0, 0006200 | ea);
-    raw_write32(2, v2);
-    m68k_do_execute();
-    BOOST_TEST(regs.z == (v1 == v2));
-}
 BOOST_AUTO_TEST_CASE(z) {
     regs.d[1] = 240000;
     raw_write16(0, 0006201);

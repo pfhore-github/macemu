@@ -83,13 +83,11 @@ OP(bchg_imm) {
     if(type == 0) {
         int bn = FETCH() & 31;
         uint32_t v1 = regs.d[reg];
-        regs.z = DO_BTST(v1, bn);
-        regs.d[reg] ^= 1 << bn;
+        regs.d[reg] = DO_BCHG_L(v1, bn);
     } else {
         int bn = FETCH() & 7;
         EA_Update8(type, reg, [bn](auto v1) {
-            regs.z = DO_BTST(v1, bn);
-            return v1 ^ (1 << bn);
+            return DO_BCHG_B(v1, bn);
         });
     }
 }
@@ -98,13 +96,11 @@ OP(bclr_imm) {
     if(type == 0) {
         int bn = FETCH() & 31;
         uint32_t v1 = regs.d[reg];
-        regs.z = DO_BTST(v1, bn);
-        regs.d[reg] &= ~(1 << bn);
+        regs.d[reg] = DO_BCLR_L(v1, bn);
     } else {
         int bn = FETCH() & 7;
         EA_Update8(type, reg, [bn](auto v1) {
-            regs.z = DO_BTST(v1, bn);
-            return v1 & ~(1 << bn);
+            return DO_BCLR_B(v1, bn);
         });
     }
 }
@@ -167,17 +163,15 @@ OP(btst_dm) {
 
 OP(bchg_dm) {
     if(type == 0) {
-        uint32_t v1 = regs.d[reg];
         int bn = regs.d[dm] & 31;
-        regs.z = DO_BTST(v1, bn);
-        regs.d[reg] ^= 1 << bn;
+        uint32_t v1 = regs.d[reg];
+        regs.d[reg] = DO_BCHG_L(v1, bn);
     } else if(type == 1) {
         op_movep_l_from(dm, reg);
     } else {
         int bn = regs.d[dm] & 7;
         EA_Update8(type, reg, [bn](auto v1) {
-            regs.z = DO_BTST(v1, bn);
-            return v1 ^ (1 << bn);
+            return DO_BCHG_B(v1, bn);
         });
     }
 }
@@ -186,15 +180,13 @@ OP(bclr_dm) {
     if(type == 0) {
         uint32_t v1 = regs.d[reg];
         int bn = regs.d[dm] & 31;
-        regs.z = DO_BTST(v1, bn);
-        regs.d[reg] &= ~(1 << bn);
+        regs.d[reg] = DO_BCLR_L(v1, bn);
     } else if(type == 1) {
         op_movep_w_to(dm, reg);
     } else {
         int bn = regs.d[dm] & 7;
         EA_Update8(type, reg, [bn](auto v1) {
-            regs.z = DO_BTST(v1, bn);
-            return v1 & ~(1 << bn);
+            return DO_BCLR_B(v1, bn);
         });
     }
 }

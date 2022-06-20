@@ -37,9 +37,9 @@
  *
  *	regs.piar is not updated.
  *
- *	regs.FPU fpcr always contains the real 68881/68040 control word.
+ *	fpu fpcr always contains the real 68881/68040 control word.
  *
- *	regs.FPU fpsr is not kept up-to-date, for efficiency reasons.
+ *	fpu fpsr is not kept up-to-date, for efficiency reasons.
  *	Most of the FPU commands update this in a way or another, but it is not
  *	read nearly that often. Therefore, three host-specific words hold the
  *	status byte and exception byte ("x86_status_word"), accrued exception
@@ -51,28 +51,28 @@
  *		-	updated after each opcode, if needed.
  *		-	x86 assembly opcodes call FXAM and store the status word to
  *			"x86_status_word".
- *		-	When regs.FPU fpsr is actually used, the value of "x86_status_word"
+ *		-	When fpu fpsr is actually used, the value of "x86_status_word"
  *			is translated.
  *		QUOTIENT BYTE
  *		-	Updated by frem, fmod, frestore(null frame)
  *		-	Stored in "FPU fpsr.quotient" in correct bit position, combined when
- *			regs.FPU fpsr is actually used.
+ *			fpu fpsr is actually used.
  *		EXCEPTION STATUS (BSUN,SNAN,OPERR,OVFL,UNFL,DZ,INEX2,INEX1)
  *		-	updated after each opcode, if needed.
  *		-	Saved in x86 form in "x86_status_word".
- *		-	When regs.FPU fpsr is actually used, the value of "x86_status_word"
+ *		-	When fpu fpsr is actually used, the value of "x86_status_word"
  *			is translated.
  *		-	Only fcc_op can set BSUN
  *		ACCRUED EXCEPTION (ACCR_IOP,ACCR_OVFL,ACCR_UNFL,ACCR_DZ,ACCR_INEX)
  *		-	updated after each opcode, if needed.
  *		-	Logically OR'ed in x86 form to "x86_status_word_accrued".
- *		-	When regs.FPU fpsr is actually used, the value of
+ *		-	When fpu fpsr is actually used, the value of
  *			"x86_status_word_accrued" is translated.
  *		
  *		When "x86_status_word" and "x86_status_word_accrued" are stored,
  *		all pending x86 FPU exceptions are cleared, if there are any.
  *
- *		Writing to "regs.FPU fpsr" reverse-maps to x86 status/exception values and
+ *		Writing to "fpu fpsr" reverse-maps to x86 status/exception values and
  *		stores the values in "x86_status_word", "x86_status_word_accrued"
  *		and "FPU fpsr.quotient".
  *
@@ -3031,21 +3031,21 @@ PRIVATE void REGPARAM2 FFPU fpuop_fmovem_fpiar_2_Dreg( uae_u32 opcode, uae_u32 e
 
 PRIVATE void REGPARAM2 FFPU fpuop_fmovem_fpsr_2_Dreg( uae_u32 opcode, uae_u32 extra )
 {
-	D(bug("FMOVEM regs.FPU fpsr (%X) -> D%d\r\n", get_fpsr(), opcode & 7));
+	D(bug("FMOVEM fpu fpsr (%X) -> D%d\r\n", get_fpsr(), opcode & 7));
 	m68k_dreg (regs, opcode & 7) = get_fpsr();
 	dump_registers( "END  ");
 }
 
 PRIVATE void REGPARAM2 FFPU fpuop_fmovem_fpcr_2_Dreg( uae_u32 opcode, uae_u32 extra )
 {
-	D(bug("FMOVEM regs.FPU fpcr (%X) -> D%d\r\n", get_fpcr(), opcode & 7));
+	D(bug("FMOVEM fpu fpcr (%X) -> D%d\r\n", get_fpcr(), opcode & 7));
 	m68k_dreg (regs, opcode & 7) = get_fpcr();
 	dump_registers( "END  ");
 }
 
 PRIVATE void REGPARAM2 FFPU fpuop_fmovem_fpsr_fpiar_2_Dreg( uae_u32 opcode, uae_u32 extra )
 {
-	D(bug("FMOVEM regs.FPU fpsr (%X) -> D%d\r\n", get_fpsr(), opcode & 7));
+	D(bug("FMOVEM fpu fpsr (%X) -> D%d\r\n", get_fpsr(), opcode & 7));
 	m68k_dreg (regs, opcode & 7) = get_fpsr();
 	D(bug("FMOVEM FPU instruction_address (%X) -> D%d\r\n", FPU instruction_address, opcode & 7));
 	m68k_dreg (regs, opcode & 7) = FPU instruction_address;
@@ -3054,7 +3054,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_fmovem_fpsr_fpiar_2_Dreg( uae_u32 opcode, uae_
 
 PRIVATE void REGPARAM2 FFPU fpuop_fmovem_fpcr_fpiar_2_Dreg( uae_u32 opcode, uae_u32 extra )
 {
-	D(bug("FMOVEM regs.FPU fpcr (%X) -> D%d\r\n", get_fpcr(), opcode & 7));
+	D(bug("FMOVEM fpu fpcr (%X) -> D%d\r\n", get_fpcr(), opcode & 7));
 	m68k_dreg (regs, opcode & 7) = get_fpcr();
 	D(bug("FMOVEM FPU instruction_address (%X) -> D%d\r\n", FPU instruction_address, opcode & 7));
 	m68k_dreg (regs, opcode & 7) = FPU instruction_address;
@@ -3063,18 +3063,18 @@ PRIVATE void REGPARAM2 FFPU fpuop_fmovem_fpcr_fpiar_2_Dreg( uae_u32 opcode, uae_
 
 PRIVATE void REGPARAM2 FFPU fpuop_fmovem_fpcr_fpsr_2_Dreg( uae_u32 opcode, uae_u32 extra )
 {
-	D(bug("FMOVEM regs.FPU fpcr (%X) -> D%d\r\n", get_fpcr(), opcode & 7));
+	D(bug("FMOVEM fpu fpcr (%X) -> D%d\r\n", get_fpcr(), opcode & 7));
 	m68k_dreg (regs, opcode & 7) = get_fpcr();
-	D(bug("FMOVEM regs.FPU fpsr (%X) -> D%d\r\n", get_fpsr(), opcode & 7));
+	D(bug("FMOVEM fpu fpsr (%X) -> D%d\r\n", get_fpsr(), opcode & 7));
 	m68k_dreg (regs, opcode & 7) = get_fpsr();
 	dump_registers( "END  ");
 }
 
 PRIVATE void REGPARAM2 FFPU fpuop_fmovem_fpcr_fpsr_fpiar_2_Dreg( uae_u32 opcode, uae_u32 extra )
 {
-	D(bug("FMOVEM regs.FPU fpcr (%X) -> D%d\r\n", get_fpcr(), opcode & 7));
+	D(bug("FMOVEM fpu fpcr (%X) -> D%d\r\n", get_fpcr(), opcode & 7));
 	m68k_dreg (regs, opcode & 7) = get_fpcr();
-	D(bug("FMOVEM regs.FPU fpsr (%X) -> D%d\r\n", get_fpsr(), opcode & 7));
+	D(bug("FMOVEM fpu fpsr (%X) -> D%d\r\n", get_fpsr(), opcode & 7));
 	m68k_dreg (regs, opcode & 7) = get_fpsr();
 	D(bug("FMOVEM FPU instruction_address (%X) -> D%d\r\n", FPU instruction_address, opcode & 7));
 	m68k_dreg (regs, opcode & 7) = FPU instruction_address;
@@ -3100,14 +3100,14 @@ PRIVATE void REGPARAM2 FFPU fpuop_fmovem_Dreg_2_fpiar( uae_u32 opcode, uae_u32 e
 PRIVATE void REGPARAM2 FFPU fpuop_fmovem_Dreg_2_fpsr( uae_u32 opcode, uae_u32 extra )
 {
 	set_fpsr( m68k_dreg (regs, opcode & 7) );
-	D(bug("FMOVEM D%d (%X) -> regs.FPU fpsr\r\n", opcode & 7, get_fpsr()));
+	D(bug("FMOVEM D%d (%X) -> fpu fpsr\r\n", opcode & 7, get_fpsr()));
 	dump_registers( "END  ");
 }
 
 PRIVATE void REGPARAM2 FFPU fpuop_fmovem_Dreg_2_fpsr_fpiar( uae_u32 opcode, uae_u32 extra )
 {
 	set_fpsr( m68k_dreg (regs, opcode & 7) );
-	D(bug("FMOVEM D%d (%X) -> regs.FPU fpsr\r\n", opcode & 7, get_fpsr()));
+	D(bug("FMOVEM D%d (%X) -> fpu fpsr\r\n", opcode & 7, get_fpsr()));
 	FPU instruction_address = m68k_dreg (regs, opcode & 7);
 	D(bug("FMOVEM D%d (%X) -> FPU instruction_address\r\n", opcode & 7, FPU instruction_address));
 	dump_registers( "END  ");
@@ -3116,14 +3116,14 @@ PRIVATE void REGPARAM2 FFPU fpuop_fmovem_Dreg_2_fpsr_fpiar( uae_u32 opcode, uae_
 PRIVATE void REGPARAM2 FFPU fpuop_fmovem_Dreg_2_fpcr( uae_u32 opcode, uae_u32 extra )
 {
 	set_fpcr( m68k_dreg (regs, opcode & 7) );
-	D(bug("FMOVEM D%d (%X) -> regs.FPU fpcr\r\n", opcode & 7, get_fpcr()));
+	D(bug("FMOVEM D%d (%X) -> fpu fpcr\r\n", opcode & 7, get_fpcr()));
 	dump_registers( "END  ");
 }
 
 PRIVATE void REGPARAM2 FFPU fpuop_fmovem_Dreg_2_fpcr_fpiar( uae_u32 opcode, uae_u32 extra )
 {
 	set_fpcr( m68k_dreg (regs, opcode & 7) );
-	D(bug("FMOVEM D%d (%X) -> regs.FPU fpcr\r\n", opcode & 7, get_fpcr()));
+	D(bug("FMOVEM D%d (%X) -> fpu fpcr\r\n", opcode & 7, get_fpcr()));
 	FPU instruction_address = m68k_dreg (regs, opcode & 7);
 	D(bug("FMOVEM D%d (%X) -> FPU instruction_address\r\n", opcode & 7, FPU instruction_address));
 	dump_registers( "END  ");
@@ -3132,18 +3132,18 @@ PRIVATE void REGPARAM2 FFPU fpuop_fmovem_Dreg_2_fpcr_fpiar( uae_u32 opcode, uae_
 PRIVATE void REGPARAM2 FFPU fpuop_fmovem_Dreg_2_fpcr_fpsr( uae_u32 opcode, uae_u32 extra )
 {
 	set_fpcr( m68k_dreg (regs, opcode & 7) );
-	D(bug("FMOVEM D%d (%X) -> regs.FPU fpcr\r\n", opcode & 7, get_fpcr()));
+	D(bug("FMOVEM D%d (%X) -> fpu fpcr\r\n", opcode & 7, get_fpcr()));
 	set_fpsr( m68k_dreg (regs, opcode & 7) );
-	D(bug("FMOVEM D%d (%X) -> regs.FPU fpsr\r\n", opcode & 7, get_fpsr()));
+	D(bug("FMOVEM D%d (%X) -> fpu fpsr\r\n", opcode & 7, get_fpsr()));
 	dump_registers( "END  ");
 }
 
 PRIVATE void REGPARAM2 FFPU fpuop_fmovem_Dreg_2_fpcr_fpsr_fpiar( uae_u32 opcode, uae_u32 extra )
 {
 	set_fpcr( m68k_dreg (regs, opcode & 7) );
-	D(bug("FMOVEM D%d (%X) -> regs.FPU fpcr\r\n", opcode & 7, get_fpcr()));
+	D(bug("FMOVEM D%d (%X) -> fpu fpcr\r\n", opcode & 7, get_fpcr()));
 	set_fpsr( m68k_dreg (regs, opcode & 7) );
-	D(bug("FMOVEM D%d (%X) -> regs.FPU fpsr\r\n", opcode & 7, get_fpsr()));
+	D(bug("FMOVEM D%d (%X) -> fpu fpsr\r\n", opcode & 7, get_fpsr()));
 	FPU instruction_address = m68k_dreg (regs, opcode & 7);
 	D(bug("FMOVEM D%d (%X) -> FPU instruction_address\r\n", opcode & 7, FPU instruction_address));
 	dump_registers( "END  ");
@@ -3167,21 +3167,21 @@ PRIVATE void REGPARAM2 FFPU fpuop_fmovem_fpiar_2_Areg( uae_u32 opcode, uae_u32 e
 
 PRIVATE void REGPARAM2 FFPU fpuop_fmovem_fpsr_2_Areg( uae_u32 opcode, uae_u32 extra )
 {
-	D(bug("FMOVEM regs.FPU fpsr (%X) -> A%d\r\n", get_fpsr(), opcode & 7));
+	D(bug("FMOVEM fpu fpsr (%X) -> A%d\r\n", get_fpsr(), opcode & 7));
 	m68k_areg (regs, opcode & 7) = get_fpsr();
 	dump_registers( "END  ");
 }
 
 PRIVATE void REGPARAM2 FFPU fpuop_fmovem_fpcr_2_Areg( uae_u32 opcode, uae_u32 extra )
 {
-	D(bug("FMOVEM regs.FPU fpcr (%X) -> A%d\r\n", get_fpcr(), opcode & 7));
+	D(bug("FMOVEM fpu fpcr (%X) -> A%d\r\n", get_fpcr(), opcode & 7));
 	m68k_areg (regs, opcode & 7) = get_fpcr();
 	dump_registers( "END  ");
 }
 
 PRIVATE void REGPARAM2 FFPU fpuop_fmovem_fpsr_fpiar_2_Areg( uae_u32 opcode, uae_u32 extra )
 {
-	D(bug("FMOVEM regs.FPU fpsr (%X) -> A%d\r\n", get_fpsr(), opcode & 7));
+	D(bug("FMOVEM fpu fpsr (%X) -> A%d\r\n", get_fpsr(), opcode & 7));
 	m68k_areg (regs, opcode & 7) = get_fpsr();
 	D(bug("FMOVEM FPU instruction_address (%X) -> A%d\r\n", FPU instruction_address, opcode & 7));
 	m68k_areg (regs, opcode & 7) = FPU instruction_address;
@@ -3190,7 +3190,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_fmovem_fpsr_fpiar_2_Areg( uae_u32 opcode, uae_
 
 PRIVATE void REGPARAM2 FFPU fpuop_fmovem_fpcr_fpiar_2_Areg( uae_u32 opcode, uae_u32 extra )
 {
-	D(bug("FMOVEM regs.FPU fpcr (%X) -> A%d\r\n", get_fpcr(), opcode & 7));
+	D(bug("FMOVEM fpu fpcr (%X) -> A%d\r\n", get_fpcr(), opcode & 7));
 	m68k_areg (regs, opcode & 7) = get_fpcr();
 	D(bug("FMOVEM FPU instruction_address (%X) -> A%d\r\n", FPU instruction_address, opcode & 7));
 	m68k_areg (regs, opcode & 7) = FPU instruction_address;
@@ -3199,18 +3199,18 @@ PRIVATE void REGPARAM2 FFPU fpuop_fmovem_fpcr_fpiar_2_Areg( uae_u32 opcode, uae_
 
 PRIVATE void REGPARAM2 FFPU fpuop_fmovem_fpcr_fpsr_2_Areg( uae_u32 opcode, uae_u32 extra )
 {
-	D(bug("FMOVEM regs.FPU fpcr (%X) -> A%d\r\n", get_fpcr(), opcode & 7));
+	D(bug("FMOVEM fpu fpcr (%X) -> A%d\r\n", get_fpcr(), opcode & 7));
 	m68k_areg (regs, opcode & 7) = get_fpcr();
-	D(bug("FMOVEM regs.FPU fpsr (%X) -> A%d\r\n", get_fpsr(), opcode & 7));
+	D(bug("FMOVEM fpu fpsr (%X) -> A%d\r\n", get_fpsr(), opcode & 7));
 	m68k_areg (regs, opcode & 7) = get_fpsr();
 	dump_registers( "END  ");
 }
 
 PRIVATE void REGPARAM2 FFPU fpuop_fmovem_fpcr_fpsr_fpiar_2_Areg( uae_u32 opcode, uae_u32 extra )
 {
-	D(bug("FMOVEM regs.FPU fpcr (%X) -> A%d\r\n", get_fpcr(), opcode & 7));
+	D(bug("FMOVEM fpu fpcr (%X) -> A%d\r\n", get_fpcr(), opcode & 7));
 	m68k_areg (regs, opcode & 7) = get_fpcr();
-	D(bug("FMOVEM regs.FPU fpsr (%X) -> A%d\r\n", get_fpsr(), opcode & 7));
+	D(bug("FMOVEM fpu fpsr (%X) -> A%d\r\n", get_fpsr(), opcode & 7));
 	m68k_areg (regs, opcode & 7) = get_fpsr();
 	D(bug("FMOVEM FPU instruction_address (%X) -> A%d\r\n", FPU instruction_address, opcode & 7));
 	m68k_areg (regs, opcode & 7) = FPU instruction_address;
@@ -3236,14 +3236,14 @@ PRIVATE void REGPARAM2 FFPU fpuop_fmovem_Areg_2_fpiar( uae_u32 opcode, uae_u32 e
 PRIVATE void REGPARAM2 FFPU fpuop_fmovem_Areg_2_fpsr( uae_u32 opcode, uae_u32 extra )
 {
 	set_fpsr( m68k_areg (regs, opcode & 7) );
-	D(bug("FMOVEM A%d (%X) -> regs.FPU fpsr\r\n", opcode & 7, get_fpsr()));
+	D(bug("FMOVEM A%d (%X) -> fpu fpsr\r\n", opcode & 7, get_fpsr()));
 	dump_registers( "END  ");
 }
 
 PRIVATE void REGPARAM2 FFPU fpuop_fmovem_Areg_2_fpsr_fpiar( uae_u32 opcode, uae_u32 extra )
 {
 	set_fpsr( m68k_areg (regs, opcode & 7) );
-	D(bug("FMOVEM A%d (%X) -> regs.FPU fpsr\r\n", opcode & 7, get_fpsr()));
+	D(bug("FMOVEM A%d (%X) -> fpu fpsr\r\n", opcode & 7, get_fpsr()));
 	FPU instruction_address = m68k_areg (regs, opcode & 7);
 	D(bug("FMOVEM A%d (%X) -> FPU instruction_address\r\n", opcode & 7, FPU instruction_address));
 	dump_registers( "END  ");
@@ -3252,14 +3252,14 @@ PRIVATE void REGPARAM2 FFPU fpuop_fmovem_Areg_2_fpsr_fpiar( uae_u32 opcode, uae_
 PRIVATE void REGPARAM2 FFPU fpuop_fmovem_Areg_2_fpcr( uae_u32 opcode, uae_u32 extra )
 {
 	set_fpcr( m68k_areg (regs, opcode & 7) );
-	D(bug("FMOVEM A%d (%X) -> regs.FPU fpcr\r\n", opcode & 7, get_fpcr()));
+	D(bug("FMOVEM A%d (%X) -> fpu fpcr\r\n", opcode & 7, get_fpcr()));
 	dump_registers( "END  ");
 }
 
 PRIVATE void REGPARAM2 FFPU fpuop_fmovem_Areg_2_fpcr_fpiar( uae_u32 opcode, uae_u32 extra )
 {
 	set_fpcr( m68k_areg (regs, opcode & 7) );
-	D(bug("FMOVEM A%d (%X) -> regs.FPU fpcr\r\n", opcode & 7, get_fpcr()));
+	D(bug("FMOVEM A%d (%X) -> fpu fpcr\r\n", opcode & 7, get_fpcr()));
 	FPU instruction_address = m68k_areg (regs, opcode & 7);
 	D(bug("FMOVEM A%d (%X) -> FPU instruction_address\r\n", opcode & 7, FPU instruction_address));
 	dump_registers( "END  ");
@@ -3268,18 +3268,18 @@ PRIVATE void REGPARAM2 FFPU fpuop_fmovem_Areg_2_fpcr_fpiar( uae_u32 opcode, uae_
 PRIVATE void REGPARAM2 FFPU fpuop_fmovem_Areg_2_fpcr_fpsr( uae_u32 opcode, uae_u32 extra )
 {
 	set_fpcr( m68k_areg (regs, opcode & 7) );
-	D(bug("FMOVEM A%d (%X) -> regs.FPU fpcr\r\n", opcode & 7, get_fpcr()));
+	D(bug("FMOVEM A%d (%X) -> fpu fpcr\r\n", opcode & 7, get_fpcr()));
 	set_fpsr( m68k_areg (regs, opcode & 7) );
-	D(bug("FMOVEM A%d (%X) -> regs.FPU fpsr\r\n", opcode & 7, get_fpsr()));
+	D(bug("FMOVEM A%d (%X) -> fpu fpsr\r\n", opcode & 7, get_fpsr()));
 	dump_registers( "END  ");
 }
 
 PRIVATE void REGPARAM2 FFPU fpuop_fmovem_Areg_2_fpcr_fpsr_fpiar( uae_u32 opcode, uae_u32 extra )
 {
 	set_fpcr( m68k_areg (regs, opcode & 7) );
-	D(bug("FMOVEM A%d (%X) -> regs.FPU fpcr\r\n", opcode & 7, get_fpcr()));
+	D(bug("FMOVEM A%d (%X) -> fpu fpcr\r\n", opcode & 7, get_fpcr()));
 	set_fpsr( m68k_areg (regs, opcode & 7) );
-	D(bug("FMOVEM A%d (%X) -> regs.FPU fpsr\r\n", opcode & 7, get_fpsr()));
+	D(bug("FMOVEM A%d (%X) -> fpu fpsr\r\n", opcode & 7, get_fpsr()));
 	FPU instruction_address = m68k_areg (regs, opcode & 7);
 	D(bug("FMOVEM A%d (%X) -> FPU instruction_address\r\n", opcode & 7, FPU instruction_address));
 	dump_registers( "END  ");
@@ -3312,7 +3312,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_fmovem_fpsr_2_Mem_predecrement( uae_u32 opcode
 	if (get_fp_ad(opcode, &ad)) {
 		ad -= 4;
 		put_long (ad, get_fpsr());
-		D(bug("FMOVEM regs.FPU fpsr (%X) -> mem %X\r\n", get_fpsr(), ad ));
+		D(bug("FMOVEM fpu fpsr (%X) -> mem %X\r\n", get_fpsr(), ad ));
 		m68k_areg (regs, opcode & 7) = ad;
 		dump_registers( "END  ");
 	}
@@ -3324,7 +3324,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_fmovem_fpsr_fpiar_2_Mem_predecrement( uae_u32 
 	if (get_fp_ad(opcode, &ad)) {
 		ad -= 8;
 		put_long (ad, get_fpsr());
-		D(bug("FMOVEM regs.FPU fpsr (%X) -> mem %X\r\n", get_fpsr(), ad ));
+		D(bug("FMOVEM fpu fpsr (%X) -> mem %X\r\n", get_fpsr(), ad ));
 		put_long (ad+4, FPU instruction_address);
 		D(bug("FMOVEM FPU instruction_address (%X) -> mem %X\r\n", FPU instruction_address, ad+4 ));
 		m68k_areg (regs, opcode & 7) = ad;
@@ -3338,7 +3338,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_fmovem_fpcr_2_Mem_predecrement( uae_u32 opcode
 	if (get_fp_ad(opcode, &ad)) {
 		ad -= 4;
 		put_long (ad, get_fpcr());
-		D(bug("FMOVEM regs.FPU fpcr (%X) -> mem %X\r\n", get_fpcr(), ad ));
+		D(bug("FMOVEM fpu fpcr (%X) -> mem %X\r\n", get_fpcr(), ad ));
 		m68k_areg (regs, opcode & 7) = ad;
 		dump_registers( "END  ");
 	}
@@ -3350,7 +3350,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_fmovem_fpcr_fpiar_2_Mem_predecrement( uae_u32 
 	if (get_fp_ad(opcode, &ad)) {
 		ad -= 8;
 		put_long (ad, get_fpcr());
-		D(bug("FMOVEM regs.FPU fpcr (%X) -> mem %X\r\n", get_fpcr(), ad ));
+		D(bug("FMOVEM fpu fpcr (%X) -> mem %X\r\n", get_fpcr(), ad ));
 		put_long (ad+4, FPU instruction_address);
 		D(bug("FMOVEM FPU instruction_address (%X) -> mem %X\r\n", FPU instruction_address, ad+4 ));
 		m68k_areg (regs, opcode & 7) = ad;
@@ -3364,9 +3364,9 @@ PRIVATE void REGPARAM2 FFPU fpuop_fmovem_fpcr_fpsr_2_Mem_predecrement( uae_u32 o
 	if (get_fp_ad(opcode, &ad)) {
 		ad -= 8;
 		put_long (ad, get_fpcr());
-		D(bug("FMOVEM regs.FPU fpcr (%X) -> mem %X\r\n", get_fpcr(), ad ));
+		D(bug("FMOVEM fpu fpcr (%X) -> mem %X\r\n", get_fpcr(), ad ));
 		put_long (ad+4, get_fpsr());
-		D(bug("FMOVEM regs.FPU fpsr (%X) -> mem %X\r\n", get_fpsr(), ad+4 ));
+		D(bug("FMOVEM fpu fpsr (%X) -> mem %X\r\n", get_fpsr(), ad+4 ));
 		m68k_areg (regs, opcode & 7) = ad;
 		dump_registers( "END  ");
 	}
@@ -3378,9 +3378,9 @@ PRIVATE void REGPARAM2 FFPU fpuop_fmovem_fpcr_fpsr_fpiar_2_Mem_predecrement( uae
 	if (get_fp_ad(opcode, &ad)) {
 		ad -= 12;
 		put_long (ad, get_fpcr());
-		D(bug("FMOVEM regs.FPU fpcr (%X) -> mem %X\r\n", get_fpcr(), ad ));
+		D(bug("FMOVEM fpu fpcr (%X) -> mem %X\r\n", get_fpcr(), ad ));
 		put_long (ad+4, get_fpsr());
-		D(bug("FMOVEM regs.FPU fpsr (%X) -> mem %X\r\n", get_fpsr(), ad+4 ));
+		D(bug("FMOVEM fpu fpsr (%X) -> mem %X\r\n", get_fpsr(), ad+4 ));
 		put_long (ad+8, FPU instruction_address);
 		D(bug("FMOVEM FPU instruction_address (%X) -> mem %X\r\n", FPU instruction_address, ad+8 ));
 		m68k_areg (regs, opcode & 7) = ad;
@@ -3413,7 +3413,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_fmovem_fpsr_2_Mem_postincrement( uae_u32 opcod
 	uae_u32 ad;
 	if (get_fp_ad(opcode, &ad)) {
 		put_long (ad, get_fpsr());
-		D(bug("FMOVEM regs.FPU fpsr (%X) -> mem %X\r\n", get_fpsr(), ad ));
+		D(bug("FMOVEM fpu fpsr (%X) -> mem %X\r\n", get_fpsr(), ad ));
 		m68k_areg (regs, opcode & 7) = ad+4;
 		dump_registers( "END  ");
 	}
@@ -3424,7 +3424,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_fmovem_fpsr_fpiar_2_Mem_postincrement( uae_u32
 	uae_u32 ad;
 	if (get_fp_ad(opcode, &ad)) {
 		put_long (ad, get_fpsr());
-		D(bug("FMOVEM regs.FPU fpsr (%X) -> mem %X\r\n", get_fpsr(), ad ));
+		D(bug("FMOVEM fpu fpsr (%X) -> mem %X\r\n", get_fpsr(), ad ));
 		put_long (ad+4, FPU instruction_address);
 		D(bug("FMOVEM FPU instruction_address (%X) -> mem %X\r\n", FPU instruction_address, ad+4 ));
 		m68k_areg (regs, opcode & 7) = ad+8;
@@ -3437,7 +3437,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_fmovem_fpcr_2_Mem_postincrement( uae_u32 opcod
 	uae_u32 ad;
 	if (get_fp_ad(opcode, &ad)) {
 		put_long (ad, get_fpcr());
-		D(bug("FMOVEM regs.FPU fpcr (%X) -> mem %X\r\n", get_fpcr(), ad ));
+		D(bug("FMOVEM fpu fpcr (%X) -> mem %X\r\n", get_fpcr(), ad ));
 		m68k_areg (regs, opcode & 7) = ad+4;
 		dump_registers( "END  ");
 	}
@@ -3448,7 +3448,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_fmovem_fpcr_fpiar_2_Mem_postincrement( uae_u32
 	uae_u32 ad;
 	if (get_fp_ad(opcode, &ad)) {
 		put_long (ad, get_fpcr());
-		D(bug("FMOVEM regs.FPU fpcr (%X) -> mem %X\r\n", get_fpcr(), ad ));
+		D(bug("FMOVEM fpu fpcr (%X) -> mem %X\r\n", get_fpcr(), ad ));
 		put_long (ad+4, FPU instruction_address);
 		D(bug("FMOVEM FPU instruction_address (%X) -> mem %X\r\n", FPU instruction_address, ad+4 ));
 		m68k_areg (regs, opcode & 7) = ad+8;
@@ -3462,9 +3462,9 @@ PRIVATE void REGPARAM2 FFPU fpuop_fmovem_fpcr_fpsr_2_Mem_postincrement( uae_u32 
 	uae_u32 ad;
 	if (get_fp_ad(opcode, &ad)) {
 		put_long (ad, get_fpcr());
-		D(bug("FMOVEM regs.FPU fpcr (%X) -> mem %X\r\n", get_fpcr(), ad ));
+		D(bug("FMOVEM fpu fpcr (%X) -> mem %X\r\n", get_fpcr(), ad ));
 		put_long (ad+4, get_fpsr());
-		D(bug("FMOVEM regs.FPU fpsr (%X) -> mem %X\r\n", get_fpsr(), ad+4 ));
+		D(bug("FMOVEM fpu fpsr (%X) -> mem %X\r\n", get_fpsr(), ad+4 ));
 		m68k_areg (regs, opcode & 7) = ad+8;
 	}
 }
@@ -3474,9 +3474,9 @@ PRIVATE void REGPARAM2 FFPU fpuop_fmovem_fpcr_fpsr_fpiar_2_Mem_postincrement( ua
 	uae_u32 ad;
 	if (get_fp_ad(opcode, &ad)) {
 		put_long (ad, get_fpcr());
-		D(bug("FMOVEM regs.FPU fpcr (%X) -> mem %X\r\n", get_fpcr(), ad ));
+		D(bug("FMOVEM fpu fpcr (%X) -> mem %X\r\n", get_fpcr(), ad ));
 		put_long (ad+4, get_fpsr());
-		D(bug("FMOVEM regs.FPU fpsr (%X) -> mem %X\r\n", get_fpsr(), ad+4 ));
+		D(bug("FMOVEM fpu fpsr (%X) -> mem %X\r\n", get_fpsr(), ad+4 ));
 		put_long (ad+8, FPU instruction_address);
 		D(bug("FMOVEM FPU instruction_address (%X) -> mem %X\r\n", FPU instruction_address, ad+8 ));
 		m68k_areg (regs, opcode & 7) = ad+12;
@@ -3508,7 +3508,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_fmovem_fpsr_2_Mem( uae_u32 opcode, uae_u32 ext
 	uae_u32 ad;
 	if (get_fp_ad(opcode, &ad)) {
 		put_long (ad, get_fpsr());
-		D(bug("FMOVEM regs.FPU fpsr (%X) -> mem %X\r\n", get_fpsr(), ad ));
+		D(bug("FMOVEM fpu fpsr (%X) -> mem %X\r\n", get_fpsr(), ad ));
 		dump_registers( "END  ");
 	}
 }
@@ -3518,7 +3518,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_fmovem_fpsr_fpiar_2_Mem( uae_u32 opcode, uae_u
 	uae_u32 ad;
 	if (get_fp_ad(opcode, &ad)) {
 		put_long (ad, get_fpsr());
-		D(bug("FMOVEM regs.FPU fpsr (%X) -> mem %X\r\n", get_fpsr(), ad ));
+		D(bug("FMOVEM fpu fpsr (%X) -> mem %X\r\n", get_fpsr(), ad ));
 		put_long (ad+4, FPU instruction_address);
 		D(bug("FMOVEM FPU instruction_address (%X) -> mem %X\r\n", FPU instruction_address, ad+4 ));
 		dump_registers( "END  ");
@@ -3530,7 +3530,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_fmovem_fpcr_2_Mem( uae_u32 opcode, uae_u32 ext
 	uae_u32 ad;
 	if (get_fp_ad(opcode, &ad)) {
 		put_long (ad, get_fpcr());
-		D(bug("FMOVEM regs.FPU fpcr (%X) -> mem %X\r\n", get_fpcr(), ad ));
+		D(bug("FMOVEM fpu fpcr (%X) -> mem %X\r\n", get_fpcr(), ad ));
 		dump_registers( "END  ");
 	}
 }
@@ -3540,7 +3540,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_fmovem_fpcr_fpiar_2_Mem( uae_u32 opcode, uae_u
 	uae_u32 ad;
 	if (get_fp_ad(opcode, &ad)) {
 		put_long (ad, get_fpcr());
-		D(bug("FMOVEM regs.FPU fpcr (%X) -> mem %X\r\n", get_fpcr(), ad ));
+		D(bug("FMOVEM fpu fpcr (%X) -> mem %X\r\n", get_fpcr(), ad ));
 		put_long (ad+4, FPU instruction_address);
 		D(bug("FMOVEM FPU instruction_address (%X) -> mem %X\r\n", FPU instruction_address, ad+4 ));
 		dump_registers( "END  ");
@@ -3552,9 +3552,9 @@ PRIVATE void REGPARAM2 FFPU fpuop_fmovem_fpcr_fpsr_2_Mem( uae_u32 opcode, uae_u3
 	uae_u32 ad;
 	if (get_fp_ad(opcode, &ad)) {
 		put_long (ad, get_fpcr());
-		D(bug("FMOVEM regs.FPU fpcr (%X) -> mem %X\r\n", get_fpcr(), ad ));
+		D(bug("FMOVEM fpu fpcr (%X) -> mem %X\r\n", get_fpcr(), ad ));
 		put_long (ad+4, get_fpsr());
-		D(bug("FMOVEM regs.FPU fpsr (%X) -> mem %X\r\n", get_fpsr(), ad+4 ));
+		D(bug("FMOVEM fpu fpsr (%X) -> mem %X\r\n", get_fpsr(), ad+4 ));
 		dump_registers( "END  ");
 	}
 }
@@ -3564,9 +3564,9 @@ PRIVATE void REGPARAM2 FFPU fpuop_fmovem_fpcr_fpsr_fpiar_2_Mem( uae_u32 opcode, 
 	uae_u32 ad;
 	if (get_fp_ad(opcode, &ad)) {
 		put_long (ad, get_fpcr());
-		D(bug("FMOVEM regs.FPU fpcr (%X) -> mem %X\r\n", get_fpcr(), ad ));
+		D(bug("FMOVEM fpu fpcr (%X) -> mem %X\r\n", get_fpcr(), ad ));
 		put_long (ad+4, get_fpsr());
-		D(bug("FMOVEM regs.FPU fpsr (%X) -> mem %X\r\n", get_fpsr(), ad+4 ));
+		D(bug("FMOVEM fpu fpsr (%X) -> mem %X\r\n", get_fpsr(), ad+4 ));
 		put_long (ad+8, FPU instruction_address);
 		D(bug("FMOVEM FPU instruction_address (%X) -> mem %X\r\n", FPU instruction_address, ad+8 ));
 		dump_registers( "END  ");
@@ -3600,7 +3600,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_fmovem_Mem_2_fpsr_predecrement( uae_u32 opcode
 	if (get_fp_ad(opcode, &ad)) {
 		ad -= 4;
 		set_fpsr( get_long (ad) );
-		D(bug("FMOVEM mem %X (%X) -> regs.FPU fpsr\r\n", ad, get_fpsr() ));
+		D(bug("FMOVEM mem %X (%X) -> fpu fpsr\r\n", ad, get_fpsr() ));
 		m68k_areg (regs, opcode & 7) = ad;
 		dump_registers( "END  ");
 	}
@@ -3612,7 +3612,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_fmovem_Mem_2_fpsr_fpiar_predecrement( uae_u32 
 	if (get_fp_ad(opcode, &ad)) {
 		ad -= 8;
 		set_fpsr( get_long (ad) );
-		D(bug("FMOVEM mem %X (%X) -> regs.FPU fpsr\r\n", ad, get_fpsr() ));
+		D(bug("FMOVEM mem %X (%X) -> fpu fpsr\r\n", ad, get_fpsr() ));
 		FPU instruction_address = get_long (ad+4);
 		D(bug("FMOVEM mem %X (%X) -> FPU instruction_address\r\n", ad+4, FPU instruction_address ));
 		m68k_areg (regs, opcode & 7) = ad;
@@ -3626,7 +3626,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_fmovem_Mem_2_fpcr_predecrement( uae_u32 opcode
 	if (get_fp_ad(opcode, &ad)) {
 		ad -= 4;
 		set_fpcr( get_long (ad) );
-		D(bug("FMOVEM mem %X (%X) -> regs.FPU fpcr\r\n", ad, get_fpcr() ));
+		D(bug("FMOVEM mem %X (%X) -> fpu fpcr\r\n", ad, get_fpcr() ));
 		m68k_areg (regs, opcode & 7) = ad;
 		dump_registers( "END  ");
 	}
@@ -3638,7 +3638,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_fmovem_Mem_2_fpcr_fpiar_predecrement( uae_u32 
 	if (get_fp_ad(opcode, &ad)) {
 		ad -= 8;
 		set_fpcr( get_long (ad) );
-		D(bug("FMOVEM mem %X (%X) -> regs.FPU fpcr\r\n", ad, get_fpcr() ));
+		D(bug("FMOVEM mem %X (%X) -> fpu fpcr\r\n", ad, get_fpcr() ));
 		FPU instruction_address = get_long (ad+4);
 		D(bug("FMOVEM mem %X (%X) -> FPU instruction_address\r\n", ad+4, FPU instruction_address ));
 		m68k_areg (regs, opcode & 7) = ad;
@@ -3652,9 +3652,9 @@ PRIVATE void REGPARAM2 FFPU fpuop_fmovem_Mem_2_fpcr_fpsr_predecrement( uae_u32 o
 	if (get_fp_ad(opcode, &ad)) {
 		ad -= 8;
 		set_fpcr( get_long (ad) );
-		D(bug("FMOVEM mem %X (%X) -> regs.FPU fpcr\r\n", ad, get_fpcr() ));
+		D(bug("FMOVEM mem %X (%X) -> fpu fpcr\r\n", ad, get_fpcr() ));
 		set_fpsr( get_long (ad+4) );
-		D(bug("FMOVEM mem %X (%X) -> regs.FPU fpsr\r\n", ad+4, get_fpsr() ));
+		D(bug("FMOVEM mem %X (%X) -> fpu fpsr\r\n", ad+4, get_fpsr() ));
 		m68k_areg (regs, opcode & 7) = ad;
 		dump_registers( "END  ");
 	}
@@ -3666,9 +3666,9 @@ PRIVATE void REGPARAM2 FFPU fpuop_fmovem_Mem_2_fpcr_fpsr_fpiar_predecrement( uae
 	if (get_fp_ad(opcode, &ad)) {
 		ad -= 12;
 		set_fpcr( get_long (ad) );
-		D(bug("FMOVEM mem %X (%X) -> regs.FPU fpcr\r\n", ad, get_fpcr() ));
+		D(bug("FMOVEM mem %X (%X) -> fpu fpcr\r\n", ad, get_fpcr() ));
 		set_fpsr( get_long (ad+4) );
-		D(bug("FMOVEM mem %X (%X) -> regs.FPU fpsr\r\n", ad+4, get_fpsr() ));
+		D(bug("FMOVEM mem %X (%X) -> fpu fpsr\r\n", ad+4, get_fpsr() ));
 		FPU instruction_address = get_long (ad+8);
 		D(bug("FMOVEM mem %X (%X) -> FPU instruction_address\r\n", ad+8, FPU instruction_address ));
 		m68k_areg (regs, opcode & 7) = ad;
@@ -3701,7 +3701,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_fmovem_Mem_2_fpsr_postincrement( uae_u32 opcod
 	uae_u32 ad;
 	if (get_fp_ad(opcode, &ad)) {
 		set_fpsr( get_long (ad) );
-		D(bug("FMOVEM mem %X (%X) -> regs.FPU fpsr\r\n", ad, get_fpsr() ));
+		D(bug("FMOVEM mem %X (%X) -> fpu fpsr\r\n", ad, get_fpsr() ));
 		m68k_areg (regs, opcode & 7) = ad+4;
 		dump_registers( "END  ");
 	}
@@ -3712,7 +3712,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_fmovem_Mem_2_fpsr_fpiar_postincrement( uae_u32
 	uae_u32 ad;
 	if (get_fp_ad(opcode, &ad)) {
 		set_fpsr( get_long (ad) );
-		D(bug("FMOVEM mem %X (%X) -> regs.FPU fpsr\r\n", ad, get_fpsr() ));
+		D(bug("FMOVEM mem %X (%X) -> fpu fpsr\r\n", ad, get_fpsr() ));
 		FPU instruction_address = get_long (ad+4);
 		D(bug("FMOVEM mem %X (%X) -> FPU instruction_address\r\n", ad+4, FPU instruction_address ));
 		m68k_areg (regs, opcode & 7) = ad+8;
@@ -3725,7 +3725,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_fmovem_Mem_2_fpcr_postincrement( uae_u32 opcod
 	uae_u32 ad;
 	if (get_fp_ad(opcode, &ad)) {
 		set_fpcr( get_long (ad) );
-		D(bug("FMOVEM mem %X (%X) -> regs.FPU fpcr\r\n", ad, get_fpcr() ));
+		D(bug("FMOVEM mem %X (%X) -> fpu fpcr\r\n", ad, get_fpcr() ));
 		m68k_areg (regs, opcode & 7) = ad+4;
 		dump_registers( "END  ");
 	}
@@ -3736,7 +3736,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_fmovem_Mem_2_fpcr_fpiar_postincrement( uae_u32
 	uae_u32 ad;
 	if (get_fp_ad(opcode, &ad)) {
 		set_fpcr( get_long (ad) );
-		D(bug("FMOVEM mem %X (%X) -> regs.FPU fpcr\r\n", ad, get_fpcr() ));
+		D(bug("FMOVEM mem %X (%X) -> fpu fpcr\r\n", ad, get_fpcr() ));
 		FPU instruction_address = get_long (ad+4);
 		D(bug("FMOVEM mem %X (%X) -> FPU instruction_address\r\n", ad+4, FPU instruction_address ));
 		m68k_areg (regs, opcode & 7) = ad+8;
@@ -3749,9 +3749,9 @@ PRIVATE void REGPARAM2 FFPU fpuop_fmovem_Mem_2_fpcr_fpsr_postincrement( uae_u32 
 	uae_u32 ad;
 	if (get_fp_ad(opcode, &ad)) {
 		set_fpcr( get_long (ad) );
-		D(bug("FMOVEM mem %X (%X) -> regs.FPU fpcr\r\n", ad, get_fpcr() ));
+		D(bug("FMOVEM mem %X (%X) -> fpu fpcr\r\n", ad, get_fpcr() ));
 		set_fpsr( get_long (ad+4) );
-		D(bug("FMOVEM mem %X (%X) -> regs.FPU fpsr\r\n", ad+4, get_fpsr() ));
+		D(bug("FMOVEM mem %X (%X) -> fpu fpsr\r\n", ad+4, get_fpsr() ));
 		m68k_areg (regs, opcode & 7) = ad+8;
 		dump_registers( "END  ");
 	}
@@ -3762,9 +3762,9 @@ PRIVATE void REGPARAM2 FFPU fpuop_fmovem_Mem_2_fpcr_fpsr_fpiar_postincrement( ua
 	uae_u32 ad;
 	if (get_fp_ad(opcode, &ad)) {
 		set_fpcr( get_long (ad) );
-		D(bug("FMOVEM mem %X (%X) -> regs.FPU fpcr\r\n", ad, get_fpcr() ));
+		D(bug("FMOVEM mem %X (%X) -> fpu fpcr\r\n", ad, get_fpcr() ));
 		set_fpsr( get_long (ad+4) );
-		D(bug("FMOVEM mem %X (%X) -> regs.FPU fpsr\r\n", ad+4, get_fpsr() ));
+		D(bug("FMOVEM mem %X (%X) -> fpu fpsr\r\n", ad+4, get_fpsr() ));
 		FPU instruction_address = get_long (ad+8);
 		D(bug("FMOVEM mem %X (%X) -> FPU instruction_address\r\n", ad+8, FPU instruction_address ));
 		m68k_areg (regs, opcode & 7) = ad+12;
@@ -3802,12 +3802,12 @@ PRIVATE void REGPARAM2 FFPU fpuop_fmovem_Mem_2_fpsr_2_Mem( uae_u32 opcode, uae_u
 {
 	if ((opcode & 0x3f) == 0x3c) {
 		set_fpsr( next_ilong() );
-		D(bug("FMOVEM #<%X> -> regs.FPU fpsr\r\n", get_fpsr()));
+		D(bug("FMOVEM #<%X> -> fpu fpsr\r\n", get_fpsr()));
 	} else {
 		uae_u32 ad;
 		if (get_fp_ad(opcode, &ad)) {
 			set_fpsr( get_long (ad) );
-			D(bug("FMOVEM mem %X (%X) -> regs.FPU fpsr\r\n", ad, get_fpsr() ));
+			D(bug("FMOVEM mem %X (%X) -> fpu fpsr\r\n", ad, get_fpsr() ));
 		}
 	}
 	dump_registers( "END  ");
@@ -3817,14 +3817,14 @@ PRIVATE void REGPARAM2 FFPU fpuop_fmovem_Mem_2_fpsr_fpiar_2_Mem( uae_u32 opcode,
 {
 	if ((opcode & 0x3f) == 0x3c) {
 		set_fpsr( next_ilong() );
-		D(bug("FMOVEM #<%X> -> regs.FPU fpsr\r\n", get_fpsr()));
+		D(bug("FMOVEM #<%X> -> fpu fpsr\r\n", get_fpsr()));
 		FPU instruction_address = next_ilong();
 		D(bug("FMOVEM #<%X> -> FPU instruction_address\r\n", FPU instruction_address));
 	} else {
 		uae_u32 ad;
 		if (get_fp_ad(opcode, &ad)) {
 			set_fpsr( get_long (ad) );
-			D(bug("FMOVEM mem %X (%X) -> regs.FPU fpsr\r\n", ad, get_fpsr() ));
+			D(bug("FMOVEM mem %X (%X) -> fpu fpsr\r\n", ad, get_fpsr() ));
 			FPU instruction_address = get_long (ad+4);
 			D(bug("FMOVEM mem %X (%X) -> FPU instruction_address\r\n", ad+4, FPU instruction_address ));
 		}
@@ -3836,12 +3836,12 @@ PRIVATE void REGPARAM2 FFPU fpuop_fmovem_Mem_2_fpcr_2_Mem( uae_u32 opcode, uae_u
 {
 	if ((opcode & 0x3f) == 0x3c) {
 		set_fpcr( next_ilong() );
-		D(bug("FMOVEM #<%X> -> regs.FPU fpcr\r\n", get_fpcr()));
+		D(bug("FMOVEM #<%X> -> fpu fpcr\r\n", get_fpcr()));
 	} else {
 		uae_u32 ad;
 		if (get_fp_ad(opcode, &ad)) {
 			set_fpcr( get_long (ad) );
-			D(bug("FMOVEM mem %X (%X) -> regs.FPU fpcr\r\n", ad, get_fpcr() ));
+			D(bug("FMOVEM mem %X (%X) -> fpu fpcr\r\n", ad, get_fpcr() ));
 		}
 	}
 	dump_registers( "END  ");
@@ -3851,14 +3851,14 @@ PRIVATE void REGPARAM2 FFPU fpuop_fmovem_Mem_2_fpcr_fpiar_2_Mem( uae_u32 opcode,
 {
 	if ((opcode & 0x3f) == 0x3c) {
 		set_fpcr( next_ilong() );
-		D(bug("FMOVEM #<%X> -> regs.FPU fpcr\r\n", get_fpcr()));
+		D(bug("FMOVEM #<%X> -> fpu fpcr\r\n", get_fpcr()));
 		FPU instruction_address = next_ilong();
 		D(bug("FMOVEM #<%X> -> FPU instruction_address\r\n", FPU instruction_address));
 	} else {
 		uae_u32 ad;
 		if (get_fp_ad(opcode, &ad)) {
 			set_fpcr( get_long (ad) );
-			D(bug("FMOVEM mem %X (%X) -> regs.FPU fpcr\r\n", ad, get_fpcr() ));
+			D(bug("FMOVEM mem %X (%X) -> fpu fpcr\r\n", ad, get_fpcr() ));
 			FPU instruction_address = get_long (ad+4);
 			D(bug("FMOVEM mem %X (%X) -> FPU instruction_address\r\n", ad+4, FPU instruction_address ));
 		}
@@ -3870,16 +3870,16 @@ PRIVATE void REGPARAM2 FFPU fpuop_fmovem_Mem_2_fpcr_fpsr_2_Mem( uae_u32 opcode, 
 {
 	if ((opcode & 0x3f) == 0x3c) {
 		set_fpcr( next_ilong() );
-		D(bug("FMOVEM #<%X> -> regs.FPU fpcr\r\n", get_fpcr()));
+		D(bug("FMOVEM #<%X> -> fpu fpcr\r\n", get_fpcr()));
 		set_fpsr( next_ilong() );
-		D(bug("FMOVEM #<%X> -> regs.FPU fpsr\r\n", get_fpsr()));
+		D(bug("FMOVEM #<%X> -> fpu fpsr\r\n", get_fpsr()));
 	} else {
 		uae_u32 ad;
 		if (get_fp_ad(opcode, &ad)) {
 			set_fpcr( get_long (ad) );
-			D(bug("FMOVEM mem %X (%X) -> regs.FPU fpcr\r\n", ad, get_fpcr() ));
+			D(bug("FMOVEM mem %X (%X) -> fpu fpcr\r\n", ad, get_fpcr() ));
 			set_fpsr( get_long (ad+4) );
-			D(bug("FMOVEM mem %X (%X) -> regs.FPU fpsr\r\n", ad+4, get_fpsr() ));
+			D(bug("FMOVEM mem %X (%X) -> fpu fpsr\r\n", ad+4, get_fpsr() ));
 		}
 	}
 	dump_registers( "END  ");
@@ -3889,18 +3889,18 @@ PRIVATE void REGPARAM2 FFPU fpuop_fmovem_Mem_2_fpcr_fpsr_fpiar_2_Mem( uae_u32 op
 {
 	if ((opcode & 0x3f) == 0x3c) {
 		set_fpcr( next_ilong() );
-		D(bug("FMOVEM #<%X> -> regs.FPU fpcr\r\n", get_fpcr()));
+		D(bug("FMOVEM #<%X> -> fpu fpcr\r\n", get_fpcr()));
 		set_fpsr( next_ilong() );
-		D(bug("FMOVEM #<%X> -> regs.FPU fpsr\r\n", get_fpsr()));
+		D(bug("FMOVEM #<%X> -> fpu fpsr\r\n", get_fpsr()));
 		FPU instruction_address = next_ilong();
 		D(bug("FMOVEM #<%X> -> FPU instruction_address\r\n", FPU instruction_address));
 	} else {
 		uae_u32 ad;
 		if (get_fp_ad(opcode, &ad)) {
 			set_fpcr( get_long (ad) );
-			D(bug("FMOVEM mem %X (%X) -> regs.FPU fpcr\r\n", ad, get_fpcr() ));
+			D(bug("FMOVEM mem %X (%X) -> fpu fpcr\r\n", ad, get_fpcr() ));
 			set_fpsr( get_long (ad+4) );
-			D(bug("FMOVEM mem %X (%X) -> regs.FPU fpsr\r\n", ad+4, get_fpsr() ));
+			D(bug("FMOVEM mem %X (%X) -> fpu fpsr\r\n", ad+4, get_fpsr() ));
 			FPU instruction_address = get_long (ad+8);
 			D(bug("FMOVEM mem %X (%X) -> FPU instruction_address\r\n", ad+8, FPU instruction_address ));
 		}

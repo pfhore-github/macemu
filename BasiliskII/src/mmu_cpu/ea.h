@@ -1,4 +1,5 @@
 #ifndef EA_H__
+#include "newcpu.h"
 uint32_t EA_Addr(int type, int reg, int sz, bool w);
 uint8_t EA_READ8(int type, int reg, bool override = false);
 uint16_t EA_READ16(int type, int reg, bool override = false);

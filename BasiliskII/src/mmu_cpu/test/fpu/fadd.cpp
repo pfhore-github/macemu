@@ -26,7 +26,7 @@ BOOST_DATA_TEST_CASE(infinity, SIGN *SIGN, sg1, sg2) {
 }
 
 BOOST_DATA_TEST_CASE(zero, SIGN *SIGN *modes, sg1, sg2, mode) {
-    regs.fpu.rnd_mode = mode;
+    mpfr_set_default_rounding_mode(mode);
     double expected = 0.0;
     if((sg1 == -1 && sg2 == -1) || (sg1 != sg2 && mode == MPFR_RNDD)) {
         expected = -0.0;
@@ -51,7 +51,7 @@ BOOST_DATA_TEST_CASE(inf, SIGN *SIGN, sg1, sg2) {
     double d = copysign(INFINITY, sg1);
     fpu_test(0x22, copysign(INFINITY, sg2), d, (sg1 == sg2) ? d : NAN);
     if(sg1 != sg2) {
-        BOOST_TEST(regs.fpu.FPSR.operr);
+        BOOST_TEST(fpu.FPSR.operr);
     }
 }
 BOOST_AUTO_TEST_SUITE_END()
@@ -68,19 +68,10 @@ BOOST_DATA_TEST_CASE(with_inf, SIGN, sg) {
     fpu_test(0x22, inf, c, inf);
 }
 
-
-BOOST_AUTO_TEST_CASE(nan1) {
-    fpu_test<double>(0x22, NAN, get_rx(-10.0, 10.0), NAN);
-}
-
-BOOST_AUTO_TEST_CASE(nan2) {
-    fpu_test<double>(0x22, get_rx(-10.0, 10.0), NAN, NAN);
-}
-
 BOOST_AUTO_TEST_CASE(ovfl) {
-    xval xm{1, 0x3ffe};
+    xval xm{false, 1, 0x3fff};
     fpu_test<xval, double>(0x22, xm, xm, INFINITY);
-    BOOST_TEST(regs.fpu.FPSR.ovfl);
+    BOOST_TEST(fpu.FPSR.ovfl);
 }
 
 BOOST_FIXTURE_TEST_SUITE(FSADD, InitFix)
@@ -103,7 +94,7 @@ BOOST_DATA_TEST_CASE(infinity, SIGN *SIGN, sg1, sg2) {
 }
 
 BOOST_DATA_TEST_CASE(zero, SIGN *SIGN *modes, sg1, sg2, mode) {
-    regs.fpu.rnd_mode = mode;
+    mpfr_set_default_rounding_mode(mode);
     float expected = 0.0f;
     if((sg1 == -1 && sg2 == -1) || (sg1 != sg2 && mode == MPFR_RNDD)) {
         expected = -0.0f;
@@ -133,7 +124,7 @@ BOOST_DATA_TEST_CASE(inf, SIGN *SIGN, sg1, sg2) {
     fpu_test<float>(0x62, x, y, ex);
     m68k_do_execute();
     if(sg1 != sg2) {
-        BOOST_TEST(regs.fpu.FPSR.operr);
+        BOOST_TEST(fpu.FPSR.operr);
     }
 }
 
@@ -151,19 +142,10 @@ BOOST_DATA_TEST_CASE(with_inf, SIGN, sg) {
     fpu_test(0x62, inf, c, inf);
 }
 
-
-BOOST_AUTO_TEST_CASE(nan1) {
-    fpu_test<float>(0x62, 1.0f, NAN, NAN);
-}
-
-BOOST_AUTO_TEST_CASE(nan2) {
-    fpu_test<float>(0x62, NAN, 1.0f, NAN);
-}
-
 BOOST_AUTO_TEST_CASE(ovfl) {
-    xval ex{1, 0x7e};
+    xval ex{false, 1, 0x7f};
     fpu_test(0x62, ex, ex, INFINITY);
-    BOOST_TEST(regs.fpu.FPSR.ovfl);
+    BOOST_TEST(fpu.FPSR.ovfl);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
@@ -188,7 +170,7 @@ BOOST_DATA_TEST_CASE(infinity, SIGN *SIGN, sg1, sg2) {
 }
 
 BOOST_DATA_TEST_CASE(zero, SIGN *SIGN *modes, sg1, sg2, mode) {
-    regs.fpu.rnd_mode = mode;
+    mpfr_set_default_rounding_mode(mode);
     double expected = 0.0;
     if((sg1 == -1 && sg2 == -1) || (sg1 != sg2 && mode == MPFR_RNDD)) {
         expected = -0.0;
@@ -217,7 +199,7 @@ BOOST_DATA_TEST_CASE(inf, SIGN *SIGN, sg1, sg2) {
     double e = copysign(INFINITY, sg2);
     fpu_test(0x66, e, d, (sg1 == sg2) ? d : NAN);
     if(sg1 != sg2) {
-        BOOST_TEST(regs.fpu.FPSR.operr);
+        BOOST_TEST(fpu.FPSR.operr);
     }
 }
 BOOST_AUTO_TEST_SUITE_END()
@@ -234,21 +216,10 @@ BOOST_DATA_TEST_CASE(with_inf, SIGN, sg) {
     fpu_test(0x66, inf, c, inf);
 }
 
-
-BOOST_AUTO_TEST_CASE(nan1) {
-    double d = get_rx(-10.0, 10.0);
-    fpu_test<double>(0x66, NAN, d, NAN);
-}
-
-BOOST_AUTO_TEST_CASE(nan2) {
-    double d = get_rx(-10.0, 10.0);
-    fpu_test<double>(0x66, d, NAN, NAN);
-}
-
 BOOST_AUTO_TEST_CASE(ovfl) {
-    xval xm{1, 0x3fe};
+    xval xm{false, 1, 0x3ff};
     fpu_test<xval, double>(0x66, xm, xm, INFINITY);
-    BOOST_TEST(regs.fpu.FPSR.ovfl);
+    BOOST_TEST(fpu.FPSR.ovfl);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

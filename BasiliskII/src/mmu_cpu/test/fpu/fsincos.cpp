@@ -11,8 +11,8 @@ BOOST_AUTO_TEST_CASE(operand) {
     raw_write16(0, 0171000);
     raw_write16(2, r1 << 10 | r2 << 7 | 0x30 | r3);
     m68k_do_execute();
-    BOOST_CHECK_CLOSE(mpfr_get_d(regs.fpu.fp[r2], MPFR_RNDN), sin(in), 1e-10);
-    BOOST_CHECK_CLOSE(mpfr_get_d(regs.fpu.fp[r3], MPFR_RNDN), cos(in), 1e-10);
+    BOOST_CHECK_CLOSE(static_cast<double>(fpu.fp[r2]), sin(in), 1e-10);
+    BOOST_CHECK_CLOSE(static_cast<double>(fpu.fp[r3]), cos(in), 1e-10);
 }
 BOOST_DATA_TEST_CASE(zero, SIGN, sg) {
     auto [r1, r2, r3] = rand_reg3();
@@ -21,8 +21,8 @@ BOOST_DATA_TEST_CASE(zero, SIGN, sg) {
     raw_write16(0, 0171000);
     raw_write16(2, r1 << 10 | r2 << 7 | 0x30 | r3);
     m68k_do_execute();
-    BOOST_CHECK_CLOSE(mpfr_get_d(regs.fpu.fp[r2], MPFR_RNDN), x, 1e-10);
-    BOOST_CHECK_CLOSE(mpfr_get_d(regs.fpu.fp[r3], MPFR_RNDN), 1.0, 1e-10);
+    BOOST_CHECK_CLOSE(static_cast<double>(fpu.fp[r2]), x, 1e-10);
+    BOOST_CHECK_CLOSE(static_cast<double>(fpu.fp[r3]), 1.0, 1e-10);
 }
 BOOST_DATA_TEST_CASE(inf, SIGN, sg) {
     auto [r1, r2, r3] = rand_reg3();
@@ -31,8 +31,8 @@ BOOST_DATA_TEST_CASE(inf, SIGN, sg) {
     raw_write16(0, 0171000);
     raw_write16(2, r1 << 10 | r2 << 7 | 0x30 | r3);
     m68k_do_execute();
-    BOOST_TEST(mpfr_nan_p(regs.fpu.fp[r2]));
-    BOOST_TEST(mpfr_nan_p(regs.fpu.fp[r3]));
+    BOOST_TEST(fpu.fp[r2].is_nan());
+    BOOST_TEST(fpu.fp[r3].is_nan());
 }
 
 BOOST_AUTO_TEST_CASE(nan_) {
@@ -41,8 +41,8 @@ BOOST_AUTO_TEST_CASE(nan_) {
     raw_write16(0, 0171000);
     raw_write16(2, r1 << 10 | r2 << 7 | 0x30 | r3);
     m68k_do_execute();
-    BOOST_TEST(mpfr_nan_p(regs.fpu.fp[r2]));
-    BOOST_TEST(mpfr_nan_p(regs.fpu.fp[r3]));
+    BOOST_TEST(fpu.fp[r2].is_nan());
+    BOOST_TEST(fpu.fp[r3].is_nan());
 }
 
 BOOST_AUTO_TEST_SUITE_END()

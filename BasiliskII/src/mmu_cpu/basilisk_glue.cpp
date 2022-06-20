@@ -47,7 +47,7 @@ bool UseJIT = false;
 // From newcpu.cpp
 bool quit_program;
 
-
+void init_mmu();
 /*
  *  Initialize 680x0 emulation, CheckROM() must have been called first
  */
@@ -68,13 +68,7 @@ bool Init680x0()
 	regs.vbr = 0;
 	regs.sfc = regs.dfc = 0;
 
-	regs.urp = regs.srp = 0;
-	regs.tcr_e = regs.tcr_p = false;
-	memset(&regs.ITTR[0], 0, sizeof(m68k_reg::ttc_t));
-	memset(&regs.ITTR[1], 0, sizeof(m68k_reg::ttc_t));
-	memset(&regs.DTTR[0], 0, sizeof(m68k_reg::ttc_t));
-	memset(&regs.DTTR[1], 0, sizeof(m68k_reg::ttc_t));
-	memset(&regs.MMUSR, 0, sizeof(m68k_reg::mmusr_t));
+	init_mmu();
 	regs.cacr_de = regs.cacr_ie = false;
 	regs.i_ea = 0;
 	regs.sleep.reset();

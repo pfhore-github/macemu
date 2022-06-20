@@ -10,25 +10,39 @@
 #include "memory.h"
 #include "newcpu.h"
 #include "via.h"
-extern VIA via1, via2;
+#include "via.h"
+extern VIA *via1;
+extern VIA *via2;
+//extern SCC_IOP* scc;
 void mcu_ctl_write(uint32_t addr, uint32_t v);
 uint32_t mcu_ctl_read(uint32_t addr);
+uint8_t mcu_scsi_r(uint32_t addr);
 uint8_t readIO8(uint32_t addr) {
     switch((addr >> 13) & 0x1f) {
     case 0:
         // VIA1
-        return via1.read(addr >> 9 & 0xf);
+        return via1->read(addr >> 9 & 0xf);
     case 1:
         // VIA 2
-        return via2.read(addr >> 9 & 0xf);
+        return via2->read(addr >> 9 & 0xf);
     case 4:
     // Ethernet PRIME
     case 5:
     // Ethernet
     case 6:
-    // IOP for SC
+    // IOP for SCC
     case 7:
-    // MCU/SCSI
+        // MCU/SCSI
+        if((addr & 0x1fff) < 0x1000) {
+            // MCU ctl
+            return mcu_ctl_read((addr & 0xfff) >> 2);
+        } else if((addr & 0xffff) < 0x1400) {
+            // intenral SCSI
+            return mcu_scsi_r(addr>>4 & 0xf);
+        } else if((addr & 0xffff) < 0x1800) {
+            // extenral SCSI
+            return mcu_scsi_r(addr>>4 & 0xf);
+        }
     case 10:
     // EASC
     case 15:
@@ -86,11 +100,11 @@ void writeIO8(uint32_t addr, uint8_t v) {
     switch((addr >> 13) & 0x1f) {
     case 0:
         // VIA1
-        via1.write(addr >> 9 & 0xf, v);
+        via1->write(addr >> 9 & 0xf, v);
         break;
     case 1:
         // VIA 2
-        via2.write(addr >> 9 & 0xf, v);
+        via2->write(addr >> 9 & 0xf, v);
         break;
     case 4:
     // Ethernet PRIME
@@ -108,8 +122,9 @@ void writeIO8(uint32_t addr, uint8_t v) {
     case 20:
         //        YANCC ctl
         break;
+    default:
+        throw BUS_ERROR_EX{};
     }
-    throw BUS_ERROR_EX{};
 }
 void writeIO16(uint32_t addr, uint16_t v) { throw BUS_ERROR_EX{}; }
 void writeIO32(uint32_t addr, uint32_t v) {
@@ -143,7 +158,7 @@ void writeIO32(uint32_t addr, uint32_t v) {
     case 20:
         //        YANCC ctl
         break;
-    }
+    default:
         throw BUS_ERROR_EX{};
-
+    }
 }

@@ -4,30 +4,35 @@
 #include "test/test_common.h"
 BOOST_FIXTURE_TEST_SUITE(ABCD, InitFix)
 
-BOOST_DATA_TEST_CASE(Reg, bdata::xrange(1), x) {
-    auto [xr, yr] = rand_reg2();
-    regs.d[xr] = 0x51;
-    regs.d[yr] = 0x27;
-    regs.x = x;
-    raw_write16(0, 0140400 | xr << 9 | yr);
+BOOST_AUTO_TEST_CASE(Reg) {
+    regs.d[1] = 0x51;
+    regs.d[2] = 0x27;
+    regs.x = false;
+    raw_write16(0, 0141402);
     m68k_do_execute();
-    BOOST_TEST(regs.d[xr] == 0x78 + x);
-    BOOST_TEST(!regs.z);
+    BOOST_TEST(regs.d[1] == 0x78);
 }
 
-BOOST_DATA_TEST_CASE(Memory, bdata::xrange(1), x) {
-    auto [xr, yr] = rand_reg2();
-    regs.a[xr] = 0x1001;
-    regs.a[yr] = 0x2001;
+BOOST_AUTO_TEST_CASE(Memory) {
+    regs.a[1] = 0x1001;
+    regs.a[2] = 0x2001;
     raw_write8(0x1000, 0x51);
     raw_write8(0x2000, 0x27);
-    regs.x = x;
-    raw_write16(0, 0140410 | xr << 9 | yr);
+    regs.x = false;
+    raw_write16(0, 0141412);
     m68k_do_execute();
-    BOOST_TEST(raw_read8(0x1000) == 0x78 + x);
-    BOOST_TEST(regs.a[xr] == 0x1000);
-    BOOST_TEST(regs.a[yr] == 0x2000);
-    BOOST_TEST(!regs.z);
+    BOOST_TEST(raw_read8(0x1000) == 0x78);
+    BOOST_TEST(regs.a[1] == 0x1000);
+    BOOST_TEST(regs.a[2] == 0x2000);
+}
+
+BOOST_DATA_TEST_CASE(X, BIT, x) {
+    regs.d[0] = 0x51;
+    regs.d[1] = 0x27;
+    regs.x = x;
+    raw_write16(0, 0140401);
+    m68k_do_execute();
+    BOOST_TEST(regs.d[0] == 0x78 + x);
 }
 
 BOOST_AUTO_TEST_CASE(carry) {
@@ -40,14 +45,14 @@ BOOST_AUTO_TEST_CASE(carry) {
     BOOST_TEST(regs.x);
 }
 
-BOOST_AUTO_TEST_CASE(z) {
+BOOST_DATA_TEST_CASE(z, BIT * BIT, old_z, new_z) {
     regs.d[1] = 0x30;
-    regs.d[2] = 0x70;
-    regs.z = true;
+    regs.d[2] = 0x69 + new_z;
+    regs.z = old_z;
     regs.x = false;
     raw_write16(0, 0140400 | 1 << 9 | 2);
     m68k_do_execute();
-    BOOST_TEST(regs.z);
+    BOOST_TEST(regs.z == (new_z ? false : old_z));
 }
 
 BOOST_AUTO_TEST_SUITE_END()

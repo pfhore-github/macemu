@@ -7,50 +7,43 @@
 BOOST_FIXTURE_TEST_SUITE(BFFFO, InitFix)
 BOOST_AUTO_TEST_SUITE(REG)
 
-BOOST_AUTO_TEST_CASE(both_imm) {
-    auto [ea, dn] = rand_reg2();
-    auto v1 = get_v32();
-    auto off = get_vn(0, 31);
-    auto w = get_vn(1, 31);
-    regs.d[ea] = v1;
-    write16(0, 0166700 | ea);
-    write16(2, dn << 12 | off << 6 | w);
+BOOST_AUTO_TEST_SUITE(range)
+
+BOOST_AUTO_TEST_CASE(exist) {
+    regs.d[2] = 0xf01fffff;
+    write16(0, 0166702);
+    write16(2, 3 << 12 | 4 << 6 | 8);
     m68k_do_execute();
-    uint32_t mask = 0xffffffffU << (32 - w) >> (32 - w);
-    uint32_t vv = std::rotl<uint32_t>(v1, w + off) & mask;
-    BOOST_TEST(regs.d[dn] == off + (w + std::countl_zero(vv) - 32));
+    BOOST_TEST(regs.d[3] == 11);
 }
 
-BOOST_AUTO_TEST_CASE(width_reg) {
-    auto [ea, wr, dn] = rand_reg3();
-    auto v1 = get_v32();
-    auto off = get_vn(0, 31);
-    auto w = get_vn(1, 31);
-    regs.d[ea] = v1;
-    regs.d[wr] = w;
-    write16(0, 0166700 | ea);
-    write16(2, dn << 12 | 1 << 5 | off << 6 | wr);
+BOOST_AUTO_TEST_CASE(non_exist) {
+    regs.d[2] = 0xf00fffff;
+    write16(0, 0166702);
+    write16(2, 3 << 12 | 4 << 6 | 8);
     m68k_do_execute();
-    uint32_t mask = 0xffffffffU << (32 - w) >> (32 - w);
-    uint32_t vv = std::rotl<uint32_t>(v1, w + off) & mask;
-    BOOST_TEST(regs.d[dn] == off + (w + std::countl_zero(vv) - 32));
+    BOOST_TEST(regs.d[3] == 12);
 }
 
-BOOST_AUTO_TEST_CASE(off_reg) {
-    auto [ea, ofr, dn] = rand_reg3();
-    auto v1 = get_v32();
-    auto off = get_vn(0, 31);
-    auto w = get_vn(1, 31);
-    regs.d[ea] = v1;
-    regs.d[ofr] = off;
-    write16(0, 0166700 | ea);
-    write16(2, dn << 12 | 1 << 11 | ofr << 6 | w);
+BOOST_AUTO_TEST_SUITE_END()
+BOOST_AUTO_TEST_SUITE(wrap)
+BOOST_AUTO_TEST_CASE(exist) {
+    regs.d[2] = 0x01ffff00;
+    write16(0, 0166702);
+    write16(2, 3 << 12 | 24 << 6 | 16);
     m68k_do_execute();
-    uint32_t mask = 0xffffffffU << (32 - w) >> (32 - w);
-    uint32_t vv = std::rotl<uint32_t>(v1, w + off) & mask;
-    BOOST_TEST(regs.d[dn] == off + (w + (vv==0?32:std::countl_zero(vv)) - 32));
+    BOOST_TEST(regs.d[3] == 39);
 }
 
+BOOST_AUTO_TEST_CASE(non_exist) {
+    regs.d[2] = 0x00ffff00;
+    write16(0, 0166702);
+    write16(2, 3 << 12 | 24 << 6 | 16);
+    m68k_do_execute();
+    BOOST_TEST(regs.d[3] == 40);
+}
+
+BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE(MEM)
 BOOST_AUTO_TEST_CASE(byte1) {

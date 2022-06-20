@@ -4,7 +4,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 enable_testing()
 project(Basillisk2 CXX)
 if ( CMAKE_COMPILER_IS_GNUCXX )
-    set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS}  -Wno-unused-parameter -Wall -Wextra")
+set(CMAKE_CXX_FLAGS_DEBUG_INIT "-coverage")
+    set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS}  -Wno-unused-parameter -Wall -Wextra --coverage")
 endif()
 if ( MSVC )
     set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} /W4")
@@ -32,7 +33,7 @@ mmu_cpu/op_branch.cpp
 mmu_cpu/op_bcd.cpp
 mmu_cpu/op_bf.cpp
 mmu_cpu/fpu/fpu_mpfr.cpp 
-
+mmu_cpu/mmu/mmu_68040.cpp
 mmu_cpu/compiler/jit.cpp
 )
 
@@ -66,8 +67,10 @@ chips/io.cpp
 chips/via.cpp
 chips/mcu.cpp
 chips/iop.cpp
+#chips/scc.cpp
 rom/boot.cpp
 rom/boot2.cpp
+rom/romdata.cpp
 )
 set( LIBRARY ${SDL2_LIBRARIES} vdeplug Threads::Threads fmt mpfr gmp asmjit)
 #target_link_libraries(Basillisk2 PRIVATE ${SDL2_LIBRARIES} vdeplug Threads::Threads mpfr gmp)
@@ -81,8 +84,7 @@ ELSE()
 ENDIF()
 set(TEST_COMMON ${CPU_FILE}  mmu_cpu/test/test_common.cpp )
 set(TEST_LIB fmt boost_unit_test_framework ${SDL2_LIBRARIES} ${LIBRARY})
-add_executable(test_cpu ${TEST_COMMON}
-mmu_cpu/test/cpu_impl.cpp
+add_executable(ut ${TEST_COMMON}
 mmu_cpu/test/exception.cpp 
 
 mmu_cpu/test/bits/bchg.cpp
@@ -127,7 +129,7 @@ mmu_cpu/test/arithmetic/addx.cpp
 mmu_cpu/test/arithmetic/adda.cpp
 mmu_cpu/test/arithmetic/sub.cpp
 mmu_cpu/test/arithmetic/subi.cpp
-mmu_cpu/test/arithmetic/subq.cpp
+#mmu_cpu/test/arithmetic/subq.cpp
 mmu_cpu/test/arithmetic/suba.cpp
 mmu_cpu/test/arithmetic/subx.cpp
 mmu_cpu/test/arithmetic/cmp.cpp
@@ -185,16 +187,7 @@ mmu_cpu/test/branch/trapv.cpp
 mmu_cpu/test/branch/rtr.cpp
 mmu_cpu/test/branch/jsr.cpp
 mmu_cpu/test/branch/jmp.cpp
- )
-target_link_libraries(test_cpu ${TEST_LIB})
-add_test(NAME test_cpu COMMAND ./test_cpu)
-function( cpu_test name)
-  add_executable(test_cpu_${name} ${TEST_COMMON} mmu_cpu/test/${name}.cpp )
-  target_link_libraries(test_cpu_${name} ${TEST_LIB})
-  add_test(NAME test_cpu_${name} COMMAND ./test_cpu_${name})
-endfunction(cpu_test)
 
-add_executable(test_fpu ${TEST_COMMON}
 mmu_cpu/test/fpu/fabs.cpp
 mmu_cpu/test/fpu/facos.cpp
 mmu_cpu/test/fpu/fadd.cpp
@@ -224,7 +217,7 @@ mmu_cpu/test/fpu/fscale.cpp
 mmu_cpu/test/fpu/fsgldiv.cpp
 mmu_cpu/test/fpu/fsglmul.cpp
 mmu_cpu/test/fpu/fsin.cpp
-mmu_cpu/test/fpu/fsincos.cpp
+#mmu_cpu/test/fpu/fsincos.cpp
 mmu_cpu/test/fpu/fsinh.cpp
 mmu_cpu/test/fpu/fsqrt.cpp
 mmu_cpu/test/fpu/fsub.cpp
@@ -242,13 +235,13 @@ mmu_cpu/test/fpu/fmovem.cpp
 mmu_cpu/test/fpu/fbcc.cpp
 mmu_cpu/test/fpu/fdbcc.cpp
 mmu_cpu/test/fpu/fscc.cpp
- )
-target_link_libraries(test_fpu ${TEST_LIB})
-add_test(NAME test_fpu COMMAND ./test_fpu)
 
-add_executable(test_mmu ${TEST_COMMON}
-mmu_cpu/test/mmu.cpp
+#mmu_cpu/test/fpu/nan.cpp
 
+#mmu_cpu/test/mmu.cpp
  )
-target_link_libraries(test_mmu ${TEST_LIB})
-add_test(NAME test_mmu COMMAND ./test_mmu)
+target_link_libraries(ut ${TEST_LIB})
+add_test(NAME ut COMMAND ./ut)
+
+
+

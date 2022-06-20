@@ -23,8 +23,7 @@ OP(moves_b) {
     }
     int rg2 = op2 >> 12 & 7;
     bool w = op2 >> 11 & 1;
-    uint32_t vaddr = EA_Addr(type, reg, 1, true);
-    uint32_t addr = do_mmu(vaddr, false, w, true);
+    uint32_t addr = EA_Addr(type, reg, 1, true);
     try {
         if(w) {
             b_write8(addr, regs.r[rg2]);
@@ -32,7 +31,7 @@ OP(moves_b) {
             WRITE_D8(rg2, b_read8(addr));
         }
     } catch(BUS_ERROR_EX &) {
-        paddr pa{vaddr, 0, SZ::BYTE, TT::LFC, TM(w ? regs.dfc : regs.sfc), w};
+        paddr pa{addr, 0, SZ::BYTE, TT::LFC, TM(w ? regs.dfc : regs.sfc), w};
         BUSERROR(pa, true);
     }
 }
@@ -45,8 +44,7 @@ OP(moves_w) {
     }
     int rg2 = op2 >> 12 & 7;
     bool w = op2 >> 11 & 1;
-    uint32_t vaddr = EA_Addr(type, reg, 2, true);
-    uint32_t addr = do_mmu(vaddr, false, w, true);
+    uint32_t addr = EA_Addr(type, reg, 2, true);
     try {
         if(w) {
             b_write16(addr, regs.r[rg2]);
@@ -54,7 +52,7 @@ OP(moves_w) {
             WRITE_D16(rg2, b_read16(addr));
         }
     } catch(BUS_ERROR_EX &) {
-        paddr pa{vaddr, 0, SZ::WORD, TT::LFC, TM(w ? regs.dfc : regs.sfc), w};
+        paddr pa{addr, 0, SZ::WORD, TT::LFC, TM(w ? regs.dfc : regs.sfc), w};
         BUSERROR(pa, true);
     }
 }
@@ -67,8 +65,7 @@ OP(moves_l) {
     }
     int rg2 = op2 >> 12 & 7;
     bool w = op2 >> 11 & 1;
-    uint32_t vaddr = EA_Addr(type, reg, 4, true);
-    uint32_t addr = do_mmu(vaddr, false, w, true);
+    uint32_t addr = EA_Addr(type, reg, 4, true);
     try {
         if(w) {
             b_write32(addr, regs.r[rg2]);
@@ -76,7 +73,7 @@ OP(moves_l) {
             regs.r[rg2] = b_read32(addr);
         }
     } catch(BUS_ERROR_EX &) {
-        paddr pa{vaddr, 0, SZ::LONG, TT::LFC, TM(w ? regs.dfc : regs.sfc), w};
+        paddr pa{addr, 0, SZ::LONG, TT::LFC, TM(w ? regs.dfc : regs.sfc), w};
         BUSERROR(pa, true);
     }
 }
@@ -248,7 +245,7 @@ OP(movem_from_w) {
         uint32_t v = regs.i_ea;
         for(int i = 0; i < 16; ++i) {
             if(reg_list & (1 << i)) {
-                EA_WRITE16(i >> 3, i & 7, read16(v));
+                EA_WRITE32(i >> 3, i & 7, DO_EXT_L(read16(v)));
                 v += 2;
             }
         }
@@ -301,7 +298,7 @@ void op_move_from_usp(int reg) {
     }
     regs.a[reg] = regs.usp;
 }
-
+uint32_t do_op_movec_from(int o);
 void op_movec_from() {
     uint16_t next = FETCH();
     if(!regs.S) {
@@ -309,71 +306,9 @@ void op_movec_from() {
         return;
     }
     int dst = next >> 12 & 15;
-    switch(next & 0xfff) {
-    case 0x000:
-        regs.r[dst] = regs.sfc;
-        return;
-    case 0x001:
-        regs.r[dst] = regs.dfc;
-        return;
-    case 0x800:
-        regs.r[dst] = regs.usp;
-        return;
-    case 0x801:
-        regs.r[dst] = regs.vbr;
-        return;
-    case 0x002:
-        regs.r[dst] = regs.cacr_de << 31 | regs.cacr_ie << 15;
-        return;
-    case 0x803:
-        regs.r[dst] = regs.msp;
-        return;
-    case 0x804:
-        regs.r[dst] = regs.isp;
-        return;
-    case 0x003:
-        regs.r[dst] = regs.tcr_e << 15 | regs.tcr_p << 14;
-        return;
-    case 0x004:
-        regs.r[dst] = regs.ITTR[0].address_base << 24 |
-                      regs.ITTR[0].address_mask << 16 | regs.ITTR[0].E << 15 |
-                      regs.ITTR[0].S << 13 | regs.ITTR[0].U << 8 |
-                      regs.ITTR[0].CM << 5 | regs.ITTR[0].W << 2;
-        return;
-    case 0x005:
-        regs.r[dst] = regs.ITTR[1].address_base << 24 |
-                      regs.ITTR[1].address_mask << 16 | regs.ITTR[1].E << 15 |
-                      regs.ITTR[1].S << 13 | regs.ITTR[1].U << 8 |
-                      regs.ITTR[1].CM << 5 | regs.ITTR[1].W << 2;
-        return;
-    case 0x006:
-        regs.r[dst] = regs.DTTR[0].address_base << 24 |
-                      regs.DTTR[0].address_mask << 16 | regs.DTTR[0].E << 15 |
-                      regs.DTTR[0].S << 13 | regs.DTTR[0].U << 8 |
-                      regs.DTTR[0].CM << 5 | regs.DTTR[0].W << 2;
-        return;
-    case 0x007:
-        regs.r[dst] = regs.DTTR[1].address_base << 24 |
-                      regs.DTTR[1].address_mask << 16 | regs.DTTR[1].E << 15 |
-                      regs.DTTR[1].S << 13 | regs.DTTR[1].U << 8 |
-                      regs.DTTR[1].CM << 5 | regs.DTTR[1].W << 2;
-        return;
-    case 0x805:
-        regs.r[dst] = regs.MMUSR.PA | regs.MMUSR.B << 11 | regs.MMUSR.G << 10 |
-                      regs.MMUSR.U << 8 | regs.MMUSR.S << 7 |
-                      regs.MMUSR.CM << 5 | regs.MMUSR.M << 4 |
-                      regs.MMUSR.W << 2 | regs.MMUSR.T << 1 | regs.MMUSR.R;
-        return;
-    case 0x806:
-        regs.r[dst] = regs.urp;
-        return;
-    case 0x807:
-        regs.r[dst] = regs.srp;
-        return;
-    default:
-        ILLEGAL_INST();
-    }
+    regs.r[dst] = do_op_movec_from(next & 0xfff);
 }
+void do_op_movec_to(int op, uint32_t v);
 
 void op_movec_to() {
     uint16_t next = FETCH();
@@ -382,90 +317,7 @@ void op_movec_to() {
         return;
     }
     int src = next >> 12 & 15;
-    switch(next & 0xfff) {
-    case 0x000:
-        regs.sfc = regs.r[src] & 7;
-        return;
-    case 0x001:
-        regs.dfc = regs.r[src] & 7;
-        return;
-    case 0x800:
-        regs.usp = regs.r[src];
-        return;
-    case 0x801:
-        regs.vbr = regs.r[src];
-        return;
-    case 0x002:
-        regs.cacr_de = regs.r[src] >> 31 & 1;
-        regs.cacr_ie = regs.r[src] >> 15 & 1;
-        return;
-    case 0x803:
-        regs.msp = regs.r[src];
-        return;
-    case 0x804:
-        regs.isp = regs.r[src];
-        return;
-    case 0x003:
-        regs.tcr_e = regs.r[src] >> 15 & 1;
-        regs.tcr_p = regs.r[src] >> 14 & 1;
-        return;
-    case 0x004:
-        regs.ITTR[0].address_base = regs.r[src] >> 24 & 0xff;
-        regs.ITTR[0].address_mask = regs.r[src] >> 16 & 0xff;
-        regs.ITTR[0].E = regs.r[src] >> 15 & 1;
-        regs.ITTR[0].S = regs.r[src] >> 13 & 3;
-        regs.ITTR[0].U = regs.r[src] >> 8 & 3;
-        regs.ITTR[0].CM = regs.r[src] >> 5 & 3;
-        regs.ITTR[0].W = regs.r[src] >> 2 & 1;
-        return;
-    case 0x005:
-        regs.ITTR[1].address_base = regs.r[src] >> 24 & 0xff;
-        regs.ITTR[1].address_mask = regs.r[src] >> 16 & 0xff;
-        regs.ITTR[1].E = regs.r[src] >> 15 & 1;
-        regs.ITTR[1].S = regs.r[src] >> 13 & 3;
-        regs.ITTR[1].U = regs.r[src] >> 8 & 3;
-        regs.ITTR[1].CM = regs.r[src] >> 5 & 3;
-        regs.ITTR[1].W = regs.r[src] >> 2 & 1;
-        return;
-    case 0x006:
-        regs.DTTR[0].address_base = regs.r[src] >> 24 & 0xff;
-        regs.DTTR[0].address_mask = regs.r[src] >> 16 & 0xff;
-        regs.DTTR[0].E = regs.r[src] >> 15 & 1;
-        regs.DTTR[0].S = regs.r[src] >> 13 & 3;
-        regs.DTTR[0].U = regs.r[src] >> 8 & 3;
-        regs.DTTR[0].CM = regs.r[src] >> 5 & 3;
-        regs.DTTR[0].W = regs.r[src] >> 2 & 1;
-        return;
-    case 0x007:
-        regs.DTTR[1].address_base = regs.r[src] >> 24 & 0xff;
-        regs.DTTR[1].address_mask = regs.r[src] >> 16 & 0xff;
-        regs.DTTR[1].E = regs.r[src] >> 15 & 1;
-        regs.DTTR[1].S = regs.r[src] >> 13 & 3;
-        regs.DTTR[1].U = regs.r[src] >> 8 & 3;
-        regs.DTTR[1].CM = regs.r[src] >> 5 & 3;
-        regs.DTTR[1].W = regs.r[src] >> 2 & 1;
-        return;
-    case 0x805:
-        regs.MMUSR.PA = regs.r[src] & 0xFFFFF000;
-        regs.MMUSR.B = regs.r[src] >> 11 & 1;
-        regs.MMUSR.G = regs.r[src] >> 10 & 1;
-        regs.MMUSR.U = regs.r[src] >> 8 & 3;
-        regs.MMUSR.S = regs.r[src] >> 7 & 1;
-        regs.MMUSR.CM = regs.r[src] >> 5 & 3;
-        regs.MMUSR.M = regs.r[src] >> 4 & 1;
-        regs.MMUSR.W = regs.r[src] >> 2 & 1;
-        regs.MMUSR.T = regs.r[src] >> 1 & 1;
-        regs.MMUSR.R = regs.r[src] & 1;
-        return;
-    case 0x806:
-        regs.urp = regs.r[src];
-        return;
-    case 0x807:
-        regs.srp = regs.r[src];
-        return;
-    default:
-        ILLEGAL_INST();
-    }
+    do_op_movec_to(next & 0xfff, regs.r[src]);
 }
 
 OP(moveq) {
@@ -493,31 +345,31 @@ OP(move16) {
     switch(type) {
     case 0:
         addr = FETCH32();
-        read_line(regs.a[reg], buf);
-        write_line(addr, buf);
+        read_line(regs.a[reg] &~ 0xf, buf);
+        write_line(addr &~ 0xf, buf);
         regs.a[reg] += 16;
         break;
     case 1:
         addr = FETCH32();
-        read_line(addr, buf);
-        write_line(regs.a[reg], buf);
+        read_line(addr &~ 0xf, buf);
+        write_line(regs.a[reg]  &~ 0xf, buf);
         regs.a[reg] += 16;
         break;
     case 2:
         addr = FETCH32();
-        read_line(regs.a[reg], buf);
-        write_line(addr, buf);
+        read_line(regs.a[reg]  &~ 0xf, buf);
+        write_line(addr &~ 0xf, buf);
         break;
     case 3:
         addr = FETCH32();
-        read_line(addr, buf);
-        write_line(regs.a[reg], buf);
+        read_line(addr &~ 0xf, buf);
+        write_line(regs.a[reg] &~ 0xf, buf);
         break;
     case 4: {
         uint16_t op2 = FETCH();
         int ay = op2 >> 12 & 7;
-        read_line(regs.a[reg], buf);
-        write_line(regs.a[ay], buf);
+        read_line(regs.a[reg] &~ 0xf, buf);
+        write_line(regs.a[ay] &~ 0xf, buf);
         regs.a[reg] += 16;
         regs.a[ay] += 16;
         break;

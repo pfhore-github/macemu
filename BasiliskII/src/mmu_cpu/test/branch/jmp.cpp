@@ -5,9 +5,8 @@
 
 BOOST_FIXTURE_TEST_SUITE(JMP, InitFix)
 BOOST_AUTO_TEST_CASE(run) {
-     auto ea = rand_ar();
-    regs.a[ea] = 0x10;
-    raw_write16(0, 0047320 | ea);
+    regs.a[2] = 0x10;
+    raw_write16(0, 0047322);
     m68k_do_execute();
     BOOST_TEST(regs.pc == 0x10);
 }

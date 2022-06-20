@@ -1,0 +1,5 @@
+/home/michiaki/Document/macemu/macemu/BasiliskII/src/CMakeFiles/Yame.dir
+/home/michiaki/Document/macemu/macemu/BasiliskII/src/CMakeFiles/ut.dir
+/home/michiaki/Document/macemu/macemu/BasiliskII/src/CMakeFiles/test.dir
+/home/michiaki/Document/macemu/macemu/BasiliskII/src/CMakeFiles/edit_cache.dir
+/home/michiaki/Document/macemu/macemu/BasiliskII/src/CMakeFiles/rebuild_cache.dir

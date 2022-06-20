@@ -44,7 +44,7 @@ InitFix::InitFix() {
     regs.pc = 0;
     regs.v = regs.c = regs.n = regs.x = regs.z = false;
     regs.S = false;
-    memset(&regs.fpu.FPCR, 0, sizeof(regs.fpu.FPCR));
+    memset(&fpu.FPCR, 0, sizeof(fpu.FPCR));
 }
 BOOST_TEST_GLOBAL_FIXTURE(MyGlobalFixture);
 
@@ -73,43 +73,14 @@ void raw_write32(uint32_t addr, uint32_t v) {
 
 static std::unordered_map<std::string, std::string> asmcodes;
 
-void set_fpu_reg(int reg, const xval& v) {
-    mpfr_prec_round(regs.fpu.fp[reg], 64, MPFR_RNDN);
-    mpfr_set_si_2exp(regs.fpu.fp[reg], v.frac, v.exp, MPFR_RNDN);
+void set_fpu_reg(int reg, const xval &v) {
+    fpu.fp[reg].set_exp(v.sg, v.frac, v.exp + 64);
 }
 void set_fpu_reg(int reg, double v) {
-    mpfr_prec_round(regs.fpu.fp[reg], 64, MPFR_RNDN);
-    switch(fpclassify(v)) {
-    case FP_NAN:
-        mpfr_set_nan(regs.fpu.fp[reg]);
-        break;
-    case FP_INFINITE:
-        mpfr_set_inf(regs.fpu.fp[reg], signbit(v) ? -1 : 1);
-        break;
-    case FP_ZERO:
-        mpfr_set_zero(regs.fpu.fp[reg], signbit(v) ? -1 : 1);
-        break;
-    default:
-        mpfr_set_d(regs.fpu.fp[reg], v, mpfr_get_default_rounding_mode());
-    }
+    fpu.fp[reg] = v;
 }
 
-void set_fpu_reg(int reg, float v) {
-    mpfr_prec_round(regs.fpu.fp[reg], 64, MPFR_RNDN);
-    switch(fpclassify(v)) {
-    case FP_NAN:
-        mpfr_set_nan(regs.fpu.fp[reg]);
-        break;
-    case FP_INFINITE:
-        mpfr_set_inf(regs.fpu.fp[reg], signbit(v) ? -1 : 1);
-        break;
-    case FP_ZERO:
-        mpfr_set_zero(regs.fpu.fp[reg], signbit(v) ? -1 : 1);
-        break;
-    default:
-        mpfr_set_flt(regs.fpu.fp[reg], v, mpfr_get_default_rounding_mode());
-    }
-}
+void set_fpu_reg(int reg, float v) { fpu.fp[reg] = v; }
 
 std::unordered_map<uint32_t, void (*)()> rom_functions;
 void dump_regs() {}

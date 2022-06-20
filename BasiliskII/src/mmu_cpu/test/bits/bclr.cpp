@@ -6,57 +6,44 @@
 BOOST_FIXTURE_TEST_SUITE(BCLR, InitFix)
 BOOST_AUTO_TEST_SUITE(Imm)
 BOOST_AUTO_TEST_CASE(Byte) {
-    auto ea = rand_reg();
-    auto v1 = get_v8();
-    int n = get_vn(0, 7);
-    regs.a[ea] = 0x10;
-    raw_write8(0x10, v1);
-    raw_write16(0, 0004220 | ea);
-    raw_write16(2, n);
+    regs.a[2] = 0x10;
+    raw_write8(0x10, 4);
+    raw_write16(0, 0004222);
+    raw_write16(2, 2);
     m68k_do_execute();
-    BOOST_TEST(regs.z == !(v1 & 1 << n));
-    BOOST_TEST(raw_read8(0x10) == (v1 &~ (1 << n)));
+    BOOST_TEST(!regs.z);
+    BOOST_TEST(raw_read8(0x10) == 0);
 }
 
 BOOST_AUTO_TEST_CASE(Long) {
-    auto ea = rand_reg();
-    auto v1 = get_v32();
-    int n = get_vn(0, 31);
-    regs.d[ea] = v1;
-    raw_write16(0, 0004200 | ea);
-    raw_write16(2, n);
+    regs.d[2] = 0x10000;
+    raw_write16(0, 0004202);
+    raw_write16(2, 16);
     m68k_do_execute();
-    BOOST_TEST(regs.z == !(v1 & 1 << n));
-    BOOST_TEST(regs.d[ea] == (v1 &~ (1 << n)));
+    BOOST_TEST(!regs.z);
+    BOOST_TEST(regs.d[2] == 0);
 }
-
 
 BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_AUTO_TEST_SUITE(Reg)
 BOOST_AUTO_TEST_CASE(Byte) {
-    auto [dn, ea] = rand_reg2();
-    auto v1 = get_v8();
-    int n = get_vn(0, 7);
-    regs.a[ea] = 0x10;
-    regs.d[dn] = n;
-    raw_write16(0, 0000620 | dn << 9 | ea);
-    raw_write8(0x10, v1);
+    regs.a[3] = 0x10;
+    regs.d[5] = 2;
+    raw_write16(0, 0005623);
+    raw_write8(0x10, 4);
     m68k_do_execute();
-    BOOST_TEST(regs.z == !(v1 & 1 << n));
-    BOOST_TEST(raw_read8(0x10) == (v1 &~ (1 << n)));
+    BOOST_TEST(!regs.z );
+    BOOST_TEST(raw_read8(0x10) == 0);
 }
 
 BOOST_AUTO_TEST_CASE(Long) {
-    auto [dn, ea] = rand_reg2();
-    auto v1 = get_v32();
-    int n = get_vn(0, 31);
-    regs.d[ea] = v1;
-    regs.d[dn] = n;
-    raw_write16(0, 0000600 | dn << 9 | ea);
+    regs.d[2] = 0x10000;
+    regs.d[3] = 16;
+    raw_write16(0, 0003602);
     m68k_do_execute();
-    BOOST_TEST(regs.z == !(v1 & 1 << n));
-    BOOST_TEST(regs.d[ea] == (v1 &~ (1 << n)));
+    BOOST_TEST(!regs.z );
+    BOOST_TEST(regs.d[2] == 0);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

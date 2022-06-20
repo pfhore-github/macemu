@@ -86,7 +86,7 @@ OP(bfchg) {
         uint32_t addr = EA_Addr(type, reg, 0, false);
         bf_m_common(addr, offset, width);
         int sz = offset + width;
-        if(sz < 8) {
+        if(sz <= 8) {
             write8(addr, read8(addr) ^ (0xff >> offset << (8 - sz)));
             return;
         }
@@ -113,7 +113,7 @@ OP(bfclr) {
         uint32_t addr = EA_Addr(type, reg, 0, false);
         bf_m_common(addr, offset, width);
         int sz = offset + width;
-        if(sz < 8) {
+        if(sz <= 8) {
             write8(addr, read8(addr) & ~(0xff >> offset << (8 - sz)));
             return;
         }
@@ -139,7 +139,7 @@ OP(bfset) {
         uint32_t addr = EA_Addr(type, reg, 0, false);
         bf_m_common(addr, offset, width);
         int sz = offset + width;
-        if(sz < 8) {
+        if(sz <= 8) {
             write8(addr, read8(addr) | (0xff >> offset << (8 - sz)));
             return;
         }
@@ -225,7 +225,7 @@ OP(bfins) {
         regs.z = v == 0;
         regs.n = v & 1 << width;
         int sz = offset + width;
-        switch(sz >> 3) {
+        switch((sz-1) >> 3) {
         case 0:
             // OOO VVVVV X
             write8(addr, bit_ins(read8(addr), offset, width, v));

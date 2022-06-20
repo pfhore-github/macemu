@@ -33,7 +33,7 @@ BOOST_DATA_TEST_CASE(zero, SIGN *SIGN, sg1, sg2) {
     double z1 = copysign(0.0, sg1);
     double z2 = copysign(0.0, sg2);
     fpu_test(0x20, z2, z1, NAN);
-    BOOST_TEST(regs.fpu.FPSR.operr);
+    BOOST_TEST(fpu.FPSR.operr);
 }
 BOOST_AUTO_TEST_SUITE_END()
 // ∞ / X
@@ -54,7 +54,7 @@ BOOST_DATA_TEST_CASE(inf, SIGN *SIGN, sg1, sg2) {
     double inf1 = copysign(INFINITY, sg1);
     double inf2 = copysign(INFINITY, sg2);
     fpu_test(0x20, inf1, inf2, NAN);
-    BOOST_TEST(regs.fpu.FPSR.operr);
+    BOOST_TEST(fpu.FPSR.operr);
 }
 BOOST_AUTO_TEST_SUITE_END()
 
@@ -62,7 +62,7 @@ BOOST_DATA_TEST_CASE(with_zero, SIGN, sg) {
     double z = copysign(0.0, sg);
     double c = get_rx(0.1, 10.0);
     fpu_test(0x20, z, c, copysign(INFINITY, sg));
-    BOOST_TEST(regs.fpu.FPSR.dz);
+    BOOST_TEST(fpu.FPSR.dz);
 }
 
 BOOST_DATA_TEST_CASE(with_inf, SIGN, sg) {
@@ -82,17 +82,17 @@ BOOST_AUTO_TEST_CASE(nan2) {
 }
 
 BOOST_AUTO_TEST_CASE(ovfl) {
-    xval xm{1, -0x3ffe};
-    xval ym{1, 0x3ffe};
+    xval xm{false, 1, -0x3ffe};
+    xval ym{false, 1, 0x3ffe};
     fpu_test(0x20, xm, ym, INFINITY);
-    BOOST_TEST(regs.fpu.FPSR.ovfl);
+    BOOST_TEST(fpu.FPSR.ovfl);
 }
 
 BOOST_AUTO_TEST_CASE(unfl) {
-    xval xm{1, -0x3ffe};
-    xval ym{1, 0x3ffe};
+    xval xm{false, 1, -0x3ffe};
+    xval ym{false, 1, 0x3ffe};
     fpu_test(0x20, ym, xm, 0.0);
-    BOOST_TEST(regs.fpu.FPSR.unfl);
+    BOOST_TEST(fpu.FPSR.unfl);
 }
 BOOST_AUTO_TEST_SUITE_END()
 
@@ -126,7 +126,7 @@ BOOST_DATA_TEST_CASE(zero, SIGN *SIGN, sg1, sg2) {
     float z1 = copysign(0.0f, sg1);
     float z2 = copysign(0.0f, sg2);
     fpu_test(0x60, z2, z1, NAN);
-    BOOST_TEST(regs.fpu.FPSR.operr);
+    BOOST_TEST(fpu.FPSR.operr);
 }
 BOOST_AUTO_TEST_SUITE_END()
 // ∞ / X
@@ -147,7 +147,7 @@ BOOST_DATA_TEST_CASE(inf, SIGN *SIGN, sg1, sg2) {
     float inf1 = copysignf(INFINITY, sg1);
     float inf2 = copysignf(INFINITY, sg2);
     fpu_test(0x60, inf1, inf2, NAN);
-    BOOST_TEST(regs.fpu.FPSR.operr);
+    BOOST_TEST(fpu.FPSR.operr);
 }
 BOOST_AUTO_TEST_SUITE_END()
 
@@ -155,7 +155,7 @@ BOOST_DATA_TEST_CASE(with_zero, SIGN, sg) {
     float z = copysignf(0.0f, sg);
     float c = get_rx(0.1, 10.0);
     fpu_test(0x60, z, c, copysignf(INFINITY, sg));
-    BOOST_TEST(regs.fpu.FPSR.dz);
+    BOOST_TEST(fpu.FPSR.dz);
 }
 
 BOOST_DATA_TEST_CASE(with_inf, SIGN, sg) {
@@ -175,17 +175,17 @@ BOOST_AUTO_TEST_CASE(nan2) {
 }
 
 BOOST_AUTO_TEST_CASE(ovfl) {
-    xval xm{1, -0x7e};
-    xval ym{1, 0x7e};
+    xval xm{false, 1, -0x7e};
+    xval ym{false, 1, 0x7e};
     fpu_test(0x60, xm, ym, INFINITY);
-    BOOST_TEST(regs.fpu.FPSR.ovfl);
+    BOOST_TEST(fpu.FPSR.ovfl);
 }
 
 BOOST_AUTO_TEST_CASE(unfl) {
-    xval xm{1, -0x7e};
-    xval ym{1, 0x7e};
+    xval xm{false, 1, -0x7e};
+    xval ym{false, 1, 0x7e};
     fpu_test(0x60, ym, xm, 0.0);
-    BOOST_TEST(regs.fpu.FPSR.unfl);
+    BOOST_TEST(fpu.FPSR.unfl);
 }
 BOOST_AUTO_TEST_SUITE_END()
 
@@ -219,7 +219,7 @@ BOOST_DATA_TEST_CASE(zero, SIGN *SIGN, sg1, sg2) {
     double z1 = copysign(0.0, sg1);
     double z2 = copysign(0.0, sg2);
     fpu_test(0x64, z2, z1, NAN);
-    BOOST_TEST(regs.fpu.FPSR.operr);
+    BOOST_TEST(fpu.FPSR.operr);
 }
 BOOST_AUTO_TEST_SUITE_END()
 // ∞ / X
@@ -240,7 +240,7 @@ BOOST_DATA_TEST_CASE(inf, SIGN *SIGN, sg1, sg2) {
     double inf1 = copysign(INFINITY, sg1);
     double inf2 = copysign(INFINITY, sg2);
     fpu_test(0x64, inf1, inf2, NAN);
-    BOOST_TEST(regs.fpu.FPSR.operr);
+    BOOST_TEST(fpu.FPSR.operr);
 }
 BOOST_AUTO_TEST_SUITE_END()
 
@@ -248,7 +248,7 @@ BOOST_DATA_TEST_CASE(with_zero, SIGN, sg) {
     double z = copysign(0.0, sg);
     double c = get_rx(0.1, 10.0);
     fpu_test(0x64, z, c, copysign(INFINITY, sg));
-    BOOST_TEST(regs.fpu.FPSR.dz);
+    BOOST_TEST(fpu.FPSR.dz);
 }
 
 BOOST_DATA_TEST_CASE(with_inf, SIGN, sg) {
@@ -268,16 +268,16 @@ BOOST_AUTO_TEST_CASE(nan2) {
 }
 
 BOOST_AUTO_TEST_CASE(ovfl) {
-    xval xm{1, -0x3fe};
-    xval ym{1, 0x3fe};
+    xval xm{false, 1, -0x3fe};
+    xval ym{false, 1, 0x3fe};
     fpu_test(0x64, xm, ym, INFINITY);
-    BOOST_TEST(regs.fpu.FPSR.ovfl);
+    BOOST_TEST(fpu.FPSR.ovfl);
 }
 
 BOOST_AUTO_TEST_CASE(unfl) {
-    xval xm{1, -0x3fe};
-    xval ym{1, 0x3fe};
+    xval xm{false, 1, -0x3fe};
+    xval ym{false, 1, 0x3fe};
     fpu_test(0x64, ym, xm, 0.0);
-    BOOST_TEST(regs.fpu.FPSR.unfl);
+    BOOST_TEST(fpu.FPSR.unfl);
 }
 BOOST_AUTO_TEST_SUITE_END()

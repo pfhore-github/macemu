@@ -36,7 +36,7 @@
 #include "ea.h"
 #include "ex_stack.h"
 #include "exception.h"
-#include "fpu/fpu_mpfr.h"
+#include "fpu/fpu.h"
 #include "newcpu.h"
 #include "op.h"
 m68k_reg regs;
@@ -378,7 +378,6 @@ void m68k_do_execute() {
 bool debug = false;
 
 void dump_regs();
-std::string disasm(uint32_t pc);
 void run_m68k(const std::vector<uint32_t> &until) {
     for(;;) {
         for(auto u : until) {
@@ -387,6 +386,7 @@ void run_m68k(const std::vector<uint32_t> &until) {
             }
         }
         if(debug) {
+
             dump_regs();
         }
         m68k_do_execute();

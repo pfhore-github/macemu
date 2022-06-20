@@ -7,23 +7,19 @@
 BOOST_FIXTURE_TEST_SUITE(ADDA, InitFix)
 
 BOOST_AUTO_TEST_CASE(Word) {
-    int an = rand_reg();
-    int ea = rand_reg();
-    regs.a[an] = 3456;
-    regs.d[ea] = 0xffff;
-    raw_write16(0, 0150300 | an << 9 | ea);
+    regs.a[3] = 0xa0000000;
+    regs.d[2] = 0xc000;
+    raw_write16(0, 0153302);
     m68k_do_execute();
-    BOOST_TEST(regs.a[an] == 3455);
+    BOOST_TEST(regs.a[3] == 0x9fffc000);
 }
 
 BOOST_AUTO_TEST_CASE(Long) {
-    int an = rand_reg();
-    int ea = rand_reg();
-    regs.a[an] = 123456789;
-    regs.d[ea] = 100000000;
-    raw_write16(0, 0150700 | an << 9 | ea);
+    regs.a[3] = 0x10000000;
+    regs.d[2] = 0x20000000;
+    raw_write16(0, 0153702);
     m68k_do_execute();
-    BOOST_TEST(regs.a[an] == 223456789);
+    BOOST_TEST(regs.a[3] == 0x30000000);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

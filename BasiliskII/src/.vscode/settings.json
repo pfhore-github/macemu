@@ -67,6 +67,14 @@
         "complex": "cpp",
         "set": "cpp",
         "typeindex": "cpp",
-        "variant": "cpp"
+        "variant": "cpp",
+        "fstream": "cpp",
+        "iomanip": "cpp",
+        "cfenv": "cpp",
+        "future": "cpp",
+        "any": "cpp",
+        "codecvt": "cpp",
+        "*.ipp": "cpp",
+        "stack": "cpp"
     }
 }

@@ -781,7 +781,7 @@ std::string disasm(uint32_t pc) {
                 }
                 }
             }
-                break;
+            break;
         case 2:
             switch(dn) {
             case 4:
@@ -1438,8 +1438,14 @@ std::string disasm(uint32_t pc) {
 
     return "ILLEGAL";
 }
+extern std::unordered_map<uint32_t, void (*)()> rom_functions;
 
 void dump_regs() {
+    if(rom_functions.count(regs.pc & 0xfffff)) {
+        printf("%08x: ROM\n", regs.pc);
+        fflush(stdout);
+        return;
+    }
     auto op = disasm(regs.pc);
     printf("%08x: %s\t ", regs.pc, op.c_str());
     for(int i = 0; i < 8; ++i) {

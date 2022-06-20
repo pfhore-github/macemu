@@ -9,7 +9,6 @@
 #include "mbus.h"
 #include "memory.h"
 #include "newcpu.h"
-#include "via.h"
 uint8_t readIO8(uint32_t addr);
 uint16_t readIO16(uint32_t addr);
 uint32_t readIO32(uint32_t addr);
@@ -65,7 +64,6 @@ inline void readBE(void *dst, const void *src, int sz) {
     }
 }
 
-bool rom_overlay;
 void b_read_impl(uint32_t addr, void *v, int sz) {
     uint32_t base = addr & 0xfffffff;
     switch(addr >> 28) {
@@ -73,16 +71,11 @@ void b_read_impl(uint32_t addr, void *v, int sz) {
     case 1:
     case 2:
     case 3:
-        if(rom_overlay) {
-            goto ROM;
-        }
         if(base + sz < RAM.size()) {
             return readBE(v, &RAM[base], sz);
         }
         break;
     case 4:
-        rom_overlay = false;
-    ROM:
         return readBE(v, &ROMBaseHost[base & (ROMSize - 1)], sz);
     case 5:
         return readIO(addr, v, sz);

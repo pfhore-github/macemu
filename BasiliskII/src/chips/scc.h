@@ -41,7 +41,7 @@ class SCC {
 	SCC_INT IUS;
 	void write_MIC(uint8_t);
 public:
-	SCC(const std::shared_ptr<SCC_impl>& o);
+	SCC();
 	// reset
 	void reset();
 	// connect

@@ -26,9 +26,9 @@ BOOST_AUTO_TEST_CASE(nan_) {
 }
 
 BOOST_AUTO_TEST_CASE(ovfl) {
-    xval xv{1, 200};
+    xval xv{false, 1, 200};
     fpu_test(0x02, xv, xv, INFINITY);
-    BOOST_TEST(regs.fpu.FPSR.ovfl);
+    BOOST_TEST(fpu.FPSR.ovfl);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

@@ -24,13 +24,13 @@
 #ifndef NEWCPU_H
 #define NEWCPU_H
 #include "spcflags.h"
-#include "fpu/fpu_mpfr.h"
 #include <atomic>
 #include <functional>
+#include <future>
 #include <memory>
 #include <setjmp.h>
 #include <stdint.h>
-#include <future>
+#include <mutex>
 enum class TT { NORMAL, MOVE16, LFC, AA };
 enum class TM {
     USER_DATA = 1,
@@ -56,8 +56,8 @@ struct ssw_t {
     TM tm = TM::USER_DATA;
     SZ sz;
     uint16_t to_value() const {
-        return cp << 15 | ct << 13 | cm << 12 | atc << 10 |
-               read << 8 | int(sz) << 5 | int(tt) << 3 | int(tm);
+        return cp << 15 | ct << 13 | cm << 12 | atc << 10 | read << 8 |
+               int(sz) << 5 | int(tt) << 3 | int(tm);
     }
 };
 struct m68k_reg {
@@ -77,29 +77,6 @@ struct m68k_reg {
     uint32_t vbr;
     uint8_t sfc, dfc;
 
-    M68881 fpu;
-   
-    // MMU
-    uint32_t urp;
-    uint32_t srp;
-    bool tcr_e, tcr_p;
-
-    struct ttc_t {
-        uint8_t address_base;
-        uint8_t address_mask;
-        bool E;
-        uint8_t S;
-        uint8_t U;
-        uint8_t CM;
-        bool W;
-    };
-    ttc_t ITTR[2], DTTR[2];
-    struct mmusr_t {
-        uint32_t PA;
-        bool B, G, S, M, W, T, R;
-        uint8_t U, CM;
-    } MMUSR;
-
     bool cacr_de, cacr_ie;
 
     uint32_t i_ea;
@@ -116,6 +93,7 @@ struct m68k_reg {
     std::atomic<uint8_t> irq;
     bool traced = false;
 
+    
 };
 // no multi cpu
 extern m68k_reg regs;

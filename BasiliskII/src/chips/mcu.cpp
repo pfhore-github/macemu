@@ -14,3 +14,10 @@ void mcu_ctl_write(uint32_t addr, uint32_t v) { mcu_ctl_d[addr] = v; }
 uint32_t mcu_ctl_read(uint32_t addr) {
     return mcu_ctl_d[addr];
 }
+
+uint8_t mcu_scsi_r(uint32_t addr) {
+    switch( addr ) {
+        case 12 : return 4;
+    }
+    throw BUS_ERROR_EX{};
+}

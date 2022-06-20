@@ -1,5 +1,6 @@
 #include <boost/test/data/test_case.hpp>
 #include <boost/test/unit_test.hpp>
+#include "fpu/fpu.h"
 #include <vector>
 namespace bdata = boost::unit_test::data;
 void asm_m68k(const char *a, int offset = 0);
@@ -36,13 +37,14 @@ struct InitFix {
 
 void exception_check(int e);
 struct xval {
-    long frac;
+    bool sg;
+    uint64_t frac;
     int exp;
 };
 void set_fpu_reg(int reg, const xval &v);
 void set_fpu_reg(int reg, double v);
 void set_fpu_reg(int reg, float v);
-
+extern M68881 fpu;
 template <class T, class T2 = T>
 void fpu_test(char op, T v1, T v2, T2 expected) {
     auto [src, dst] = rand_reg2();
@@ -53,22 +55,22 @@ void fpu_test(char op, T v1, T v2, T2 expected) {
     m68k_do_execute();
     switch(fpclassify(expected)) {
     case FP_NAN:
-        BOOST_TEST(mpfr_nan_p(regs.fpu.fp[dst]));
+        BOOST_TEST(fpu.fp[dst].is_nan());
         break;
     case FP_INFINITE:
-        BOOST_TEST(mpfr_inf_p(regs.fpu.fp[dst]));
-        BOOST_TEST(mpfr_signbit(regs.fpu.fp[dst]) == signbit(expected));
+        BOOST_TEST(fpu.fp[dst].is_inf());
+        BOOST_TEST(fpu.fp[dst].signbit() == signbit(expected));
         break;
     case FP_ZERO:
-        BOOST_TEST(mpfr_zero_p(regs.fpu.fp[dst]));
-        BOOST_TEST(mpfr_signbit(regs.fpu.fp[dst]) == signbit(expected));
+        BOOST_TEST(fpu.fp[dst].is_zero());
+        BOOST_TEST(fpu.fp[dst].signbit()== signbit(expected));
         break;
     default:
         if(sizeof(T2) == sizeof(float)) {
             BOOST_CHECK_CLOSE(
-                mpfr_get_flt(regs.fpu.fp[dst], MPFR_RNDN), expected, 1e-04);
+                static_cast<float>(fpu.fp[dst]), expected, 1e-04);
         } else if(sizeof(T2) == sizeof(double)) {
-            BOOST_CHECK_CLOSE(mpfr_get_d(regs.fpu.fp[dst], MPFR_RNDN),
+            BOOST_CHECK_CLOSE( static_cast<double>(fpu.fp[dst]),
                                        expected, 1e-10);
         }
         break;
