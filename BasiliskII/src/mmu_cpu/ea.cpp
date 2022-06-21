@@ -1,11 +1,12 @@
 #include "ea.h"
 #include "exception.h"
+#include "intop.h"
 #include "memory.h"
 #include "newcpu.h"
-#include "intop.h"
 #include <stdint.h>
 uint32_t get_eaext(uint32_t base) {
     uint16_t nextw = FETCH();
+
     bool full = (nextw >> 8 & 1);
     int reg = nextw >> 12 & 15;
     bool wl = nextw >> 11 & 1;
@@ -18,6 +19,9 @@ uint32_t get_eaext(uint32_t base) {
         int8_t disp = nextw & 0xff;
         return base + (xn << scale) + disp;
     } else {
+        if(nextw & 1 << 3) {
+            ILLEGAL_INST();
+        }
         bool bs = nextw >> 7 & 1;
         bool is = nextw >> 6 & 1;
         int bd_c = nextw >> 4 & 3;
@@ -25,6 +29,9 @@ uint32_t get_eaext(uint32_t base) {
         int od_c = nextw & 3;
         int32_t bd = 0;
         int32_t od = 0;
+        if(pre && bs && is) {
+            ILLEGAL_INST();
+        }
         switch(bd_c) {
         case 0:
             ILLEGAL_INST();
@@ -108,7 +115,7 @@ uint32_t EA_Addr(int type, int reg, int sz, bool w) {
     case EA_OP::EXT2:
         switch(reg) {
         case 0:
-            return FETCH();
+            return DO_EXT_L(FETCH());
         case 1:
             return FETCH32();
         case 2:
@@ -208,7 +215,7 @@ void EA_WRITE16(int type, int reg, uint16_t v) {
         regs.d[reg] = (regs.d[reg] & 0xffff0000) | v;
         return;
     case EA_OP::AR:
-        regs.a[reg] = (int16_t)v;
+        regs.a[reg] = DO_EXT_L(v);
         return;
     default:
         if(!regs.i_ea) {
@@ -223,7 +230,7 @@ void EA_WRITE32(int type, int reg, uint32_t v) {
         regs.d[reg] = v;
         return;
     case EA_OP::AR:
-        regs.a[reg] = (int16_t)v;
+        regs.a[reg] = v;
         return;
     default:
         if(!regs.i_ea) {

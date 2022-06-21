@@ -3,46 +3,64 @@
 #include "newcpu.h"
 #include "test/test_common.h"
 BOOST_FIXTURE_TEST_SUITE(TST, InitFix)
-BOOST_AUTO_TEST_CASE(Byte) {
-    auto ea = rand_reg();
-    auto v1 = get_v8();
-    regs.d[ea] = v1;
-    raw_write16(0, 0045000 | ea);
+BOOST_AUTO_TEST_SUITE(Byte) 
+
+BOOST_DATA_TEST_CASE(n, BIT, n) {
     regs.x = regs.v = regs.c = true;
+    regs.d[1] = n << 7;
+    raw_write16(0, 0045001);
     m68k_do_execute();
+    BOOST_TEST(regs.n == n);
     BOOST_TEST(regs.x);
     BOOST_TEST(!regs.c);
     BOOST_TEST(!regs.v);
-    BOOST_TEST(regs.n == !!(v1 & 0x80));
-    BOOST_TEST(regs.z == (v1 == 0));
 }
 
-BOOST_AUTO_TEST_CASE(Word) {
-    auto ea = rand_reg();
-    auto v1 = get_v16();
-    regs.d[ea] = v1;
-    raw_write16(0, 0045100 | ea);
-    regs.x = regs.v = regs.c = true;
+BOOST_DATA_TEST_CASE(z, BIT, z) {
+    regs.d[1] = z ? 0 : 1;
+    raw_write16(0, 0045001);
     m68k_do_execute();
+    BOOST_TEST(regs.z == z);
+}
+BOOST_AUTO_TEST_SUITE_END()
+BOOST_AUTO_TEST_SUITE(Word) 
+BOOST_DATA_TEST_CASE(n, BIT, n) {
+    regs.x = regs.v = regs.c = true;
+    regs.d[1] = n << 15;
+    raw_write16(0, 0045101);
+    m68k_do_execute();
+    BOOST_TEST(regs.n == n);
     BOOST_TEST(regs.x);
     BOOST_TEST(!regs.c);
     BOOST_TEST(!regs.v);
-    BOOST_TEST(regs.n == !!(v1 & 0x8000));
-    BOOST_TEST(regs.z == (v1 == 0));
 }
 
-BOOST_AUTO_TEST_CASE(Long) {
-    auto ea = rand_reg();
-    auto v1 = get_v32();
-    regs.d[ea] = v1;
-    raw_write16(0, 0045200 | ea);
-    regs.x = regs.v = regs.c = true;
+BOOST_DATA_TEST_CASE(z, BIT, z) {
+    regs.d[1] = z ? 0 : 1;
+    raw_write16(0, 0045101);
     m68k_do_execute();
+    BOOST_TEST(regs.z == z);
+}
+BOOST_AUTO_TEST_SUITE_END()
+
+
+BOOST_AUTO_TEST_SUITE(Long) 
+BOOST_DATA_TEST_CASE(n, BIT, n) {
+    regs.x = regs.v = regs.c = true;
+    regs.d[1] = n << 31;
+    raw_write16(0, 0045201);
+    m68k_do_execute();
+    BOOST_TEST(regs.n == n);
     BOOST_TEST(regs.x);
     BOOST_TEST(!regs.c);
     BOOST_TEST(!regs.v);
-    BOOST_TEST(regs.n == !!(v1 & 0x80000000));
-    BOOST_TEST(regs.z == (v1 == 0));
 }
 
+BOOST_DATA_TEST_CASE(z, BIT, z) {
+    regs.d[1] = z ? 0 : 1;
+    raw_write16(0, 0045201);
+    m68k_do_execute();
+    BOOST_TEST(regs.z == z);
+}
+BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE_END()

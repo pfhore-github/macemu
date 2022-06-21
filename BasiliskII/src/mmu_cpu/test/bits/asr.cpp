@@ -110,6 +110,7 @@ BOOST_AUTO_TEST_CASE(Reg0) {
     BOOST_TEST(regs.x);
     BOOST_TEST(!regs.c);
 }
+
 BOOST_AUTO_TEST_CASE(RegOver) {
     regs.d[1] = 0x8000;
     regs.d[2] = 66;

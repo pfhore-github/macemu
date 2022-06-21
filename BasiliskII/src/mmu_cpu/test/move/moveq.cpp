@@ -5,12 +5,9 @@
 
 BOOST_FIXTURE_TEST_SUITE(MOVEQ, InitFix)
 BOOST_AUTO_TEST_CASE(operand) {
-    auto rg = rand_reg();
-    auto v = get_v8() & 0x7f;
-    int32_t vx = (v & 0x40 ? 0xffffff80 : 0) | v;
-    raw_write16(0, 0x7000 | rg << 9 | v);
+    raw_write16(0, 0x76f0);
     m68k_do_execute();
-    BOOST_TEST(regs.d[rg] == vx);
+    BOOST_TEST(regs.d[3] == 0xfffffff0);
 }
 BOOST_AUTO_TEST_CASE(n) {
     raw_write16(0, 0071377);

@@ -6,17 +6,13 @@
 BOOST_FIXTURE_TEST_SUITE(MULS, InitFix)
 BOOST_AUTO_TEST_SUITE(Long)
 BOOST_AUTO_TEST_CASE(operand) {
-    int32_t v1 = get_v32();
-    int32_t v2 = get_v32();
-    auto [ea, dh, dl] = rand_reg3();
-    regs.d[dl] = v1;
-    regs.d[ea] = v2;
-    raw_write16(0, 0046000 | ea);
-    raw_write16(2, 0x0C00 | dl << 12 | dh);
-    int64_t mx = int64_t(v1) * v2;
+    regs.d[3] = -4;
+    regs.d[4] = 0x40000000;
+    raw_write16(0, 0046004);
+    raw_write16(2, 0x0C00 | 3 << 12 | 2);
     m68k_do_execute();
-    BOOST_TEST(regs.d[dh] == (uint32_t)(mx >> 32));
-    BOOST_TEST(regs.d[dl] == (uint32_t)mx);
+    BOOST_TEST(regs.d[2] == -1);
+    BOOST_TEST(regs.d[3] == 0);
 }
 
 BOOST_AUTO_TEST_CASE(n) {
@@ -49,14 +45,11 @@ BOOST_AUTO_TEST_CASE(v) {
 BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE(Word)
 BOOST_AUTO_TEST_CASE(operand) {
-    auto [ea, dl] = rand_reg2();
-    int16_t v1 = get_v16();
-    int16_t v2 = get_v16();
-    regs.d[ea] = v1;
-    regs.d[dl] = v2;
-    raw_write16(0, 0140700 | dl << 9 | ea);
+    regs.d[2] = -24;
+    regs.d[3] = 12;
+    raw_write16(0, 0143702 );
     m68k_do_execute();
-    BOOST_TEST(static_cast<int32_t>(regs.d[dl]) == v1 * v2);
+    BOOST_TEST(regs.d[3] == -288);
     BOOST_TEST(!regs.v);
     BOOST_TEST(!regs.c);
 }

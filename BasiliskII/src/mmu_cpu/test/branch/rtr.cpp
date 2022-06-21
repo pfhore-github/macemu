@@ -6,6 +6,7 @@
 
 BOOST_FIXTURE_TEST_CASE(rtr, InitFix) {
     regs.a[7] = 0x200;
+    regs.c = false;
     raw_write16(0, 0047167);
     raw_write16(0x200, 0x1);
     raw_write32(0x202, 0x1000);

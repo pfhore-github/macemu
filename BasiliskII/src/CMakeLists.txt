@@ -129,7 +129,7 @@ mmu_cpu/test/arithmetic/addx.cpp
 mmu_cpu/test/arithmetic/adda.cpp
 mmu_cpu/test/arithmetic/sub.cpp
 mmu_cpu/test/arithmetic/subi.cpp
-#mmu_cpu/test/arithmetic/subq.cpp
+mmu_cpu/test/arithmetic/subq.cpp
 mmu_cpu/test/arithmetic/suba.cpp
 mmu_cpu/test/arithmetic/subx.cpp
 mmu_cpu/test/arithmetic/cmp.cpp

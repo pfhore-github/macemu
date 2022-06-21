@@ -49,6 +49,18 @@ BOOST_AUTO_TEST_CASE(n) {
     BOOST_TEST(regs.n);
     BOOST_TEST(regs.d[1] == 0x80);
 }
+
+BOOST_AUTO_TEST_CASE(err_an) {
+    raw_write16(0, 0051011);
+    raw_write16(2, 0);
+    exception_check(4);
+}
+
+BOOST_AUTO_TEST_CASE(err_imm) {
+    raw_write16(0, 0051074);
+    raw_write16(2, 0);
+    exception_check(4);
+}
 BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE(Word)
 BOOST_AUTO_TEST_CASE(non_eight) {
@@ -94,6 +106,12 @@ BOOST_AUTO_TEST_CASE(n) {
     m68k_do_execute();
     BOOST_TEST(regs.n);
     BOOST_TEST(regs.d[1] == 0x8000);
+}
+
+BOOST_AUTO_TEST_CASE(err_imm) {
+    raw_write16(0, 0051174);
+    raw_write16(2, 0);
+    exception_check(4);
 }
 BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE(AWord)
@@ -155,6 +173,12 @@ BOOST_AUTO_TEST_CASE(n) {
     m68k_do_execute();
     BOOST_TEST(regs.n);
     BOOST_TEST(regs.d[1] == 0x80000000);
+}
+
+BOOST_AUTO_TEST_CASE(err_imm) {
+    raw_write16(0, 0051274);
+    raw_write16(2, 0);
+    exception_check(4);
 }
 BOOST_AUTO_TEST_SUITE_END()
 

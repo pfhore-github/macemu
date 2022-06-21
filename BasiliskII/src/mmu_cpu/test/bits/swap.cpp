@@ -6,14 +6,12 @@
 BOOST_FIXTURE_TEST_SUITE(SWAP, InitFix)
 
 BOOST_AUTO_TEST_CASE(operand) {
-    auto dn = rand_reg();
-    uint32_t v = get_v32();
-    regs.d[dn] = v;
+    regs.d[2] = 0x12345678;
     regs.z = true;
     regs.c = true;
-    raw_write16(0, 0044100 | dn);
+    raw_write16(0, 0044102);
     m68k_do_execute();
-    BOOST_TEST(regs.d[dn] == std::rotl<uint32_t>(v, 16));
+    BOOST_TEST(regs.d[2] == 0x56781234);
     BOOST_TEST(!regs.c);
     BOOST_TEST(!regs.v);
 }

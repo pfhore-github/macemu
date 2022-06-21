@@ -7,14 +7,11 @@
 BOOST_FIXTURE_TEST_SUITE(SUBI, InitFix)
 BOOST_AUTO_TEST_SUITE(Byte)
 BOOST_AUTO_TEST_CASE(operand) {
-    auto ea = rand_reg();
-    auto v1 = get_v8();
-    auto v2 = get_v8();
-    regs.d[ea] = v1;
-    raw_write16(0, 0002000 | ea);
-    raw_write16(2, v2);
+    regs.d[2] = 100;
+    raw_write16(0, 0002002);
+    raw_write16(2, 10);
     m68k_do_execute();
-    BOOST_TEST(regs.d[ea] == ((v1 - v2) & 0xff));
+    BOOST_TEST(regs.d[2] == 90);
 }
 BOOST_AUTO_TEST_CASE(cx) {
     regs.d[1] = 1;
@@ -52,14 +49,11 @@ BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE(Word)
 
 BOOST_AUTO_TEST_CASE(operand) {
-    auto xr = rand_reg();
-    auto v1 = get_v16();
-    auto v2 = get_v16();
-    regs.d[xr] = v1;
-    raw_write16(0, 0002100 | xr);
-    raw_write16(2, v2);
+    regs.d[2] = 1000;
+    raw_write16(0, 0002102);
+    raw_write16(2, 300);
     m68k_do_execute();
-    BOOST_TEST(regs.d[xr] == ((v1 - v2) & 0xffff));
+    BOOST_TEST(regs.d[2] == 700);
 }
 
 BOOST_AUTO_TEST_CASE(cx) {
@@ -98,14 +92,11 @@ BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE(Long)
 
 BOOST_AUTO_TEST_CASE(operand) {
-    auto ea = rand_reg();
-    auto v1 = get_v32();
-    auto v2 = get_v32();
-    regs.d[ea] = v1;
-    raw_write16(0, 0002200 | ea);
-    raw_write32(2, v2);
+    regs.d[3] = 100000;
+    raw_write16(0, 0002203);
+    raw_write32(2, 60000);
     m68k_do_execute();
-    BOOST_TEST(regs.d[ea] == (v1 - v2));
+    BOOST_TEST(regs.d[3] == 40000);
 }
 
 BOOST_AUTO_TEST_CASE(cx) {

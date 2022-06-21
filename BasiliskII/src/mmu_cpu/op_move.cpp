@@ -137,13 +137,13 @@ OP(move_l) {
 }
 
 OP(movea_w) {
-    int16_t v = EA_READ16(type, reg);
-    regs.a[dm] = v;
+    uint16_t v = EA_READ16(type, reg);
+    EA_WRITE16(1, dm, v);
 }
 
 OP(movea_l) {
     uint32_t v = EA_READ32(type, reg);
-    regs.a[dm] = v;
+    EA_WRITE32(1, dm, v);
 }
 
 OP(move_from_sr) {

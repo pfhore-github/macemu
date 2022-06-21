@@ -446,7 +446,7 @@ OP(subq_b) {
 OP(subq_w) {
     int v2 = dm ? dm : 8;
     if(type == 1) {
-        regs.a[reg] = DO_EXT_W(regs.a[reg] - v2);
+        regs.a[reg] -= v2;
     } else {
         EA_Update16(type, reg, [v2](auto v1) { return DO_SUB_W(v1, v2); });
     }

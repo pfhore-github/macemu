@@ -6,15 +6,12 @@
 BOOST_FIXTURE_TEST_SUITE(ORI, InitFix)
 BOOST_AUTO_TEST_SUITE(Byte)
 BOOST_AUTO_TEST_CASE(operand) {
-    auto ea = rand_reg();
-    auto v1 = get_v8();
-    auto v2 = get_v8();
-    regs.d[ea] = v1;
-    raw_write16(0, 0000000 | ea);
-    raw_write16(2, v2);
+    regs.d[2] = 0x12;
+    raw_write16(0, 0000002);
+    raw_write16(2, 0x23);
     regs.x = regs.v = regs.c = true;
     m68k_do_execute();
-    BOOST_TEST(regs.d[ea] == (v1 | v2));
+    BOOST_TEST(regs.d[2] == 0x33);
     BOOST_TEST(regs.x);
     BOOST_TEST(!regs.c);
     BOOST_TEST(!regs.v);
@@ -51,15 +48,12 @@ BOOST_DATA_TEST_CASE(ccr, BIT *BIT *BIT *BIT *BIT, x1, v1, c1, n1, z1) {
 BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE(Word)
 BOOST_AUTO_TEST_CASE(operand) {
-    auto ea = rand_reg();
-    auto v1 = get_v16();
-    auto v2 = get_v16();
-    regs.d[ea] = v1;
-    raw_write16(0, 0000100 | ea);
-    raw_write16(2, v2);
+    regs.d[2] = 0x1234;
+    raw_write16(0, 0000102);
+    raw_write16(2, 0xbeaf);
     regs.x = regs.v = regs.c = true;
     m68k_do_execute();
-    BOOST_TEST(regs.d[ea] == (v1 | v2));
+    BOOST_TEST(regs.d[2] == 0xbebf);
     BOOST_TEST(regs.x);
     BOOST_TEST(!regs.c);
     BOOST_TEST(!regs.v);
@@ -102,15 +96,12 @@ BOOST_DATA_TEST_CASE(sr_valid, bdata::xrange(8), i) {
 BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE(Long)
 BOOST_AUTO_TEST_CASE(operand) {
-    auto ea = rand_reg();
-    auto v1 = get_v32();
-    auto v2 = get_v32();
-    regs.d[ea] = v1;
-    raw_write16(0, 0000200 | ea);
-    raw_write32(2, v2);
+    regs.d[2] = 0x12345678;
+    raw_write16(0, 0000202);
+    raw_write32(2, 0xdeaddead);
     regs.x = regs.v = regs.c = true;
     m68k_do_execute();
-    BOOST_TEST(regs.d[ea] == (v1 | v2));
+    BOOST_TEST(regs.d[2] == 0xdebddefd);
     BOOST_TEST(regs.x);
     BOOST_TEST(!regs.c);
     BOOST_TEST(!regs.v);

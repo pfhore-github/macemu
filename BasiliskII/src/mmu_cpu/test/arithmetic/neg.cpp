@@ -5,12 +5,10 @@
 BOOST_FIXTURE_TEST_SUITE(NEG, InitFix)
 BOOST_AUTO_TEST_SUITE(Byte) 
 BOOST_AUTO_TEST_CASE(operand) {
-    auto ea = rand_reg();
-    uint8_t v = get_v8();
-    regs.d[ea] = v;
-    raw_write16(0, 0042000 | ea);
+    regs.d[2] = 11;
+    raw_write16(0, 0042002);
     m68k_do_execute();
-    BOOST_TEST(regs.d[ea] == ((0x100 - v)&0xff));
+    BOOST_TEST(regs.d[2] == 0xf5);
 }
 
 BOOST_AUTO_TEST_CASE(n) {
@@ -25,6 +23,8 @@ BOOST_AUTO_TEST_CASE(z) {
     raw_write16(0, 0042001);
     m68k_do_execute();
     BOOST_TEST( regs.z);
+    BOOST_TEST( !regs.c);
+    BOOST_TEST( !regs.x);
 }
 
 BOOST_AUTO_TEST_CASE(cx) {
@@ -45,16 +45,14 @@ BOOST_AUTO_TEST_CASE(v) {
 BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE(Word) 
 BOOST_AUTO_TEST_CASE(operand) {
-    auto ea = rand_reg();
-    uint16_t v = get_v16();
-    regs.d[ea] = v;
-    raw_write16(0, 0042100 | ea);
+    regs.d[3] = 1200;
+    raw_write16(0, 0042103);
     m68k_do_execute();
-    BOOST_TEST(regs.d[ea] == ((0x10000 - v)&0xffff));
+    BOOST_TEST(regs.d[3] == 0xfb50);
 }
 
 BOOST_AUTO_TEST_CASE(n) {
-    regs.d[1] = 20;
+    regs.d[1] = 200;
     raw_write16(0, 0042101);
     m68k_do_execute();
     BOOST_TEST( regs.n);
@@ -65,7 +63,8 @@ BOOST_AUTO_TEST_CASE(z) {
     raw_write16(0, 0042101);
     m68k_do_execute();
     BOOST_TEST( regs.z);
-}
+    BOOST_TEST( !regs.c);
+    BOOST_TEST( !regs.x);}
 
 BOOST_AUTO_TEST_CASE(cx) {
     regs.d[1] = 1;
@@ -86,12 +85,10 @@ BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_AUTO_TEST_SUITE(Long) 
 BOOST_AUTO_TEST_CASE(operand) {
-    auto ea = rand_reg();
-    uint32_t v = get_v32();
-    regs.d[ea] = v;
-    raw_write16(0, 0042200 | ea);
+    regs.d[1] = 100000;
+    raw_write16(0, 0042201);
     m68k_do_execute();
-    BOOST_TEST(regs.d[ea] == - v);
+    BOOST_TEST(regs.d[1] == - 100000);
 }
 
 BOOST_AUTO_TEST_CASE(n) {
@@ -106,6 +103,8 @@ BOOST_AUTO_TEST_CASE(z) {
     raw_write16(0, 0042201);
     m68k_do_execute();
     BOOST_TEST( regs.z);
+    BOOST_TEST(! regs.c);
+    BOOST_TEST(! regs.x);
 }
 
 BOOST_AUTO_TEST_CASE(cx) {

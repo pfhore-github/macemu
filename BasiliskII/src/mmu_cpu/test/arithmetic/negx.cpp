@@ -6,18 +6,17 @@
 BOOST_FIXTURE_TEST_SUITE(NEGX, InitFix)
 
 BOOST_AUTO_TEST_SUITE(Byte)
-BOOST_DATA_TEST_CASE(operand, BIT, value) {
-    auto ea = rand_reg();
-    uint8_t v = get_v8();
-    regs.d[ea] = v;
-    regs.x = value;
-    raw_write16(0, 0040000 | ea);
+BOOST_DATA_TEST_CASE(oldx, BIT, x) {
+    regs.d[2] = 10;
+    regs.x = x;
+    raw_write16(0, 0040002);
     m68k_do_execute();
-    BOOST_TEST(regs.d[ea] == ((0x100 - v - value)&0xff));
+    BOOST_TEST(regs.d[2] == (0xf6 - x));
 }
 
 BOOST_AUTO_TEST_CASE(cx) {
     regs.d[1] = 1;
+    regs.x = false;
     raw_write16(0, 0040001);
     m68k_do_execute();
     BOOST_TEST(regs.c);
@@ -49,14 +48,12 @@ BOOST_AUTO_TEST_CASE(n) {
 BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_AUTO_TEST_SUITE(Word)
-BOOST_DATA_TEST_CASE(operand, BIT, value) {
-    auto ea = rand_reg();
-    uint16_t v = get_v16();
-    regs.d[ea] = v;
-    regs.x = value;
-    raw_write16(0, 0040100 | ea);
+BOOST_DATA_TEST_CASE(oldx, BIT, x) {
+    regs.d[2] = 1000;
+    regs.x = x;
+    raw_write16(0, 0040102);
     m68k_do_execute();
-    BOOST_TEST(regs.d[ea] == ((0x10000 - v - value)&0xffff));
+    BOOST_TEST(regs.d[2] == (0xfc18 - x));
 }
 
 BOOST_AUTO_TEST_CASE(cx) {
@@ -92,14 +89,12 @@ BOOST_AUTO_TEST_CASE(n) {
 BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_AUTO_TEST_SUITE(Long)
-BOOST_DATA_TEST_CASE(operand, BIT, value) {
-    auto ea = rand_reg();
-    uint32_t v = get_v32();
-    regs.d[ea] = v;
-    regs.x = value;
-    raw_write16(0, 0040200 | ea);
+BOOST_DATA_TEST_CASE(oldx, BIT, x) {
+    regs.d[2] = 100000;
+    regs.x = x;
+    raw_write16(0, 0040202);
     m68k_do_execute();
-    BOOST_TEST(regs.d[ea] == - v - value);
+    BOOST_TEST(regs.d[2] == - 100000 - x);
 }
 
 BOOST_AUTO_TEST_CASE(cx) {

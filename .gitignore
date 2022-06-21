@@ -39,3 +39,5 @@ project.xcworkspace/
 *.idea
 
 BasiliskII/src/*.rom
+BasiliskII/src/quadra950.ROM
+SheepShaver/src/Unix/ppc.log
