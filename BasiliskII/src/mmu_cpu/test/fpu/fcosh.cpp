@@ -5,25 +5,24 @@
 #include "test/test_common.h"
 BOOST_FIXTURE_TEST_SUITE(FCOSH, InitFix)
 BOOST_AUTO_TEST_CASE(operand, *boost::unit_test::tolerance(1e-12)) {
-    double in = get_rx(-1.0, 1.0);
-    fpu_test(0x19, in, 0.0, cosh(in));
+    fpu_test2(0x19, 0.2, cosh(0.2));
 }
+
+BOOST_AUTO_TEST_CASE(normal, *boost::unit_test::tolerance(1e-12)) {
+    fpu_test(0x19, 0.1, cosh(0.1));
+}
+
 BOOST_DATA_TEST_CASE(zero, SIGN, sg) {
-    fpu_test(0x19, copysign(0.0, sg), 0.0, 1.0);
+    fpu_test(0x19, copysign(0.0, sg), 1.0);
 }
 
 BOOST_DATA_TEST_CASE(inf, SIGN, sg) {
-    double v = copysign(INFINITY, sg);
-    fpu_test(0x19, v, 0.0, INFINITY);
-}
-
-BOOST_AUTO_TEST_CASE(nan_) {
-    fpu_test<double>(0x19, NAN, 0.0, NAN);
+    fpu_test(0x19, copysign(INFINITY, sg), INFINITY);
 }
 
 BOOST_AUTO_TEST_CASE(ovfl) {
     xval xv{false, 1, 200};
-    fpu_test(0x19, xv, xv, INFINITY);
+    fpu_test(0x19, xv, INFINITY);
     BOOST_TEST(fpu.FPSR.ovfl);
 }
 

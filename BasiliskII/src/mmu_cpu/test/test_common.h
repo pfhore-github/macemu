@@ -45,41 +45,63 @@ void set_fpu_reg(int reg, const xval &v);
 void set_fpu_reg(int reg, double v);
 void set_fpu_reg(int reg, float v);
 extern M68881 fpu;
-template <class T, class T2 = T>
-void fpu_test(char op, T v1, T v2, T2 expected) {
-    auto [src, dst] = rand_reg2();
-    set_fpu_reg(src, v1);
-    set_fpu_reg(dst, v2);
-    raw_write16(0, 0171000);
-    raw_write16(2, src << 10 | dst << 7 | op);
-    m68k_do_execute();
-    switch(fpclassify(expected)) {
-    case FP_NAN:
-        BOOST_TEST(fpu.fp[dst].is_nan());
-        break;
-    case FP_INFINITE:
-        BOOST_TEST(fpu.fp[dst].is_inf());
-        BOOST_TEST(fpu.fp[dst].signbit() == signbit(expected));
-        break;
-    case FP_ZERO:
-        BOOST_TEST(fpu.fp[dst].is_zero());
-        BOOST_TEST(fpu.fp[dst].signbit()== signbit(expected));
-        break;
-    default:
-        if(sizeof(T2) == sizeof(float)) {
-            BOOST_CHECK_CLOSE(
-                static_cast<float>(fpu.fp[dst]), expected, 1e-04);
-        } else if(sizeof(T2) == sizeof(double)) {
-            BOOST_CHECK_CLOSE( static_cast<double>(fpu.fp[dst]),
-                                       expected, 1e-10);
-        }
-        break;
-    }
-}
-
 #ifndef NAN
 constexpr double NAN = std::numeric_limits<double>::quiet_NaN();
 #endif
 #ifndef INFINITY
 constexpr double INFINITY = std::numeric_limits<double>::infinity();
 #endif
+template<class T>
+void fpu_check(int d, T expected) {
+     switch(fpclassify(expected)) {
+    case FP_NAN:
+        BOOST_TEST(fpu.fp[d].is_nan());
+        break;
+    case FP_INFINITE:
+        BOOST_TEST(fpu.fp[d].is_inf());
+        BOOST_TEST(fpu.fp[d].signbit() == signbit(expected));
+        break;
+    case FP_ZERO:
+        BOOST_TEST(fpu.fp[d].is_zero());
+        BOOST_TEST(fpu.fp[d].signbit()== signbit(expected));
+        break;
+    default:
+        if(sizeof(T) == sizeof(float)) {
+            BOOST_CHECK_CLOSE(
+                static_cast<float>(fpu.fp[d]), expected, 1e-04);
+        } else if(sizeof(T) == sizeof(double)) {
+            BOOST_CHECK_CLOSE( static_cast<double>(fpu.fp[d]),
+                                       expected, 1e-10);
+        }
+        break;
+    }
+}
+template <class T, class T2 = T>
+void fpu_test2(char op, T v1, T2 expected) {
+    set_fpu_reg(1, v1);
+    set_fpu_reg(2, NAN);
+    raw_write16(0, 0171000);
+    raw_write16(2, 1 << 10 | 2 << 7 | op);
+    m68k_do_execute();
+    fpu_check(2, expected);
+}
+
+template <class T, class T2 = T>
+void fpu_test(char op, T v1, T2 expected) {
+    set_fpu_reg(1, v1);
+    raw_write16(0, 0171000);
+    raw_write16(2, 1 << 10 | 1 << 7 | op);
+    m68k_do_execute();
+    fpu_check(1, expected);
+}
+template <class T, class T2 = T>
+void fpu_test(char op, T v1, T v2, T2 expected) {
+    set_fpu_reg(1, v1);
+    set_fpu_reg(2, v2);
+    raw_write16(0, 0171000);
+    raw_write16(2, 1 << 10 | 2 << 7 | op);
+    m68k_do_execute();
+    fpu_check(2, expected);
+}
+
+

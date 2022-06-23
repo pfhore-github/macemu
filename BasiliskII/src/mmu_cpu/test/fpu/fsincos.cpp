@@ -5,44 +5,41 @@
 #include "test/test_common.h"
 BOOST_FIXTURE_TEST_SUITE(FSINCOS, InitFix)
 BOOST_AUTO_TEST_CASE(operand) {
-    auto [r1, r2, r3] = rand_reg3();
-    double in = get_rx(-1.0, 1.0);
-    set_fpu_reg(r1, in);
+    set_fpu_reg(1, 0.1);
     raw_write16(0, 0171000);
-    raw_write16(2, r1 << 10 | r2 << 7 | 0x30 | r3);
+    raw_write16(2, 1 << 10 | 2 << 7 | 0x30 | 3);
     m68k_do_execute();
-    BOOST_CHECK_CLOSE(static_cast<double>(fpu.fp[r2]), sin(in), 1e-10);
-    BOOST_CHECK_CLOSE(static_cast<double>(fpu.fp[r3]), cos(in), 1e-10);
-}
-BOOST_DATA_TEST_CASE(zero, SIGN, sg) {
-    auto [r1, r2, r3] = rand_reg3();
-    double x = copysign(0.0, sg);
-    set_fpu_reg(r1, x);
-    raw_write16(0, 0171000);
-    raw_write16(2, r1 << 10 | r2 << 7 | 0x30 | r3);
-    m68k_do_execute();
-    BOOST_CHECK_CLOSE(static_cast<double>(fpu.fp[r2]), x, 1e-10);
-    BOOST_CHECK_CLOSE(static_cast<double>(fpu.fp[r3]), 1.0, 1e-10);
-}
-BOOST_DATA_TEST_CASE(inf, SIGN, sg) {
-    auto [r1, r2, r3] = rand_reg3();
-    double x = copysign(INFINITY, sg);
-    set_fpu_reg(r1, x);
-    raw_write16(0, 0171000);
-    raw_write16(2, r1 << 10 | r2 << 7 | 0x30 | r3);
-    m68k_do_execute();
-    BOOST_TEST(fpu.fp[r2].is_nan());
-    BOOST_TEST(fpu.fp[r3].is_nan());
+    BOOST_CHECK_CLOSE(static_cast<double>(fpu.fp[2]), sin(0.1), 1e-10);
+    BOOST_CHECK_CLOSE(static_cast<double>(fpu.fp[3]), cos(0.1), 1e-10);
 }
 
-BOOST_AUTO_TEST_CASE(nan_) {
-    auto [r1, r2, r3] = rand_reg3();
-    set_fpu_reg(r1, NAN);
+BOOST_AUTO_TEST_CASE(operand2) {
+    set_fpu_reg(1, 0.1);
     raw_write16(0, 0171000);
-    raw_write16(2, r1 << 10 | r2 << 7 | 0x30 | r3);
+    raw_write16(2, 1 << 10 | 2 << 7 | 0x30 | 2);
     m68k_do_execute();
-    BOOST_TEST(fpu.fp[r2].is_nan());
-    BOOST_TEST(fpu.fp[r3].is_nan());
+    BOOST_CHECK_CLOSE(static_cast<double>(fpu.fp[2]), sin(0.1), 1e-10);
 }
+
+BOOST_DATA_TEST_CASE(zero, SIGN, sg) {
+    double x = copysign(0.0, sg);
+    set_fpu_reg(1, x);
+    raw_write16(0, 0171000);
+    raw_write16(2, 1 << 10 | 2 << 7 | 0x30 | 3);
+    m68k_do_execute();
+    BOOST_CHECK_CLOSE(static_cast<double>(fpu.fp[2]), x, 1e-10);
+    BOOST_CHECK_CLOSE(static_cast<double>(fpu.fp[3]), 1.0, 1e-10);
+}
+
+BOOST_DATA_TEST_CASE(inf, SIGN, sg) {
+    double x = copysign(INFINITY, sg);
+    set_fpu_reg(1, x);
+    raw_write16(0, 0171000);
+    raw_write16(2, 1 << 10 | 2 << 7 | 0x30 | 3);
+    m68k_do_execute();
+    BOOST_TEST(fpu.fp[2].is_nan());
+    BOOST_TEST(fpu.fp[3].is_nan());
+}
+
 
 BOOST_AUTO_TEST_SUITE_END()

@@ -42,7 +42,7 @@ void load_single(uint32_t addr, fpvalue &dst) {
     uint32_t rv = read32(addr);
     float v = std::bit_cast<float>(rv);
     if(isnan(v)) {
-        dst.set_nan(static_cast<uint64_t>(rv & 0x3fffff) << 41);
+        dst.set_nan(static_cast<uint64_t>(rv & 0x7fffff) << 40);
     } else {
         dst = v;
     }
@@ -55,18 +55,18 @@ bool test_nan(fpvalue &v) {
     }
     if(!(v.get_payload() & SNAN_BIT)) {
         // SNAN
-        if(fpu.FPCR.snan) {
-            fpu.FPSR.snan = true;
-        } else {
+        fpu.FPSR.snan = true;
+        if(!fpu.FPCR.snan) {
             v.set_payload(v.get_payload() | SNAN_BIT);
         }
     }
     return true;
 }
+
 void store_single(uint32_t addr, const fpvalue &src) {
     uint32_t v;
     if(src.is_nan()) {
-        v = 0x7FC00000 | (src.get_payload() >> 41);
+        v = 0x7FC00000 | (src.get_payload() >> 40);
     } else {
         v = bit_cast<uint32_t>(static_cast<float>(src));
         fpu.FPSR.inex2 = mpfr_inexflag_p();
@@ -77,7 +77,7 @@ void load_double(uint32_t addr, fpvalue &dst) {
     uint64_t rv = read64(addr);
     double v = bit_cast<double>(rv);
     if(isnan(v)) {
-        dst.set_nan((rv & ((1LLU << 52) - 1)) << 10);
+        dst.set_nan((rv & ((1LLU << 52) - 1)) << 11);
     } else {
         dst = v;
     }
@@ -86,7 +86,7 @@ void load_double(uint32_t addr, fpvalue &dst) {
 void store_double(uint32_t addr, const fpvalue &src) {
     uint64_t v;
     if(src.is_nan()) {
-        v = 0x7ff8000000000000LLU | (src.get_payload() >> 10);
+        v = 0x7ff8000000000000LLU | (src.get_payload() >> 11);
     } else {
         v = bit_cast<uint64_t>(static_cast<double>(src));
         fpu.FPSR.inex2 = mpfr_inexflag_p();
@@ -109,7 +109,7 @@ void load_ext(uint32_t addr, fpvalue &dst) {
         }
         return;
     }
-    dst = fpvalue(s, mantissa, exp_v - 0x3ffe);
+    dst = fpvalue(s, mantissa, exp_v - 0x3fff);
 }
 
 void store_ext(uint32_t addr, const fpvalue &src) {
@@ -127,7 +127,7 @@ void load_packed(uint32_t addr, fpvalue &dst) {
     uint32_t v1 = read32(addr);
     uint64_t vd = read32(addr + 4);
     vd = vd << 32 | read32(addr + 8);
-    int sm = (v1 & 1 << 31) ? -1 : 1;
+    bool sm = (v1 & 1 << 31);
     bool se = v1 & 1 << 30;
     uint8_t yy = v1 >> 28 & 3;
     if(se && yy == 3 && ((v1 >> 16) & 0xfff) == 0xfff) {
@@ -144,7 +144,7 @@ void load_packed(uint32_t addr, fpvalue &dst) {
         return;
     }
     char digit[26] = {0};
-    digit[0] = sm == -1.0 ? '-' : '+';
+    digit[0] = sm ? '-' : '+';
     digit[1] = (v1 & 0xf) + '0';
     digit[2] = '.';
     for(int i = 0; i < 16; ++i) {
@@ -156,6 +156,9 @@ void load_packed(uint32_t addr, fpvalue &dst) {
     digit[22] = ((v1 >> 20) & 0xf) + '0';
     digit[23] = ((v1 >> 16) & 0xf) + '0';
     dst = digit;
+    if(dst.mpfr_ret != 0) {
+        fpu.FPSR.inex1 = true;
+    }
 }
 
 void store_packed(uint32_t addr, const fpvalue &value, int8_t k) {
@@ -231,68 +234,60 @@ void fpu_checkexception() {
 }
 void to_sgl(fpvalue &d) {
     if(d.is_number()) {
+        int omi = mpfr_get_emin();
+        int omx = mpfr_get_emax();
         d.set_precision(24);
-        int exp = d.get_exp();
-        if(exp > 127) {
-            // overflow
-            fpu.FPSR.ovfl = true;
-            d.set_inf(d.signbit());
-        } else if(exp < -126) {
-            // underflow
-            fpu.FPSR.ovfl = false;
-            int omi = mpfr_get_emin();
-            mpfr_set_emin(-126);
-            mpfr_check_range(d.ptr(), d.mpfr_ret, mpfr_get_default_rounding_mode());
-            d.subnormalize();
-            fpu.FPSR.inex2 = mpfr_inexflag_p();
-            // reset range
-            mpfr_set_emin(omi);
-        }
+        mpfr_set_emax(127);
+        mpfr_set_emin(-126 - 24 + 1);
+        d.mpfr_ret = mpfr_check_range(d.ptr(), d.mpfr_ret,
+                                      mpfr_get_default_rounding_mode());
+        d.subnormalize();
+        fpu.FPSR.ovfl = mpfr_overflow_p();
+        fpu.FPSR.unfl = mpfr_underflow_p();
+        fpu.FPSR.inex2 = mpfr_inexflag_p();
+        // reset range
+        mpfr_set_emin(omi);
+        mpfr_set_emax(omx);
         d.set_precision(64);
     }
 }
 void to_dbl(fpvalue &d) {
     if(d.is_number()) {
+        int omi = mpfr_get_emin();
+        int omx = mpfr_get_emax();
         d.set_precision(53);
-        int exp = d.get_exp();
-        if(exp > 1023) {
-            // overflow
-            fpu.FPSR.ovfl = true;
-            d.set_inf(d.signbit());
-        } else if(exp < -1022) {
-            // underflow
-            fpu.FPSR.ovfl = false;
-            int omi = mpfr_get_emin();
-            mpfr_set_emin(-1022);
-            mpfr_check_range(d.ptr(), d.mpfr_ret, mpfr_get_default_rounding_mode());
-            d.subnormalize();
-            fpu.FPSR.inex2 = mpfr_inexflag_p();
-            // reset range
-            mpfr_set_emin(omi);
-        }
+        mpfr_set_emax(1023);
+        mpfr_set_emin(-1022 - 53 + 1);
+        d.mpfr_ret = mpfr_check_range(d.ptr(), d.mpfr_ret,
+                                      mpfr_get_default_rounding_mode());
+        d.subnormalize();
+        fpu.FPSR.ovfl = mpfr_overflow_p();
+        fpu.FPSR.unfl = mpfr_underflow_p();
+        fpu.FPSR.inex2 = mpfr_inexflag_p();
+        // reset range
+        mpfr_set_emin(omi);
+        mpfr_set_emax(omx);
         d.set_precision(64);
     }
 }
 
 void to_ext(fpvalue &d) {
     if(d.is_number()) {
+        int omi = mpfr_get_emin();
+        int omx = mpfr_get_emax();
         d.set_precision(64);
-        int exp = d.get_exp();
-        if(exp > 16383) {
-            // overflow
-            fpu.FPSR.ovfl = true;
-            d.set_inf(d.signbit());
-        } else if(exp < -16382) {
-            // underflow
-            fpu.FPSR.ovfl = false;
-            int omi = mpfr_get_emin();
-            mpfr_set_emin(-16382);
-            mpfr_check_range(d.ptr(), d.mpfr_ret, mpfr_get_default_rounding_mode());
-            d.subnormalize();
-            fpu.FPSR.inex2 = mpfr_inexflag_p();
-            // reset range
-            mpfr_set_emin(omi);
-        }
+        mpfr_set_emax(16383);
+        mpfr_set_emin(-16383 - 64 + 1);
+        d.mpfr_ret = mpfr_check_range(d.ptr(), d.mpfr_ret,
+                                      mpfr_get_default_rounding_mode());
+        d.subnormalize();
+        fpu.FPSR.ovfl = mpfr_overflow_p();
+        fpu.FPSR.unfl = mpfr_underflow_p();
+        fpu.FPSR.inex2 = mpfr_inexflag_p();
+        // reset range
+        mpfr_set_emin(omi);
+        mpfr_set_emax(omx);
+        d.set_precision(64);
     }
 }
 void fpu_postprocess(fpvalue &d, RND_PREC round = RND_PREC::ROUND_DEF) {
@@ -317,7 +312,7 @@ void fpu_postprocess(fpvalue &d, RND_PREC round = RND_PREC::ROUND_DEF) {
     fpu.FPSR.unfl |= mpfr_underflow_p();
     fpu.FPSR.dz = mpfr_divby0_p();
     fpu.FPSR.operr = mpfr_nanflag_p() || mpfr_erangeflag_p();
-    fpu.FPSR.inex1 = mpfr_inexflag_p();
+    fpu.FPSR.inex2 = mpfr_inexflag_p();
 
     // update normal flag
     fpu.FPSR.n = d.signbit();
@@ -653,6 +648,7 @@ void fmove_to(int type, int reg, int d_type, uint8_t k, const fpvalue &value) {
     case 6: {
         fpu.FPSR.operr = !value.fits_int8();
         int8_t v = static_cast<int64_t>(value);
+        fpu.FPSR.inex2 = mpfr_inexflag_p();
         EA_WRITE8(type, reg, v);
         break;
     }
@@ -865,6 +861,7 @@ void fmove_from_cr(int type, int reg, uint16_t op2) {
     }
 }
 OP(fpu_op) {
+    mpfr_clear_flags();
     uint16_t op2 = FETCH();
     if(op2 >> 15 & 1) {
         switch(op2 >> 13 & 3) {
@@ -987,6 +984,8 @@ OP(fpu_op) {
         fpu.FPSR.ovfl = false;
         fpu.FPSR.unfl = false;
         fpu.FPSR.dz = false;
+        fpu.FPSR.inex1 = false;
+        fpu.FPSR.inex2 = false;
         switch(opc2) {
         case 0x38: // FCMP
             op_fcmp(src, fpu.fp[dst_r]);
@@ -1114,6 +1113,7 @@ OP(fbcc_w) {
     if(fpcc(opc)) {
         JUMP(pc + offset);
     }
+    fpu_checkexception();
 }
 
 OP(fbcc_l) {

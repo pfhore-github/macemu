@@ -4,13 +4,18 @@
 #include "newcpu.h"
 #include "test/test_common.h"
 BOOST_FIXTURE_TEST_SUITE(FCMP, InitFix)
-BOOST_AUTO_TEST_CASE(operand) {
-    double v1 = get_rx(-10.0, 10.0);
-    double v2 = get_rx(-10.0, 10.0);
-    fpu_test(0x38, v1, v2, v2);
-    BOOST_TEST(fpu.FPSR.z == (v1 == v2));
-    BOOST_TEST(fpu.FPSR.n == (v1 > v2));
+BOOST_AUTO_TEST_CASE(n) {
+    fpu.FPSR.i = true;
+    fpu_test(0x38, 0.5, 0.2, 0.2);
+    BOOST_TEST(fpu.FPSR.n);
+    BOOST_TEST(!fpu.FPSR.i);
 }
+
+BOOST_AUTO_TEST_CASE(z) {
+    fpu_test(0x38, 0.5, 0.5, 0.5);
+    BOOST_TEST(fpu.FPSR.z);
+}
+
 // 0 - X
 BOOST_AUTO_TEST_SUITE(zero_with)
 BOOST_DATA_TEST_CASE(normal, SIGN, sg) {

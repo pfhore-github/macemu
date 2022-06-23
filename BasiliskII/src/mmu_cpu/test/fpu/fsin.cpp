@@ -5,22 +5,20 @@
 #include "test/test_common.h"
 BOOST_FIXTURE_TEST_SUITE(FSIN, InitFix)
 BOOST_AUTO_TEST_CASE(operand) {
-    double in = get_rx(-1.0, 1.0);
-    fpu_test(0x0E, in, 0.0, sin(in));
+    fpu_test2(0x0E, 1.0, sin(1.0));
 }
 
+BOOST_AUTO_TEST_CASE(normal) {
+    fpu_test(0x0E, 0.1, sin(0.1));
+}
 BOOST_DATA_TEST_CASE(zero, SIGN, sg) {
     double d = copysign(0.0, sg);
-    fpu_test<double>(0x0E, d, 0.0, d);
+    fpu_test<double>(0x0E, d, d);
 }
 
 BOOST_DATA_TEST_CASE(inf, SIGN, sg) {
-    fpu_test<double>(0x0E, copysign(INFINITY, sg), 0.0, NAN);
+    fpu_test<double>(0x0E, copysign(INFINITY, sg), NAN);
     BOOST_TEST(fpu.FPSR.operr);
-}
-
-BOOST_AUTO_TEST_CASE(nan_) {
-    fpu_test<double>(0x0E, NAN, 0.0, NAN);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

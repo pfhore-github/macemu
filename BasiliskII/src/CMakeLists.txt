@@ -217,7 +217,7 @@ mmu_cpu/test/fpu/fscale.cpp
 mmu_cpu/test/fpu/fsgldiv.cpp
 mmu_cpu/test/fpu/fsglmul.cpp
 mmu_cpu/test/fpu/fsin.cpp
-#mmu_cpu/test/fpu/fsincos.cpp
+mmu_cpu/test/fpu/fsincos.cpp
 mmu_cpu/test/fpu/fsinh.cpp
 mmu_cpu/test/fpu/fsqrt.cpp
 mmu_cpu/test/fpu/fsub.cpp
@@ -236,7 +236,8 @@ mmu_cpu/test/fpu/fbcc.cpp
 mmu_cpu/test/fpu/fdbcc.cpp
 mmu_cpu/test/fpu/fscc.cpp
 
-#mmu_cpu/test/fpu/nan.cpp
+mmu_cpu/test/fpu/nan.cpp
+mmu_cpu/test/fpu/fpu_ex.cpp
 
 #mmu_cpu/test/mmu.cpp
  )

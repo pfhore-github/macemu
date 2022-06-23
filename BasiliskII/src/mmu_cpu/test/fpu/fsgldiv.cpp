@@ -5,22 +5,13 @@
 #include "test/test_common.h"
 BOOST_FIXTURE_TEST_SUITE(FSGLDIV, InitFix)
 BOOST_AUTO_TEST_CASE(operand) {
-    float v1 = get_rx(-10.0, 10.0);
-    if(v1 == 0.0) {
-        v1 = 1.0;
-    }
-    float v2 = get_rx(-10.0, 10.0);
-    if(v2 == 0.0) {
-        v2 = 1.0;
-    }
-    fpu_test(0x24, v1, v2, v2 / v1);
+    fpu_test(0x24, 2.0f, 6.0f, 3.0f);
 }
 // 0 / X
 BOOST_AUTO_TEST_SUITE(zero_with)
 BOOST_DATA_TEST_CASE(normal, SIGN, sg) {
     float z = copysignf(0.0f, sg);
-    float c = get_rx(0.1, 10.0);
-    fpu_test(0x24, c, z, z);
+    fpu_test(0x24, 1.0f, z, z);
 }
 
 BOOST_DATA_TEST_CASE(infinity, SIGN *SIGN, sg1, sg2) {
@@ -40,8 +31,7 @@ BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE(infinity_with)
 BOOST_DATA_TEST_CASE(normal, SIGN, sg) {
     float inf = copysignf(INFINITY, sg);
-    float d = get_rx(0.1, 10.0);
-    fpu_test(0x24, d, inf, inf);
+    fpu_test(0x24, 1.0f, inf, inf);
 }
 
 BOOST_DATA_TEST_CASE(zero, SIGN *SIGN, sg1, sg2) {
@@ -60,25 +50,13 @@ BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_DATA_TEST_CASE(with_zero, SIGN, sg) {
     float z = copysignf(0.0f, sg);
-    float c = get_rx(0.1, 10.0);
-    fpu_test(0x24, z, c, copysignf(INFINITY, sg));
+    fpu_test(0x24, z, 1.0f, copysignf(INFINITY, sg));
     BOOST_TEST(fpu.FPSR.dz);
 }
 
 BOOST_DATA_TEST_CASE(with_inf, SIGN, sg) {
     float z = copysignf(INFINITY, sg);
-    float c = get_rx(0.1, 10.0);
-    fpu_test(0x24, z, c, copysignf(0.0, sg));
-}
-
-BOOST_AUTO_TEST_CASE(nan1) {
-    float c = get_rx(0.1, 10.0);
-    fpu_test<float>(0x24, NAN, c, NAN);
-}
-
-BOOST_AUTO_TEST_CASE(nan2) {
-    float c = get_rx(0.1, 10.0);
-    fpu_test<float>(0x24, c, NAN, NAN);
+    fpu_test(0x24, z, 1.0f, copysignf(0.0, sg));
 }
 
 BOOST_AUTO_TEST_CASE(ovfl) {

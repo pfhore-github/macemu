@@ -3,17 +3,6 @@
 #include "newcpu.h"
 #include "test/test_common.h"
 BOOST_FIXTURE_TEST_SUITE(FDBcc, InitFix)
-BOOST_AUTO_TEST_CASE(operand) {
-    auto cr = rand_reg();
-    regs.d[cr] = 1;
-    raw_write16(0, 0171110 | cr);
-    raw_write16(2, 0);
-    raw_write16(4, 0x1000);
-    m68k_do_execute();
-    BOOST_TEST(regs.pc == 0x1004);
-    BOOST_TEST(regs.d[cr] == 0);
-}
-
 BOOST_AUTO_TEST_CASE(t) {
     regs.d[1] = 1;
     raw_write16(0, 0171111);

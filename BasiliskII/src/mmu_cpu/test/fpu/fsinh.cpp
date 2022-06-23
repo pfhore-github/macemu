@@ -7,27 +7,26 @@
 #include <boost/test/unit_test.hpp>
 BOOST_FIXTURE_TEST_SUITE(FSINH, InitFix)
 BOOST_AUTO_TEST_CASE(operand) {
-    double in = get_rx(-1.0, 1.0);
-    fpu_test(0x02, in, 0.0, sinh(in));
+    fpu_test2(0x02, 0.1, sinh(0.1));
+}
+
+BOOST_AUTO_TEST_CASE(normal) {
+    fpu_test(0x02, 0.1, sinh(0.1));
 }
 
 BOOST_DATA_TEST_CASE(zero, SIGN, sg) {
     double d = copysign(0.0, sg);
-    fpu_test<double>(0x02, d, 0.0, d);
+    fpu_test<double>(0x02, d, d);
 }
 
 BOOST_DATA_TEST_CASE(inf, SIGN, sg) {
     double d = copysign(INFINITY, sg);
-    fpu_test<double>(0x02, d, 0.0, d);
-}
-
-BOOST_AUTO_TEST_CASE(nan_) {
-    fpu_test<double>(0x02, NAN, 0.0, NAN);
+    fpu_test<double>(0x02, d, d);
 }
 
 BOOST_AUTO_TEST_CASE(ovfl) {
     xval xv{false, 1, 200};
-    fpu_test(0x02, xv, xv, INFINITY);
+    fpu_test(0x02, xv, INFINITY);
     BOOST_TEST(fpu.FPSR.ovfl);
 }
 

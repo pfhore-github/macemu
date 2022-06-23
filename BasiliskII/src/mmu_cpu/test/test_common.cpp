@@ -45,6 +45,8 @@ InitFix::InitFix() {
     regs.v = regs.c = regs.n = regs.x = regs.z = false;
     regs.S = false;
     memset(&fpu.FPCR, 0, sizeof(fpu.FPCR));
+    mpfr_set_default_rounding_mode(MPFR_RNDN);
+    mpfr_clear_flags();
 }
 BOOST_TEST_GLOBAL_FIXTURE(MyGlobalFixture);
 
