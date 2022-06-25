@@ -21,52 +21,54 @@ constexpr presult MMU_BUS_ERROR{false, false, false, false, 0,
 
 constexpr presult MMU_BUS_INALID{false, false, false, false, 0,
                                  false, 0,     false, false, 0};
-mmu_68040 mmu;
+mmu_68040_cmn mmu;
+mmu_68040 mmu_d, mmu_i;
 
 constexpr atc_entry_t ATC_INVALID{0, false, false, false, 0, false, 0};
 // MMU enabled access
-presult test_TTR(const uint32_t addr, bool is_code, bool rw) {
-    const ttc_t *ttr = is_code ? mmu.ITTR : mmu.DTTR;
+presult mmu_68040::test_TTR(const uint32_t addr) {
     uint8_t base = addr >> 24;
     for(int i = 0; i < 2; ++i) {
-        if(ttr[i].E &&
-           ((base & ~ttr->address_mask) ==
-            (ttr[i].address_base & ~ttr->address_mask)) &&
-           ((ttr[i].S & 2) || (ttr[i].S == !!regs.S))) {
+        if(TTR[i].E &&
+           ((base & ~TTR[i].address_mask) ==
+            (TTR[i].address_base & ~TTR[i].address_mask)) &&
+           ((TTR[i].S & 2) || (static_cast<bool>(TTR[i].S) == regs.S))) {
             uint32_t raddr = base << 12 | ((addr >> 12) & 0xfff);
-            return {true,          true,   ttr->W, false, ttr->CM,
-                    ttr[i].S == 1, ttr->U, false,  false, raddr};
+            return {true,          true,     TTR[i].W, false, TTR[i].CM,
+                    TTR[i].S == 1, TTR[i].U, false,    false, raddr};
         }
     }
     return MMU_BUS_INALID;
 }
 
 presult mmu_68040::ptest(const uint32_t addr, bool rw, bool s) {
+    uint32_t pgi, atc_key = 0;
+    auto atc_cache_g = s ? &atc_cache_g_s : &atc_cache_g_u;
+    auto atc_cache_l = s ? &atc_cache_l_s : &atc_cache_l_u;
+    bool g = false;
     try {
         uint32_t ri = (addr >> 25) << 2;
         uint32_t pi = (addr >> 18 & 0x7f) << 2;
-        uint32_t pgi, atc_key = s << 31;
-        if(tcr_p) {
+        if(mmu.tcr_p) {
             pgi = ((addr >> 13) & 0x1f) << 2;
-            atc_key |= addr >> 13;
+            atc_key = addr >> 13;
         } else {
             pgi = ((addr >> 12) & 0x3f) << 2;
-            atc_key |= addr >> 12;
+            atc_key = addr >> 12;
         }
-        atc_entry_t *entry;
+        atc_entry_t *entry = nullptr;
         bool wp = false;
-        bool g;
-        if(auto gi = atc_gcache.find(atc_key); gi != atc_gcache.end()) {
+        if(auto gi = atc_cache_g->find(atc_key); gi != atc_cache_g->end()) {
             entry = &gi->second;
             g = true;
-        } else if(auto li = atc_lcache.find(atc_key); li != atc_lcache.end()) {
+        } else if(auto li = atc_cache_l->find(atc_key);
+                  li != atc_cache_l->end()) {
             entry = &li->second;
-            g = false;
-        } else {
-            uint32_t mst = s ? srp : urp;
+        }
+        if(!entry) {
+            uint32_t mst = s ? mmu.srp : mmu.urp;
             uint32_t rtd = b_read32(mst | ri);
             if(!(rtd & 2)) {
-                atc_lcache[atc_key] = ATC_INVALID;
                 goto INVALID;
             }
             if(rtd & 4) {
@@ -76,14 +78,13 @@ presult mmu_68040::ptest(const uint32_t addr, bool rw, bool s) {
             uint32_t ptd_addr = (rtd & ~0x1ff) | pi;
             uint32_t ptd = b_read32(ptd_addr);
             if(!(ptd & 2)) {
-                atc_lcache[atc_key] = ATC_INVALID;
                 goto INVALID;
             }
             b_write32(ptd_addr, ptd |= 8);
             if(ptd & 4) {
                 wp = true;
             }
-            uint32_t pd_addr = (ptd & ~(tcr_p ? 0x3f : 0x7f)) | pgi;
+            uint32_t pd_addr = (ptd & ~(mmu.tcr_p ? 0x3f : 0x7f)) | pgi;
             uint32_t pd = b_read32(pd_addr);
             switch(pd & 3) {
             case 0:
@@ -106,7 +107,7 @@ presult mmu_68040::ptest(const uint32_t addr, bool rw, bool s) {
             }
             b_write32(pd_addr, pd);
             atc_entry_t ent{
-                pd >> (tcr_p ? 13 : 12),
+                pd >> (mmu.tcr_p ? 13 : 12),
                 true,
                 wp,
                 m,
@@ -116,15 +117,15 @@ presult mmu_68040::ptest(const uint32_t addr, bool rw, bool s) {
             };
             g = pd >> 10 & 1;
             if(g) {
-                atc_gcache[atc_key] = ent;
-                entry = &atc_gcache[atc_key];
+                (*atc_cache_g)[atc_key] = ent;
+                entry = &(*atc_cache_g)[atc_key];
             } else {
-                atc_lcache[atc_key] = ent;
-                entry = &atc_lcache[atc_key];
+                (*atc_cache_l)[atc_key] = ent;
+                entry = &(*atc_cache_l)[atc_key];
             }
         }
         uint32_t xaddr = entry->addr;
-        if(tcr_p) {
+        if(mmu.tcr_p) {
             xaddr = (xaddr << 1) | (addr & 1);
         }
         return {true,     false,    wp, entry->M, entry->cm,
@@ -133,10 +134,11 @@ presult mmu_68040::ptest(const uint32_t addr, bool rw, bool s) {
         return MMU_BUS_ERROR;
     }
 INVALID:
+    (*atc_cache_l)[atc_key] = ATC_INVALID;
     return MMU_BUS_INALID;
 }
-uint32_t do_mmu(uint32_t vaddr, bool code, bool rw, bool s) {
-    presult ttr_result = test_TTR(vaddr, code, rw);
+uint32_t mmu_68040::do_mmu(uint32_t vaddr, bool rw, bool s) {
+    presult ttr_result = test_TTR(vaddr);
     if(ttr_result.T) {
         if(ttr_result.W && rw) {
             throw BUS_ERROR_EX{};
@@ -147,7 +149,7 @@ uint32_t do_mmu(uint32_t vaddr, bool code, bool rw, bool s) {
         return vaddr;
     }
 
-    presult result = mmu.ptest(vaddr, rw, s);
+    presult result = ptest(vaddr, rw, s);
     if(result.B) {
         // BUS ERROR during table search
         throw BUS_ERROR_EX{true};
@@ -169,15 +171,68 @@ uint32_t do_mmu(uint32_t vaddr, bool code, bool rw, bool s) {
     return (result.addr << 12) | (vaddr & 0xfff);
 }
 
-void mmu_68040::pflushn_an(uint32_t atc_key) { atc_lcache.erase(atc_key); }
-void mmu_68040::pflush_an(uint32_t atc_key) {
-    atc_gcache.erase(atc_key);
-    atc_lcache.erase(atc_key);
+void mmu_68040_cmn::pflushn_an(uint32_t atc_key) {
+    switch(regs.dfc) {
+    case 1:
+    case 2:
+        mmu_d.atc_cache_l_u.erase(atc_key);
+        mmu_i.atc_cache_l_u.erase(atc_key);
+        break;
+    case 5:
+    case 6:
+        mmu_d.atc_cache_l_s.erase(atc_key);
+        mmu_i.atc_cache_l_s.erase(atc_key);
+    }
 }
-void mmu_68040::pflushn() { atc_lcache.clear(); }
-void mmu_68040::pflush() {
-    atc_gcache.clear();
-    atc_lcache.clear();
+void mmu_68040_cmn::pflush_an(uint32_t atc_key) {
+    switch(regs.dfc) {
+    case 1:
+    case 2:
+        mmu_d.atc_cache_l_u.erase(atc_key);
+        mmu_i.atc_cache_l_u.erase(atc_key);
+        mmu_d.atc_cache_g_u.erase(atc_key);
+        mmu_i.atc_cache_g_u.erase(atc_key);
+        break;
+    case 5:
+    case 6:
+        mmu_d.atc_cache_l_s.erase(atc_key);
+        mmu_i.atc_cache_l_s.erase(atc_key);
+        mmu_d.atc_cache_g_s.erase(atc_key);
+        mmu_i.atc_cache_g_s.erase(atc_key);
+        break;
+    }
+}
+void mmu_68040_cmn::pflushn() {
+    switch(regs.dfc) {
+    case 1:
+    case 2:
+        mmu_d.atc_cache_l_u.clear();
+        mmu_i.atc_cache_l_u.clear();
+        break;
+    case 5:
+    case 6:
+        mmu_d.atc_cache_l_s.clear();
+        mmu_i.atc_cache_l_s.clear();
+        break;
+    }
+}
+void mmu_68040_cmn::pflush() {
+    switch(regs.dfc) {
+    case 1:
+    case 2:
+        mmu_d.atc_cache_l_u.clear();
+        mmu_i.atc_cache_l_u.clear();
+        mmu_d.atc_cache_g_u.clear();
+        mmu_i.atc_cache_g_u.clear();
+        break;
+    case 5:
+    case 6:
+        mmu_d.atc_cache_l_s.clear();
+        mmu_i.atc_cache_l_s.clear();
+        mmu_d.atc_cache_g_s.clear();
+        mmu_i.atc_cache_g_s.clear();
+        break;
+    }
 }
 using op_t = void (*)(uint16_t, int, int, int);
 extern op_t opc_map[65536 >> 6];
@@ -269,18 +324,10 @@ OP(pflush) {
     }
     switch(type) {
     case 0: // pflushn (an)
-        if(regs.dfc == 1 || regs.dfc == 2) {
-            mmu.pflushn_an(atc_key);
-        } else {
-            mmu.pflushn_an(0x80000000 | atc_key);
-        }
+        mmu.pflushn_an(atc_key);
         break;
     case 1: // pflush (an)
-        if(regs.dfc == 1 || regs.dfc == 2) {
-            mmu.pflush_an(atc_key);
-        } else {
-            mmu.pflush_an(0x80000000 | atc_key);
-        }
+        mmu.pflush_an(atc_key);
         break;
     case 2: // pflushan
         mmu.pflushn();
@@ -301,15 +348,49 @@ OP(ptest) {
     uint32_t addr = regs.a[reg];
     bool rw;
     if(type == 1) {
-        rw = false;
-    } else if(type == 5) {
         rw = true;
+    } else if(type == 5) {
+        rw = false;
     } else {
         ILLEGAL_INST();
     }
-    presult result = test_TTR(addr, !(regs.dfc & 1), rw);
-    if(!result.T) {
-        result = mmu.ptest(addr, rw, true);
+    presult result;
+    switch(regs.dfc) {
+    case 1:
+    case 5:
+        result = mmu_d.test_TTR(addr);
+        break;
+    case 2:
+    case 6:
+        result = mmu_i.test_TTR(addr);
+        break;
+    }
+    if(result.T) {
+        mmu.MMUSR.PA = 0;
+        mmu.MMUSR.B = false;
+        mmu.MMUSR.G = false;
+        mmu.MMUSR.U = 0;
+        mmu.MMUSR.S = false;
+        mmu.MMUSR.CM = 0;
+        mmu.MMUSR.M = false;
+        mmu.MMUSR.W = false;
+        mmu.MMUSR.T = true;
+        mmu.MMUSR.R = true;
+        return;
+    }
+    switch(regs.dfc) {
+    case 1:
+        result = mmu_d.ptest(addr, rw, false);
+        break;
+    case 2:
+        result = mmu_i.ptest(addr, rw, false);
+        break;
+    case 5:
+        result = mmu_d.ptest(addr, rw, true);
+        break;
+    case 6:
+        result = mmu_i.ptest(addr, rw, true);
+        break;
     }
     mmu.MMUSR.PA = result.addr << 12;
     mmu.MMUSR.B = result.B;
@@ -342,21 +423,25 @@ uint32_t do_op_movec_from(int o) {
     case 0x003:
         return mmu.tcr_e << 15 | mmu.tcr_p << 14;
     case 0x004:
-        return mmu.ITTR[0].address_base << 24 | mmu.ITTR[0].address_mask << 16 |
-               mmu.ITTR[0].E << 15 | mmu.ITTR[0].S << 13 | mmu.ITTR[0].U << 8 |
-               mmu.ITTR[0].CM << 5 | mmu.ITTR[0].W << 2;
+        return mmu_i.TTR[0].address_base << 24 |
+               mmu_i.TTR[0].address_mask << 16 | mmu_i.TTR[0].E << 15 |
+               mmu_i.TTR[0].S << 13 | mmu_i.TTR[0].U << 8 |
+               mmu_i.TTR[0].CM << 5 | mmu_i.TTR[0].W << 2;
     case 0x005:
-        return mmu.ITTR[1].address_base << 24 | mmu.ITTR[1].address_mask << 16 |
-               mmu.ITTR[1].E << 15 | mmu.ITTR[1].S << 13 | mmu.ITTR[1].U << 8 |
-               mmu.ITTR[1].CM << 5 | mmu.ITTR[1].W << 2;
+        return mmu_i.TTR[1].address_base << 24 |
+               mmu_i.TTR[1].address_mask << 16 | mmu_i.TTR[1].E << 15 |
+               mmu_i.TTR[1].S << 13 | mmu_i.TTR[1].U << 8 |
+               mmu_i.TTR[1].CM << 5 | mmu_i.TTR[1].W << 2;
     case 0x006:
-        return mmu.DTTR[0].address_base << 24 | mmu.DTTR[0].address_mask << 16 |
-               mmu.DTTR[0].E << 15 | mmu.DTTR[0].S << 13 | mmu.DTTR[0].U << 8 |
-               mmu.DTTR[0].CM << 5 | mmu.DTTR[0].W << 2;
+        return mmu_d.TTR[0].address_base << 24 |
+               mmu_d.TTR[0].address_mask << 16 | mmu_d.TTR[0].E << 15 |
+               mmu_d.TTR[0].S << 13 | mmu_d.TTR[0].U << 8 |
+               mmu_d.TTR[0].CM << 5 | mmu_d.TTR[0].W << 2;
     case 0x007:
-        return mmu.DTTR[1].address_base << 24 | mmu.DTTR[1].address_mask << 16 |
-               mmu.DTTR[1].E << 15 | mmu.DTTR[1].S << 13 | mmu.DTTR[1].U << 8 |
-               mmu.DTTR[1].CM << 5 | mmu.DTTR[1].W << 2;
+        return mmu_d.TTR[1].address_base << 24 |
+               mmu_d.TTR[1].address_mask << 16 | mmu_d.TTR[1].E << 15 |
+               mmu_d.TTR[1].S << 13 | mmu_d.TTR[1].U << 8 |
+               mmu_d.TTR[1].CM << 5 | mmu_d.TTR[1].W << 2;
     case 0x805:
         return mmu.MMUSR.PA | mmu.MMUSR.B << 11 | mmu.MMUSR.G << 10 |
                mmu.MMUSR.U << 8 | mmu.MMUSR.S << 7 | mmu.MMUSR.CM << 5 |
@@ -400,40 +485,40 @@ void do_op_movec_to(int op, uint32_t v) {
         mmu.tcr_p = v >> 14 & 1;
         return;
     case 0x004:
-        mmu.ITTR[0].address_base = v >> 24 & 0xff;
-        mmu.ITTR[0].address_mask = v >> 16 & 0xff;
-        mmu.ITTR[0].E = v >> 15 & 1;
-        mmu.ITTR[0].S = v >> 13 & 3;
-        mmu.ITTR[0].U = v >> 8 & 3;
-        mmu.ITTR[0].CM = v >> 5 & 3;
-        mmu.ITTR[0].W = v >> 2 & 1;
+        mmu_i.TTR[0].address_base = v >> 24 & 0xff;
+        mmu_i.TTR[0].address_mask = v >> 16 & 0xff;
+        mmu_i.TTR[0].E = v >> 15 & 1;
+        mmu_i.TTR[0].S = v >> 13 & 3;
+        mmu_i.TTR[0].U = v >> 8 & 3;
+        mmu_i.TTR[0].CM = v >> 5 & 3;
+        mmu_i.TTR[0].W = v >> 2 & 1;
         return;
     case 0x005:
-        mmu.ITTR[1].address_base = v >> 24 & 0xff;
-        mmu.ITTR[1].address_mask = v >> 16 & 0xff;
-        mmu.ITTR[1].E = v >> 15 & 1;
-        mmu.ITTR[1].S = v >> 13 & 3;
-        mmu.ITTR[1].U = v >> 8 & 3;
-        mmu.ITTR[1].CM = v >> 5 & 3;
-        mmu.ITTR[1].W = v >> 2 & 1;
+        mmu_i.TTR[1].address_base = v >> 24 & 0xff;
+        mmu_i.TTR[1].address_mask = v >> 16 & 0xff;
+        mmu_i.TTR[1].E = v >> 15 & 1;
+        mmu_i.TTR[1].S = v >> 13 & 3;
+        mmu_i.TTR[1].U = v >> 8 & 3;
+        mmu_i.TTR[1].CM = v >> 5 & 3;
+        mmu_i.TTR[1].W = v >> 2 & 1;
         return;
     case 0x006:
-        mmu.DTTR[0].address_base = v >> 24 & 0xff;
-        mmu.DTTR[0].address_mask = v >> 16 & 0xff;
-        mmu.DTTR[0].E = v >> 15 & 1;
-        mmu.DTTR[0].S = v >> 13 & 3;
-        mmu.DTTR[0].U = v >> 8 & 3;
-        mmu.DTTR[0].CM = v >> 5 & 3;
-        mmu.DTTR[0].W = v >> 2 & 1;
+        mmu_d.TTR[0].address_base = v >> 24 & 0xff;
+        mmu_d.TTR[0].address_mask = v >> 16 & 0xff;
+        mmu_d.TTR[0].E = v >> 15 & 1;
+        mmu_d.TTR[0].S = v >> 13 & 3;
+        mmu_d.TTR[0].U = v >> 8 & 3;
+        mmu_d.TTR[0].CM = v >> 5 & 3;
+        mmu_d.TTR[0].W = v >> 2 & 1;
         return;
     case 0x007:
-        mmu.DTTR[1].address_base = v >> 24 & 0xff;
-        mmu.DTTR[1].address_mask = v >> 16 & 0xff;
-        mmu.DTTR[1].E = v >> 15 & 1;
-        mmu.DTTR[1].S = v >> 13 & 3;
-        mmu.DTTR[1].U = v >> 8 & 3;
-        mmu.DTTR[1].CM = v >> 5 & 3;
-        mmu.DTTR[1].W = v >> 2 & 1;
+        mmu_d.TTR[1].address_base = v >> 24 & 0xff;
+        mmu_d.TTR[1].address_mask = v >> 16 & 0xff;
+        mmu_d.TTR[1].E = v >> 15 & 1;
+        mmu_d.TTR[1].S = v >> 13 & 3;
+        mmu_d.TTR[1].U = v >> 8 & 3;
+        mmu_d.TTR[1].CM = v >> 5 & 3;
+        mmu_d.TTR[1].W = v >> 2 & 1;
         return;
     case 0x805:
         mmu.MMUSR.PA = v & 0xFFFFF000;
@@ -461,10 +546,10 @@ void do_op_movec_to(int op, uint32_t v) {
 void init_mmu() {
     mmu.urp = mmu.srp = 0;
     mmu.tcr_e = mmu.tcr_p = false;
-    memset(&mmu.ITTR[0], 0, sizeof(ttc_t));
-    memset(&mmu.ITTR[1], 0, sizeof(ttc_t));
-    memset(&mmu.DTTR[0], 0, sizeof(ttc_t));
-    memset(&mmu.DTTR[1], 0, sizeof(ttc_t));
+    memset(&mmu_i.TTR[0], 0, sizeof(ttc_t));
+    memset(&mmu_i.TTR[1], 0, sizeof(ttc_t));
+    memset(&mmu_d.TTR[0], 0, sizeof(ttc_t));
+    memset(&mmu_d.TTR[1], 0, sizeof(ttc_t));
     memset(&mmu.MMUSR, 0, sizeof(mmusr_t));
 }
 void init_mmu_opc() {

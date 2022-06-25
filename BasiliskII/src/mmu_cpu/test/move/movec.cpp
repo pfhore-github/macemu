@@ -86,9 +86,9 @@ BOOST_AUTO_TEST_CASE(tc) {
 
 BOOST_DATA_TEST_CASE(ittr, BIT, i) {
     regs.S = true;
-    mmu.ITTR[i].address_base = 0x20;
-    mmu.ITTR[i].address_mask = 0x30;
-    mmu.ITTR[i].S = true;
+    mmu_i.TTR[i].address_base = 0x20;
+    mmu_i.TTR[i].address_mask = 0x30;
+    mmu_i.TTR[i].S = true;
     raw_write16(0, 0047172);
     raw_write16(2, 0x0004 + i);
     m68k_do_execute();
@@ -97,9 +97,9 @@ BOOST_DATA_TEST_CASE(ittr, BIT, i) {
 
 BOOST_DATA_TEST_CASE(dttr, BIT, i) {
     regs.S = true;
-    mmu.DTTR[i].address_base = 0x20;
-    mmu.DTTR[i].address_mask = 0x30;
-    mmu.DTTR[i].S = true;
+    mmu_d.TTR[i].address_base = 0x20;
+    mmu_d.TTR[i].address_mask = 0x30;
+    mmu_d.TTR[i].S = true;
     raw_write16(0, 0047172);
     raw_write16(2, 0x1006 + i);
     m68k_do_execute();
@@ -223,9 +223,9 @@ BOOST_DATA_TEST_CASE(ittr, BIT, i) {
     raw_write16(0, 0047173);
     raw_write16(2, 0x0004 + i);
     m68k_do_execute();
-    BOOST_TEST(mmu.ITTR[i].address_base == 0x20);
-    BOOST_TEST(mmu.ITTR[i].address_mask == 0x30);
-    BOOST_TEST(mmu.ITTR[i].S);
+    BOOST_TEST(mmu_i.TTR[i].address_base == 0x20);
+    BOOST_TEST(mmu_i.TTR[i].address_mask == 0x30);
+    BOOST_TEST(mmu_i.TTR[i].S);
 }
 
 BOOST_DATA_TEST_CASE(dttr, BIT, i) {
@@ -234,9 +234,9 @@ BOOST_DATA_TEST_CASE(dttr, BIT, i) {
     raw_write16(0, 0047173);
     raw_write16(2, 0x1006 + i);
     m68k_do_execute();
-    BOOST_TEST(mmu.DTTR[i].address_base == 0x20);
-    BOOST_TEST(mmu.DTTR[i].address_mask == 0x30);
-    BOOST_TEST(mmu.DTTR[i].S);
+    BOOST_TEST(mmu_d.TTR[i].address_base == 0x20);
+    BOOST_TEST(mmu_d.TTR[i].address_mask == 0x30);
+    BOOST_TEST(mmu_d.TTR[i].S);
 }
 
 BOOST_AUTO_TEST_CASE(mmusr) {

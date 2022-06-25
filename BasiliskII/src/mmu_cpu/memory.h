@@ -43,6 +43,6 @@ inline uint32_t POP32() {
 }
 
 void init_mmu_opc();
-
+void PREFETCH();
 
 #endif /* MEMORY_H */

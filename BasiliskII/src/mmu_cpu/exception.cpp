@@ -46,6 +46,7 @@ void BUSERROR(const paddr &v, bool atc, bool ma) {
     regs.err_address = v.addr;
     regs.err_ssw.read = !v.rw;
     regs.err_ssw.atc = atc;
+    regs.err_ssw.lk = v.lk;
     regs.err_ssw.tt = TT(int(v.tt) & 3);
     regs.err_ssw.tm = TM(int(v.tm) & 7);
     regs.err_ssw.sz = SZ(int(v.sz) & 3);

@@ -150,6 +150,7 @@ uint8_t EA_READ8(int type, int reg, bool override) {
     default:
         break;
     }
+    regs.ea_rw = override;
     return read8(regs.i_ea = EA_Addr(type, reg, 1, override));
 }
 
@@ -171,6 +172,7 @@ uint16_t EA_READ16(int type, int reg, bool override) {
     default:
         break;
     }
+    regs.ea_rw = override;
     return read16(regs.i_ea = EA_Addr(type, reg, 2, override));
 }
 
@@ -192,6 +194,7 @@ uint32_t EA_READ32(int type, int reg, bool override) {
     default:
         break;
     }
+    regs.ea_rw = override;
     return read32(regs.i_ea = EA_Addr(type, reg, 4, override));
 }
 

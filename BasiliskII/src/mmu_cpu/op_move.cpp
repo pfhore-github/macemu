@@ -31,7 +31,7 @@ OP(moves_b) {
             WRITE_D8(rg2, b_read8(addr));
         }
     } catch(BUS_ERROR_EX &) {
-        paddr pa{addr, 0, SZ::BYTE, TT::LFC, TM(w ? regs.dfc : regs.sfc), w};
+        paddr pa{addr, SZ::BYTE, TT::LFC, TM(w ? regs.dfc : regs.sfc), false, w};
         BUSERROR(pa, true);
     }
 }
@@ -52,7 +52,7 @@ OP(moves_w) {
             WRITE_D16(rg2, b_read16(addr));
         }
     } catch(BUS_ERROR_EX &) {
-        paddr pa{addr, 0, SZ::WORD, TT::LFC, TM(w ? regs.dfc : regs.sfc), w};
+        paddr pa{addr, SZ::WORD, TT::LFC, TM(w ? regs.dfc : regs.sfc), false, w};
         BUSERROR(pa, true);
     }
 }
@@ -73,7 +73,7 @@ OP(moves_l) {
             regs.r[rg2] = b_read32(addr);
         }
     } catch(BUS_ERROR_EX &) {
-        paddr pa{addr, 0, SZ::LONG, TT::LFC, TM(w ? regs.dfc : regs.sfc), w};
+        paddr pa{addr, SZ::LONG, TT::LFC, TM(w ? regs.dfc : regs.sfc), false, w};
         BUSERROR(pa, true);
     }
 }

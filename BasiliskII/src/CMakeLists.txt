@@ -239,7 +239,12 @@ mmu_cpu/test/fpu/fscc.cpp
 mmu_cpu/test/fpu/nan.cpp
 mmu_cpu/test/fpu/fpu_ex.cpp
 
-#mmu_cpu/test/mmu.cpp
+mmu_cpu/test/mmu/disabled.cpp
+mmu_cpu/test/mmu/ttr.cpp
+mmu_cpu/test/mmu/atc.cpp
+mmu_cpu/test/mmu/lookup.cpp
+mmu_cpu/test/mmu/pflush.cpp
+mmu_cpu/test/mmu/ptest.cpp
  )
 target_link_libraries(ut ${TEST_LIB})
 add_test(NAME ut COMMAND ./ut)

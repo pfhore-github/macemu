@@ -35,23 +35,22 @@
 #include "newcpu.h"
 #include <unordered_map>
 #include <vector>
-
-uint32_t do_mmu(uint32_t vaddr, bool code, bool rw, bool s);
+#include "mmu/mmu_68040.h"
 uint8_t read8(uint32_t addr) {
     try {
-        return b_read8(do_mmu(addr, false, false, regs.S));
+        return b_read8(mmu_d.do_mmu(addr, false, regs.S));
     } catch(BUS_ERROR_EX &e) {
         TM tm = TM(int(regs.S ? TM::SUPER_DATA : TM::USER_DATA));
-        paddr pe{addr, 0, SZ::BYTE, TT::NORMAL, tm, false};
+        paddr pe{addr, SZ::BYTE, TT::NORMAL, tm, regs.ea_rw, false};
         BUSERROR(pe, e.atc);
     }
 }
 uint16_t read16(uint32_t addr) {
     try {
-        return b_read16(do_mmu(addr, false, false, regs.S));
+        return b_read16(mmu_d.do_mmu(addr, false, regs.S));
     } catch(BUS_ERROR_EX &e) {
         TM tm = regs.S ? TM::SUPER_DATA : TM::USER_DATA;
-        paddr pe{addr, 0, SZ::WORD, TT::NORMAL, tm, false};
+        paddr pe{addr, SZ::WORD, TT::NORMAL, tm,  regs.ea_rw,false};
         BUSERROR(pe, e.atc);
     }
 }
@@ -59,58 +58,73 @@ uint16_t read16(uint32_t addr) {
 uint16_t FETCH() {
     uint32_t addr = std::exchange(regs.pc, regs.pc + 2);
     try {
-        return b_read16(do_mmu(addr, true, false, regs.S));
+        return b_read16(mmu_i.do_mmu(addr, false, regs.S));
     } catch(BUS_ERROR_EX &e) {
         TM tm = regs.S ? TM::SUPER_CODE : TM::USER_CODE;
-        paddr pe{addr, 0, SZ::WORD, TT::NORMAL, tm, false};
+        paddr pe{addr, SZ::WORD, TT::NORMAL, tm,false, false};
         BUSERROR(pe, e.atc);
+    }
+}
+
+void PREFETCH() {
+    uint32_t addr = regs.pc + 2;
+    try {
+        b_read16(mmu_i.do_mmu(addr, false, regs.S));
+    } catch(BUS_ERROR_EX &e) {
+        TM tm = regs.S ? TM::SUPER_CODE : TM::USER_CODE;
+        paddr pe{addr, SZ::WORD, TT::NORMAL, tm, false,false};
+        BUSERROR(pe, e.atc, true);
     }
 }
 uint32_t read32(uint32_t addr) {
     try {
-        uint32_t v = b_read32(do_mmu(addr, false, false, regs.S));
+        uint32_t v = b_read32(mmu_d.do_mmu(addr, false, regs.S));
         return v;
     } catch(BUS_ERROR_EX &e) {
         TM tm = regs.S ? TM::SUPER_DATA : TM::USER_DATA;
-        paddr pe{addr, 0, SZ::LONG, TT::NORMAL, tm, false};
+        paddr pe{addr, SZ::LONG, TT::NORMAL, tm,  regs.ea_rw,false};
         BUSERROR(pe, e.atc);
     }
 }
 uint32_t FETCH32() {
     uint32_t addr = std::exchange(regs.pc, regs.pc + 4);
     try {
-        uint32_t v = b_read32(do_mmu(addr, true, false, regs.S));
+        uint32_t v = b_read32(mmu_i.do_mmu(addr, false, regs.S));
         return v;
     } catch(BUS_ERROR_EX &e) {
         TM tm = regs.S ? TM::SUPER_CODE : TM::USER_CODE;
-        paddr pe{addr, 0, SZ::LONG, TT::NORMAL, tm, false};
+        paddr pe{addr, SZ::LONG, TT::NORMAL, tm,  false,false};
         BUSERROR(pe, e.atc);
     }
 }
 void write8(uint32_t addr, uint8_t v) {
     try {
-        b_write8(do_mmu(addr, false, true, regs.S), v);
+        b_write8(mmu_d.do_mmu(addr, true, regs.S), v);
+        regs.ea_rw = false; 
     } catch(BUS_ERROR_EX &e) {
         TM tm = regs.S ? TM::SUPER_DATA : TM::USER_DATA;
-        paddr pe{addr, 0, SZ::BYTE, TT::NORMAL, tm, true};
+        paddr pe{addr, SZ::BYTE, TT::NORMAL, tm,regs.ea_rw, true};
         BUSERROR(pe, e.atc);
     }
 }
 void write16(uint32_t addr, uint16_t v) {
     try {
-        b_write16(do_mmu(addr, false, true, regs.S), v);
+        b_write16(mmu_d.do_mmu(addr, true, regs.S), v);
+        regs.ea_rw = false; 
     } catch(BUS_ERROR_EX &e) {
         TM tm = regs.S ? TM::SUPER_DATA : TM::USER_DATA;
-        paddr pe{addr, 0, SZ::WORD, TT::NORMAL, tm, true};
+        paddr pe{addr, SZ::WORD, TT::NORMAL, tm, regs.ea_rw,true};
+        regs.ea_rw = false; 
         BUSERROR(pe, e.atc);
     }
 }
 void write32(uint32_t addr, uint32_t v) {
     try {
-        b_write32(do_mmu(addr, false, true, regs.S), v);
+        b_write32(mmu_d.do_mmu(addr, true, regs.S), v);
+        regs.ea_rw = false; 
     } catch(BUS_ERROR_EX &e) {
         TM tm = regs.S ? TM::SUPER_DATA : TM::USER_DATA;
-        paddr pe{addr, 0, SZ::LONG, TT::NORMAL, tm, true};
+        paddr pe{addr, SZ::LONG, TT::NORMAL, tm, regs.ea_rw,true};
         BUSERROR(pe, e.atc);
     }
 }

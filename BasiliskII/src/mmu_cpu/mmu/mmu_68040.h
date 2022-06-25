@@ -24,20 +24,27 @@ struct atc_entry_t {
     bool S : 1;
     uint8_t U : 2;
 };
-struct mmu_68040 {
+struct mmu_68040_cmn {
     uint32_t urp;
     uint32_t srp;
     bool tcr_e, tcr_p;
 
-    ttc_t ITTR[2], DTTR[2];
     mmusr_t MMUSR;
-    std::unordered_map<uint32_t, atc_entry_t> atc_gcache, atc_lcache;
 
-    presult ptest(const uint32_t addr, bool rw, bool s);
     void pflushn_an(uint32_t atc_key);
     void pflush_an(uint32_t atc_key);
     void pflushn();
     void pflush();
 };
-extern mmu_68040 mmu;
+
+struct mmu_68040 {
+    ttc_t TTR[2];
+    std::unordered_map<uint32_t, atc_entry_t> atc_cache_l_u, atc_cache_l_s,
+        atc_cache_g_u, atc_cache_g_s;
+    presult ptest(const uint32_t addr, bool rw, bool s);
+    presult test_TTR(uint32_t addr);
+    uint32_t do_mmu(uint32_t vaddr, bool rw, bool s);
+};
+extern mmu_68040_cmn mmu;
+extern mmu_68040 mmu_d, mmu_i;
 #endif

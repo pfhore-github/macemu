@@ -86,7 +86,10 @@ void SET_SR(uint16_t v) {
     LOAD_SP();
 }
 
-OP(aline) { ALINE_EXCEPTION(); }
+OP(aline) {
+    PREFETCH();
+    ALINE_EXCEPTION();
+}
 void EmulOp(uint16_t opcode, M68kRegisters *r);
 OP(emul_op) {
     M68kRegisters rr;
@@ -318,6 +321,7 @@ static void build_cpufunctbl() {
 void init_m68k() {
     build_cpufunctbl();
     init_fpu();
+    init_mmu();
 }
 
 void exit_m68k(void) {}
@@ -340,6 +344,7 @@ void m68k_do_execute() {
             try {
                 f(opc, opc >> 9 & 7, opc >> 3 & 7, opc & 7);
             } catch(ILLEGAL_INST_EX &) {
+                PREFETCH();
                 RAISE0(4, false);
             } catch(BUS_ERROR_EX &) {
                 if(regs.T == 2 || (regs.T == 1 && regs.traced)) {
@@ -356,6 +361,7 @@ void m68k_do_execute() {
                 return;
             }
         } else {
+            PREFETCH();
             RAISE0(4, false);
         }
     }

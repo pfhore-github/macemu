@@ -36,6 +36,7 @@ struct MyGlobalFixture {
 
     ~MyGlobalFixture() {}
 };
+void init_mmu();
 
 InitFix::InitFix() {
     RAM.clear();
@@ -47,6 +48,7 @@ InitFix::InitFix() {
     memset(&fpu.FPCR, 0, sizeof(fpu.FPCR));
     mpfr_set_default_rounding_mode(MPFR_RNDN);
     mpfr_clear_flags();
+    init_mmu();
 }
 BOOST_TEST_GLOBAL_FIXTURE(MyGlobalFixture);
 

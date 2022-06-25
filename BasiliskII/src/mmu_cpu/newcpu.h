@@ -43,20 +43,20 @@ enum class SZ { LONG, BYTE, WORD, LINE };
 
 struct paddr {
     uint32_t addr;
-    unsigned int upa : 2;
     SZ sz : 2;
     TT tt : 2;
     TM tm : 3;
+    bool lk : 1;
     bool rw : 1;
 };
 struct ssw_t {
-    bool read = true;
+    bool read = true, lk = false;
     bool cp = false, ct = false, cm = false, atc = false;
     TT tt = TT::NORMAL;
     TM tm = TM::USER_DATA;
     SZ sz;
     uint16_t to_value() const {
-        return cp << 15 | ct << 13 | cm << 12 | atc << 10 | read << 8 |
+        return cp << 15 | ct << 13 | cm << 12 | atc << 10 | lk << 9 | read << 8 |
                int(sz) << 5 | int(tt) << 3 | int(tm);
     }
 };
@@ -80,6 +80,7 @@ struct m68k_reg {
     bool cacr_de, cacr_ie;
 
     uint32_t i_ea;
+    bool ea_rw;
 
     // BUS ERROR DATA
     uint32_t err_address;
@@ -98,6 +99,7 @@ struct m68k_reg {
 // no multi cpu
 extern m68k_reg regs;
 void init_m68k();
+void init_mmu();
 void exit_m68k();
 void m68k_reset();
 void m68k_execute();
