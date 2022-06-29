@@ -52,11 +52,12 @@ struct paddr {
 struct ssw_t {
     bool read = true, lk = false;
     bool cp = false, ct = false, cm = false, atc = false;
+    bool ma = false;
     TT tt = TT::NORMAL;
     TM tm = TM::USER_DATA;
     SZ sz;
     uint16_t to_value() const {
-        return cp << 15 | ct << 13 | cm << 12 | atc << 10 | lk << 9 | read << 8 |
+        return cp << 15 | ct << 13 | cm << 12 | ma << 11 | atc << 10 | lk << 9 | read << 8 |
                int(sz) << 5 | int(tt) << 3 | int(tm);
     }
 };
@@ -83,8 +84,6 @@ struct m68k_reg {
     bool ea_rw;
 
     // BUS ERROR DATA
-    uint32_t err_address;
-    ssw_t err_ssw;
 
     // emulator flag
 
@@ -92,6 +91,7 @@ struct m68k_reg {
 
     std::atomic<uint32_t> spcflags;
     std::atomic<uint8_t> irq;
+    std::atomic<bool> must_reset;
     bool traced = false;
 
     
@@ -104,10 +104,7 @@ void exit_m68k();
 void m68k_reset();
 void m68k_execute();
 void m68k_compile_execute();
-inline void JUMP(uint32_t pc) {
-    regs.pc = pc;
-    regs.traced = true;
-}
+void JUMP(uint32_t pc);
 
 uint8_t GET_CCR();
 

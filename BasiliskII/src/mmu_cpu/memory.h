@@ -18,7 +18,6 @@ struct presult {
     bool S : 1;
     uint8_t U : 2;
     bool G : 1;
-    bool B : 1;
     unsigned int addr : 20;
 };
 

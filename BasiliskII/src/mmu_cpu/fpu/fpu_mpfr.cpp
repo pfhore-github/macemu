@@ -875,6 +875,7 @@ OP(fpu_op) {
         case 2: {
             // FMOVEM FROM MEM
             int mode = op2 >> 11 & 3;
+            regs.traced = true;
             uint8_t reglist;
             switch(mode) {
             case 0:
@@ -899,6 +900,7 @@ OP(fpu_op) {
         case 3: {
             // FMOVEM TO MEM
             int mode = op2 >> 11 & 3;
+            regs.traced = true;
             switch(mode) {
             case 0:
                 if(type != 4) {
@@ -1073,6 +1075,7 @@ OP(fpu_fscc) {
         // FDBcc
         uint32_t pc = regs.pc;
         int16_t disp = FETCH();
+        regs.traced = true;
         if(!ret) {
             int16_t v = regs.d[reg] - 1;
             WRITE_D16(reg, v);
@@ -1111,6 +1114,7 @@ OP(fbcc_w) {
     uint32_t pc = regs.pc;
     int32_t offset = static_cast<int16_t>(FETCH());
     if(fpcc(opc)) {
+        regs.traced = true;
         JUMP(pc + offset);
     }
     fpu_checkexception();
@@ -1129,12 +1133,14 @@ OP(fsave) {
     if(!regs.S) {
         PRIV_ERROR();
     }
+regs.traced = true;
     EA_WRITE32(type, reg, 0x41000000);
 }
 OP(frestore) {
     if(!regs.S) {
         PRIV_ERROR();
     }
+regs.traced = true;
     uint32_t fw = EA_READ32(type, reg);
     if(fw >> 24 == 0) {
         init_fpu();

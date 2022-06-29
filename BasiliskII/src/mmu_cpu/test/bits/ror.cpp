@@ -131,10 +131,9 @@ BOOST_AUTO_TEST_CASE(z) {
     BOOST_TEST(regs.z);
 }
 BOOST_AUTO_TEST_CASE(ea) {
-    auto dy = rand_ar();
-    regs.a[dy] = 0x10;
+    regs.a[1] = 0x10;
     raw_write16(0x10, 0x4000);
-    write16(0, 0163320 | dy);
+    write16(0, 0163321);
     m68k_do_execute();
     BOOST_TEST(raw_read16(0x10) = 0x8000);
 }

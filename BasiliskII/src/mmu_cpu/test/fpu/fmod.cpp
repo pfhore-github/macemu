@@ -45,7 +45,7 @@ BOOST_DATA_TEST_CASE(inf, SIGN *SIGN, sg1, sg2) {
 BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_DATA_TEST_CASE(with_zero, SIGN, sg) {
-    fpu_test(0x21, copysign(0.0, sg), get_rx(0.1, 10.0), NAN);
+    fpu_test(0x21, copysign(0.0, sg), 1.0, NAN);
     BOOST_TEST(fpu.FPSR.operr);
 }
 

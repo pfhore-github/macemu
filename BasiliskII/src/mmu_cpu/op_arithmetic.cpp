@@ -106,6 +106,7 @@ OP(addi_l) {
 
 OP(cas_b) {
     uint16_t op2 = FETCH();
+    regs.traced = true;
     regs.i_ea = EA_Addr(type, reg, 1, true);
     uint8_t d = read8(regs.i_ea);
     DO_CMP_B(d, regs.d[op2 & 7]);
@@ -128,6 +129,7 @@ OP(cas_w) {
         int dc1 = op2 & 7;
         int du2 = op3 >> 6 & 7;
         int dc2 = op3 & 7;
+        regs.traced = true;
         uint16_t v1 = read16(rn1);
         uint16_t v2 = read16(rn2);
         DO_CMP_W(v1, regs.d[dc1]);
@@ -143,6 +145,7 @@ OP(cas_w) {
         WRITE_D16(dc2, v2);
     } else {
         uint16_t op2 = FETCH();
+        regs.traced = true;
         regs.i_ea = EA_Addr(type, reg, 2, true);
         uint16_t d = read16(regs.i_ea);
         DO_CMP_W(d, regs.d[op2 & 7]);
@@ -164,6 +167,7 @@ OP(cas_l) {
         int dc1 = op2 & 7;
         int du2 = op3 >> 6 & 7;
         int dc2 = op3 & 7;
+        regs.traced = true;
         uint32_t v1 = read32(rn1);
         uint32_t v2 = read32(rn2);
         DO_CMP_L(v1, regs.d[dc1]);
@@ -179,6 +183,7 @@ OP(cas_l) {
         regs.d[dc2] = v2;
     } else {
         uint16_t op2 = FETCH();
+        regs.traced = true;
         regs.i_ea = EA_Addr(type, reg, 4, true);
         uint32_t d = read32(regs.i_ea);
         DO_CMP_L(d, regs.d[op2 & 7]);

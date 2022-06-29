@@ -3,6 +3,7 @@
 #include "mmu/mmu_68040.h"
 #include "newcpu.h"
 #include "test/test_common.h"
+#include "ex_stack.h"
 BOOST_FIXTURE_TEST_SUITE(MMU, InitFix)
 static const auto mmu_p = {&mmu_i, &mmu_d};
 BOOST_DATA_TEST_CASE(bus_error, BIT *mmu_p, s, mmu_r) {
@@ -17,8 +18,7 @@ BOOST_DATA_TEST_CASE(bus_error, BIT *mmu_p, s, mmu_r) {
     } else {
         mmu.urp = 0x60000000;
     }
-    auto ret = mmu_r->ptest(0x2000000, true, s);
-    BOOST_TEST(static_cast<bool>(ret.B));
+    BOOST_CHECK_THROW( mmu_r->ptest(0x2000000, true, s), BUS_ERROR_EX );
 }
 
 BOOST_DATA_TEST_CASE(root_error, BIT *mmu_p, s, mmu_r) {
@@ -52,7 +52,7 @@ BOOST_DATA_TEST_CASE(lv2_error, BIT *mmu_p, s, mmu_r) {
     }
     raw_write32(0x1004, 0x2002);
     raw_write32(0x2008, 0);
-    auto ret = mmu_r->ptest(0x2080000, true, s);
+    auto ret = mmu_r->ptest(0x2080, true, s);
     BOOST_TEST(!ret.R);
     BOOST_TEST(raw_read32(0x1004) == 0x200A);
 }
@@ -72,7 +72,7 @@ BOOST_DATA_TEST_CASE(lv3_error, BIT *mmu_p, s, mmu_r) {
     raw_write32(0x1004, 0x2002);
     raw_write32(0x2008, 0x3002);
     raw_write32(0x300C, 0);
-    auto ret = mmu_r->ptest(0x2083000, true, s);
+    auto ret = mmu_r->ptest(0x2083, true, s);
     BOOST_TEST(!ret.R);
     BOOST_TEST(raw_read32(0x1004) == 0x200A);
     BOOST_TEST(raw_read32(0x2008) == 0x300A);
@@ -94,7 +94,7 @@ BOOST_DATA_TEST_CASE(lv3_indirect_error, BIT *mmu_p, s, mmu_r) {
     raw_write32(0x2008, 0x3002);
     raw_write32(0x300C, 0x4002);
     raw_write32(0x4000, 0x0);
-    auto ret = mmu_r->ptest(0x2083000, true, s);
+    auto ret = mmu_r->ptest(0x2083, true, s);
     BOOST_TEST(!ret.R);
     BOOST_TEST(raw_read32(0x1004) == 0x200A);
     BOOST_TEST(raw_read32(0x2008) == 0x300A);
@@ -117,7 +117,7 @@ BOOST_DATA_TEST_CASE(lv3_indirect_nest_error, BIT *mmu_p, s, mmu_r) {
     raw_write32(0x2008, 0x3002);
     raw_write32(0x300C, 0x4002);
     raw_write32(0x4000, 0x5002);
-    auto ret = mmu_r->ptest(0x2083000, true, s);
+    auto ret = mmu_r->ptest(0x2083, true, s);
     BOOST_TEST(!ret.R);
     BOOST_TEST(raw_read32(0x1004) == 0x200A);
     BOOST_TEST(raw_read32(0x2008) == 0x300A);
@@ -134,7 +134,7 @@ BOOST_DATA_TEST_CASE(lv3_priv_error, mmu_p, mmu_r) {
     raw_write32(0x1004, 0x2002);
     raw_write32(0x2008, 0x3002);
     raw_write32(0x300C, 0x5081);
-    auto ret = mmu_r->ptest(0x2083000, true, false);
+    auto ret = mmu_r->ptest(0x2083, true, false);
     BOOST_TEST(static_cast<bool>(ret.S));
     BOOST_TEST(raw_read32(0x1004) == 0x200A);
     BOOST_TEST(raw_read32(0x2008) == 0x300A);
@@ -156,7 +156,7 @@ BOOST_DATA_TEST_CASE(root_write_protect, BIT *mmu_p, s, mmu_r) {
     raw_write32(0x1004, 0x2006);
     raw_write32(0x2008, 0x3002);
     raw_write32(0x300C, 0x5001);
-    auto ret = mmu_r->ptest(0x2083000, true, s);
+    auto ret = mmu_r->ptest(0x2083, true, s);
     BOOST_TEST((ret.W == true));
     BOOST_TEST(raw_read32(0x1004) == 0x200E);
     BOOST_TEST(raw_read32(0x2008) == 0x300A);
@@ -178,7 +178,7 @@ BOOST_DATA_TEST_CASE(lv2_write_protect, BIT *mmu_p, s, mmu_r) {
     raw_write32(0x1004, 0x2002);
     raw_write32(0x2008, 0x3006);
     raw_write32(0x300C, 0x5001);
-    auto ret = mmu_r->ptest(0x2083000, true, s);
+    auto ret = mmu_r->ptest(0x2083, true, s);
     BOOST_TEST((ret.W == true));
     BOOST_TEST(raw_read32(0x1004) == 0x200A);
     BOOST_TEST(raw_read32(0x2008) == 0x300E);
@@ -200,7 +200,7 @@ BOOST_DATA_TEST_CASE(lv3_write_protect, BIT *mmu_p, s, mmu_r) {
     raw_write32(0x1004, 0x2002);
     raw_write32(0x2008, 0x3002);
     raw_write32(0x300C, 0x5007);
-    auto ret = mmu_r->ptest(0x2083000, true, s);
+    auto ret = mmu_r->ptest(0x2083, true, s);
     BOOST_TEST((ret.W == true));
     BOOST_TEST(raw_read32(0x1004) == 0x200A);
     BOOST_TEST(raw_read32(0x2008) == 0x300A);
@@ -222,7 +222,7 @@ BOOST_DATA_TEST_CASE(ok, BIT *BIT *BIT *mmu_p, s, w, g, mmu_r) {
     raw_write32(0x1004, 0x2002);
     raw_write32(0x2008, 0x3002);
     raw_write32(0x300C, 0x5003 | (g << 10));
-    auto ret = mmu_r->ptest(0x2083022, w, s);
+    auto ret = mmu_r->ptest(0x2083, w, s);
     BOOST_TEST((ret.R == true));
     BOOST_TEST(raw_read32(0x1004) == 0x200A);
     BOOST_TEST(raw_read32(0x2008) == 0x300A);
@@ -246,7 +246,7 @@ BOOST_DATA_TEST_CASE(p_ok, BIT *BIT *mmu_p, s, w, mmu_r) {
     raw_write32(0x1004, 0x2002);
     raw_write32(0x2008, 0x3002);
     raw_write32(0x300C, 0x6003);
-    auto ret = mmu_r->ptest(0x2086022, w, s);
+    auto ret = mmu_r->ptest(0x2086, w, s);
     BOOST_TEST((ret.R == true));
     BOOST_TEST(raw_read32(0x1004) == 0x200A);
     BOOST_TEST(raw_read32(0x2008) == 0x300A);

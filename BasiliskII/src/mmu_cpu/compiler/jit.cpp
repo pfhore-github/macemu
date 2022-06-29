@@ -25,6 +25,7 @@ using namespace asmjit;
 jmp_buf jit_ex;
 typedef int (*Func)(void);
 void jit_buserror() {
+    /*
     uint32_t ea_v = regs.err_ssw.cm ? regs.i_ea : 0;
     std::vector<uint16_t> data(26u, 0);
     data[18] = LOW(regs.err_address);
@@ -33,6 +34,7 @@ void jit_buserror() {
     data[24] = LOW(ea_v);
     data[25] = HIGH(ea_v);
     RAISE(2, 7, data, false);
+    */
     longjmp(jit_ex, 1);
 }
 uint32_t jit_read8(uint32_t addr) {

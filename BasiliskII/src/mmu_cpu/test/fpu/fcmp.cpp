@@ -20,10 +20,9 @@ BOOST_AUTO_TEST_CASE(z) {
 BOOST_AUTO_TEST_SUITE(zero_with)
 BOOST_DATA_TEST_CASE(normal, SIGN, sg) {
     double z = copysign(0.0, sg);
-    double v1 = get_rx(-10.0, 10.0);
-    fpu_test(0x38, v1, z, z);
-    BOOST_TEST(fpu.FPSR.z == (v1 == 0.0));
-    BOOST_TEST(fpu.FPSR.n == (v1 > 0.0));
+    fpu_test(0x38, -1.0, z, z);
+    BOOST_TEST(!fpu.FPSR.z );
+    BOOST_TEST(!fpu.FPSR.n );
 }
 
 BOOST_DATA_TEST_CASE(infinity, SIGN *SIGN, sg1, sg2) {
@@ -44,8 +43,7 @@ BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE(infinity_with)
 BOOST_DATA_TEST_CASE(normal, SIGN, sg) {
     double inf = copysign(INFINITY, sg);
-    double v1 = get_rx(-10.0, 10.0);
-    fpu_test(0x38, v1, inf, inf);
+    fpu_test(0x38, 1.0, inf, inf);
     BOOST_TEST(fpu.FPSR.n == signbit(sg));
 }
 

@@ -42,9 +42,13 @@ InitFix::InitFix() {
     RAM.clear();
     RAM.resize(0x100000);
     memset(regs.r, 0, sizeof(uint32_t) * 16);
+    regs.exception = false;
     regs.pc = 0;
     regs.v = regs.c = regs.n = regs.x = regs.z = false;
     regs.S = false;
+    regs.M = false;
+    regs.IM = 0;
+    regs.irq = 0;
     memset(&fpu.FPCR, 0, sizeof(fpu.FPCR));
     mpfr_set_default_rounding_mode(MPFR_RNDN);
     mpfr_clear_flags();
@@ -80,9 +84,7 @@ static std::unordered_map<std::string, std::string> asmcodes;
 void set_fpu_reg(int reg, const xval &v) {
     fpu.fp[reg].set_exp(v.sg, v.frac, v.exp + 64);
 }
-void set_fpu_reg(int reg, double v) {
-    fpu.fp[reg] = v;
-}
+void set_fpu_reg(int reg, double v) { fpu.fp[reg] = v; }
 
 void set_fpu_reg(int reg, float v) { fpu.fp[reg] = v; }
 
@@ -90,7 +92,7 @@ std::unordered_map<uint32_t, void (*)()> rom_functions;
 void dump_regs() {}
 void EmulOp(uint16_t opcode, M68kRegisters *r) {}
 
-void exception_check(int e) {
+void exception_check(int e, int tp) {
     regs.M = false;
     regs.usp = regs.isp = regs.a[7] = 0x1000;
     regs.vbr = 0x3000;
@@ -100,6 +102,9 @@ void exception_check(int e) {
         BOOST_TEST(regs.S);
         BOOST_TEST(regs.pc == 0x5000);
         BOOST_TEST((raw_read16(regs.a[7] + 6) & 0xfff) == e * 4);
+        if( tp != -1) {
+            BOOST_TEST((raw_read16(regs.a[7] + 6) >> 12) == tp);
+        }
     } else {
         BOOST_TEST(regs.pc != 0x5000);
     }
@@ -111,67 +116,3 @@ uint32_t readIO32(uint32_t addr) { return 0; }
 void writeIO8(uint32_t addr, uint8_t v) {}
 void writeIO16(uint32_t addr, uint16_t v) {}
 void writeIO32(uint32_t addr, uint32_t v) {}
-
-int rand_reg() {
-    std::uniform_int_distribution<> dist(0, 7);
-    return dist(*rnd);
-}
-
-int rand_ar() {
-    std::uniform_int_distribution<> dist(0, 6);
-    return dist(*rnd);
-}
-std::pair<int, int> rand_reg2() {
-    std::uniform_int_distribution<> dist(0, 7);
-    int a, b;
-    do {
-        a = dist(*rnd);
-        b = dist(*rnd);
-    } while(a == b);
-    return {a, b};
-}
-std::tuple<int, int, int> rand_reg3() {
-    std::uniform_int_distribution<> dist(0, 7);
-    int a, b, c;
-    do {
-        a = dist(*rnd);
-        b = dist(*rnd);
-        c = dist(*rnd);
-    } while(a == b || a == c || b == c);
-    return {a, b, c};
-}
-
-std::tuple<int, int, int, int> rand_reg4() {
-    std::uniform_int_distribution<> dist(0, 7);
-    int a, b, c, d;
-    do {
-        a = dist(*rnd);
-        b = dist(*rnd);
-        c = dist(*rnd);
-        d = dist(*rnd);
-    } while(a == b || a == c || a == d || b == c || b == d || c == d);
-    return {a, b, c, d};
-}
-
-uint8_t get_v8() {
-    std::uniform_int_distribution<uint8_t> dist;
-    return dist(*rnd);
-}
-uint16_t get_v16() {
-    std::uniform_int_distribution<uint16_t> dist;
-    return dist(*rnd);
-}
-uint32_t get_v32() {
-    std::uniform_int_distribution<uint32_t> dist;
-    return dist(*rnd);
-}
-
-uint64_t get_vn(int mn, int mx) {
-    std::uniform_int_distribution<uint64_t> dist(mn, mx);
-    return dist(*rnd);
-}
-
-double get_rx(double mn, double mx) {
-    std::uniform_real_distribution<double> dist(mn, mx);
-    return dist(*rnd);
-}

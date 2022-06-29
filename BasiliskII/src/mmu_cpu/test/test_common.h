@@ -17,17 +17,6 @@ void raw_write32(uint32_t addr, uint32_t v);
 const int SIGN[2] = {-1, 1};
 const bool BIT[2] = {false, true};
 inline auto REG() { return bdata::xrange(0, 8); }
-int rand_reg();
-int rand_ar();
-std::pair<int, int> rand_reg2();
-std::tuple<int, int, int> rand_reg3();
-std::tuple<int, int, int, int> rand_reg4();
-uint8_t get_v8();
-uint16_t get_v16();
-uint32_t get_v32();
-uint64_t get_vn(int mn, int mx);
-
-double get_rx(double mn, double mx);
 using op_t = void (*)(uint16_t, int, int, int);
 extern op_t opc_map[65536 >> 6];
 struct InitFix {
@@ -35,7 +24,7 @@ struct InitFix {
     ~InitFix() { regs.exception = false; }
 };
 
-void exception_check(int e);
+void exception_check(int e, int tp = -1);
 struct xval {
     bool sg;
     uint64_t frac;

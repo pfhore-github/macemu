@@ -17,158 +17,153 @@
 #include <vector>
 
 constexpr presult MMU_BUS_ERROR{false, false, false, false, 0,
-                                false, 0,     false, true,  0};
+                                false, 0,     false, 0};
 
 constexpr presult MMU_BUS_INALID{false, false, false, false, 0,
-                                 false, 0,     false, false, 0};
+                                 false, 0,     false, 0};
 mmu_68040_cmn mmu;
 mmu_68040 mmu_d, mmu_i;
 
 constexpr atc_entry_t ATC_INVALID{0, false, false, false, 0, false, 0};
 // MMU enabled access
 presult mmu_68040::test_TTR(const uint32_t addr) {
-    uint8_t base = addr >> 24;
+    uint8_t base = addr >> 12;
     for(int i = 0; i < 2; ++i) {
         if(TTR[i].E &&
            ((base & ~TTR[i].address_mask) ==
             (TTR[i].address_base & ~TTR[i].address_mask)) &&
            ((TTR[i].S & 2) || (static_cast<bool>(TTR[i].S) == regs.S))) {
-            uint32_t raddr = base << 12 | ((addr >> 12) & 0xfff);
             return {true,          true,     TTR[i].W, false, TTR[i].CM,
-                    TTR[i].S == 1, TTR[i].U, false,    false, raddr};
+                    TTR[i].S == 1, TTR[i].U, false,    addr};
         }
     }
     return MMU_BUS_INALID;
 }
 
 presult mmu_68040::ptest(const uint32_t addr, bool rw, bool s) {
+    uint32_t xaddr = 0;
     uint32_t pgi, atc_key = 0;
     auto atc_cache_g = s ? &atc_cache_g_s : &atc_cache_g_u;
     auto atc_cache_l = s ? &atc_cache_l_s : &atc_cache_l_u;
     bool g = false;
-    try {
-        uint32_t ri = (addr >> 25) << 2;
-        uint32_t pi = (addr >> 18 & 0x7f) << 2;
-        if(mmu.tcr_p) {
-            pgi = ((addr >> 13) & 0x1f) << 2;
-            atc_key = addr >> 13;
-        } else {
-            pgi = ((addr >> 12) & 0x3f) << 2;
-            atc_key = addr >> 12;
-        }
-        atc_entry_t *entry = nullptr;
-        bool wp = false;
-        if(auto gi = atc_cache_g->find(atc_key); gi != atc_cache_g->end()) {
-            entry = &gi->second;
-            g = true;
-        } else if(auto li = atc_cache_l->find(atc_key);
-                  li != atc_cache_l->end()) {
-            entry = &li->second;
-        }
-        if(!entry) {
-            uint32_t mst = s ? mmu.srp : mmu.urp;
-            uint32_t rtd = b_read32(mst | ri);
-            if(!(rtd & 2)) {
-                goto INVALID;
-            }
-            if(rtd & 4) {
-                wp = true;
-            }
-            b_write32(mst | ri, rtd |= 8);
-            uint32_t ptd_addr = (rtd & ~0x1ff) | pi;
-            uint32_t ptd = b_read32(ptd_addr);
-            if(!(ptd & 2)) {
-                goto INVALID;
-            }
-            b_write32(ptd_addr, ptd |= 8);
-            if(ptd & 4) {
-                wp = true;
-            }
-            uint32_t pd_addr = (ptd & ~(mmu.tcr_p ? 0x3f : 0x7f)) | pgi;
-            uint32_t pd = b_read32(pd_addr);
-            switch(pd & 3) {
-            case 0:
-                goto INVALID;
-            case 2:
-                pd_addr = pd & ~3;
-                pd = b_read32(pd_addr);
-                if((pd & 1) == 0) {
-                    goto INVALID;
-                }
-            }
-            pd |= 8;
-            if(pd & 4) {
-                wp = true;
-            }
-            bool m = pd & 0x10;
-            if(rw && !wp && !((pd & 0x80) && !s)) {
-                pd |= 0x10;
-                m = true;
-            }
-            b_write32(pd_addr, pd);
-            atc_entry_t ent{
-                pd >> (mmu.tcr_p ? 13 : 12),
-                true,
-                wp,
-                m,
-                uint8_t(pd >> 5 & 3),
-                bool(pd & 0x80),
-                uint8_t(pd >> 8 & 3),
-            };
-            g = pd >> 10 & 1;
-            if(g) {
-                (*atc_cache_g)[atc_key] = ent;
-                entry = &(*atc_cache_g)[atc_key];
-            } else {
-                (*atc_cache_l)[atc_key] = ent;
-                entry = &(*atc_cache_l)[atc_key];
-            }
-        }
-        uint32_t xaddr = entry->addr;
-        if(mmu.tcr_p) {
-            xaddr = (xaddr << 1) | (addr & 1);
-        }
-        return {true,     false,    wp, entry->M, entry->cm,
-                entry->S, entry->U, g,  false,    xaddr};
-    } catch(BUS_ERROR_EX &) {
-        return MMU_BUS_ERROR;
+    uint32_t ri = (addr >> 13) << 2;
+    uint32_t pi = (addr >> 6 & 0x7f) << 2;
+    if(mmu.tcr_p) {
+        pgi = ((addr >> 1) & 0x1f) << 2;
+        atc_key = addr >> 1;
+    } else {
+        pgi = (addr & 0x3f) << 2;
+        atc_key = addr;
     }
+    atc_entry_t *entry = nullptr;
+    bool wp = false;
+    if(auto gi = atc_cache_g->find(atc_key); gi != atc_cache_g->end()) {
+        entry = &gi->second;
+        g = true;
+    } else if(auto li = atc_cache_l->find(atc_key); li != atc_cache_l->end()) {
+        entry = &li->second;
+    }
+    if(!entry) {
+        uint32_t mst = s ? mmu.srp : mmu.urp;
+        uint32_t rtd = b_read32(mst | ri);
+        if(!(rtd & 2)) {
+            goto INVALID;
+        }
+        if(rtd & 4) {
+            wp = true;
+        }
+        b_write32(mst | ri, rtd |= 8);
+        uint32_t ptd_addr = (rtd & ~0x1ff) | pi;
+        uint32_t ptd = b_read32(ptd_addr);
+        if(!(ptd & 2)) {
+            goto INVALID;
+        }
+        b_write32(ptd_addr, ptd |= 8);
+        if(ptd & 4) {
+            wp = true;
+        }
+        uint32_t pd_addr = (ptd & ~(mmu.tcr_p ? 0x3f : 0x7f)) | pgi;
+        uint32_t pd = b_read32(pd_addr);
+        switch(pd & 3) {
+        case 0:
+            goto INVALID;
+        case 2:
+            pd_addr = pd & ~3;
+            pd = b_read32(pd_addr);
+            if((pd & 1) == 0) {
+                goto INVALID;
+            }
+        }
+        pd |= 8;
+        if(pd & 4) {
+            wp = true;
+        }
+        bool m = pd & 0x10;
+        if(rw && !wp && !((pd & 0x80) && !s)) {
+            pd |= 0x10;
+            m = true;
+        }
+        b_write32(pd_addr, pd);
+        atc_entry_t ent{
+            pd >> (mmu.tcr_p ? 13 : 12),
+            true,
+            wp,
+            m,
+            uint8_t(pd >> 5 & 3),
+            bool(pd & 0x80),
+            uint8_t(pd >> 8 & 3),
+        };
+        g = pd >> 10 & 1;
+        if(g) {
+            (*atc_cache_g)[atc_key] = ent;
+            entry = &(*atc_cache_g)[atc_key];
+        } else {
+            (*atc_cache_l)[atc_key] = ent;
+            entry = &(*atc_cache_l)[atc_key];
+        }
+    }
+    xaddr = entry->addr;
+    if(mmu.tcr_p) {
+        xaddr = (xaddr << 1) | (addr & 1);
+    }
+    return {true, false, wp, entry->M, entry->cm, entry->S, entry->U, g, xaddr};
+
 INVALID:
     (*atc_cache_l)[atc_key] = ATC_INVALID;
     return MMU_BUS_INALID;
 }
 uint32_t mmu_68040::do_mmu(uint32_t vaddr, bool rw, bool s) {
-    presult ttr_result = test_TTR(vaddr);
+    presult ttr_result = test_TTR(vaddr >> 12);
     if(ttr_result.T) {
         if(ttr_result.W && rw) {
-            throw BUS_ERROR_EX{};
+            throw BUS_ERROR_EX{.atc = false};
         }
-        return (ttr_result.addr << 12) | (vaddr & 0xfff);
+        return vaddr;
     }
     if(!mmu.tcr_e) {
         return vaddr;
     }
+    try {
+        presult result = ptest(vaddr >> 12, rw, s);
+        if(!result.R) {
+            // no entry for the address
+            throw BUS_ERROR_EX{};
+        }
+        // Supervisor table
+        if(result.S && !s) {
+            throw BUS_ERROR_EX{};
+        }
 
-    presult result = ptest(vaddr, rw, s);
-    if(result.B) {
+        // readonly table
+        if(result.W && rw) {
+            throw BUS_ERROR_EX{};
+        }
+
+        return (result.addr<<12) | (vaddr & 0xfff);
+    } catch(BUS_ERROR_EX &e) {
         // BUS ERROR during table search
-        throw BUS_ERROR_EX{true};
+        throw e;
     }
-    if(!result.R) {
-        // no entry for the address
-        throw BUS_ERROR_EX{true};
-    }
-    // Supervisor table
-    if(result.S && !s) {
-        throw BUS_ERROR_EX{true};
-    }
-
-    // readonly table
-    if(result.W && rw) {
-        throw BUS_ERROR_EX{true};
-    }
-
-    return (result.addr << 12) | (vaddr & 0xfff);
 }
 
 void mmu_68040_cmn::pflushn_an(uint32_t atc_key) {
@@ -243,6 +238,7 @@ OP(cinv_push_dc) {
         PRIV_ERROR();
         return;
     }
+    regs.traced = true;
     //    uint32_t addr = regs.a[reg];
     switch(type) {
     case 1:
@@ -267,6 +263,7 @@ OP(cinv_push_ic) {
         PRIV_ERROR();
         return;
     }
+    regs.traced = true;
     //    uint32_t addr = regs.a[reg];
     switch(type) {
     case 1:
@@ -291,6 +288,7 @@ OP(cinv_push_bc) {
         PRIV_ERROR();
         return;
     }
+    regs.traced = true;
     //    uint32_t addr = regs.a[reg];
     switch(type) {
     case 1:
@@ -315,6 +313,7 @@ OP(pflush) {
         PRIV_ERROR();
         return;
     }
+    regs.traced = true;
     uint32_t addr = regs.a[reg];
     uint32_t atc_key;
     if(mmu.tcr_p) {
@@ -345,7 +344,8 @@ OP(ptest) {
         PRIV_ERROR();
         return;
     }
-    uint32_t addr = regs.a[reg];
+    regs.traced = true;
+    uint32_t addr = regs.a[reg] >> 12;
     bool rw;
     if(type == 1) {
         rw = true;
@@ -378,30 +378,43 @@ OP(ptest) {
         mmu.MMUSR.R = true;
         return;
     }
-    switch(regs.dfc) {
-    case 1:
-        result = mmu_d.ptest(addr, rw, false);
-        break;
-    case 2:
-        result = mmu_i.ptest(addr, rw, false);
-        break;
-    case 5:
-        result = mmu_d.ptest(addr, rw, true);
-        break;
-    case 6:
-        result = mmu_i.ptest(addr, rw, true);
-        break;
+    try {
+        switch(regs.dfc) {
+        case 1:
+            result = mmu_d.ptest(addr, rw, false);
+            break;
+        case 2:
+            result = mmu_i.ptest(addr, rw, false);
+            break;
+        case 5:
+            result = mmu_d.ptest(addr, rw, true);
+            break;
+        case 6:
+            result = mmu_i.ptest(addr, rw, true);
+            break;
+        }
+        mmu.MMUSR.PA = result.addr << 12;
+        mmu.MMUSR.B = false;
+        mmu.MMUSR.G = result.G;
+        mmu.MMUSR.U = result.U;
+        mmu.MMUSR.S = result.S;
+        mmu.MMUSR.CM = result.CM;
+        mmu.MMUSR.M = result.M;
+        mmu.MMUSR.W = result.W;
+        mmu.MMUSR.T = result.T;
+        mmu.MMUSR.R = result.R;
+    } catch(BUS_ERROR_EX &) {
+        mmu.MMUSR.B = true;
+        mmu.MMUSR.PA = 0;
+        mmu.MMUSR.G = false;
+        mmu.MMUSR.U = 0;
+        mmu.MMUSR.S = false;
+        mmu.MMUSR.CM = 0;
+        mmu.MMUSR.M = false;
+        mmu.MMUSR.W = false;
+        mmu.MMUSR.T = false;
+        mmu.MMUSR.R = false;
     }
-    mmu.MMUSR.PA = result.addr << 12;
-    mmu.MMUSR.B = result.B;
-    mmu.MMUSR.G = result.G;
-    mmu.MMUSR.U = result.U;
-    mmu.MMUSR.S = result.S;
-    mmu.MMUSR.CM = result.CM;
-    mmu.MMUSR.M = result.M;
-    mmu.MMUSR.W = result.W;
-    mmu.MMUSR.T = result.T;
-    mmu.MMUSR.R = result.R;
 }
 
 uint32_t do_op_movec_from(int o) {

@@ -22,7 +22,7 @@ BOOST_DATA_TEST_CASE(local, BIT * mmu_p, s, mmu_r) {
             atc_entry_t{1, true, false, false, 0, s, 0};
     }
     raw_write32(0x1004, 0);
-    auto ret = mmu_r->ptest(0x2000200, false, s);
+    auto ret = mmu_r->ptest(0x2000, false, s);
     BOOST_TEST(!ret.G);
     BOOST_TEST((ret.addr + 0) == 1);
 }
@@ -43,7 +43,7 @@ BOOST_DATA_TEST_CASE(global, BIT * mmu_p, s, mmu_r) {
     }
     raw_write32(0x1004, 0);
     raw_write32(0x3000 + 2 * 4, 0x4000);
-    auto ret = mmu_r->ptest(0x2000200, true, s);
+    auto ret = mmu_r->ptest(0x2000, true, s);
     BOOST_TEST((ret.G == true));
     BOOST_TEST((ret.addr + 0) == 1);
 }

@@ -14,13 +14,13 @@
 #include "mbus.h"
 #include "newcpu.h"
 #include "op.h"
-uint32_t do_mmu(uint32_t vaddr, bool code, bool rw, bool s);
 OP(moves_b) {
     uint16_t op2 = FETCH();
     if(!regs.S) {
         PRIV_ERROR();
         return;
     }
+    regs.traced = true;
     int rg2 = op2 >> 12 & 7;
     bool w = op2 >> 11 & 1;
     uint32_t addr = EA_Addr(type, reg, 1, true);
@@ -31,8 +31,16 @@ OP(moves_b) {
             WRITE_D8(rg2, b_read8(addr));
         }
     } catch(BUS_ERROR_EX &) {
-        paddr pa{addr, SZ::BYTE, TT::LFC, TM(w ? regs.dfc : regs.sfc), false, w};
-        BUSERROR(pa, true);
+        throw BUS_ERROR_EX {
+            .addr = addr,
+            .ma = false,
+            .atc = false,
+            .lk = false,
+            .rw = !w,
+            .size = SZ::BYTE,
+            .tt = TT::LFC,
+            .tm = TM(w ? regs.dfc : regs.sfc),
+        };
     }
 }
 
@@ -42,18 +50,39 @@ OP(moves_w) {
         PRIV_ERROR();
         return;
     }
+    regs.traced = true;
     int rg2 = op2 >> 12 & 7;
     bool w = op2 >> 11 & 1;
     uint32_t addr = EA_Addr(type, reg, 2, true);
     try {
         if(w) {
-            b_write16(addr, regs.r[rg2]);
+            if(addr & 1) {
+                b_write8(addr, (regs.r[rg2] >> 8) & 0xff);
+                b_write8(addr + 1, regs.r[rg2] & 0xff);
+            } else {
+                b_write16(addr, regs.r[rg2]);
+            }
         } else {
-            WRITE_D16(rg2, b_read16(addr));
+            uint16_t v;
+            if(addr & 1) {
+                v = b_read8(addr) << 8;
+                v |= b_read8(addr + 1);
+            } else {
+                v = b_read16(addr);
+            }
+            WRITE_D16(rg2, v);
         }
-    } catch(BUS_ERROR_EX &) {
-        paddr pa{addr, SZ::WORD, TT::LFC, TM(w ? regs.dfc : regs.sfc), false, w};
-        BUSERROR(pa, true);
+    } catch(BUS_ERROR_EX &e) {
+        throw BUS_ERROR_EX{
+            .addr = addr,
+            .ma = false,
+            .atc = false,
+            .lk = false,
+            .rw = !w,
+            .size = SZ::WORD,
+            .tt = TT::LFC,
+            .tm = TM(w ? regs.dfc : regs.sfc),
+        };       
     }
 }
 
@@ -63,18 +92,58 @@ OP(moves_l) {
         PRIV_ERROR();
         return;
     }
+    regs.traced = true;
     int rg2 = op2 >> 12 & 7;
     bool w = op2 >> 11 & 1;
     uint32_t addr = EA_Addr(type, reg, 4, true);
     try {
         if(w) {
-            b_write32(addr, regs.r[rg2]);
+            uint32_t v = regs.r[rg2];
+            switch(addr & 3) {
+            case 0:
+                b_write32(addr, v);
+                return;
+            case 1:
+            case 3:
+                b_write8(addr, v >> 24);
+                b_write16(addr + 1, (v >> 8) & 0xffff);
+                b_write8(addr + 2, v & 0xff);
+                return;
+            case 2:
+                b_write16(addr, (v >> 16) & 0xffff);
+                b_write16(addr + 2, v & 0xffff);
+                return;
+            }
         } else {
-            regs.r[rg2] = b_read32(addr);
+            uint32_t v;
+            switch(addr & 3) {
+            case 0:
+                v = b_read32(addr);
+                break;
+            case 1:
+            case 3:
+                v = b_read8(addr) << 24;
+                v |= b_read16(addr + 1) << 8;
+                v |= b_read8(addr + 3);
+                break;
+            case 2:
+                v = b_read16(addr) << 16;
+                v |= b_read8(addr + 2);
+                break;
+            }
+            regs.r[rg2] = v;
         }
-    } catch(BUS_ERROR_EX &) {
-        paddr pa{addr, SZ::LONG, TT::LFC, TM(w ? regs.dfc : regs.sfc), false, w};
-        BUSERROR(pa, true);
+    } catch(BUS_ERROR_EX &e) {
+        throw BUS_ERROR_EX{
+            .addr = addr,
+            .ma = false,
+            .atc = false,
+            .lk = false,
+            .rw = !w,
+            .size = SZ::LONG,
+            .tt = TT::LFC,
+            .tm = TM(w ? regs.dfc : regs.sfc),
+        };       
     }
 }
 
@@ -163,7 +232,7 @@ OP(move_to_sr) {
         PRIV_ERROR();
         return;
     }
-
+    regs.traced = true;
     SET_SR(EA_READ16(type, reg));
 }
 
@@ -196,7 +265,7 @@ OP(movem_to_w) {
             }
             regs.i_ea = 0;
         } catch(BUS_ERROR_EX &e) {
-            regs.err_ssw.cm = true;
+            e.cm = true;
             throw e;
         }
     }
@@ -230,7 +299,7 @@ OP(movem_to_l) {
             }
             regs.i_ea = 0;
         } catch(BUS_ERROR_EX &e) {
-            regs.err_ssw.cm = true;
+            e.cm = true;
             throw e;
         }
     }
@@ -254,7 +323,7 @@ OP(movem_from_w) {
         }
         regs.i_ea = 0;
     } catch(BUS_ERROR_EX &e) {
-        regs.err_ssw.cm = true;
+        e.cm = true;
         throw e;
     }
 }
@@ -278,7 +347,7 @@ OP(movem_from_l) {
         }
         regs.i_ea = 0;
     } catch(BUS_ERROR_EX &e) {
-        regs.err_ssw.cm = true;
+        e.cm = true;
         throw e;
     }
 }
@@ -288,6 +357,7 @@ void op_move_to_usp(int reg) {
         PRIV_ERROR();
         return;
     }
+    regs.traced = true;
     regs.usp = regs.a[reg];
 }
 
@@ -296,6 +366,7 @@ void op_move_from_usp(int reg) {
         PRIV_ERROR();
         return;
     }
+    regs.traced = true;
     regs.a[reg] = regs.usp;
 }
 uint32_t do_op_movec_from(int o);
@@ -305,6 +376,7 @@ void op_movec_from() {
         PRIV_ERROR();
         return;
     }
+    regs.traced = true;
     int dst = next >> 12 & 15;
     regs.r[dst] = do_op_movec_from(next & 0xfff);
 }
@@ -316,6 +388,7 @@ void op_movec_to() {
         PRIV_ERROR();
         return;
     }
+    regs.traced = true;
     int src = next >> 12 & 15;
     do_op_movec_to(next & 0xfff, regs.r[src]);
 }
@@ -345,31 +418,31 @@ OP(move16) {
     switch(type) {
     case 0:
         addr = FETCH32();
-        read_line(regs.a[reg] &~ 0xf, buf);
-        write_line(addr &~ 0xf, buf);
+        read_line(regs.a[reg] & ~0xf, buf);
+        write_line(addr & ~0xf, buf);
         regs.a[reg] += 16;
         break;
     case 1:
         addr = FETCH32();
-        read_line(addr &~ 0xf, buf);
-        write_line(regs.a[reg]  &~ 0xf, buf);
+        read_line(addr & ~0xf, buf);
+        write_line(regs.a[reg] & ~0xf, buf);
         regs.a[reg] += 16;
         break;
     case 2:
         addr = FETCH32();
-        read_line(regs.a[reg]  &~ 0xf, buf);
-        write_line(addr &~ 0xf, buf);
+        read_line(regs.a[reg] & ~0xf, buf);
+        write_line(addr & ~0xf, buf);
         break;
     case 3:
         addr = FETCH32();
-        read_line(addr &~ 0xf, buf);
-        write_line(regs.a[reg] &~ 0xf, buf);
+        read_line(addr & ~0xf, buf);
+        write_line(regs.a[reg] & ~0xf, buf);
         break;
     case 4: {
         uint16_t op2 = FETCH();
         int ay = op2 >> 12 & 7;
-        read_line(regs.a[reg] &~ 0xf, buf);
-        write_line(regs.a[ay] &~ 0xf, buf);
+        read_line(regs.a[reg] & ~0xf, buf);
+        write_line(regs.a[ay] & ~0xf, buf);
         regs.a[reg] += 16;
         regs.a[ay] += 16;
         break;

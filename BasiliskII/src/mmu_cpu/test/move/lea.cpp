@@ -164,7 +164,6 @@ BOOST_AUTO_TEST_CASE(pre_od_err) {
     raw_write16(2, 3 << 12 | 1 << 11 | 2 << 9 | 1 << 8 | 2 << 4 | 1 << 2 | 0);
     raw_write16(4, 0x100);
     raw_write32(0x1000 + 0x100, 0x2000);
-    m68k_do_execute();
     exception_check(4);
 }
 
@@ -175,7 +174,6 @@ BOOST_AUTO_TEST_CASE(pre_wo_an_ri) {
     raw_write16(2, 1 << 8 | 3 << 6 | 2 << 4 | 1 << 2 | 1);
     raw_write16(4, 0x100);
     raw_write32(0x1000 + 0x100, 0x2000);
-    m68k_do_execute();
     exception_check(4);
 }
 

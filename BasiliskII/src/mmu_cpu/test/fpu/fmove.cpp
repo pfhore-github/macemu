@@ -780,60 +780,54 @@ BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_FIXTURE_TEST_SUITE(FMOVE_CR_FROM, InitFix)
 BOOST_AUTO_TEST_CASE(fpiar) {
-    auto ar = rand_ar();
-    regs.a[ar] = 0x100;
-    raw_write16(0, 0171010 | ar);
+    regs.a[2] = 0x100;
+    raw_write16(0, 0171012);
     raw_write16(2, 0xA000 | 1 << 10);
     m68k_do_execute();
-    BOOST_TEST(regs.a[ar] == 0);
+    BOOST_TEST(regs.a[2] == 0);
 }
 
 BOOST_AUTO_TEST_CASE(fpsr) {
-    auto dr = rand_reg();
     memset(&fpu.FPSR, 0, sizeof(fpu.FPSR));
     fpu.FPSR.n = true;
-    raw_write16(0, 0171000 | dr);
+    raw_write16(0, 0171003);
     raw_write16(2, 0xA000 | 1 << 11);
     m68k_do_execute();
-    BOOST_TEST(regs.d[dr] == 1 << 27);
+    BOOST_TEST(regs.d[3] == 1 << 27);
 }
 
 BOOST_AUTO_TEST_CASE(fpcr) {
-    auto dr = rand_reg();
     memset(&fpu.FPCR, 0, sizeof(fpu.FPCR));
     fpu.FPCR.bsun = true;
-    raw_write16(0, 0171000 | dr);
+    raw_write16(0, 0171003);
     raw_write16(2, 0xA000 | 1 << 12);
     m68k_do_execute();
-    BOOST_TEST(regs.d[dr] == 0x8000);
+    BOOST_TEST(regs.d[3] == 0x8000);
 }
 BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_FIXTURE_TEST_SUITE(FMOVE_CR_TO, InitFix)
 BOOST_AUTO_TEST_CASE(fpiar) {
-    auto ar = rand_ar();
-    regs.a[ar] = 0x100;
-    raw_write16(0, 0171010 | ar);
+    regs.a[3] = 0x100;
+    raw_write16(0, 0171013);
     raw_write16(2, 0x8000 | 1 << 10);
     m68k_do_execute();
     BOOST_TEST(fpu.fpiar == 0x100);
 }
 
 BOOST_AUTO_TEST_CASE(fpsr) {
-    auto dr = rand_reg();
     memset(&fpu.FPSR, 0, sizeof(fpu.FPSR));
-    regs.d[dr] = 1 << 27;
-    raw_write16(0, 0171000 | dr);
+    regs.d[3] = 1 << 27;
+    raw_write16(0, 0171003);
     raw_write16(2, 0x8000 | 1 << 11);
     m68k_do_execute();
     BOOST_TEST(fpu.FPSR.n);
 }
 
 BOOST_AUTO_TEST_CASE(fpcr) {
-    auto dr = rand_reg();
     memset(&fpu.FPCR, 0, sizeof(fpu.FPCR));
-    regs.d[dr] = 0x8000;
-    raw_write16(0, 0171000 | dr);
+    regs.d[3] = 0x8000;
+    raw_write16(0, 0171003);
     raw_write16(2, 0x8000 | 1 << 12);
     m68k_do_execute();
     BOOST_TEST(fpu.FPCR.bsun);

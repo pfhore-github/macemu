@@ -50,6 +50,7 @@ void op_stop() {
         PRIV_ERROR();
         return;
     }
+    regs.traced = true;
     SET_SR(next);
     regs.sleep = std::make_unique<std::promise<void>>();
     std::future<void> f = regs.sleep->get_future();
@@ -61,6 +62,7 @@ void op_rte() {
         PRIV_ERROR();
         return;
     }
+    regs.traced = true;
 BEGIN:
     uint16_t sr = POP16();
     uint32_t pc = POP32();
@@ -98,17 +100,20 @@ BEGIN:
     }
     SET_SR(sr);
     JUMP(pc);
+    regs.exception = false;
     return;
 }
 
 void op_rtd() {
     int16_t disp = FETCH();
+    regs.traced = true;
     uint32_t pc = POP32();
     regs.a[7] += disp;
     JUMP(pc);
 }
 
 void op_rts() {
+    regs.traced = true;
     uint32_t pc = POP32();
     JUMP(pc);
 }
@@ -120,18 +125,21 @@ void op_trapv() {
 }
 
 void op_rtr() {
+    regs.traced = true;
     SET_CCR(POP16());
     uint32_t pc = POP32();
     JUMP(pc);
 }
 
 OP(jsr) {
+    regs.traced = true;
     uint32_t dst = EA_Addr(type, reg, 0, false);
     PUSH32(regs.pc);
     JUMP(dst);
 }
 
 OP(jmp) {
+    regs.traced = true;
     uint32_t dst = EA_Addr(type, reg, 0, false);
     JUMP(dst);
 }
@@ -184,6 +192,7 @@ OP(scc) {
             int16_t dx = regs.d[reg] - 1;
             WRITE_D16(reg, dx);
             if(dx != -1) {
+                regs.traced = true;
                 JUMP(pc + disp);
             }
         }
@@ -217,6 +226,7 @@ OP(bra) {
     } else if(disp == -1) {
         disp = FETCH32();
     }
+    regs.traced = true;
     JUMP(pc + disp);
 }
 
@@ -228,6 +238,7 @@ OP(bsr) {
     } else if(disp == -1) {
         disp = FETCH32();
     }
+    regs.traced = true;
     PUSH32(pc);
     JUMP(pc + disp);
 }
@@ -242,6 +253,7 @@ OP(bcc) {
         disp = FETCH32();
     }
     if(cc_test(cond)) {
+        regs.traced = true;
         JUMP(pc + disp);
     }
 }

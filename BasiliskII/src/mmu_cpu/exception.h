@@ -19,8 +19,6 @@ inline void RAISE2(int e, uint32_t addr, bool next_instruction) {
 inline void RAISE3(int e) {
     RAISE(e, 3, {LOW(regs.i_ea), HIGH(regs.i_ea)}, true);
 }
-void BUSERROR(const paddr &v, bool atc = false, bool ma = false)
-    __attribute__((noreturn));
 
 inline __attribute__((noreturn)) void ILLEGAL_INST() { throw ILLEGAL_INST_EX{}; }
 inline void DIV0_ERROR() { RAISE2(5, regs.opc, true); }

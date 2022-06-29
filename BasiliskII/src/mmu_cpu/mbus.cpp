@@ -88,26 +88,14 @@ uint8_t b_read8(uint32_t addr_v) {
     return v;
 }
 uint16_t b_read16(uint32_t addr) {
-    if(addr & 1) {
-        uint32_t v1 = b_read8(addr);
-        uint32_t v2 = b_read8(addr + 1);
-        return v1 << 8 | v2;
-    } else {
-        uint16_t v;
-        b_read_impl(addr, &v, 2);
-        return v;
-    }
+    uint16_t v;
+    b_read_impl(addr, &v, 2);
+    return v;
 }
 uint32_t b_read32(uint32_t addr) {
-    if(addr & 2) {
-        uint32_t v1 = b_read16(addr);
-        uint32_t v2 = b_read16(addr + 2);
-        return v1 << 16 | v2;
-    } else {
-        uint32_t v;
-        b_read_impl(addr, &v, 4);
-        return v;
-    }
+    uint32_t v;
+    b_read_impl(addr, &v, 4);
+    return v;
 }
 
 void b_readline(uint32_t addr, std::byte *v) { b_read_impl(addr, v, 16); }
@@ -129,23 +117,8 @@ void b_write_impl(uint32_t addr, const void *v, int sz) {
     throw BUS_ERROR_EX{};
 }
 void b_write8(uint32_t addr, uint8_t v) { b_write_impl(addr, &v, 1); }
-void b_write16(uint32_t addr, uint16_t v) {
-    if(addr & 1) {
-        b_write8(addr, v >> 8);
-        b_write8(addr + 1, v & 0xff);
-    } else {
-        b_write_impl(addr, &v, 2);
-    }
-}
-void b_write32(uint32_t addr, uint32_t v) {
-    if(addr & 2) {
-        b_write16(addr, v >> 16);
-        b_write16(addr + 2, v & 0xffff);
-    } else {
-        b_write_impl(addr, &v, 4);
-    }
-}
-
+void b_write16(uint32_t addr, uint16_t v) { b_write_impl(addr, &v, 2); }
+void b_write32(uint32_t addr, uint32_t v) { b_write_impl(addr, &v, 4); }
 void b_writeline(uint32_t addr, const std::byte *v) {
     return b_write_impl(addr, v, 16);
 }

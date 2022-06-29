@@ -32,26 +32,52 @@
 #include "exception.h"
 #include "mbus.h"
 #include "memory.h"
+#include "mmu/mmu_68040.h"
 #include "newcpu.h"
 #include <unordered_map>
 #include <vector>
-#include "mmu/mmu_68040.h"
+template <class F> class MyFinally {
+    F f;
+
+  public:
+    MyFinally(F v) : f(v) {}
+    ~MyFinally() { f(); }
+    MyFinally(const MyFinally<F> &) = delete;
+    MyFinally<F> &operator=(const MyFinally<F> &) = delete;
+};
 uint8_t read8(uint32_t addr) {
     try {
         return b_read8(mmu_d.do_mmu(addr, false, regs.S));
     } catch(BUS_ERROR_EX &e) {
-        TM tm = TM(int(regs.S ? TM::SUPER_DATA : TM::USER_DATA));
-        paddr pe{addr, SZ::BYTE, TT::NORMAL, tm, regs.ea_rw, false};
-        BUSERROR(pe, e.atc);
+        e.addr = addr;
+        e.tm = regs.S ? TM::SUPER_DATA : TM::USER_DATA;
+        e.size = SZ::BYTE;
+        e.lk = regs.ea_rw;
+        e.rw = true;
+        throw e;
     }
 }
 uint16_t read16(uint32_t addr) {
     try {
-        return b_read16(mmu_d.do_mmu(addr, false, regs.S));
+        if(addr & 1) {
+            uint16_t v = read8(addr) << 8;
+            try {
+                v |= read8(addr + 1);
+            } catch(BUS_ERROR_EX &e) {
+                e.ma = true;
+                throw e;
+            }
+            return v;
+        } else {
+            return b_read16(mmu_d.do_mmu(addr, false, regs.S));
+        }
     } catch(BUS_ERROR_EX &e) {
-        TM tm = regs.S ? TM::SUPER_DATA : TM::USER_DATA;
-        paddr pe{addr, SZ::WORD, TT::NORMAL, tm,  regs.ea_rw,false};
-        BUSERROR(pe, e.atc);
+        e.addr = addr;
+        e.tm = regs.S ? TM::SUPER_DATA : TM::USER_DATA;
+        e.size = SZ::WORD;
+        e.lk = regs.ea_rw;
+        e.rw = true;
+        throw e;
     }
 }
 
@@ -60,71 +86,133 @@ uint16_t FETCH() {
     try {
         return b_read16(mmu_i.do_mmu(addr, false, regs.S));
     } catch(BUS_ERROR_EX &e) {
-        TM tm = regs.S ? TM::SUPER_CODE : TM::USER_CODE;
-        paddr pe{addr, SZ::WORD, TT::NORMAL, tm,false, false};
-        BUSERROR(pe, e.atc);
+        e.addr = addr;
+        e.tm = regs.S ? TM::SUPER_CODE : TM::USER_CODE;
+        e.size = SZ::WORD;
+        e.rw = true;
+        throw e;
     }
 }
 
 void PREFETCH() {
     uint32_t addr = regs.pc + 2;
     try {
-        b_read16(mmu_i.do_mmu(addr, false, regs.S));
+        for(int i = 0; i < 16; addr += 2, i += 2) {
+            b_read16(mmu_i.do_mmu(addr, false, regs.S));
+        }
     } catch(BUS_ERROR_EX &e) {
-        TM tm = regs.S ? TM::SUPER_CODE : TM::USER_CODE;
-        paddr pe{addr, SZ::WORD, TT::NORMAL, tm, false,false};
-        BUSERROR(pe, e.atc, true);
+        e.addr = addr;
+        e.tm = regs.S ? TM::SUPER_CODE : TM::USER_CODE;
+        e.size = SZ::LINE;
+        e.rw = true;
+        throw e;
     }
 }
 uint32_t read32(uint32_t addr) {
+    uint32_t v;
     try {
-        uint32_t v = b_read32(mmu_d.do_mmu(addr, false, regs.S));
-        return v;
+        switch(addr & 3) {
+        case 0: // aligned
+            return b_read32(mmu_d.do_mmu(addr, false, regs.S));
+        case 1:
+        case 3: // mis-aligned
+            v = b_read8(mmu_d.do_mmu(addr, false, regs.S)) << 24;
+            try {
+                v |= b_read16(mmu_d.do_mmu((addr + 2), false, regs.S)) << 8;
+                v |= b_read8(mmu_d.do_mmu(addr + 3, false, regs.S));
+                return v;
+            } catch(BUS_ERROR_EX &e) {
+                e.ma = true;
+                throw e;
+            }
+        case 2: // half-aligned
+            v = b_read16(mmu_d.do_mmu(addr, false, regs.S)) << 16;
+            try {
+                v |= b_read16(mmu_d.do_mmu(addr + 2, false, regs.S));
+                return v;
+            } catch(BUS_ERROR_EX &e) {
+                e.ma = true;
+                throw e;
+            }
+        }
+        return 0;
     } catch(BUS_ERROR_EX &e) {
-        TM tm = regs.S ? TM::SUPER_DATA : TM::USER_DATA;
-        paddr pe{addr, SZ::LONG, TT::NORMAL, tm,  regs.ea_rw,false};
-        BUSERROR(pe, e.atc);
+        e.addr = addr;
+        e.tm = regs.S ? TM::SUPER_DATA : TM::USER_DATA;
+        e.size = SZ::LONG;
+        e.lk = regs.ea_rw;
+        e.rw = true;
+        throw e;
     }
 }
 uint32_t FETCH32() {
     uint32_t addr = std::exchange(regs.pc, regs.pc + 4);
     try {
-        uint32_t v = b_read32(mmu_i.do_mmu(addr, false, regs.S));
-        return v;
+        return b_read32(mmu_i.do_mmu(addr, false, regs.S));
     } catch(BUS_ERROR_EX &e) {
-        TM tm = regs.S ? TM::SUPER_CODE : TM::USER_CODE;
-        paddr pe{addr, SZ::LONG, TT::NORMAL, tm,  false,false};
-        BUSERROR(pe, e.atc);
+        e.addr = addr;
+         e.tm = regs.S ? TM::SUPER_CODE : TM::USER_CODE;
+        e.size = SZ::LONG;
+        e.rw = true;
+        throw e;
     }
 }
 void write8(uint32_t addr, uint8_t v) {
+    MyFinally e = []() { regs.ea_rw = false; };
     try {
         b_write8(mmu_d.do_mmu(addr, true, regs.S), v);
-        regs.ea_rw = false; 
     } catch(BUS_ERROR_EX &e) {
-        TM tm = regs.S ? TM::SUPER_DATA : TM::USER_DATA;
-        paddr pe{addr, SZ::BYTE, TT::NORMAL, tm,regs.ea_rw, true};
-        BUSERROR(pe, e.atc);
+        e.addr = addr;
+        e.tm = regs.S ? TM::SUPER_DATA : TM::USER_DATA;
+        e.size = SZ::BYTE;
+        e.lk = regs.ea_rw;
+        e.rw = false;
+        throw e;
     }
 }
 void write16(uint32_t addr, uint16_t v) {
+    MyFinally e = []() { regs.ea_rw = false; };
     try {
-        b_write16(mmu_d.do_mmu(addr, true, regs.S), v);
-        regs.ea_rw = false; 
+        if(addr & 1) {
+            b_write8(mmu_d.do_mmu(addr, true, regs.S), v >> 8);
+            try {
+                b_write8(mmu_d.do_mmu(addr + 1, true, regs.S), v & 0xff);
+            } catch(BUS_ERROR_EX &e) {
+                e.ma = true;
+                throw e;
+            }
+        } else {
+            b_write16(mmu_d.do_mmu(addr, true, regs.S), v);
+        }
     } catch(BUS_ERROR_EX &e) {
-        TM tm = regs.S ? TM::SUPER_DATA : TM::USER_DATA;
-        paddr pe{addr, SZ::WORD, TT::NORMAL, tm, regs.ea_rw,true};
-        regs.ea_rw = false; 
-        BUSERROR(pe, e.atc);
+        e.addr = addr;
+        e.tm = regs.S ? TM::SUPER_DATA : TM::USER_DATA;
+        e.size = SZ::WORD;
+        e.lk = regs.ea_rw;
+        e.rw = false;
+        throw e;
     }
 }
 void write32(uint32_t addr, uint32_t v) {
+    MyFinally e = []() { regs.ea_rw = false; };
     try {
-        b_write32(mmu_d.do_mmu(addr, true, regs.S), v);
-        regs.ea_rw = false; 
+        if(addr & 3) {
+            write16(addr, v >> 16);
+            try {
+                write16(addr + 2, v & 0xffff);
+            } catch(BUS_ERROR_EX &e) {
+                e.ma = true;
+                throw e;
+            }
+        } else {
+            b_write32(mmu_d.do_mmu(addr, true, regs.S), v);
+        }
     } catch(BUS_ERROR_EX &e) {
-        TM tm = regs.S ? TM::SUPER_DATA : TM::USER_DATA;
-        paddr pe{addr, SZ::LONG, TT::NORMAL, tm, regs.ea_rw,true};
-        BUSERROR(pe, e.atc);
+       e.addr = addr;
+        e.tm = regs.S ? TM::SUPER_DATA : TM::USER_DATA;
+        e.size = SZ::LONG;
+        e.lk = regs.ea_rw;
+        e.rw = false;
+        throw e;
     }
 }

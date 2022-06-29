@@ -37,6 +37,7 @@
 #include "ex_stack.h"
 #include "exception.h"
 #include "fpu/fpu.h"
+
 #include "newcpu.h"
 #include "op.h"
 m68k_reg regs;
@@ -326,59 +327,73 @@ void init_m68k() {
 
 void exit_m68k(void) {}
 extern std::unordered_map<uint32_t, void (*)()> rom_functions;
+void reset_ex();
 // run one opcode
 void m68k_do_execute() {
+    if(regs.must_reset.load()) {
+        reset_ex();
+        regs.must_reset.store(false);
+        return;
+    }
     if(auto it = rom_functions.find(regs.pc & 0xfffff);
        it != rom_functions.end()) {
         it->second();
         return;
     }
     regs.opc = regs.pc;
-    if(regs.pc & 1) {
-        // ADDRESS ERROR
-        RAISE2(3, regs.opc - 1, false);
-        return;
-    } else {
-        uint16_t opc = FETCH();
-        if(op_t f = opc_map[opc >> 6]; f) {
-            try {
-                f(opc, opc >> 9 & 7, opc >> 3 & 7, opc & 7);
-            } catch(ILLEGAL_INST_EX &) {
-                PREFETCH();
-                RAISE0(4, false);
-            } catch(BUS_ERROR_EX &) {
-                if(regs.T == 2 || (regs.T == 1 && regs.traced)) {
-                    regs.err_ssw.ct = true;
-                }
-                uint32_t ea_v = regs.err_ssw.cm ? regs.i_ea : 0;
-                std::vector<uint16_t> data(26u, 0);
-                data[18] = LOW(regs.err_address);
-                data[19] = HIGH(regs.err_address);
-                data[23] = regs.err_ssw.to_value();
-                data[24] = LOW(ea_v);
-                data[25] = HIGH(ea_v);
-                RAISE(2, 7, data, false);
-                return;
-            }
-        } else {
-            PREFETCH();
-            RAISE0(4, false);
+    uint16_t opc = FETCH();
+    bool trace_suspend = false;
+    try {
+        op_t f = opc_map[opc >> 6];
+        if(!f) {
+            throw ILLEGAL_INST_EX{};
         }
+        f(opc, opc >> 9 & 7, opc >> 3 & 7, opc & 7);
+    } catch(ILLEGAL_INST_EX &) {
+        PREFETCH();
+        RAISE0(4, false);
+    } catch(BUS_ERROR_EX &e) {
+
+        uint16_t ssw = int(e.tm) | int(e.tt) << 3 | int(e.size) << 5 |
+                       e.rw << 8 | e.lk << 9 | e.atc << 10 | e.ma << 11;
+        // check CP
+        // check CU
+        uint32_t ea_v = 0;
+
+        if(regs.T == 2 || (regs.T == 1 && regs.traced)) {
+            trace_suspend = true;
+            ssw |= 1 << 13;
+            ea_v = regs.opc;
+        } else if(e.cm) {
+            ssw |= 1 << 12;
+            ea_v = regs.i_ea;
+        }
+
+        std::vector<uint16_t> data(26u, 0);
+        data[18] = LOW(e.addr);
+        data[19] = HIGH(e.addr);
+        data[23] = ssw;
+        data[24] = LOW(ea_v);
+        data[25] = HIGH(ea_v);
+        RAISE(2, 7, data, false);
+        return;
     }
     // TRACE
-    if(!regs.err_ssw.ct && (regs.T == 2 || (regs.T == 1 && regs.traced))) {
+    if(!trace_suspend && (regs.T == 2 || (regs.T == 1 && regs.traced))) {
         TRACE();
         return;
     }
 
     // IRQ
-    for(int i = 0; i < 8; ++i) {
+    for(int i = 7; i > 0; --i) {
         if(regs.IM <= i && regs.irq & (1 << i)) {
+            regs.IM = i;
             regs.irq &= ~(1 << i);
-            RAISE0(25 + i, false, true);
+            RAISE0(25 + i, true, true);
             break;
         }
     }
+    regs.i_ea = 0;
     regs.traced = false;
 }
 bool debug = false;
@@ -392,7 +407,6 @@ void run_m68k(const std::vector<uint32_t> &until) {
             }
         }
         if(debug) {
-
             dump_regs();
         }
         m68k_do_execute();
@@ -432,7 +446,7 @@ void op_pea(int type, int reg) {
     PUSH32(regs.i_ea);
 }
 
-void op_nop() {}
+void op_nop() { regs.traced = true; }
 
 OP(0471) {
     switch(type) {
@@ -498,4 +512,13 @@ OP(lea) {
         regs.i_ea = EA_Addr(type, reg, 0, false);
         regs.a[dm] = regs.i_ea;
     }
+}
+
+void JUMP(uint32_t pc) {
+    if(pc & 1) {
+        // ADDRESS ERROR
+        RAISE2(3, pc & ~1, false);
+        return;
+    }
+    regs.pc = pc;
 }

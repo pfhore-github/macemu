@@ -84,8 +84,7 @@ BOOST_AUTO_TEST_CASE(operand) {
 BOOST_AUTO_TEST_SUITE(zero_with)
 BOOST_DATA_TEST_CASE(normal, SIGN, sg) {
     float z = copysignf(0.0f, sg);
-    float c = get_rx(0.1, 10.0);
-    fpu_test(0x60, c, z, z);
+    fpu_test(0x60, 1.0f, z, z);
 }
 
 BOOST_DATA_TEST_CASE(infinity, SIGN *SIGN, sg1, sg2) {

@@ -29,6 +29,7 @@ OP(ori_w) {
             PRIV_ERROR();
             return;
         }
+regs.traced = true;
         SET_SR(GET_SR() | v2);
     } else {
         EA_Update16(type, reg, [v2](auto v1) { return DO_OR_W(v1, v2); });
@@ -55,6 +56,7 @@ OP(andi_w) {
             PRIV_ERROR();
             return;
         }
+        regs.traced = true;
         SET_SR(GET_SR() & v2);
     } else {
         EA_Update16(type, reg, [v2](auto v1) { return DO_AND_W(v1, v2); });
@@ -65,7 +67,6 @@ OP(andi_l) {
     uint32_t v2 = FETCH32();
     EA_Update32(type, reg, [v2](auto v1) { return DO_AND_L(v1, v2); });
 }
-
 
 OP(btst_imm) {
     if(type == 0) {
@@ -86,9 +87,7 @@ OP(bchg_imm) {
         regs.d[reg] = DO_BCHG_L(v1, bn);
     } else {
         int bn = FETCH() & 7;
-        EA_Update8(type, reg, [bn](auto v1) {
-            return DO_BCHG_B(v1, bn);
-        });
+        EA_Update8(type, reg, [bn](auto v1) { return DO_BCHG_B(v1, bn); });
     }
 }
 
@@ -99,9 +98,7 @@ OP(bclr_imm) {
         regs.d[reg] = DO_BCLR_L(v1, bn);
     } else {
         int bn = FETCH() & 7;
-        EA_Update8(type, reg, [bn](auto v1) {
-            return DO_BCLR_B(v1, bn);
-        });
+        EA_Update8(type, reg, [bn](auto v1) { return DO_BCLR_B(v1, bn); });
     }
 }
 
@@ -136,6 +133,7 @@ OP(eori_w) {
             PRIV_ERROR();
             return;
         }
+        regs.traced = true;
         SET_SR(GET_SR() ^ v2);
     } else {
         EA_Update16(type, reg, [v2](auto v1) { return DO_EOR_W(v1, v2); });
@@ -170,9 +168,7 @@ OP(bchg_dm) {
         op_movep_l_from(dm, reg);
     } else {
         int bn = regs.d[dm] & 7;
-        EA_Update8(type, reg, [bn](auto v1) {
-            return DO_BCHG_B(v1, bn);
-        });
+        EA_Update8(type, reg, [bn](auto v1) { return DO_BCHG_B(v1, bn); });
     }
 }
 
@@ -185,9 +181,7 @@ OP(bclr_dm) {
         op_movep_w_to(dm, reg);
     } else {
         int bn = regs.d[dm] & 7;
-        EA_Update8(type, reg, [bn](auto v1) {
-            return DO_BCLR_B(v1, bn);
-        });
+        EA_Update8(type, reg, [bn](auto v1) { return DO_BCLR_B(v1, bn); });
     }
 }
 
