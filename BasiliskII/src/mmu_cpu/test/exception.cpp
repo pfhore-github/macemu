@@ -215,6 +215,12 @@ BOOST_AUTO_TEST_CASE(ALine) {
     BOOST_TEST(raw_read32(regs.a[7] + 2) == 0);
 }
 
+BOOST_AUTO_TEST_CASE(FLine) {
+    regs.S = false;
+    raw_write16(0, 0xffff);
+    exception_check(11, 0);
+    BOOST_TEST(raw_read32(regs.a[7] + 2) == 0);
+}
 BOOST_AUTO_TEST_CASE(FormatError) {
     regs.S = true;
     regs.isp = regs.msp = regs.a[7] = 0x1000;
@@ -251,7 +257,7 @@ BOOST_DATA_TEST_CASE(throw_away, bdata::xrange(1, 8), iq) {
 
     regs.usp = regs.isp = regs.a[7] = 0x1000;
     regs.vbr = 0x3000;
-    raw_write32(0x3000 + (25 + iq )* 4, 0x5000);
+    raw_write32(0x3000 + (25 + iq) * 4, 0x5000);
     m68k_do_execute();
     BOOST_TEST(regs.pc == 0x5000);
     BOOST_TEST(raw_read16(regs.a[7] + 6) == (1 << 12 | (25 + iq) * 4));
@@ -263,4 +269,567 @@ BOOST_DATA_TEST_CASE(TRAP, bdata::xrange(0, 16), n) {
     exception_check(32 + n, 0);
     BOOST_TEST(raw_read32(regs.a[7] + 2) == 2);
 }
+
+BOOST_DATA_TEST_CASE(BSUN, BIT, enabled) {
+    fpu.FPSR.nan = true;
+    fpu.FPCR.bsun = enabled;
+    raw_write16(0, 0171200 | 16);
+    raw_write16(2, 0x100);
+    if(enabled) {
+        exception_check(48, 0);
+        BOOST_TEST(raw_read32(regs.a[7] + 2) == 0);
+    } else {
+        exception_check(0);
+    }
+}
+
+BOOST_DATA_TEST_CASE(snan, BIT, enabled) {
+    fpu.FPCR.snan = enabled;
+    fpu.fp[1].set_nan(1);
+    raw_write16(0, 0171000);
+    raw_write16(2, 1 << 10 | 2 << 7);
+    if(enabled) {
+        exception_check(54, 0);
+        BOOST_TEST(raw_read32(regs.a[7] + 2) == 0);
+    } else {
+        exception_check(0);
+    }
+    BOOST_TEST(fpu.fp[2].is_nan());
+    BOOST_TEST(fpu.fp[2].get_payload() == (1LLU << 62) | 1);
+}
+BOOST_AUTO_TEST_SUITE(operr)
+BOOST_DATA_TEST_CASE(operation, BIT, enabled) {
+    fpu.FPCR.operr = enabled;
+    fpu.fp[1] = -1.0;
+    raw_write16(0, 0171000);
+    raw_write16(2, 1 << 10 | 1 << 7 | 4);
+    if(enabled) {
+        exception_check(52, 0);
+        BOOST_TEST(raw_read32(regs.a[7] + 2) == 0);
+        BOOST_TEST(static_cast<double>(fpu.fp[1]) == -1.0);
+    } else {
+        exception_check(0);
+        BOOST_TEST(fpu.fp[1].is_nan());
+        BOOST_TEST(fpu.fp[1].get_payload() == 0xffffffffffffffffLLU);
+    }
+}
+
+BOOST_DATA_TEST_CASE(to_byte, BIT *SIGN, enabled, sign) {
+    fpu.FPCR.operr = enabled;
+    fpu.fp[1] = copysign(200.0, sign);
+    raw_write16(0, 0171001);
+    raw_write16(2, 3 << 13 | 6 << 10 | 1 << 7);
+    if(enabled) {
+        exception_check(52, 0);
+        BOOST_TEST(raw_read32(regs.a[7] + 2) == 0);
+    } else {
+        exception_check(0);
+    }
+    BOOST_TEST(static_cast<int8_t>(regs.d[1]) == (sign < 0 ? -128 : 127));
+}
+
+BOOST_DATA_TEST_CASE(to_word, BIT *SIGN, enabled, sign) {
+    fpu.FPCR.operr = enabled;
+    fpu.fp[1] = copysign(100000.0, sign);
+    raw_write16(0, 0171001);
+    raw_write16(2, 3 << 13 | 4 << 10 | 1 << 7);
+    if(enabled) {
+        exception_check(52, 0);
+        BOOST_TEST(raw_read32(regs.a[7] + 2) == 0);
+    } else {
+        exception_check(0);
+    }
+    BOOST_TEST(static_cast<int16_t>(regs.d[1]) == (sign < 0 ? -32768 : 32767));
+}
+
+BOOST_DATA_TEST_CASE(to_lword, BIT *SIGN, enabled, sign) {
+    fpu.FPCR.operr = enabled;
+    fpu.fp[1] = copysign(1e44, sign);
+    raw_write16(0, 0171001);
+    raw_write16(2, 3 << 13 | 0 << 10 | 1 << 7);
+    if(enabled) {
+        exception_check(52, 0);
+        BOOST_TEST(raw_read32(regs.a[7] + 2) == 0);
+    } else {
+        exception_check(0);
+    }
+    BOOST_TEST(regs.d[1] == (sign < 0 ? 0x80000000 : 0x7fffffff));
+}
+
+BOOST_DATA_TEST_CASE(to_pakced, BIT, enabled) {
+    fpu.FPCR.operr = enabled;
+    set_fpu_reg(2, 12345.678765);
+    regs.a[1] = 0x10;
+    raw_write16(0, 0171031);
+    raw_write16(2, 3 << 13 | 3 << 10 | 2 << 7 | 18);
+
+    if(enabled) {
+        exception_check(52, 0);
+        BOOST_TEST(raw_read32(regs.a[7] + 2) == 0);
+    } else {
+        exception_check(0);
+    }
+}
+
+BOOST_DATA_TEST_CASE(to_pakced2, BIT, enabled) {
+    fpu.FPCR.operr = enabled;
+    fpu.fp[2] = "1e1001";
+    regs.a[1] = 0x10;
+    raw_write16(0, 0171031);
+    raw_write16(2, 3 << 13 | 3 << 10 | 2 << 7 | 3);
+
+    if(enabled) {
+        exception_check(52, 0);
+        BOOST_TEST(raw_read32(regs.a[7] + 2) == 0);
+    } else {
+        exception_check(0);
+    }
+    BOOST_TEST(raw_read32(0x10) == 0x00011001);
+}
+BOOST_AUTO_TEST_SUITE_END()
+BOOST_AUTO_TEST_SUITE(ovfl)
+template <class V> void check_ovfl(const V &v1, const V &v2, bool enabled) {
+    set_fpu_reg(1, v1);
+    set_fpu_reg(2, v2);
+    raw_write16(0, 0171000);
+    raw_write16(2, 1 << 10 | 2 << 7 | 0x23);
+
+    if(enabled) {
+        exception_check(53, 0);
+        BOOST_TEST(raw_read32(regs.a[7] + 2) == 0);
+    } else {
+        exception_check(0);
+    }
+}
+BOOST_AUTO_TEST_SUITE(ext)
+BOOST_DATA_TEST_CASE(rn, BIT *SIGN, enabled, sign) {
+    fpu.FPCR.ovfl = enabled;
+    fpu.FPCR.prec = RND_PREC::ROUND_EXT;
+    mpfr_set_default_rounding_mode(MPFR_RNDN);
+    xval xm1{sign < 0, 1, 0x3fff};
+    xval xm2{false, 1, 0x3fff};
+    check_ovfl(xm1, xm2, enabled);
+    BOOST_TEST(fpu.fp[2].is_inf());
+    BOOST_TEST(fpu.fp[2].signbit() == (sign < 0));
+}
+
+BOOST_DATA_TEST_CASE(rz, BIT *SIGN, enabled, sign) {
+    fpu.FPCR.ovfl = enabled;
+    fpu.FPCR.prec = RND_PREC::ROUND_EXT;
+    mpfr_set_default_rounding_mode(MPFR_RNDZ);
+    xval xm1{sign < 0, 1, 0x3fff};
+    xval xm2{false, 1, 0x3fff};
+    check_ovfl(xm1, xm2, enabled);
+    auto [sg, fra, exp] = fpu.fp[2].get_zexp();
+    BOOST_TEST(sg == (sign < 0));
+    BOOST_TEST(exp == 32765);
+    BOOST_TEST(fra == 0xffffffffffffffffLLU);
+}
+
+BOOST_DATA_TEST_CASE(rm, BIT *SIGN, enabled, sign) {
+    fpu.FPCR.ovfl = enabled;
+    fpu.FPCR.prec = RND_PREC::ROUND_EXT;
+    mpfr_set_default_rounding_mode(MPFR_RNDD);
+    xval xm1{sign < 0, 1, 0x3fff};
+    xval xm2{false, 1, 0x3fff};
+    check_ovfl(xm1, xm2, enabled);
+    if(sign > 0) {
+        auto [sg, fra, exp] = fpu.fp[2].get_zexp();
+        BOOST_TEST(!sg);
+        BOOST_TEST(exp == 32765);
+        BOOST_TEST(fra == 0xffffffffffffffffLLU);
+    } else {
+        BOOST_TEST(fpu.fp[2].signbit());
+        BOOST_TEST(fpu.fp[2].is_inf());
+    }
+}
+
+BOOST_DATA_TEST_CASE(rp, BIT *SIGN, enabled, sign) {
+    fpu.FPCR.ovfl = enabled;
+    fpu.FPCR.prec = RND_PREC::ROUND_EXT;
+    mpfr_set_default_rounding_mode(MPFR_RNDU);
+    xval xm1{sign < 0, 1, 0x3fff};
+    xval xm2{false, 1, 0x3fff};
+    check_ovfl(xm1, xm2, enabled);
+    if(sign < 0) {
+        auto [sg, fra, exp] = fpu.fp[2].get_zexp();
+        BOOST_TEST(sg);
+        BOOST_TEST(exp == 32765);
+        BOOST_TEST(fra == 0xffffffffffffffffLLU);
+    } else {
+        BOOST_TEST(!fpu.fp[2].signbit());
+        BOOST_TEST(fpu.fp[2].is_inf());
+    }
+}
+BOOST_AUTO_TEST_SUITE_END()
+
+BOOST_AUTO_TEST_SUITE(dbl)
+BOOST_DATA_TEST_CASE(rn, BIT *SIGN, enabled, sign) {
+    fpu.FPCR.ovfl = enabled;
+    fpu.FPCR.prec = RND_PREC::ROUND_DBL;
+    mpfr_set_default_rounding_mode(MPFR_RNDN);
+    xval xm1{sign < 0, 1, 0x3fe};
+    xval xm2{false, 1, 0x3fe};
+    check_ovfl(xm1, xm2, enabled);
+    BOOST_TEST(fpu.fp[2].is_inf());
+    BOOST_TEST(fpu.fp[2].signbit() == (sign < 0));
+}
+
+BOOST_DATA_TEST_CASE(rz, BIT *SIGN, enabled, sign) {
+    fpu.FPCR.ovfl = enabled;
+    fpu.FPCR.prec = RND_PREC::ROUND_DBL;
+    mpfr_set_default_rounding_mode(MPFR_RNDZ);
+    xval xm1{sign < 0, 1, 0x3fe};
+    xval xm2{false, 1, 0x3fe};
+    check_ovfl(xm1, xm2, enabled);
+    auto [sg, fra, exp] = fpu.fp[2].get_zexp();
+    BOOST_TEST(sg == (sign < 0));
+    BOOST_TEST(exp == 0x3ffe + 1023);
+    BOOST_TEST(fra == 0xfffffffffffff800LLU);
+}
+
+BOOST_DATA_TEST_CASE(rm, BIT *SIGN, enabled, sign) {
+    fpu.FPCR.ovfl = enabled;
+    fpu.FPCR.prec = RND_PREC::ROUND_DBL;
+    mpfr_set_default_rounding_mode(MPFR_RNDD);
+    xval xm1{sign < 0, 1, 0x3fe};
+    xval xm2{false, 1, 0x3fe};
+    check_ovfl(xm1, xm2, enabled);
+    if(sign > 0) {
+        auto [sg, fra, exp] = fpu.fp[2].get_zexp();
+        BOOST_TEST(!sg);
+        BOOST_TEST(exp == 0x3ffe + 1023);
+        BOOST_TEST(fra == 0xfffffffffffff800LLU);
+
+    } else {
+        BOOST_TEST(fpu.fp[2].signbit());
+        BOOST_TEST(fpu.fp[2].is_inf());
+    }
+}
+
+BOOST_DATA_TEST_CASE(rp, BIT *SIGN, enabled, sign) {
+    fpu.FPCR.ovfl = enabled;
+    fpu.FPCR.prec = RND_PREC::ROUND_DBL;
+    mpfr_set_default_rounding_mode(MPFR_RNDU);
+    xval xm1{sign < 0, 1, 0x3fe};
+    xval xm2{false, 1, 0x3fe};
+    check_ovfl(xm1, xm2, enabled);
+    if(sign < 0) {
+        auto [sg, fra, exp] = fpu.fp[2].get_zexp();
+        BOOST_TEST(sg);
+        BOOST_TEST(exp == 0x3ffe + 1023);
+        BOOST_TEST(fra == 0xfffffffffffff800LLU);
+    } else {
+        BOOST_TEST(!fpu.fp[2].signbit());
+        BOOST_TEST(fpu.fp[2].is_inf());
+    }
+}
+BOOST_AUTO_TEST_SUITE_END()
+
+BOOST_AUTO_TEST_SUITE(sgl)
+BOOST_DATA_TEST_CASE(rn, BIT *SIGN, enabled, sign) {
+    fpu.FPCR.ovfl = enabled;
+    fpu.FPCR.prec = RND_PREC::ROUND_SGL;
+    mpfr_set_default_rounding_mode(MPFR_RNDN);
+    xval xm1{sign < 0, 1, 0x7e};
+    xval xm2{false, 1, 0x7e};
+    check_ovfl(xm1, xm2, enabled);
+    BOOST_TEST(fpu.fp[2].is_inf());
+    BOOST_TEST(fpu.fp[2].signbit() == (sign < 0));
+}
+
+BOOST_DATA_TEST_CASE(rz, BIT *SIGN, enabled, sign) {
+    fpu.FPCR.ovfl = enabled;
+    fpu.FPCR.prec = RND_PREC::ROUND_SGL;
+    mpfr_set_default_rounding_mode(MPFR_RNDZ);
+    xval xm1{sign < 0, 1, 0x7e};
+    xval xm2{false, 1, 0x7e};
+    check_ovfl(xm1, xm2, enabled);
+    auto [sg, fra, exp] = fpu.fp[2].get_zexp();
+    BOOST_TEST(sg == (sign < 0));
+    BOOST_TEST(exp == 0x3ffe + 0x7f);
+    BOOST_TEST(fra == 0xffffff0000000000LLU);
+}
+
+BOOST_DATA_TEST_CASE(rm, BIT *SIGN, enabled, sign) {
+    fpu.FPCR.ovfl = enabled;
+    fpu.FPCR.prec = RND_PREC::ROUND_SGL;
+    mpfr_set_default_rounding_mode(MPFR_RNDD);
+    xval xm1{sign < 0, 1, 0x7e};
+    xval xm2{false, 1, 0x7e};
+    check_ovfl(xm1, xm2, enabled);
+    if(sign > 0) {
+        auto [sg, fra, exp] = fpu.fp[2].get_zexp();
+        BOOST_TEST(!sg);
+        BOOST_TEST(exp == 0x3ffe + 0x7f);
+        BOOST_TEST(fra == 0xffffff0000000000LLU);
+
+    } else {
+        BOOST_TEST(fpu.fp[2].signbit());
+        BOOST_TEST(fpu.fp[2].is_inf());
+    }
+}
+
+BOOST_DATA_TEST_CASE(rp, BIT *SIGN, enabled, sign) {
+    fpu.FPCR.ovfl = enabled;
+    fpu.FPCR.prec = RND_PREC::ROUND_SGL;
+    mpfr_set_default_rounding_mode(MPFR_RNDU);
+    xval xm1{sign < 0, 1, 0x7e};
+    xval xm2{false, 1, 0x7e};
+    check_ovfl(xm1, xm2, enabled);
+    if(sign < 0) {
+        auto [sg, fra, exp] = fpu.fp[2].get_zexp();
+        BOOST_TEST(sg);
+        BOOST_TEST(exp == 0x3ffe + 0x7f);
+        BOOST_TEST(fra == 0xffffff0000000000LLU);
+    } else {
+        BOOST_TEST(!fpu.fp[2].signbit());
+        BOOST_TEST(fpu.fp[2].is_inf());
+    }
+}
+BOOST_AUTO_TEST_SUITE_END()
+
+BOOST_AUTO_TEST_SUITE_END()
+
+BOOST_AUTO_TEST_SUITE(unfl)
+template <class V> void check_unfl(const V &v1, const V &v2, bool enabled) {
+    set_fpu_reg(1, v1);
+    set_fpu_reg(2, v2);
+    raw_write16(0, 0171000);
+    raw_write16(2, 1 << 10 | 2 << 7 | 0x23);
+
+    if(enabled) {
+        exception_check(51, 0);
+        BOOST_TEST(raw_read32(regs.a[7] + 2) == 0);
+    } else {
+        exception_check(0);
+    }
+}
+BOOST_AUTO_TEST_SUITE(ext)
+BOOST_DATA_TEST_CASE(rn, BIT *SIGN, enabled, sign) {
+    fpu.FPCR.unfl = enabled;
+    fpu.FPCR.prec = RND_PREC::ROUND_EXT;
+    mpfr_set_default_rounding_mode(MPFR_RNDN);
+    xval xm1{sign < 0, 1, -0x3fff};
+    xval xm2{false, 1, -0x3fff};
+    check_unfl(xm1, xm2, enabled);
+    BOOST_TEST(fpu.fp[2].is_zero());
+    BOOST_TEST(fpu.fp[2].signbit() == (sign < 0));
+}
+
+BOOST_DATA_TEST_CASE(rz, BIT *SIGN, enabled, sign) {
+    fpu.FPCR.unfl = enabled;
+    fpu.FPCR.prec = RND_PREC::ROUND_EXT;
+    mpfr_set_default_rounding_mode(MPFR_RNDZ);
+    xval xm1{sign < 0, 1, -0x3fff};
+    xval xm2{false, 1, -0x3fff};
+    check_unfl(xm1, xm2, enabled);
+    BOOST_TEST(fpu.fp[2].is_zero());
+    BOOST_TEST(fpu.fp[2].signbit() == (sign < 0));
+}
+
+BOOST_DATA_TEST_CASE(rm, BIT *SIGN, enabled, sign) {
+    fpu.FPCR.unfl = enabled;
+    fpu.FPCR.prec = RND_PREC::ROUND_EXT;
+    mpfr_set_default_rounding_mode(MPFR_RNDD);
+    xval xm1{sign < 0, 1, -0x3fff};
+    xval xm2{false, 1, -0x3fff};
+    check_unfl(xm1, xm2, enabled);
+    if(sign > 0) {
+        BOOST_TEST(fpu.fp[2].is_zero());
+        BOOST_TEST(!fpu.fp[2].signbit());
+    } else {
+        auto [sg, fra, exp] = fpu.fp[2].get_zexp();
+        BOOST_TEST(sg);
+        BOOST_TEST(exp == 0);
+        BOOST_TEST(fra == 1);
+    }
+}
+
+BOOST_DATA_TEST_CASE(rp, BIT *SIGN, enabled, sign) {
+    fpu.FPCR.unfl = enabled;
+    fpu.FPCR.prec = RND_PREC::ROUND_EXT;
+    mpfr_set_default_rounding_mode(MPFR_RNDU);
+    xval xm1{sign < 0, 1, -0x3fff};
+    xval xm2{false, 1, -0x3fff};
+    check_unfl(xm1, xm2, enabled);
+    if(sign < 0) {
+        BOOST_TEST(fpu.fp[2].is_zero());
+        BOOST_TEST(fpu.fp[2].signbit());
+    } else {
+        auto [sg, fra, exp] = fpu.fp[2].get_zexp();
+        BOOST_TEST(!sg);
+        BOOST_TEST(exp == 0);
+        BOOST_TEST(fra == 1);
+    }
+}
+BOOST_AUTO_TEST_SUITE_END()
+BOOST_AUTO_TEST_SUITE(dbl)
+BOOST_DATA_TEST_CASE(rn, BIT *SIGN, enabled, sign) {
+    fpu.FPCR.unfl = enabled;
+    fpu.FPCR.prec = RND_PREC::ROUND_DBL;
+    mpfr_set_default_rounding_mode(MPFR_RNDN);
+    xval xm1{sign < 0, 1, -0x3fe};
+    xval xm2{false, 1, -0x3fe};
+    check_unfl(xm1, xm2, enabled);
+    BOOST_TEST(fpu.fp[2].is_zero());
+    BOOST_TEST(fpu.fp[2].signbit() == (sign < 0));
+}
+
+BOOST_DATA_TEST_CASE(rz, BIT *SIGN, enabled, sign) {
+    fpu.FPCR.unfl = enabled;
+    fpu.FPCR.prec = RND_PREC::ROUND_DBL;
+    mpfr_set_default_rounding_mode(MPFR_RNDZ);
+    xval xm1{sign < 0, 1, -0x3fe};
+    xval xm2{false, 1, -0x3fe};
+    check_unfl(xm1, xm2, enabled);
+    BOOST_TEST(fpu.fp[2].is_zero());
+    BOOST_TEST(fpu.fp[2].signbit() == (sign < 0));
+}
+
+BOOST_DATA_TEST_CASE(rm, BIT *SIGN, enabled, sign) {
+    fpu.FPCR.unfl = enabled;
+    fpu.FPCR.prec = RND_PREC::ROUND_DBL;
+    mpfr_set_default_rounding_mode(MPFR_RNDD);
+    xval xm1{sign < 0, 1, -0x3fe};
+    xval xm2{false, 1, -0x3fe};
+    check_unfl(xm1, xm2, enabled);
+    if(sign > 0) {
+        BOOST_TEST(!fpu.fp[2].signbit());
+        BOOST_TEST(fpu.fp[2].is_zero());
+    } else {
+        auto [sg, fra, exp] = fpu.fp[2].get_zexp();
+        BOOST_TEST(sg);
+        BOOST_TEST(exp == 0x3ffe - 1023 - 51);
+        BOOST_TEST(fra == 0x8000000000000000LLU);
+    }
+}
+
+BOOST_DATA_TEST_CASE(rp, BIT *SIGN, enabled, sign) {
+    fpu.FPCR.unfl = enabled;
+    fpu.FPCR.prec = RND_PREC::ROUND_DBL;
+    mpfr_set_default_rounding_mode(MPFR_RNDU);
+    xval xm1{sign < 0, 1, -0x3fe};
+    xval xm2{false, 1, -0x3fe};
+    check_unfl(xm1, xm2, enabled);
+    if(sign < 0) {
+        BOOST_TEST(fpu.fp[2].signbit());
+        BOOST_TEST(fpu.fp[2].is_zero());
+    } else {
+        auto [sg, fra, exp] = fpu.fp[2].get_zexp();
+        BOOST_TEST(!sg);
+        BOOST_TEST(exp == 0x3ffe - 1023 - 51);
+        BOOST_TEST(fra == 0x8000000000000000LLU);
+    }
+}
+BOOST_AUTO_TEST_SUITE_END()
+
+BOOST_AUTO_TEST_SUITE(sgl)
+BOOST_DATA_TEST_CASE(rn, BIT *SIGN, enabled, sign) {
+    fpu.FPCR.unfl = enabled;
+    fpu.FPCR.prec = RND_PREC::ROUND_SGL;
+    mpfr_set_default_rounding_mode(MPFR_RNDN);
+    xval xm1{sign < 0, 1, -0x7e};
+    xval xm2{false, 1, -0x7e};
+    check_unfl(xm1, xm2, enabled);
+    BOOST_TEST(fpu.fp[2].is_zero());
+    BOOST_TEST(fpu.fp[2].signbit() == (sign < 0));
+}
+
+BOOST_DATA_TEST_CASE(rz, BIT *SIGN, enabled, sign) {
+    fpu.FPCR.unfl = enabled;
+    fpu.FPCR.prec = RND_PREC::ROUND_SGL;
+    mpfr_set_default_rounding_mode(MPFR_RNDZ);
+    xval xm1{sign < 0, 1, -0x7e};
+    xval xm2{false, 1, -0x7e};
+    check_unfl(xm1, xm2, enabled);
+    BOOST_TEST(fpu.fp[2].is_zero());
+    BOOST_TEST(fpu.fp[2].signbit() == (sign < 0));
+}
+
+BOOST_DATA_TEST_CASE(rm, BIT *SIGN, enabled, sign) {
+    fpu.FPCR.unfl = enabled;
+    fpu.FPCR.prec = RND_PREC::ROUND_SGL;
+    mpfr_set_default_rounding_mode(MPFR_RNDD);
+    xval xm1{sign < 0, 1, -0x7e};
+    xval xm2{false, 1, -0x7e};
+    check_unfl(xm1, xm2, enabled);
+    if(sign > 0) {
+        BOOST_TEST(!fpu.fp[2].signbit());
+        BOOST_TEST(fpu.fp[2].is_zero());
+    } else {
+        auto [sg, fra, exp] = fpu.fp[2].get_zexp();
+        BOOST_TEST(sg);
+        BOOST_TEST(exp == 0x3ffe - 0x7f - 22);
+        BOOST_TEST(fra == 0x8000000000000000LLU);
+    }
+}
+
+BOOST_DATA_TEST_CASE(rp, BIT *SIGN, enabled, sign) {
+    fpu.FPCR.unfl = enabled;
+    fpu.FPCR.prec = RND_PREC::ROUND_SGL;
+    mpfr_set_default_rounding_mode(MPFR_RNDU);
+    xval xm1{sign < 0, 1, -0x7e};
+    xval xm2{false, 1, -0x7e};
+    check_unfl(xm1, xm2, enabled);
+    if(sign < 0) {
+        BOOST_TEST(fpu.fp[2].signbit());
+        BOOST_TEST(fpu.fp[2].is_zero());
+    } else {
+        auto [sg, fra, exp] = fpu.fp[2].get_zexp();
+        BOOST_TEST(!sg);
+        BOOST_TEST(exp == 0x3ffe - 0x7f - 22);
+        BOOST_TEST(fra == 0x8000000000000000LLU);
+    }
+}
+BOOST_AUTO_TEST_SUITE_END()
+BOOST_AUTO_TEST_SUITE_END()
+BOOST_DATA_TEST_CASE(div0, BIT, enabled) {
+    fpu.FPCR.dz = enabled;
+    set_fpu_reg(1, 1.0);
+    set_fpu_reg(2, 0.0);
+    raw_write16(0, 0171000);
+    raw_write16(2, 1 << 10 | 2 << 7 | 0x20);
+
+    if(enabled) {
+        exception_check(50, 0);
+        BOOST_TEST(raw_read32(regs.a[7] + 2) == 0);
+        BOOST_TEST(fpu.fp[2].is_zero());
+    } else {
+        exception_check(0);
+        BOOST_TEST(fpu.fp[2].is_inf());
+    }
+}
+
+BOOST_DATA_TEST_CASE(inex1, BIT, enabled) {
+    fpu.FPCR.inex1 = enabled;
+    raw_write32(0x10, 0x40010001 );
+    raw_write32(0x14, 0x00000000);
+    raw_write32(0x18, 0);
+    regs.a[1] = 0x10;
+      raw_write16(0, 0171031);
+    raw_write16(2, 1 << 14 | 3 << 10 | 2 << 7);
+    if(enabled) {
+        exception_check(49, 0);
+        BOOST_TEST(raw_read32(regs.a[7] + 2) == 0);
+    } else {
+        exception_check(0);
+    }
+    fpu.FPCR.inex1 = false;
+}
+BOOST_DATA_TEST_CASE(inex2, BIT, enabled) {
+    fpu.FPCR.inex2 = enabled;
+    set_fpu_reg(1, 1.0);
+    set_fpu_reg(2, 3.0);
+    raw_write16(0, 0171000);
+    raw_write16(2, 1 << 10 | 2 << 7 | 0x20);
+
+    if(enabled) {
+        exception_check(49, 0);
+        BOOST_TEST(raw_read32(regs.a[7] + 2) == 0);
+    } else {
+        exception_check(0);
+    }
+}
+
 BOOST_AUTO_TEST_SUITE_END()

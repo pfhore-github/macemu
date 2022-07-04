@@ -4,6 +4,10 @@ fpvalue::~fpvalue() { mpfr_clear(mp); }
 fpvalue::fpvalue(fpvalue &&old) {
     mpfr_swap(mp, old.mp);
     payload = old.payload;
+
+    
+    mpfr_set_nan(old.mp);
+    old.payload = 0xffffffffffffffffLLU;
 }
 fpvalue::fpvalue(double v) {
     mpfr_init_set_d(mp, v, mpfr_get_default_rounding_mode());
@@ -58,6 +62,7 @@ fpvalue &fpvalue::set_exp(bool sg, uint64_t mantissa, int exp) {
 }
 
 fpvalue &fpvalue::operator=(const char *s) {
+    mpfr_prec_round(mp, 64, mpfr_get_default_rounding_mode());
     mpfr_ret =
         mpfr_strtofr(mp, s, nullptr, 10, mpfr_get_default_rounding_mode());
     
@@ -86,9 +91,10 @@ fpvalue::operator float() const {
 fpvalue::operator double() const {
     return mpfr_get_d(mp, mpfr_get_default_rounding_mode());
 }
-fpvalue::operator int64_t() const {
+int64_t fpvalue::to_int () const {
     return mpfr_get_sj(mp, mpfr_get_default_rounding_mode());
 }
+
 std::tuple<bool, uint64_t, mpfr_exp_t> fpvalue::get_zexp() const {
     bool s = mpfr_signbit(mp);
     if(mpfr_inf_p(mp)) {
@@ -154,6 +160,9 @@ fpvalue &fpvalue::operator/=(const fpvalue &op2) {
     return *this;
 }
 
+fpvalue operator/(fpvalue a, const fpvalue &b) {
+    return a/= b;
+}
 bool fpvalue::signbit() const { return mpfr_signbit(mp); }
 
 fpvalue fpvalue::sqrt() const {

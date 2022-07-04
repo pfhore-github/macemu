@@ -139,7 +139,7 @@ void load_packed(uint32_t addr, fpvalue &dst) {
             return;
         }
     }
-    if(vd == 0) {
+    if((v1 & 0xf) == 0 && vd == 0) {
         dst.set_zero(sm);
         return;
     }
@@ -181,18 +181,28 @@ void store_packed(uint32_t addr, const fpvalue &value, int8_t k) {
         return;
     }
     auto tp = value.abs();
+    if(k > 17) {
+        fpu.FPSR.operr = true;
+        k = 17;
+    }
+
     if(k <= 0) {
         auto tmp2 = value.log10(MPFR_RNDZ);
-        int mp = static_cast<int64_t>(tmp2);
+        int mp = tmp2.to_int();
         k = mp - k + 1;
     }
+
     // SM-SE-0-0 EEE-XXXD DDDDDDDD DDDDDDDD
     auto [buf, e] = tp.get_str(k);
     e--;
     uint32_t exp = s << 31 | ((e < 0 ? 1 : 0) << 30);
     e = abs(e);
-    exp |= (e / 100) << 24 | ((e / 10) % 10) << 20 | (e % 10) << 16 |
+    exp |= ((e / 100) % 10) << 24 | ((e / 10) % 10) << 20 | (e % 10) << 16 |
            (buf[0] - '0');
+    if(e > 999) {
+        fpu.FPSR.operr = true;
+        exp |= (e / 1000) << 12;
+    }
     uint64_t mant = 0;
     for(int i = 0; i < k - 1; ++i) {
         mant |= static_cast<uint64_t>(buf[i + 1] - '0') << (60 - 4 * i);
@@ -209,9 +219,7 @@ void fpu_checkexception() {
     fpu.FPSR.ac_dz |= fpu.FPSR.dz;
     fpu.FPSR.ac_inex |= fpu.FPSR.inex1 | fpu.FPSR.inex2 | fpu.FPSR.ovfl;
     // raise excpetion
-    if(fpu.FPCR.bsun && fpu.FPSR.bsun) {
-        return FP_UNCND();
-    }
+
     if(fpu.FPCR.snan && fpu.FPSR.snan) {
         return FP_SNAN();
     }
@@ -277,13 +285,13 @@ void to_ext(fpvalue &d) {
         int omx = mpfr_get_emax();
         d.set_precision(64);
         mpfr_set_emax(16383);
-        mpfr_set_emin(-16383 - 64 + 1);
+        mpfr_set_emin(-16382 - 64 + 1);
         d.mpfr_ret = mpfr_check_range(d.ptr(), d.mpfr_ret,
                                       mpfr_get_default_rounding_mode());
         d.subnormalize();
-        fpu.FPSR.ovfl = mpfr_overflow_p();
-        fpu.FPSR.unfl = mpfr_underflow_p();
-        fpu.FPSR.inex2 = mpfr_inexflag_p();
+        fpu.FPSR.ovfl |= mpfr_overflow_p();
+        fpu.FPSR.unfl |= mpfr_underflow_p();
+        fpu.FPSR.inex2 |= mpfr_inexflag_p();
         // reset range
         mpfr_set_emin(omi);
         mpfr_set_emax(omx);
@@ -310,9 +318,9 @@ void fpu_postprocess(fpvalue &d, RND_PREC round = RND_PREC::ROUND_DEF) {
     }
     fpu.FPSR.ovfl |= mpfr_overflow_p();
     fpu.FPSR.unfl |= mpfr_underflow_p();
-    fpu.FPSR.dz = mpfr_divby0_p();
-    fpu.FPSR.operr = mpfr_nanflag_p() || mpfr_erangeflag_p();
-    fpu.FPSR.inex2 = mpfr_inexflag_p();
+    fpu.FPSR.dz |= mpfr_divby0_p();
+    fpu.FPSR.operr |= mpfr_nanflag_p() || mpfr_erangeflag_p();
+    fpu.FPSR.inex2 |= mpfr_inexflag_p();
 
     // update normal flag
     fpu.FPSR.n = d.signbit();
@@ -323,8 +331,6 @@ void fpu_postprocess(fpvalue &d, RND_PREC round = RND_PREC::ROUND_DEF) {
     if(fpu.FPSR.operr) {
         d.set_payload();
     }
-
-    fpu_checkexception();
 }
 using fpu_op_t = void (*)(fpvalue &src, fpvalue &dst);
 void fmove_cr(uint8_t op, fpvalue &v) {
@@ -479,7 +485,7 @@ OP_F(fgetman) {
     fpu_postprocess(dst);
 }
 
-OP_F(fdiv) { fpu_postprocess(dst /= src); }
+OP_F(fdiv) { fpu_postprocess(dst = src / dst); }
 
 OP_F(fmod) {
     long q;
@@ -497,7 +503,7 @@ OP_F(fmul) { fpu_postprocess(dst *= src); }
 OP_F(fsgldiv) {
     dst.set_precision(24);
     src.set_precision(24);
-    dst /= src;
+    dst = src / dst;
     dst.set_precision(64);
     src.set_precision(64);
     fpu_postprocess(dst, RND_PREC::ROUND_SGL);
@@ -590,13 +596,13 @@ OP_F(fdabs) { fpu_postprocess(dst = src.abs(), RND_PREC::ROUND_DBL); }
 
 OP_F(fdneg) { fpu_postprocess(dst = -src, RND_PREC::ROUND_DBL); }
 
-OP_F(fsdiv) { fpu_postprocess(dst /= src, RND_PREC::ROUND_SGL); }
+OP_F(fsdiv) { fpu_postprocess(dst = src / dst, RND_PREC::ROUND_SGL); }
 
 OP_F(fsadd) { fpu_postprocess(dst += src, RND_PREC::ROUND_SGL); }
 
 OP_F(fsmul) { fpu_postprocess(dst *= src, RND_PREC::ROUND_SGL); }
 
-OP_F(fddiv) { fpu_postprocess(dst /= src, RND_PREC::ROUND_DBL); }
+OP_F(fddiv) { fpu_postprocess(dst = src / dst, RND_PREC::ROUND_DBL); }
 
 OP_F(fdadd) { fpu_postprocess(dst += src, RND_PREC::ROUND_DBL); }
 
@@ -608,16 +614,25 @@ OP_F(fdsub) { fpu_postprocess(dst -= src, RND_PREC::ROUND_DBL); }
 
 static fpu_op_t fpu_op_t_table1[0x80];
 static fpu_op_t fpu_op_t_table2[0x80];
-void fmove_to(int type, int reg, int d_type, uint8_t k, const fpvalue &value) {
+void fmove_to(int type, int reg, int d_type, uint8_t k, fpvalue &value) {
     regs.i_ea = 0;
     switch(d_type) {
-    case 0: {
-        fpu.FPSR.operr = !value.fits_int32();
-        int32_t v = static_cast<int64_t>(value);
-        fpu.FPSR.inex2 = mpfr_inexflag_p();
-        EA_WRITE32(type, reg, v);
+    case 0:
+        if(test_nan(value)) {
+            fpu.FPSR.operr = true;
+            EA_WRITE32(type, reg, value.get_payload() >> 32);
+        } else {
+            if(!(fpu.FPSR.operr = !value.fits_int32())) {
+                int32_t v = value.to_int();
+                fpu.FPSR.inex2 = mpfr_inexflag_p();
+                EA_WRITE32(type, reg, v);
+            } else if(value.signbit()) {
+                EA_WRITE32(type, reg, std::numeric_limits<int32_t>::min());
+            } else {
+                EA_WRITE32(type, reg, std::numeric_limits<int32_t>::max());
+            }
+        }
         break;
-    }
     case 1: {
         uint32_t addr = EA_Addr(type, reg, 4, true);
         store_single(addr, value);
@@ -633,25 +648,45 @@ void fmove_to(int type, int reg, int d_type, uint8_t k, const fpvalue &value) {
         store_packed(addr, value, static_cast<int8_t>(k << 1) >> 1);
         break;
     }
-    case 4: {
-        fpu.FPSR.operr = !value.fits_int16();
-        int16_t v = static_cast<int64_t>(value);
-        fpu.FPSR.inex2 = mpfr_inexflag_p();
-        EA_WRITE16(type, reg, v);
+    case 4:
+        if(test_nan(value)) {
+            fpu.FPSR.operr = true;
+            EA_WRITE16(type, reg, value.get_payload() >> 48);
+        } else {
+            if(!(fpu.FPSR.operr = !value.fits_int16())) {
+                int16_t v = value.to_int();
+                fpu.FPSR.inex2 = mpfr_inexflag_p();
+                EA_WRITE16(type, reg, v);
+            } else if(value.signbit()) {
+                EA_WRITE16(type, reg, std::numeric_limits<int16_t>::min());
+            } else {
+                EA_WRITE16(type, reg, std::numeric_limits<int16_t>::max());
+            }
+        }
         break;
-    }
     case 5: {
         uint32_t addr = EA_Addr(type, reg, 8, true);
         store_double(addr, value);
         break;
     }
-    case 6: {
-        fpu.FPSR.operr = !value.fits_int8();
-        int8_t v = static_cast<int64_t>(value);
-        fpu.FPSR.inex2 = mpfr_inexflag_p();
-        EA_WRITE8(type, reg, v);
+    case 6:
+        if(test_nan(value)) {
+            uint8_t v = value.get_payload() >> 56;
+            EA_WRITE8(type, reg, v);
+        } else {
+
+            if(!(fpu.FPSR.operr = !value.fits_int8())) {
+                int8_t v = value.to_int();
+                fpu.FPSR.inex2 = mpfr_inexflag_p();
+                EA_WRITE8(type, reg, v);
+            } else if(value.signbit()) {
+                EA_WRITE8(type, reg, std::numeric_limits<int8_t>::min());
+            } else {
+                EA_WRITE8(type, reg, std::numeric_limits<int8_t>::max());
+            }
+        }
         break;
-    }
+
     case 7: {
         uint32_t addr = EA_Addr(type, reg, 12, true);
         store_packed(addr, value, regs.d[k >> 4]);
@@ -936,40 +971,46 @@ OP(fpu_op) {
     int src_s = op2 >> 10 & 7;
     int dst_r = op2 >> 7 & 7;
     int opc2 = op2 & 0x7f;
+    fpu.FPSR.bsun = false;
+    fpu.FPSR.operr = false;
+    fpu.FPSR.ovfl = false;
+    fpu.FPSR.unfl = false;
+    fpu.FPSR.dz = false;
+    fpu.FPSR.inex1 = false;
+    fpu.FPSR.inex2 = false;
     if(!(op2 >> 13 & 1)) {
-        fpvalue src;
         if(rm) {
             switch(src_s) {
             case 0:
-                src = static_cast<int64_t>(
+                fpu.src_v = static_cast<int64_t>(
                     static_cast<int32_t>(EA_READ32(type, reg)));
                 break;
             case 1: {
                 uint32_t addr = EA_Addr(type, reg, 4, false);
-                load_single(addr, src);
+                load_single(addr, fpu.src_v);
                 break;
             }
             case 2: {
                 uint32_t addr = EA_Addr(type, reg, 12, false);
-                load_ext(addr, src);
+                load_ext(addr, fpu.src_v);
                 break;
             }
             case 3: {
                 uint32_t addr = EA_Addr(type, reg, 12, false);
-                load_packed(addr, src);
+                load_packed(addr, fpu.src_v);
                 break;
             }
             case 4:
-                src = static_cast<int64_t>(
+                fpu.src_v = static_cast<int64_t>(
                     static_cast<int16_t>(EA_READ16(type, reg)));
                 break;
             case 5: {
                 uint32_t addr = EA_Addr(type, reg, 8, false);
-                load_double(addr, src);
+                load_double(addr, fpu.src_v);
                 break;
             }
             case 6:
-                src = static_cast<int64_t>(
+                fpu.src_v = static_cast<int64_t>(
                     static_cast<int8_t>(EA_READ8(type, reg)));
                 break;
             case 7:
@@ -978,50 +1019,52 @@ OP(fpu_op) {
                 return;
             }
         } else {
-            src = fpu.fp[src_s];
+            fpu.src_v = fpu.fp[src_s];
         }
-        mpfr_clear_flags();
-        fpu.FPSR.bsun = false;
-        fpu.FPSR.operr = false;
-        fpu.FPSR.ovfl = false;
-        fpu.FPSR.unfl = false;
-        fpu.FPSR.dz = false;
-        fpu.FPSR.inex1 = false;
-        fpu.FPSR.inex2 = false;
         switch(opc2) {
         case 0x38: // FCMP
-            op_fcmp(src, fpu.fp[dst_r]);
+            op_fcmp(fpu.src_v, fpu.fp[dst_r]);
             break;
         case 0x3A: // FTST
-            op_ftst(src, fpu.fp[dst_r]);
+            op_ftst(fpu.src_v, fpu.fp[dst_r]);
             break;
         default:
             if(fpu_op_t_table1[opc2]) {
-                if(test_nan(src)) {
-                    fpu.fp[dst_r] = src;
+                if(test_nan(fpu.src_v)) {
+                    fpu.fp[dst_r] = std::move(fpu.src_v);
                     fpu.FPSR.nan = true;
-                    fpu_checkexception();
                 } else {
-                    fpu_op_t_table1[opc2](src, fpu.fp[dst_r]);
+                    fpu_op_t_table1[opc2](fpu.src_v, fpu.dst_v);
+                    if((!fpu.FPSR.operr || !fpu.FPCR.operr) &&
+                       (!fpu.FPSR.dz || !fpu.FPCR.dz)) {
+                        fpu.fp[dst_r] = std::move(fpu.dst_v);
+                    }
                 }
+                fpu_checkexception();
             } else if(fpu_op_t_table2[opc2]) {
                 if(test_nan(fpu.fp[dst_r])) {
                     fpu.FPSR.nan = true;
-                    fpu_checkexception();
-                } else if(test_nan(src)) {
-                    fpu.fp[dst_r] = src;
+                } else if(test_nan(fpu.src_v)) {
+                    fpu.fp[dst_r] = std::move(fpu.src_v);
                     fpu.FPSR.nan = true;
-                    fpu_checkexception();
                 } else {
-                    fpu_op_t_table2[opc2](src, fpu.fp[dst_r]);
+                    fpu.dst_v = fpu.fp[dst_r];
+                    fpu_op_t_table2[opc2](fpu.src_v, fpu.dst_v);
+                    if((!fpu.FPSR.operr || !fpu.FPCR.operr) &&
+                       (!fpu.FPSR.dz || !fpu.FPCR.dz)) {
+                        fpu.fp[dst_r] = std::move(fpu.dst_v);
+                    }
                 }
+                fpu_checkexception();
             } else {
                 FP_UNDEF();
             }
         }
     } else {
         // FMOVE TO
-        fmove_to(type, reg, src_s, opc2, fpu.fp[dst_r]);
+        fpu.dst_v = fpu.fp[dst_r];
+        fmove_to(type, reg, src_s, opc2, fpu.dst_v);
+        fpu_checkexception();
     }
 }
 bool fpcc(int c) {
@@ -1030,6 +1073,9 @@ bool fpcc(int c) {
     }
     if((c & 0x10) && fpu.FPSR.nan) {
         fpu.FPSR.bsun = true;
+        if(fpu.FPCR.bsun) {
+            FP_UNCND();
+        }
     }
 
     switch(c & 0xf) {
@@ -1133,14 +1179,14 @@ OP(fsave) {
     if(!regs.S) {
         PRIV_ERROR();
     }
-regs.traced = true;
+    regs.traced = true;
     EA_WRITE32(type, reg, 0x41000000);
 }
 OP(frestore) {
     if(!regs.S) {
         PRIV_ERROR();
     }
-regs.traced = true;
+    regs.traced = true;
     uint32_t fw = EA_READ32(type, reg);
     if(fw >> 24 == 0) {
         init_fpu();

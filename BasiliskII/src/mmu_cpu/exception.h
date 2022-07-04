@@ -30,11 +30,11 @@ inline void ALINE_EXCEPTION() { RAISE0(10, false); }
 inline void FP_UNDEF() { RAISE0(11, false); }
 inline void FORMAT_ERROR() { RAISE0(14, false); }
 inline void TRAP(int v) { RAISE0(32 + v, true); }
-inline void FP_UNCND() { RAISE3(48); }
-inline void FP_INEX() { RAISE3(49); }
-inline void FP_DIV0() { RAISE3(50); }
-inline void FP_UNFL() { RAISE3(51); }
-inline void FP_OPERR() { RAISE3(52); }
-inline void FP_OVFR() { RAISE3(53); }
-inline void FP_SNAN() { RAISE3(54); }
+inline void FP_UNCND() { RAISE0(48, false); }
+inline void FP_INEX() { RAISE0(49, false); }
+inline void FP_DIV0() { RAISE0(50, false); }
+inline void FP_UNFL() { RAISE0(51, false); }
+inline void FP_OPERR() { RAISE0(52, false); }
+inline void FP_OVFR() { RAISE0(53, false); }
+inline void FP_SNAN() { RAISE0(54, false); }
 #endif

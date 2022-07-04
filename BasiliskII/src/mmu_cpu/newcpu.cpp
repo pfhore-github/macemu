@@ -91,6 +91,11 @@ OP(aline) {
     PREFETCH();
     ALINE_EXCEPTION();
 }
+
+OP(fline) {
+    PREFETCH();
+    FP_UNDEF();
+}
 void EmulOp(uint16_t opcode, M68kRegisters *r);
 OP(emul_op) {
     M68kRegisters rr;
@@ -311,6 +316,10 @@ static void build_cpufunctbl() {
 
     for(int i = 0; i < 0100; ++i) {
         opc_map[01200 | i] = op_aline;
+    }
+
+    for(int i = 0; i < 0100; ++i) {
+        opc_map[01700 | i] = op_fline;
     }
 
     opc_map[01730] = op_move16;

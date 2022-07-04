@@ -237,7 +237,6 @@ mmu_cpu/test/fpu/fdbcc.cpp
 mmu_cpu/test/fpu/fscc.cpp
 
 mmu_cpu/test/fpu/nan.cpp
-mmu_cpu/test/fpu/fpu_ex.cpp
 
 mmu_cpu/test/mmu/disabled.cpp
 mmu_cpu/test/mmu/ttr.cpp

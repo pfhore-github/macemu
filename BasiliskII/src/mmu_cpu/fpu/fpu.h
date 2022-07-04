@@ -45,5 +45,8 @@ struct M68881 {
         bool n;
     } FPSR;
     uint32_t fpiar;
+
+    // internal
+    fpvalue src_v, dst_v;
 };
 #endif

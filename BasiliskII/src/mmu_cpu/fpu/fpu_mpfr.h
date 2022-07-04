@@ -36,7 +36,9 @@ class fpvalue {
 
     explicit operator float() const;
     explicit operator double() const;
-    explicit operator int64_t() const;
+    int64_t to_int() const;
+
+
     std::tuple<bool, uint64_t, mpfr_exp_t> get_zexp() const;
     std::pair<fpvalue, mpfr_exp_t> frexp() const;
     uint64_t get_payload() const;
@@ -46,6 +48,7 @@ class fpvalue {
     fpvalue &operator-=(const fpvalue &a);
     fpvalue &operator*=(const fpvalue &a);
     fpvalue &operator/=(const fpvalue &a);
+    friend fpvalue operator/(fpvalue a, const fpvalue &b);
 
     bool signbit() const;
 
