@@ -144,13 +144,6 @@ class Z8530 : public SCC_impl {
   public:
     Z8530(SCC *s, bool c = false) : SCC_impl(s, c) {}
 };
-#if 0
-// CMOS
-class Z85C80 : public Z8530 {
-//	void write_reg_impl(int n, uint8_t v) override;
-//	uint8_t read_reg_impl(int n) override;
-public:
-	Z85C80(bool c = false) :Z8530(c) {}
-};
+
 #endif
 #endif

@@ -23,15 +23,22 @@ std::vector<std::byte> RAM;
 uint8_t *ROMBaseHost;
 std::unique_ptr<std::mt19937> rnd;
 void init_m68k();
+extern bool rom_overlay;
 bool reset = false;
 void reset_all() { reset = true; }
 struct MyGlobalFixture {
     MyGlobalFixture() {
+        if(SDL_Init(SDL_INIT_EVERYTHING)) {
+            SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "fatal error",
+                                     SDL_GetError(), nullptr);
+            exit(1);
+        }
         init_m68k();
         RAM.resize(0x100000);
         srand(time(nullptr));
         std::random_device seed_gen;
         rnd = std::make_unique<std::mt19937>(seed_gen());
+        rom_overlay = false;
     }
 
     ~MyGlobalFixture() {}
@@ -102,7 +109,7 @@ void exception_check(int e, int tp) {
         BOOST_TEST(regs.S);
         BOOST_TEST(regs.pc == 0x5000);
         BOOST_TEST((raw_read16(regs.a[7] + 6) & 0xfff) == e * 4);
-        if( tp != -1) {
+        if(tp != -1) {
             BOOST_TEST((raw_read16(regs.a[7] + 6) >> 12) == tp);
         }
     } else {

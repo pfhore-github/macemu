@@ -9,6 +9,7 @@
 #include "mbus.h"
 #include "memory.h"
 #include "newcpu.h"
+bool rom_overlay = true;
 uint8_t readIO8(uint32_t addr);
 uint16_t readIO16(uint32_t addr);
 uint32_t readIO32(uint32_t addr);
@@ -71,11 +72,14 @@ void b_read_impl(uint32_t addr, void *v, int sz) {
     case 1:
     case 2:
     case 3:
-        if(base + sz < RAM.size()) {
+        if(rom_overlay) {
+            return readBE(v, &ROMBaseHost[base & (ROMSize - 1)], sz);
+        } else if(base + sz < RAM.size()) {
             return readBE(v, &RAM[base], sz);
         }
         break;
     case 4:
+        rom_overlay = false;
         return readBE(v, &ROMBaseHost[base & (ROMSize - 1)], sz);
     case 5:
         return readIO(addr, v, sz);

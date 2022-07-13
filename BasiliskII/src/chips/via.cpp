@@ -15,6 +15,38 @@ static inline uint64_t CLOCK() {
     return SDL_GetPerformanceCounter() * 7833600 /
            SDL_GetPerformanceFrequency();
 }
+
+void VIA::ca1_in() { do_irq(IRQ_FLAG::CA1); }
+
+void VIA::cb1_in() { do_irq(IRQ_FLAG::CB1); }
+
+void VIA::ca2_in() { do_irq(IRQ_FLAG::CA2); }
+
+void VIA::cb2_in(bool v) {
+    sr = sr << 1 | v;
+    if(++sr_c == 8) {
+        sr_c = 0;
+        do_irq(IRQ_FLAG::SREG);
+    }
+    bool old = std::exchange(cb2_old, v);
+    switch(PCR_MODE(p_ctl.CB2)) {
+    case PCR_MODE::INPUT_NEGATIVE:
+    case PCR_MODE::INDEPENDENT_NEGATIVE:
+        if(old && !v) {
+            do_irq(IRQ_FLAG::CB2);
+        }
+        break;
+    case PCR_MODE::INPUT_POSITIVE:
+    case PCR_MODE::INDEPENDENT_POSITIVE:
+        if(!old && v) {
+            do_irq(IRQ_FLAG::CB2);
+        }
+        break;
+    default:
+        break;
+    }
+}
+
 class via_timer {
     const IRQ_FLAG c;
     VIA *via;
@@ -44,6 +76,7 @@ uint32_t timer_exec(uint32_t i, void *p) {
     if(self->isTimer1 && self->via->a_ctl.T1_PB7) {
         self->via->writeB(7, std::exchange(self->pulse, !self->pulse));
     }
+
     if(self->repeat) {
         self->base = CLOCK();
         return i;
@@ -68,53 +101,17 @@ VIA::VIA(uint8_t irq)
     reset();
 }
 
-void VIA::ca1_in(bool v) {
-    bool old = std::exchange(ca1_old, v);
-    if(p_ctl.CA1) {
-        if(old || !v) {
-            return;
-        }
-    } else {
-        if(!old || v) {
-            return;
-        }
-    }
-    do_irq(IRQ_FLAG::CA1);
-    irA = 0;
-    for(int i = 0; i < 8; ++i) {
-        irA |= readA(i) << i;
-    }
-}
-
-void VIA::cb1_in(bool v) {
-    bool old = std::exchange(cb1_old, v);
-    if(p_ctl.CB1) {
-        if(old || !v) {
-            return;
-        }
-    } else {
-        if(!old || v) {
-            return;
-        }
-    }
-    do_irq(IRQ_FLAG::CB1);
-    irB = 0;
-    for(int i = 0; i < 8; ++i) {
-        irB |= readB(i) << i;
-    }
-}
-
 void VIA::do_irq(IRQ_FLAG i) {
     irq_flg.set(int(i));
     if(irq_enable.test(int(i))) {
         irq_flg |= 0x80;
-        irq_pin();
+        irq();
     }
 }
 
 void VIA::reset_irq(IRQ_FLAG i) { irq_flg.reset(int(i)); }
 
-void VIA::irq_pin() { regs.irq |= 1 << IRQ; }
+void VIA::irq() { regs.irq |= 1 << IRQ; }
 
 void VIA::set_timer2() {
     if(!a_ctl.T2_CTL) {
@@ -123,56 +120,6 @@ void VIA::set_timer2() {
         timer2->stop();
         t2_counter = timer2_latch;
         t2_running = true;
-    }
-}
-
-void VIA::ca2_in_push(bool v) {
-    bool old = std::exchange(ca2_old, v);
-    switch(PCR_MODE(p_ctl.CA2)) {
-    case PCR_MODE::INPUT_NEGATIVE:
-    case PCR_MODE::INDEPENDENT_NEGATIVE:
-        if(old && !v) {
-            do_irq(IRQ_FLAG::CA2);
-        }
-        break;
-    case PCR_MODE::INPUT_POSITIVE:
-    case PCR_MODE::INDEPENDENT_POSITIVE:
-        if(!old && v) {
-            do_irq(IRQ_FLAG::CA2);
-        }
-        break;
-    default:
-        break;
-    }
-}
-
-void VIA::cb2_in_push_byte(uint8_t v) {
-    for(int i = 0; i < 8; ++i) {
-        cb2_in_push(v >> (7 - i) & 1);
-    }
-}
-void VIA::cb2_in_push(bool v) {
-    sr = sr << 1 | v;
-    if(++sr_c == 8) {
-        sr_c = 0;
-        do_irq(IRQ_FLAG::SREG);
-    }
-    bool old = std::exchange(cb2_old, v);
-    switch(PCR_MODE(p_ctl.CB2)) {
-    case PCR_MODE::INPUT_NEGATIVE:
-    case PCR_MODE::INDEPENDENT_NEGATIVE:
-        if(old && !v) {
-            do_irq(IRQ_FLAG::CB2);
-        }
-        break;
-    case PCR_MODE::INPUT_POSITIVE:
-    case PCR_MODE::INDEPENDENT_POSITIVE:
-        if(!old && v) {
-            do_irq(IRQ_FLAG::CB2);
-        }
-        break;
-    default:
-        break;
     }
 }
 
@@ -197,37 +144,18 @@ uint8_t VIA::read_reg_b() {
     if(!p_ctl.CB1) {
         irq_flg.reset(int(IRQ_FLAG::CB1));
     }
-    if(p_ctl.CB2 == PCR_MODE::INPUT_NEGATIVE ||
-       p_ctl.CB2 == PCR_MODE::INPUT_POSITIVE) {
-        irq_flg.reset(int(IRQ_FLAG::CB2));
-    }
-    return v;
-}
-
-uint8_t VIA::read_reg_a_handshake() {
-    uint8_t v = 0;
-    if(a_ctl.PA_LATCH) {
-        v = irA;
-    } else {
-        for(int i = 0; i < 8; ++i) {
-            v |= readA(i) << i;
-        }
-    }
-    irq_flg.reset(int(IRQ_FLAG::CA1));
-    switch(p_ctl.CA2) {
+    switch(PCR_MODE(p_ctl.CB2)) {
     case PCR_MODE::INPUT_NEGATIVE:
     case PCR_MODE::INPUT_POSITIVE:
-        irq_flg.reset(int(IRQ_FLAG::CA2));
-        break;
-    case PCR_MODE::HANDSHAKE:
-    case PCR_MODE::PULSE:
-        // not implemented
+        irq_flg.reset(int(IRQ_FLAG::CB2));
         break;
     default:
         break;
     }
     return v;
 }
+
+uint8_t VIA::read_reg_a_handshake() { return read_reg_a(); }
 uint8_t VIA::read_dir_b() { return dirB; }
 uint8_t VIA::read_dir_a() { return dirA; }
 uint8_t VIA::read_timer1_l() {
@@ -255,13 +183,20 @@ uint8_t VIA::read_timer2_h() {
     }
 }
 uint8_t VIA::read_shift_reg() {
+    switch(a_ctl.SR) {
+    case SR_MODE::CLOCK_IN:
+    case SR_MODE::TIMER2_IN:
+    case SR_MODE::CB1_IN:
+        sr = cb2_recv();
+    default:
+        break;
+    }
     irq_flg.reset(int(IRQ_FLAG::SREG));
     return sr;
 }
 uint8_t VIA::read_auxilary_cr() {
-    return a_ctl.PA_LATCH | a_ctl.PB_LATCH << 1 | (a_ctl.SR_MODE & 3) << 2 |
-           a_ctl.SR_OUT << 4 | a_ctl.T2_CTL << 5 | a_ctl.T1_FREERUN << 6 |
-           a_ctl.T1_PB7 << 7;
+    return a_ctl.PA_LATCH | a_ctl.PB_LATCH << 1 | int(a_ctl.SR) << 2 |
+           a_ctl.T2_CTL << 5 | a_ctl.T1_FREERUN << 6 | a_ctl.T1_PB7 << 7;
 }
 uint8_t VIA::read_peripheral_cr() {
     return p_ctl.CA1 | int(p_ctl.CA2) << 1 | p_ctl.CB1 << 4 |
@@ -348,10 +283,6 @@ void VIA::write_reg_b(uint8_t v) {
     case PCR_MODE::INPUT_POSITIVE:
         irq_flg.reset(int(IRQ_FLAG::CB2));
         return;
-    case PCR_MODE::HANDSHAKE:
-    case PCR_MODE::PULSE:
-        // not implemented
-        return;
     default:
         return;
     }
@@ -403,17 +334,29 @@ void VIA::write_timer2_h(uint8_t v) {
 void VIA::write_shift_reg(uint8_t v) {
     irq_flg.reset(int(IRQ_FLAG::SREG));
     sr = v;
-    if(a_ctl.SR_OUT) {
-        // immidiate shift out everything
-        cb2_out(v);
+    switch(a_ctl.SR) {
+    case SR_MODE::DISABLED:
+    case SR_MODE::TIMER2_IN:
+    case SR_MODE::CLOCK_IN:
+    case SR_MODE::CB1_IN:
+        // do nothing
+        break;
+    case SR_MODE::CLOCK_OUT:
+        // immidiate shift out (10.2124us is too short to delay)
+        cb2_send(v);
         do_irq(IRQ_FLAG::SREG);
+    case SR_MODE::FREERUN_OUT:
+        // handle another
+        break;
+    case SR_MODE::TIMER2_OUT:
+    case SR_MODE::CB1_OUT:
+        break;
     }
 }
 void VIA::write_auxilary_cr(uint8_t v) {
     a_ctl.PA_LATCH = v & 1;
     a_ctl.PB_LATCH = (v >> 1) & 1;
-    a_ctl.SR_MODE = (v >> 2) & 3;
-    a_ctl.SR_OUT = (v >> 4) & 1;
+    a_ctl.SR = SR_MODE((v >> 2) & 7);
     a_ctl.T2_CTL = (v >> 5) & 1;
     a_ctl.T1_FREERUN = (v >> 6) & 1;
     a_ctl.T1_PB7 = (v >> 7) & 1;
@@ -519,22 +462,17 @@ void VIA::reset() {
     memset(&a_ctl, 0, sizeof(a_ctl));
     irq_flg = 0;
     irq_enable = 0x7f;
-    cb1_old = ca1_old = false;
-    cb2_old = ca2_old = false;
+    cb2_old = false;
 }
 
 VIA::~VIA() {}
-class VIA1 : public VIA {
-  public:
-    VIA1() : VIA(1) {}
-    bool readA(int n) override;
-    void writeA(int n, bool v) override;
-    bool readB(int n) override;
-    void writeB(int n, bool v) override;
-};
 
+// TODO implement at scc.cpp
+bool scc_wr_req() { return false; }
 bool VIA1::readA(int n) {
     switch(n) {
+    case 7:
+        return scc_wr_req();
     case 6:
         return false;
     case 4:
@@ -546,16 +484,138 @@ bool VIA1::readA(int n) {
     }
     return false;
 }
-void VIA1::writeA(int n, bool v) {}
-bool VIA1::readB(int n) { return false; }
-void VIA1::writeB(int n, bool v) {}
-
-VIA* via1;
-VIA* via2;
-
-void reset_via() {
-    if( via1) { delete via1;}
-    if( via2) { delete via2;}
-    via1 = new VIA1();
-    via2 = new VIA(2);
+// TODO swim.cpp
+void vHeadSel(bool b) {}
+// TODO scc.cpp
+void vSync(bool b) {}
+extern bool rom_overlay;
+void VIA1::writeA(int n, bool v) {
+    switch(n) {
+    case 5:
+        vHeadSel(v);
+        break;
+    case 4:
+        if(v) {
+            rom_overlay = true;
+        }
+        break;
+    case 3:
+        vSync(v);
+        break;
+    default:
+        break;
+    }
 }
+bool VIA2::readA(int n) {
+    switch(n) {
+    case 6:
+        return irq_from_ext[0].load();
+    case 5:
+        return irq_from_ext[6].load();
+    case 4:
+        return irq_from_ext[5].load();
+    case 3:
+        return irq_from_ext[4].load();
+    case 2:
+        return irq_from_ext[3].load();
+    case 1:
+        return irq_from_ext[2].load();
+    case 0:
+        return irq_from_ext[1].load();
+    }
+    return false;
+}
+void v2RAM1(bool v) {}
+void v2RAM0(bool v) {}
+void VIA2::writeA(int n, bool v) {
+    switch(n) {
+    case 7:
+        v2RAM1(v);
+        break;
+    case 6:
+        v2RAM0(v);
+        break;
+    }
+    return;
+}
+
+// TODO adb.cpp
+bool vfDBInt4() { return false; }
+// TODO rtc.cpp
+bool rtcDataIn();
+bool VIA1::readB(int n) {
+    switch(n) {
+    case 3:
+        return vfDBInt4();
+    case 0:
+        return rtcDataIn();
+    }
+    return false;
+}
+// TODO nbus.cpp
+bool v2TM0A() { return false; }
+bool v2TM1A() { return false; }
+bool VIA2::readB(int n) {
+    switch(n) {
+    case 6:
+        return false; // always stereo
+    case 5:
+        return v2TM0A();
+    case 4:
+        return v2TM1A();
+    case 3:
+        return false;
+    }
+    return false;
+}
+// TODO sound.cpp
+void vSndEnb(bool v) {}
+// TODO adb.cpp
+void vfDesk2(bool v) {}
+void vfDesk1(bool v) {}
+// TODO rtc.cpp
+void rTCEnb(bool v);
+void rtcCLK(bool v);
+void rtcDataOut(bool v);
+
+void VIA1::writeB(int n, bool v) {
+    switch(n) {
+    case 7:
+        vSndEnb(v);
+        break;
+    case 5:
+        vfDesk2(v);
+        break;
+    case 4:
+        vfDesk1(v);
+        break;
+    case 2:
+        rTCEnb(v);
+        break;
+    case 1:
+        rtcCLK(v);
+        break;
+    case 0:
+        rtcDataOut(v);
+        break;
+    }
+}
+void v2PowerOff(bool v) {}
+void v2BusLk(bool v) {}
+void VIA2::writeB(int n, bool v) {
+    switch(n) {
+    case 2:
+        v2PowerOff(v);
+        break;
+    case 1:
+        v2BusLk(v);
+        break;
+    case 0:
+        regs.cdis = v;
+        break;
+    }
+}
+VIA1 via1;
+
+VIA2 via2;
+void reset_via() {}

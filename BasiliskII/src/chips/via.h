@@ -1,7 +1,9 @@
 #ifndef VIA_H__
 #define VIA_H__ 1
 #include <SDL.h>
+#include <memory>
 #include <bitset>
+#include "newcpu.h"
 enum class ACR_MODE {
     PA_LATCH,
     PB_LATCH,
@@ -31,11 +33,35 @@ enum class PCR_MODE : uint32_t {
     MANUAL_HIGH
 };
 
+enum class SR_MODE {
+    DISABLED = 0,
+    TIMER2_IN,
+    CLOCK_IN,
+    CB1_IN, 
+    FREERUN_OUT,
+    TIMER2_OUT,
+    CLOCK_OUT,
+    CB1_OUT,
+};
+
 // 1tick(783.36kHz) = 1.27655 us
 // macintosh CA2 is input only
 class via_timer;
-/** limited MOS 6522 VIA */
+/** MOS 6522 VIA */
 class VIA {
+    // peripheral
+    virtual bool readA(int n) { return false; }
+    virtual void writeA(int n, bool v) {}
+    virtual bool readB(int n) { return false; }
+    virtual void writeB(int n, bool v) {}
+
+    // for SR
+    virtual void cb2_send(uint8_t v) {}
+    virtual uint8_t cb2_recv() { return 0; }
+
+    // external bus
+    virtual void send_ca2() {}
+
     friend void TimerInit();
     // clock timer
     std::unique_ptr<via_timer> timer1, timer2;
@@ -43,10 +69,8 @@ class VIA {
     uint16_t t2_counter = 0;
 
     const uint8_t IRQ;
-    bool ca1_old;
-    bool cb1_old;
-    bool ca2_old;
     bool cb2_old;
+
     uint16_t timer1_latch, timer2_latch;
     void do_writeB(int i, bool v);
 
@@ -66,8 +90,7 @@ class VIA {
     struct a_ctl_t {
         bool PA_LATCH;
         bool PB_LATCH;
-        unsigned int SR_MODE;
-        bool SR_OUT;
+        SR_MODE SR;
         bool T2_CTL;
         bool T1_FREERUN;
         bool T1_PB7;
@@ -82,23 +105,9 @@ class VIA {
 
     std::bitset<8> irq_enable;
 
-    // peripheral
-    virtual bool readA(int n) { return false; }
-    virtual void writeA(int n, bool v) {}
-    virtual bool readB(int n) { return false; }
-    virtual void writeB(int n, bool v) {}
-    virtual void cb2_out(uint8_t v) {} // for VIA1; ADB
-    virtual void irq_pin();
-    friend class ADB_VIA;
-
   public:
     VIA(uint8_t irq);
 
-    void ca1_in(bool v);
-    void cb1_in(bool v);
-    void ca2_in_push(bool v);
-    void cb2_in_push_byte(uint8_t v); // for ADB
-    void cb2_in_push(bool v);
     void do_irq(IRQ_FLAG i);
     void reset_irq(IRQ_FLAG i);
     uint8_t read(int n);
@@ -140,10 +149,39 @@ class VIA {
     void write_irq(uint8_t v);             // $1A00
     void write_irq_enable(uint8_t v);      // $1C00
     void write_reg_a(uint8_t v);           // $1E00
+
+        // from device
+    void ca1_in();
+    void cb1_in();
+    void ca2_in();
+    void cb2_in(bool v);
+
+    void irq();
+
 };
 
+class VIA1 : public VIA {
+  public:
+    VIA1() : VIA(1) {}
+    bool readA(int n) override;
+    void writeA(int n, bool v) override;
+    bool readB(int n) override;
+    void writeB(int n, bool v) override;
 
-extern VIA* via1;
-extern VIA* via2;
+};
+
+class VIA2 : public VIA {
+  public:
+    VIA2() : VIA(2) {}
+    bool readA(int n) override;
+    void writeA(int n, bool v) override;
+    bool readB(int n) override;
+    void writeB(int n, bool v) override;
+
+    std::atomic<bool> irq_from_ext[7];
+};
+
+extern VIA1 via1;
+extern VIA2 via2;
 
 #endif

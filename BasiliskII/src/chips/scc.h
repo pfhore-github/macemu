@@ -45,8 +45,6 @@ public:
 	// reset
 	void reset();
 	// connect
-//	void connect_modem(const std::shared_ptr<SerialDevice>&);
-//	void connect_printer(const std::shared_ptr<SerialDevice>&);
 	uint8_t get_int_vec();
 	uint8_t read(int) ;
 	void write(int, uint8_t) ;

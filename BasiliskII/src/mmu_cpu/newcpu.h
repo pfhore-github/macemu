@@ -94,7 +94,7 @@ struct m68k_reg {
     std::atomic<bool> must_reset;
     bool traced = false;
 
-    
+    bool cdis = false;
 };
 // no multi cpu
 extern m68k_reg regs;
@@ -111,6 +111,7 @@ uint8_t GET_CCR();
 uint16_t GET_SR();
 void SET_CCR(uint8_t v);
 void SET_SR(uint16_t sr);
+
 #define OP(name)                                                               \
     void op_##name(                                                            \
         uint16_t __attribute__((unused)) xop, int __attribute__((unused)) dm,  \
