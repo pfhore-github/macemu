@@ -555,36 +555,36 @@ void check_iop() {
 void get_via_machine_id() {
     uint32_t via_v = 0;
     if(HWINFO_D0 & 1 << int(ADDR::VIA1)) {
-        uint8_t reg_a_oldv = via1->read_reg_a();
-        uint8_t reg_a_dir = via1->read_dir_a();
-        via1->write_dir_a(reg_a_dir & HWINFO_A0->via1_mask_a);
-        uint8_t reg_a_newv = via1->read_reg_a();
-        via1->write_dir_a(reg_a_dir);
-        via1->write_reg_a(reg_a_oldv);
+        uint8_t reg_a_oldv = via1.read_reg_a();
+        uint8_t reg_a_dir = via1.read_dir_a();
+        via1.write_dir_a(reg_a_dir & HWINFO_A0->via1_mask_a);
+        uint8_t reg_a_newv = via1.read_reg_a();
+        via1.write_dir_a(reg_a_dir);
+        via1.write_reg_a(reg_a_oldv);
 
-        uint8_t reg_b_oldv = via1->read_reg_b();
-        uint8_t reg_b_dir = via1->read_dir_b();
-        via1->write_dir_b(reg_b_dir & HWINFO_A0->via1_mask_b);
-        uint8_t reg_b_newv = via1->read_reg_b();
-        via1->write_dir_b(reg_b_dir);
-        via1->write_reg_b(reg_b_oldv);
+        uint8_t reg_b_oldv = via1.read_reg_b();
+        uint8_t reg_b_dir = via1.read_dir_b();
+        via1.write_dir_b(reg_b_dir & HWINFO_A0->via1_mask_b);
+        uint8_t reg_b_newv = via1.read_reg_b();
+        via1.write_dir_b(reg_b_dir);
+        via1.write_reg_b(reg_b_oldv);
 
         via_v = reg_a_newv << 24 | reg_b_newv << 16;
     }
     if(HWINFO_D0 & 1 << int(ADDR::VIA2)) {
-        uint8_t reg_a_oldv = via2->read_reg_a();
-        uint8_t reg_a_dir = via2->read_dir_a();
-        via2->write_dir_a(reg_a_dir & HWINFO_A0->via2_mask_a);
-        uint8_t reg_a_newv = via2->read_reg_a();
-        via2->write_dir_a(reg_a_dir);
-        via2->write_reg_a(reg_a_oldv);
+        uint8_t reg_a_oldv = via2.read_reg_a();
+        uint8_t reg_a_dir = via2.read_dir_a();
+        via2.write_dir_a(reg_a_dir & HWINFO_A0->via2_mask_a);
+        uint8_t reg_a_newv = via2.read_reg_a();
+        via2.write_dir_a(reg_a_dir);
+        via2.write_reg_a(reg_a_oldv);
 
-        uint8_t reg_b_oldv = via2->read_reg_b();
-        uint8_t reg_b_dir = via2->read_dir_b();
-        via2->write_dir_b(reg_b_dir & HWINFO_A0->via2_mask_b);
-        uint8_t reg_b_newv = via2->read_reg_b();
-        via2->write_dir_b(reg_b_dir);
-        via2->write_reg_b(reg_b_oldv);
+        uint8_t reg_b_oldv = via2.read_reg_b();
+        uint8_t reg_b_dir = via2.read_dir_b();
+        via2.write_dir_b(reg_b_dir & HWINFO_A0->via2_mask_b);
+        uint8_t reg_b_newv = via2.read_reg_b();
+        via2.write_dir_b(reg_b_dir);
+        via2.write_reg_b(reg_b_oldv);
         via_v |= reg_a_newv << 8 | reg_b_newv;
     }
     regs.d[1] = via_v;

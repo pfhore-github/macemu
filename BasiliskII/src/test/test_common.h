@@ -92,5 +92,7 @@ void fpu_test(char op, T v1, T v2, T2 expected) {
     m68k_do_execute();
     fpu_check(2, expected);
 }
-
+bool jit_compile(uint32_t from, uint32_t to);
+bool jit_jump(uint32_t to);
+void jit_exception_check(int e);
 

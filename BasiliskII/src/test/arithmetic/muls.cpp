@@ -18,7 +18,7 @@ BOOST_AUTO_TEST_CASE(operand) {
 BOOST_AUTO_TEST_CASE(n) {
     regs.d[1] = -2;
     regs.d[2] = 10;
-    raw_write16(0, 0046101);
+    raw_write16(0, 0046001);
     raw_write16(2, 0x2802);
     m68k_do_execute();
     BOOST_TEST(regs.n);
@@ -27,7 +27,7 @@ BOOST_AUTO_TEST_CASE(n) {
 BOOST_AUTO_TEST_CASE(z) {
     regs.d[1] = -12345;
     regs.d[2] = 0;
-    raw_write16(0, 0046101);
+    raw_write16(0, 0046001);
     raw_write16(2, 0x2802);
     m68k_do_execute();
     BOOST_TEST(regs.z);

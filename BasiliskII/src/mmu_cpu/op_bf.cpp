@@ -65,8 +65,7 @@ inline void bf_m_common(uint32_t &addr, int &offset, int width) {
     regs.n = ret < 0;
     regs.z = ret == 0;
 }
-OP(bftst) {
-    uint16_t op2 = FETCH();
+void do_bftst(int type, int reg, uint16_t op2) {
     auto [offset, width] = parse_bf(op2);
     if(type == 0) {
         bf_r_common(reg, offset, width);
@@ -75,8 +74,12 @@ OP(bftst) {
         bf_m_common(addr, offset, width);
     }
 }
-OP(bfchg) {
+OP(bftst) {
     uint16_t op2 = FETCH();
+    do_bftst(type, reg, op2);
+}
+
+void do_bfchg(int type, int reg, uint16_t op2) {
     auto [offset, width] = parse_bf(op2);
     if(type == 0) {
         bf_r_common(reg, offset, width);
@@ -102,8 +105,12 @@ OP(bfchg) {
     }
 }
 
-OP(bfclr) {
+OP(bfchg) {
     uint16_t op2 = FETCH();
+    do_bfchg(type, reg, op2);
+}
+
+void do_bfclr(int type, int reg, uint16_t op2) {
     auto [offset, width] = parse_bf(op2);
     if(type == 0) {
         bf_r_common(reg, offset, width);
@@ -128,8 +135,12 @@ OP(bfclr) {
         }
     }
 }
-OP(bfset) {
+OP(bfclr) {
     uint16_t op2 = FETCH();
+    do_bfclr(type, reg, op2);
+}
+
+void do_bfset(int type, int reg, uint16_t op2) {
     auto [offset, width] = parse_bf(op2);
     if(type == 0) {
         bf_r_common(reg, offset, width);
@@ -154,12 +165,15 @@ OP(bfset) {
         }
     }
 }
+OP(bfset) {
+    uint16_t op2 = FETCH();
+    do_bfset(type, reg, op2);
+}
 
 inline int CLZ(unsigned int v, int width) {
     return std::countl_zero(v) - (32 - width);
 }
-OP(bfextu) {
-    uint16_t op2 = FETCH();
+void do_bfextu(int type, int reg, uint16_t op2) {
     auto [offset, width] = parse_bf(op2);
     if(type == 0) {
         bf_r_common(reg, offset, width);
@@ -170,8 +184,12 @@ OP(bfextu) {
         regs.d[op2 >> 12 & 7] = get_bf_m<uint32_t>(addr, offset, width);
     }
 }
-OP(bfexts) {
+OP(bfextu) {
     uint16_t op2 = FETCH();
+    do_bfextu(type, reg, op2);
+}
+
+void do_bfexts(int type, int reg, uint16_t op2) {
     auto [offset, width] = parse_bf(op2);
     if(type == 0) {
         bf_r_common(reg, offset, width);
@@ -182,8 +200,12 @@ OP(bfexts) {
         regs.d[op2 >> 12 & 7] = get_bf_m<int32_t>(addr, offset, width);
     }
 }
-OP(bfffo) {
+OP(bfexts) {
     uint16_t op2 = FETCH();
+    do_bfexts(type, reg, op2);
+}
+
+void do_bfffo(int type, int reg, uint16_t op2) {
     auto [offset, width] = parse_bf(op2);
     int xf = offset;
     if(type == 0) {
@@ -198,14 +220,18 @@ OP(bfffo) {
     }
 }
 
+OP(bfffo) {
+    uint16_t op2 = FETCH();
+    do_bfffo(type, reg, op2);
+}
+
 uint8_t bit_ins(uint8_t oldv, int offset, int width, uint8_t newv) {
     uint8_t mask = 0xff >> (8 - width);
     return (oldv & ~(mask << (8 - offset - width))) |
            ((newv & mask) << (8 - offset - width));
 }
 
-OP(bfins) {
-    uint16_t op2 = FETCH();
+void do_bfins(int type, int reg, uint16_t op2) {
     auto [offset, width] = parse_bf(op2);
     regs.v = false;
     regs.c = false;
@@ -225,7 +251,7 @@ OP(bfins) {
         regs.z = v == 0;
         regs.n = v & 1 << width;
         int sz = offset + width;
-        switch((sz-1) >> 3) {
+        switch((sz - 1) >> 3) {
         case 0:
             // OOO VVVVV X
             write8(addr, bit_ins(read8(addr), offset, width, v));
@@ -260,4 +286,8 @@ OP(bfins) {
             break;
         }
     }
+}
+OP(bfins) {
+    uint16_t op2 = FETCH();
+    do_bfins(type, reg, op2);
 }

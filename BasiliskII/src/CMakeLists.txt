@@ -35,6 +35,13 @@ mmu_cpu/op_bf.cpp
 mmu_cpu/fpu/fpu_mpfr.cpp 
 mmu_cpu/mmu/mmu_68040.cpp
 mmu_cpu/compiler/jit.cpp
+mmu_cpu/compiler/jit_ea.cpp
+mmu_cpu/compiler/jit_bits.cpp
+mmu_cpu/compiler/jit_arithmetic.cpp
+mmu_cpu/compiler/jit_move.cpp
+mmu_cpu/compiler/jit_bcd.cpp
+mmu_cpu/compiler/jit_branch.cpp
+mmu_cpu/compiler/jit_bf.cpp
 )
 
 #add_executable(Basillisk2 main.cpp prefs.cpp prefs_items.cpp Unix/sys_unix.cpp rom_patches.cpp slot_rom.cpp rsrc_patches.cpp emul_op.cpp macos_util.cpp xpram.cpp 
@@ -67,6 +74,7 @@ chips/io.cpp
 chips/via.cpp
 chips/mcu.cpp
 chips/iop.cpp
+chips/rtc.cpp
 #chips/scc.cpp
 rom/boot.cpp
 rom/boot2.cpp
@@ -248,9 +256,88 @@ test/mmu/ptest.cpp
 chips/via.cpp
 chips/rtc.cpp
 chips/easc.cpp
+
+peripheral/adb.cpp
+test/via.cpp
+
+)
+
+add_executable(jit ${TEST_COMMON}
+
+
+test/compiler/move/jit_lea.cpp
+test/compiler/move/jit_pea.cpp
+test/compiler/move/jit_moves.cpp
+test/compiler/move/jit_move.cpp
+test/compiler/move/jit_movec.cpp
+test/compiler/move/jit_movem.cpp
+
+test/compiler/bits/jit_ori.cpp
+test/compiler/bits/jit_ext.cpp
+test/compiler/bits/jit_extb.cpp
+test/compiler/bits/jit_andi.cpp
+test/compiler/bits/jit_eori.cpp
+test/compiler/bits/jit_clr.cpp
+test/compiler/bits/jit_not.cpp
+test/compiler/bits/jit_tst.cpp
+test/compiler/bits/jit_tas.cpp
+test/compiler/bits/jit_swap.cpp
+test/compiler/bits/jit_bclr.cpp
+test/compiler/bits/jit_btst.cpp
+test/compiler/bits/jit_bchg.cpp
+test/compiler/bits/jit_bset.cpp
+
+test/compiler/bits/jit_asr.cpp
+test/compiler/bits/jit_lsr.cpp
+test/compiler/bits/jit_roxr.cpp
+test/compiler/bits/jit_ror.cpp
+test/compiler/bits/jit_asl.cpp
+test/compiler/bits/jit_lsl.cpp
+test/compiler/bits/jit_roxl.cpp
+test/compiler/bits/jit_rol.cpp
+
+test/compiler/bits/jit_bftst.cpp
+test/compiler/bits/jit_bfchg.cpp
+test/compiler/bits/jit_bfclr.cpp
+test/compiler/bits/jit_bfset.cpp
+test/compiler/bits/jit_bfextu.cpp
+test/compiler/bits/jit_bfexts.cpp
+test/compiler/bits/jit_bfffo.cpp
+test/compiler/bits/jit_bfins.cpp
+
+
+test/compiler/arithmetic/jit_addi.cpp
+test/compiler/arithmetic/jit_subi.cpp
+test/compiler/arithmetic/jit_cmpi.cpp
+test/compiler/arithmetic/jit_neg.cpp
+test/compiler/arithmetic/jit_negx.cpp
+test/compiler/arithmetic/jit_cas.cpp
+test/compiler/arithmetic/jit_cmp2.cpp
+test/compiler/arithmetic/jit_chk2.cpp
+test/compiler/arithmetic/jit_mulu.cpp
+test/compiler/arithmetic/jit_muls.cpp
+test/compiler/arithmetic/jit_divs.cpp
+test/compiler/bcd/jit_nbcd.cpp
+test/compiler/branch/jit_bkpt.cpp
+test/compiler/branch/jit_link.cpp
+test/compiler/branch/jit_illegal.cpp
+test/compiler/branch/jit_trap.cpp
+test/compiler/branch/jit_trapv.cpp
+test/compiler/branch/jit_unlk.cpp
+test/compiler/branch/jit_nop.cpp
+test/compiler/branch/jit_reset.cpp
+test/compiler/branch/jit_rte.cpp
+test/compiler/branch/jit_rts.cpp
+test/compiler/branch/jit_rtr.cpp
+test/compiler/branch/jit_rtd.cpp
+test/compiler/branch/jit_jsr.cpp
+test/compiler/branch/jit_jmp.cpp
+
 )
 target_link_libraries(ut ${TEST_LIB})
+target_link_libraries(jit ${TEST_LIB})
 add_test(NAME ut COMMAND ./ut)
+add_test(NAME jit COMMAND ./jit)
 
 
 

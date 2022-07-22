@@ -19,5 +19,9 @@ uint8_t mcu_scsi_r(uint32_t addr) {
     switch( addr ) {
         case 12 : return 4;
     }
-    throw BUS_ERROR_EX{};
+    throw BUS_ERROR_EX{
+        .addr = addr,
+        .rw = true,
+        .size = SZ::LONG,
+    };
 }

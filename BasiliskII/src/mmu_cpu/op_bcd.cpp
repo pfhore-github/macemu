@@ -12,20 +12,20 @@
 
 int from_bcd(uint8_t v) { return ((v >> 4) & 0xf) * 10 + (v & 0xf); }
 uint8_t to_bcd(int v) { return ((v / 10) % 10) << 4 | (v % 10); }
-
+uint8_t do_nbcd(uint8_t v1) {
+    int v = 100 - from_bcd(v1) - regs.x;
+    bool cc = (v1 % 100) != 0;
+    regs.x = regs.c = cc;
+    if(cc) {
+        regs.z = false;
+    }
+    return to_bcd(v);
+}
 OP(nbcd) {
     if(type == 1) {
         op_link_l(reg);
     } else {
-        EA_Update8(type, reg, [](auto v1) {
-            int v = 100 - from_bcd(v1) - regs.x;
-            bool cc = (v1 % 100) != 0;
-            regs.x = regs.c = cc;
-            if(cc) {
-                regs.z = false;
-            }
-            return to_bcd(v);
-        });
+        EA_Update8(type, reg, do_nbcd);
     }
 }
 void op_sbcd_d(int dm, int reg) {
@@ -97,7 +97,7 @@ uint8_t do_abcd(uint8_t a, uint8_t b) {
     regs.z = v == 0 ? false : regs.z;
     return to_bcd(v);
 }
-void op_abcd_d(int dm, int reg)  {
+void op_abcd_d(int dm, int reg) {
     uint8_t src = regs.d[reg];
     uint8_t dst = regs.d[dm];
     WRITE_D8(dm, do_abcd(dst, src));

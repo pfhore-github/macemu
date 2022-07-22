@@ -1,0 +1,103 @@
+#define BOOST_TEST_DYN_LINK
+#include "memory.h"
+#include "newcpu.h"
+#include "test/test_common.h"
+BOOST_FIXTURE_TEST_SUITE(JIT, InitFix)
+BOOST_AUTO_TEST_SUITE(MOVES)
+BOOST_AUTO_TEST_SUITE(Byte)
+BOOST_AUTO_TEST_CASE(unpriv) {
+    regs.S = false;
+    raw_write16(0, 0007021);
+    raw_write16(2, 0x4000);
+    jit_compile(0, 2);
+    jit_exception_check(8);
+}
+
+BOOST_AUTO_TEST_CASE(from) {
+    regs.S = true;
+    regs.a[1] = 0x1000;
+    raw_write16(0, 0007021);
+    raw_write16(2, 0x5000);
+    raw_write8(0x1000, 0x23);
+    jit_compile(0, 2);
+    jit_exception_check(0);
+    BOOST_TEST(regs.d[5] == 0x23);
+}
+
+BOOST_AUTO_TEST_CASE(to) {
+    regs.S = true;
+    regs.a[1] = 0x1000;
+    regs.d[5] = 0x23;
+    raw_write16(0, 0007021);
+    raw_write16(2, 0x5800);
+    jit_compile(0, 2);
+    jit_exception_check(0);
+    BOOST_TEST(raw_read8(0x1000) == 0x23);
+}
+BOOST_AUTO_TEST_SUITE_END()
+
+BOOST_AUTO_TEST_SUITE(Word)
+BOOST_AUTO_TEST_CASE(unpriv) {
+    regs.S = false;
+    raw_write16(0, 0007121);
+    raw_write16(2, 0x4000);
+    jit_compile(0, 2);
+    jit_exception_check(8);
+}
+
+BOOST_AUTO_TEST_CASE(from) {
+    regs.S = true;
+    regs.a[1] = 0x1000;
+    raw_write16(0, 0007121);
+    raw_write16(2, 0x5000);
+    raw_write16(0x1000, 0x2345);
+    jit_compile(0, 2);
+    jit_exception_check(0);
+    BOOST_TEST(regs.d[5] == 0x2345);
+}
+
+BOOST_AUTO_TEST_CASE(to) {
+    regs.S = true;
+    regs.a[1] = 0x1000;
+    regs.d[5] = 0x2345;
+    raw_write16(0, 0007121);
+    raw_write16(2, 0x5800);
+    jit_compile(0, 2);
+    jit_exception_check(0);
+    BOOST_TEST(raw_read16(0x1000) == 0x2345);
+}
+BOOST_AUTO_TEST_SUITE_END()
+
+BOOST_AUTO_TEST_SUITE(Long)
+BOOST_AUTO_TEST_CASE(unpriv) {
+    regs.S = false;
+    raw_write16(0, 0007221);
+    raw_write16(2, 0x4000);
+    jit_compile(0, 2);
+    jit_exception_check(8);
+}
+
+BOOST_AUTO_TEST_CASE(from) {
+    regs.S = true;
+    regs.a[1] = 0x1000;
+    raw_write16(0, 0007221);
+    raw_write16(2, 0x5000);
+    raw_write32(0x1000, 0x23456789);
+    jit_compile(0, 2);
+    jit_exception_check(0);
+    BOOST_TEST(regs.d[5] == 0x23456789);
+}
+
+BOOST_AUTO_TEST_CASE(to) {
+    regs.S = true;
+    regs.a[1] = 0x1000;
+    regs.d[5] = 0x23456789;
+    raw_write16(0, 0007221);
+    raw_write16(2, 0x5800);
+    jit_compile(0, 2);
+    jit_exception_check(0);
+    BOOST_TEST(raw_read32(0x1000) == 0x23456789);
+}
+BOOST_AUTO_TEST_SUITE_END()
+BOOST_AUTO_TEST_SUITE_END()
+BOOST_AUTO_TEST_SUITE_END()

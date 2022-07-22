@@ -155,6 +155,7 @@ class VIA {
     void cb1_in();
     void ca2_in();
     void cb2_in(bool v);
+    void cb2_in_byte(uint8_t b);
 
     void irq();
 

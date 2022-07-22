@@ -43,18 +43,21 @@ void op_reset() {
     // TODO
     reset_all();
 }
-
-void op_stop() {
-    uint16_t next = FETCH();
+void do_stop(uint16_t next) {
     if(!regs.S) {
         PRIV_ERROR();
         return;
     }
     regs.traced = true;
     SET_SR(next);
-    regs.sleep = std::make_unique<std::promise<void>>();
-    std::future<void> f = regs.sleep->get_future();
+    cpu.sleep = std::make_unique<std::promise<void>>();
+    std::future<void> f = cpu.sleep->get_future();
     f.wait();
+
+}
+void op_stop() {
+    uint16_t next = FETCH();
+    do_stop(next);
 }
 
 void op_rte() {
@@ -104,12 +107,15 @@ BEGIN:
     return;
 }
 
-void op_rtd() {
-    int16_t disp = FETCH();
+void do_rtd(int16_t disp) {
     regs.traced = true;
     uint32_t pc = POP32();
     regs.a[7] += disp;
     JUMP(pc);
+}
+void op_rtd() {
+    int16_t disp = FETCH();
+    do_rtd(disp);
 }
 
 void op_rts() {

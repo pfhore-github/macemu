@@ -84,7 +84,14 @@ void b_read_impl(uint32_t addr, void *v, int sz) {
     case 5:
         return readIO(addr, v, sz);
     }
-    throw BUS_ERROR_EX{};
+    throw BUS_ERROR_EX{
+        .addr = addr,
+        .rw = true,
+        .size = sz == 1 ? SZ::BYTE :
+        sz == 2 ? SZ::WORD : 
+        sz == 4 ? SZ::LONG :
+        SZ::LINE
+    };
 }
 uint8_t b_read8(uint32_t addr_v) {
     uint8_t v;
@@ -118,7 +125,14 @@ void b_write_impl(uint32_t addr, const void *v, int sz) {
     case 5:
         return writeIO(base, v, sz);
     }
-    throw BUS_ERROR_EX{};
+    throw BUS_ERROR_EX{
+         .addr = addr,
+        .rw = false,
+        .size = sz == 1 ? SZ::BYTE :
+        sz == 2 ? SZ::WORD : 
+        sz == 4 ? SZ::LONG :
+        SZ::LINE
+    };
 }
 void b_write8(uint32_t addr, uint8_t v) { b_write_impl(addr, &v, 1); }
 void b_write16(uint32_t addr, uint16_t v) { b_write_impl(addr, &v, 2); }

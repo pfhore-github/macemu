@@ -14,6 +14,7 @@
 #include "mbus.h"
 #include "newcpu.h"
 #include "op.h"
+
 OP(moves_b) {
     uint16_t op2 = FETCH();
     if(!regs.S) {
@@ -31,7 +32,7 @@ OP(moves_b) {
             WRITE_D8(rg2, b_read8(addr));
         }
     } catch(BUS_ERROR_EX &) {
-        throw BUS_ERROR_EX {
+        throw BUS_ERROR_EX{
             .addr = addr,
             .ma = false,
             .atc = false,
@@ -82,7 +83,7 @@ OP(moves_w) {
             .size = SZ::WORD,
             .tt = TT::LFC,
             .tm = TM(w ? regs.dfc : regs.sfc),
-        };       
+        };
     }
 }
 
@@ -143,7 +144,7 @@ OP(moves_l) {
             .size = SZ::LONG,
             .tt = TT::LFC,
             .tm = TM(w ? regs.dfc : regs.sfc),
-        };       
+        };
     }
 }
 
@@ -235,39 +236,71 @@ OP(move_to_sr) {
     regs.traced = true;
     SET_SR(EA_READ16(type, reg));
 }
-
+void do_movem_to_w(int type, int reg, uint16_t reg_list) {
+    try {
+        if(!regs.i_ea) {
+            // start movem
+            regs.i_ea = EA_Addr(type, reg, 2, true);
+        }
+        uint32_t vv = regs.i_ea + (type == 4 ? 2 : 0);
+        if(type == 4) {
+            for(int i = 0; i < 15; ++i) {
+                if(reg_list & (1 << i)) {
+                    vv -= 2;
+                    write16(vv, regs.r[15 - i]);
+                }
+            }
+            regs.a[reg] = vv;
+        } else {
+            for(int i = 0; i < 15; ++i) {
+                if(reg_list & (1 << i)) {
+                    write16(vv, regs.r[i]);
+                    vv += 2;
+                }
+            }
+        }
+        regs.i_ea = 0;
+    } catch(BUS_ERROR_EX &e) {
+        e.cm = true;
+        throw e;
+    }
+}
 OP(movem_to_w) {
     if(type == 0) {
         op_ext_w(reg);
     } else {
         uint16_t reg_list = FETCH();
-        try {
-            if(!regs.i_ea) {
-                // start movem
-                regs.i_ea = EA_Addr(type, reg, 2, true);
-            }
-            uint32_t vv = regs.i_ea + (type == 4 ? 2 : 0);
-            if(type == 4) {
-                for(int i = 0; i < 15; ++i) {
-                    if(reg_list & (1 << i)) {
-                        vv -= 2;
-                        write16(vv, regs.r[15 - i]);
-                    }
-                }
-                regs.a[reg] = vv;
-            } else {
-                for(int i = 0; i < 15; ++i) {
-                    if(reg_list & (1 << i)) {
-                        write16(vv, regs.r[i]);
-                        vv += 2;
-                    }
-                }
-            }
-            regs.i_ea = 0;
-        } catch(BUS_ERROR_EX &e) {
-            e.cm = true;
-            throw e;
+        do_movem_to_w(type, reg, reg_list);
+    }
+}
+
+void do_movem_to_l(int type, int reg, uint16_t reg_list) {
+    try {
+        if(!regs.i_ea) {
+            // start movem
+            regs.i_ea = EA_Addr(type, reg, 4, true);
         }
+        uint32_t vv = regs.i_ea + (type == 4 ? 4 : 0);
+        if(type == 4) {
+            for(int i = 0; i < 15; ++i) {
+                if(reg_list & (1 << i)) {
+                    vv -= 4;
+                    write32(vv, regs.r[15 - i]);
+                }
+            }
+            regs.a[reg] = vv;
+        } else {
+            for(int i = 0; i < 15; ++i) {
+                if(reg_list & (1 << i)) {
+                    write32(vv, regs.r[i]);
+                    vv += 4;
+                }
+            }
+        }
+        regs.i_ea = 0;
+    } catch(BUS_ERROR_EX &e) {
+        e.cm = true;
+        throw e;
     }
 }
 OP(movem_to_l) {
@@ -275,37 +308,11 @@ OP(movem_to_l) {
         op_ext_l(reg);
     } else {
         uint16_t reg_list = FETCH();
-        try {
-            if(!regs.i_ea) {
-                // start movem
-                regs.i_ea = EA_Addr(type, reg, 4, true);
-            }
-            uint32_t vv = regs.i_ea + (type == 4 ? 4 : 0);
-            if(type == 4) {
-                for(int i = 0; i < 15; ++i) {
-                    if(reg_list & (1 << i)) {
-                        vv -= 4;
-                        write32(vv, regs.r[15 - i]);
-                    }
-                }
-                regs.a[reg] = vv;
-            } else {
-                for(int i = 0; i < 15; ++i) {
-                    if(reg_list & (1 << i)) {
-                        write32(vv, regs.r[i]);
-                        vv += 4;
-                    }
-                }
-            }
-            regs.i_ea = 0;
-        } catch(BUS_ERROR_EX &e) {
-            e.cm = true;
-            throw e;
-        }
+        do_movem_to_l(type, reg, reg_list);
     }
 }
-OP(movem_from_w) {
-    uint16_t reg_list = FETCH();
+
+void do_movem_from_w(int type, int reg, uint32_t reg_list) {
     try {
         if(!regs.i_ea) {
             // start movem
@@ -327,9 +334,11 @@ OP(movem_from_w) {
         throw e;
     }
 }
-
-OP(movem_from_l) {
+OP(movem_from_w) {
     uint16_t reg_list = FETCH();
+    do_movem_from_w(type, reg, reg_list);
+}
+void do_movem_from_l(int type, int reg, uint32_t reg_list) {
     try {
         if(!regs.i_ea) {
             // start movem
@@ -350,6 +359,10 @@ OP(movem_from_l) {
         e.cm = true;
         throw e;
     }
+}
+OP(movem_from_l) {
+    uint16_t reg_list = FETCH();
+    do_movem_from_l(type, reg, reg_list);
 }
 
 void op_move_to_usp(int reg) {

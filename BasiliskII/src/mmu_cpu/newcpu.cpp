@@ -41,6 +41,7 @@
 #include "newcpu.h"
 #include "op.h"
 m68k_reg regs;
+m680x0 cpu;
 void SAVE_SP() {
     if(!regs.S) {
         regs.usp = regs.a[7];
@@ -327,9 +328,10 @@ static void build_cpufunctbl() {
     init_fpu_opc();
     init_mmu_opc();
 }
-
+void build_jitfunctbl() ;
 void init_m68k() {
     build_cpufunctbl();
+    build_jitfunctbl();
     init_fpu();
     init_mmu();
 }
@@ -337,58 +339,9 @@ void init_m68k() {
 void exit_m68k(void) {}
 extern std::unordered_map<uint32_t, void (*)()> rom_functions;
 void reset_ex();
-// run one opcode
-void m68k_do_execute() {
-    if(regs.must_reset.load()) {
-        reset_ex();
-        regs.must_reset.store(false);
-        return;
-    }
-    if(auto it = rom_functions.find(regs.pc & 0xfffff);
-       it != rom_functions.end()) {
-        it->second();
-        return;
-    }
-    regs.opc = regs.pc;
-    uint16_t opc = FETCH();
-    bool trace_suspend = false;
-    try {
-        op_t f = opc_map[opc >> 6];
-        if(!f) {
-            throw ILLEGAL_INST_EX{};
-        }
-        f(opc, opc >> 9 & 7, opc >> 3 & 7, opc & 7);
-    } catch(ILLEGAL_INST_EX &) {
-        PREFETCH();
-        RAISE0(4, false);
-    } catch(BUS_ERROR_EX &e) {
-
-        uint16_t ssw = int(e.tm) | int(e.tt) << 3 | int(e.size) << 5 |
-                       e.rw << 8 | e.lk << 9 | e.atc << 10 | e.ma << 11;
-        // check CP
-        // check CU
-        uint32_t ea_v = 0;
-
-        if(regs.T == 2 || (regs.T == 1 && regs.traced)) {
-            trace_suspend = true;
-            ssw |= 1 << 13;
-            ea_v = regs.opc;
-        } else if(e.cm) {
-            ssw |= 1 << 12;
-            ea_v = regs.i_ea;
-        }
-
-        std::vector<uint16_t> data(26u, 0);
-        data[18] = LOW(e.addr);
-        data[19] = HIGH(e.addr);
-        data[23] = ssw;
-        data[24] = LOW(ea_v);
-        data[25] = HIGH(ea_v);
-        RAISE(2, 7, data, false);
-        return;
-    }
+void m68k_postop() {
     // TRACE
-    if(!trace_suspend && (regs.T == 2 || (regs.T == 1 && regs.traced))) {
+    if(!regs.trace_suspend && (regs.T == 2 || (regs.T == 1 && regs.traced))) {
         TRACE();
         return;
     }
@@ -404,6 +357,60 @@ void m68k_do_execute() {
     }
     regs.i_ea = 0;
     regs.traced = false;
+}
+void m68k_do_buserror(BUS_ERROR_EX &e) {
+    uint16_t ssw = int(e.tm) | int(e.tt) << 3 | int(e.size) << 5 | e.rw << 8 |
+                   e.lk << 9 | e.atc << 10 | e.ma << 11;
+    // check CP
+    // check CU
+    uint32_t ea_v = 0;
+
+    if(regs.T == 2 || (regs.T == 1 && regs.traced)) {
+        regs.trace_suspend = true;
+        ssw |= 1 << 13;
+        ea_v = regs.opc;
+    } else if(e.cm) {
+        ssw |= 1 << 12;
+        ea_v = regs.i_ea;
+    }
+
+    std::vector<uint16_t> data(26u, 0);
+    data[18] = LOW(e.addr);
+    data[19] = HIGH(e.addr);
+    data[23] = ssw;
+    data[24] = LOW(ea_v);
+    data[25] = HIGH(ea_v);
+    RAISE(2, 7, data, false);
+}
+// run one opcode
+void m68k_do_execute() {
+    if(regs.must_reset.load()) {
+        reset_ex();
+        regs.must_reset.store(false);
+        return;
+    }
+    if(auto it = rom_functions.find(regs.pc & 0xfffff);
+       it != rom_functions.end()) {
+        it->second();
+        return;
+    }
+    regs.opc = regs.pc;
+    uint16_t opc = FETCH();
+    regs.trace_suspend = false;
+    try {
+        op_t f = opc_map[opc >> 6];
+        if(!f) {
+            throw ILLEGAL_INST_EX{};
+        }
+        f(opc, opc >> 9 & 7, opc >> 3 & 7, opc & 7);
+    } catch(ILLEGAL_INST_EX &) {
+        PREFETCH();
+        RAISE0(4, false);
+    } catch(BUS_ERROR_EX &e) {
+        m68k_do_buserror(e);
+        return;
+    }
+    m68k_postop();
 }
 bool debug = false;
 

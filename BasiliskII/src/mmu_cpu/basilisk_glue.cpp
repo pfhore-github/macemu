@@ -71,7 +71,7 @@ bool Init680x0()
 	init_mmu();
 	regs.cacr_de = regs.cacr_ie = false;
 	regs.i_ea = 0;
-	regs.sleep.reset();
+	cpu.sleep.reset();
 	regs.spcflags.store(0);
 	regs.irq.store(0);
 	regs.traced = false;
@@ -131,8 +131,8 @@ void Start680x0(void)
 void TriggerInterrupt(void)
 {
 	regs.irq = 1;
-	if( regs.sleep) {
-		regs.sleep->set_value();
+	if( cpu.sleep) {
+		cpu.sleep->set_value();
 	}
 	idle_resume();
 	SPCFLAGS_SET( SPCFLAG_INT );

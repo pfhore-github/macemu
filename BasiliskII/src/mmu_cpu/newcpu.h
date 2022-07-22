@@ -24,13 +24,13 @@
 #ifndef NEWCPU_H
 #define NEWCPU_H
 #include "spcflags.h"
+#include <asmjit/x86.h>
 #include <atomic>
 #include <functional>
 #include <future>
 #include <memory>
 #include <setjmp.h>
 #include <stdint.h>
-#include <mutex>
 enum class TT { NORMAL, MOVE16, LFC, AA };
 enum class TM {
     USER_DATA = 1,
@@ -57,10 +57,12 @@ struct ssw_t {
     TM tm = TM::USER_DATA;
     SZ sz;
     uint16_t to_value() const {
-        return cp << 15 | ct << 13 | cm << 12 | ma << 11 | atc << 10 | lk << 9 | read << 8 |
-               int(sz) << 5 | int(tt) << 3 | int(tm);
+        return cp << 15 | ct << 13 | cm << 12 | ma << 11 | atc << 10 | lk << 9 |
+               read << 8 | int(sz) << 5 | int(tt) << 3 | int(tm);
     }
 };
+
+
 struct m68k_reg {
     uint32_t r[16];
     uint32_t *d = r;
@@ -84,20 +86,27 @@ struct m68k_reg {
     bool ea_rw;
 
     // BUS ERROR DATA
+    bool trace_suspend;
 
-    // emulator flag
-
-    std::unique_ptr<std::promise<void>> sleep;
-
-    std::atomic<uint32_t> spcflags;
     std::atomic<uint8_t> irq;
+    std::atomic<uint32_t> spcflags;
     std::atomic<bool> must_reset;
     bool traced = false;
 
     bool cdis = false;
+
 };
 // no multi cpu
 extern m68k_reg regs;
+    // emulator flag
+struct m680x0 {
+    std::unique_ptr<std::promise<void>> sleep;
+
+
+
+
+};
+extern m680x0 cpu;
 void init_m68k();
 void init_mmu();
 void exit_m68k();

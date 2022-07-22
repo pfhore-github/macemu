@@ -332,58 +332,62 @@ OP(mul_l) {
     }
 }
 
+uint64_t do_divs(int32_t ah, uint32_t al, int32_t b) {
+    int64_t a = static_cast<int64_t>(ah) << 32 | al;
+    if(b == 0) {
+        DIV0_ERROR();
+        return a;
+    }
+    int64_t ret1 = a / b;
+    int64_t ret2 = a % b;
+    regs.n = ret1 < 0;
+    regs.z = ret1 == 0;
+    if(ret1 > INT32_MAX || ret1 < INT32_MIN) {
+        regs.v = true;
+        return a;
+    } else {
+        regs.v = false;
+        return static_cast<uint64_t>(ret1 & 0xffffffff) |
+               static_cast<uint64_t>(ret2 & 0xffffffff) << 32;
+    }
+}
+
+uint64_t do_divu(uint32_t ah, uint32_t al, uint32_t b) {
+    uint64_t a = static_cast<uint64_t>(ah) << 32 | al;
+    if(b == 0) {
+        DIV0_ERROR();
+        return a;
+    }
+    uint64_t ret1 = a / b;
+    uint64_t ret2 = a % b;
+    regs.n = ret1 >> 31;
+    regs.z = ret1 == 0;
+    if(ret1 > 0xffffffff) {
+        regs.v = true;
+        return a;
+    } else {
+        regs.v = false;
+        return (ret1 & 0xffffffff) | (ret2 & 0xffffffff) << 32;
+    }
+}
 OP(div_l) {
     uint16_t op2 = FETCH();
     int dq = op2 >> 12 & 7;
     int dr = op2 & 7;
     regs.c = false;
+    uint32_t vd = EA_READ32(type, reg);
+    uint64_t ret;
     if(op2 & 1 << 11) {
         // divs
-        int64_t vd = static_cast<int32_t>(EA_READ32(type, reg));
-        if(vd == 0) {
-            DIV0_ERROR();
-            return;
-        }
-        int64_t v2 = static_cast<int32_t>(regs.d[dq]);
-        if(op2 & 1 << 10) {
-            v2 |= static_cast<int64_t>(static_cast<int32_t>(regs.d[dr])) << 32;
-        }
-        int64_t ret1 = v2 / vd;
-        int64_t ret2 = v2 % vd;
-        regs.n = ret1 < 0;
-        regs.z = ret1 == 0;
-        if(ret1 > INT32_MAX || ret1 < INT32_MIN) {
-            regs.v = true;
-        } else {
-            regs.v = false;
-            regs.d[dq] = ret1;
-            if(dq != dr) {
-                regs.d[dr] = ret2;
-            }
-        }
+        int32_t ah = (op2 & 1 << 10) ? regs.d[dr] : (static_cast<int32_t>(regs.d[dq]) >> 31); 
+        ret = do_divs(ah, regs.d[dq], vd);
     } else {
-        // divs
-        uint64_t vd = EA_READ32(type, reg);
-        if(vd == 0) {
-            DIV0_ERROR();
-            return;
-        }
-        uint64_t v2 = regs.d[dq];
-        if(op2 & 1 << 10) {
-            v2 |= static_cast<uint64_t>(regs.d[dr]) << 32;
-        }
-        uint64_t ret1 = v2 / vd;
-        uint64_t ret2 = v2 % vd;
-        regs.n = ret1 >> 31 & 1;
-        regs.z = ret1 == 0;
-        if(ret1 >> 32) {
-            regs.v = true;
-        } else {
-            regs.d[dq] = ret1;
-            if(dq != dr) {
-                regs.d[dr] = ret2;
-            }
-        }
+        int32_t ah = (op2 & 1 << 10) ? regs.d[dr] : 0; 
+        ret = do_divu(ah, regs.d[dq], vd);
+    }
+    regs.d[dq] = ret & 0xffffffff;
+    if(dq != dr) {
+        regs.d[dr] = ret >> 32;
     }
 }
 
@@ -826,345 +830,4 @@ OP(add_to_ea_l) {
 OP(adda_l) {
     int32_t v2 = EA_READ32(type, reg);
     regs.a[dm] += v2;
-}
-
-void op_asr_b_imm(int dm, int reg) {
-    WRITE_D8(reg, DO_ASR_B(regs.d[reg], dm ? dm : 8));
-}
-void op_lsr_b_imm(int dm, int reg) {
-    WRITE_D8(reg, DO_LSR_B(regs.d[reg], dm ? dm : 8));
-}
-void op_roxr_b_imm(int dm, int reg) {
-    WRITE_D8(reg, DO_ROXR_B(regs.d[reg], dm ? dm : 8));
-}
-void op_ror_b_imm(int dm, int reg) {
-    WRITE_D8(reg, DO_ROR_B(regs.d[reg], dm ? dm : 8));
-}
-void op_asr_b_reg(int dm, int reg) {
-    WRITE_D8(reg, DO_ASR_B(regs.d[reg], regs.d[dm] & 63));
-}
-void op_lsr_b_reg(int dm, int reg) {
-    WRITE_D8(reg, DO_LSR_B(regs.d[reg], regs.d[dm] & 63));
-}
-void op_roxr_b_reg(int dm, int reg) {
-    WRITE_D8(reg, DO_ROXR_B(regs.d[reg], regs.d[dm] & 63));
-}
-void op_ror_b_reg(int dm, int reg) {
-    WRITE_D8(reg, DO_ROR_B(regs.d[reg], regs.d[dm] & 63));
-}
-OP(shr_b) {
-    switch(type) {
-    case 0:
-        op_asr_b_imm(dm, reg);
-        break;
-    case 1:
-        op_lsr_b_imm(dm, reg);
-        break;
-    case 2:
-        op_roxr_b_imm(dm, reg);
-        break;
-    case 3:
-        op_ror_b_imm(dm, reg);
-        break;
-    case 4:
-        op_asr_b_reg(dm, reg);
-        break;
-    case 5:
-        op_lsr_b_reg(dm, reg);
-        break;
-    case 6:
-        op_roxr_b_reg(dm, reg);
-        break;
-    case 7:
-        op_ror_b_reg(dm, reg);
-        break;
-    }
-}
-void op_asr_w_imm(int dm, int reg) {
-    WRITE_D16(reg, DO_ASR_W(regs.d[reg], dm ? dm : 8));
-}
-void op_lsr_w_imm(int dm, int reg) {
-    WRITE_D16(reg, DO_LSR_W(regs.d[reg], dm ? dm : 8));
-}
-void op_roxr_w_imm(int dm, int reg) {
-    WRITE_D16(reg, DO_ROXR_W(regs.d[reg], dm ? dm : 8));
-}
-void op_ror_w_imm(int dm, int reg) {
-    WRITE_D16(reg, DO_ROR_W(regs.d[reg], dm ? dm : 8));
-}
-void op_asr_w_reg(int dm, int reg) {
-    WRITE_D16(reg, DO_ASR_W(regs.d[reg], regs.d[dm] & 63));
-}
-void op_lsr_w_reg(int dm, int reg) {
-    WRITE_D16(reg, DO_LSR_W(regs.d[reg], regs.d[dm] & 63));
-}
-void op_roxr_w_reg(int dm, int reg) {
-    WRITE_D16(reg, DO_ROXR_W(regs.d[reg], regs.d[dm] & 63));
-}
-void op_ror_w_reg(int dm, int reg) {
-    WRITE_D16(reg, DO_ROR_W(regs.d[reg], regs.d[dm] & 63));
-}
-OP(shr_w) {
-    switch(type) {
-    case 0:
-        op_asr_w_imm(dm, reg);
-        break;
-    case 1:
-        op_lsr_w_imm(dm, reg);
-        break;
-    case 2:
-        op_roxr_w_imm(dm, reg);
-        break;
-    case 3:
-        op_ror_w_imm(dm, reg);
-        break;
-    case 4:
-        op_asr_w_reg(dm, reg);
-        break;
-    case 5:
-        op_lsr_w_reg(dm, reg);
-        break;
-    case 6:
-        op_roxr_w_reg(dm, reg);
-        break;
-    case 7:
-        op_ror_w_reg(dm, reg);
-        break;
-    }
-}
-void op_asr_l_imm(int dm, int reg) {
-    regs.d[reg] = DO_ASR_L(regs.d[reg], dm ? dm : 8);
-}
-void op_lsr_l_imm(int dm, int reg) {
-    regs.d[reg] = DO_LSR_L(regs.d[reg], dm ? dm : 8);
-}
-void op_roxr_l_imm(int dm, int reg) {
-    regs.d[reg] = DO_ROXR_L(regs.d[reg], dm ? dm : 8);
-}
-void op_ror_l_imm(int dm, int reg) {
-    regs.d[reg] = DO_ROR_L(regs.d[reg], dm ? dm : 8);
-}
-void op_asr_l_reg(int dm, int reg) {
-    regs.d[reg] = DO_ASR_L(regs.d[reg], regs.d[dm] & 63);
-}
-void op_lsr_l_reg(int dm, int reg) {
-    regs.d[reg] = DO_LSR_L(regs.d[reg], regs.d[dm] & 63);
-}
-void op_roxr_l_reg(int dm, int reg) {
-    regs.d[reg] = DO_ROXR_L(regs.d[reg], regs.d[dm] & 63);
-}
-void op_ror_l_reg(int dm, int reg) {
-    regs.d[reg] = DO_ROR_L(regs.d[reg], regs.d[dm] & 63);
-}
-OP(shr_l) {
-    switch(type) {
-    case 0:
-        op_asr_l_imm(dm, reg);
-        break;
-    case 1:
-        op_lsr_l_imm(dm, reg);
-        break;
-    case 2:
-        op_roxr_l_imm(dm, reg);
-        break;
-    case 3:
-        op_ror_l_imm(dm, reg);
-        break;
-    case 4:
-        op_asr_l_reg(dm, reg);
-        break;
-    case 5:
-        op_lsr_l_reg(dm, reg);
-        break;
-    case 6:
-        op_roxr_l_reg(dm, reg);
-        break;
-    case 7:
-        op_ror_l_reg(dm, reg);
-        break;
-    }
-}
-
-OP(asr_ea) {
-    EA_Update16(type, reg, [](auto v) { return DO_ASR_W(v, 1); });
-}
-OP(lsr_ea) {
-    EA_Update16(type, reg, [](auto v) { return DO_LSR_W(v, 1); });
-}
-OP(roxr_ea) {
-    EA_Update16(type, reg, [](auto v) { return DO_ROXR_W(v, 1); });
-}
-OP(ror_ea) {
-    EA_Update16(type, reg, [](auto v) { return DO_ROR_W(v, 1); });
-}
-
-void op_asl_b_imm(int dm, int reg) {
-    WRITE_D8(reg, DO_ASL_B(regs.d[reg], dm ? dm : 8));
-}
-void op_lsl_b_imm(int dm, int reg) {
-    WRITE_D8(reg, DO_LSL_B(regs.d[reg], dm ? dm : 8));
-}
-void op_roxl_b_imm(int dm, int reg) {
-    WRITE_D8(reg, DO_ROXL_B(regs.d[reg], dm ? dm : 8));
-}
-void op_rol_b_imm(int dm, int reg) {
-    WRITE_D8(reg, DO_ROL_B(regs.d[reg], dm ? dm : 8));
-}
-void op_asl_b_reg(int dm, int reg) {
-    WRITE_D8(reg, DO_ASL_B(regs.d[reg], regs.d[dm] & 63));
-}
-void op_lsl_b_reg(int dm, int reg) {
-    WRITE_D8(reg, DO_LSL_B(regs.d[reg], regs.d[dm] & 63));
-}
-void op_roxl_b_reg(int dm, int reg) {
-    WRITE_D8(reg, DO_ROXL_B(regs.d[reg], regs.d[dm] & 63));
-}
-void op_rol_b_reg(int dm, int reg) {
-    WRITE_D8(reg, DO_ROL_B(regs.d[reg], regs.d[dm] & 63));
-}
-OP(shl_b) {
-    switch(type) {
-    case 0:
-        op_asl_b_imm(dm, reg);
-        break;
-    case 1:
-        op_lsl_b_imm(dm, reg);
-        break;
-    case 2:
-        op_roxl_b_imm(dm, reg);
-        break;
-    case 3:
-        op_rol_b_imm(dm, reg);
-        break;
-    case 4:
-        op_asl_b_reg(dm, reg);
-        break;
-    case 5:
-        op_lsl_b_reg(dm, reg);
-        break;
-    case 6:
-        op_roxl_b_reg(dm, reg);
-        break;
-    case 7:
-        op_rol_b_reg(dm, reg);
-        break;
-    }
-}
-void op_asl_w_imm(int dm, int reg) {
-    WRITE_D16(reg, DO_ASL_W(regs.d[reg], dm ? dm : 8));
-}
-void op_lsl_w_imm(int dm, int reg) {
-    WRITE_D16(reg, DO_LSL_W(regs.d[reg], dm ? dm : 8));
-}
-void op_roxl_w_imm(int dm, int reg) {
-    WRITE_D16(reg, DO_ROXL_W(regs.d[reg], dm ? dm : 8));
-}
-void op_rol_w_imm(int dm, int reg) {
-    WRITE_D16(reg, DO_ROL_W(regs.d[reg], dm ? dm : 8));
-}
-void op_asl_w_reg(int dm, int reg) {
-    WRITE_D16(reg, DO_ASL_W(regs.d[reg], regs.d[dm] & 63));
-}
-void op_lsl_w_reg(int dm, int reg) {
-    WRITE_D16(reg, DO_LSL_W(regs.d[reg], regs.d[dm] & 63));
-}
-void op_roxl_w_reg(int dm, int reg) {
-    WRITE_D16(reg, DO_ROXL_W(regs.d[reg], regs.d[dm] & 63));
-}
-void op_rol_w_reg(int dm, int reg) {
-    WRITE_D16(reg, DO_ROL_W(regs.d[reg], regs.d[dm] & 63));
-}
-
-OP(shl_w) {
-    switch(type) {
-    case 0:
-        op_asl_w_imm(dm, reg);
-        break;
-    case 1:
-        op_lsl_w_imm(dm, reg);
-        break;
-    case 2:
-        op_roxl_w_imm(dm, reg);
-        break;
-    case 3:
-        op_rol_w_imm(dm, reg);
-        break;
-    case 4:
-        op_asl_w_reg(dm, reg);
-        break;
-    case 5:
-        op_lsl_w_reg(dm, reg);
-        break;
-    case 6:
-        op_roxl_w_reg(dm, reg);
-        break;
-    case 7:
-        op_rol_w_reg(dm, reg);
-        break;
-    }
-}
-void op_asl_l_imm(int dm, int reg) {
-    regs.d[reg] = DO_ASL_L(regs.d[reg], dm ? dm : 8);
-}
-void op_lsl_l_imm(int dm, int reg) {
-    regs.d[reg] = DO_LSL_L(regs.d[reg], dm ? dm : 8);
-}
-void op_roxl_l_imm(int dm, int reg) {
-    regs.d[reg] = DO_ROXL_L(regs.d[reg], dm ? dm : 8);
-}
-void op_rol_l_imm(int dm, int reg) {
-    regs.d[reg] = DO_ROL_L(regs.d[reg], dm ? dm : 8);
-}
-void op_asl_l_reg(int dm, int reg) {
-    regs.d[reg] = DO_ASL_L(regs.d[reg], regs.d[dm] & 63);
-}
-void op_lsl_l_reg(int dm, int reg) {
-    regs.d[reg] = DO_LSL_L(regs.d[reg], regs.d[dm] & 63);
-}
-void op_roxl_l_reg(int dm, int reg) {
-    regs.d[reg] = DO_ROXL_L(regs.d[reg], regs.d[dm] & 63);
-}
-void op_rol_l_reg(int dm, int reg) {
-    regs.d[reg] = DO_ROL_L(regs.d[reg], regs.d[dm] & 63);
-}
-
-OP(shl_l) {
-    switch(type) {
-    case 0:
-        op_asl_l_imm(dm, reg);
-        break;
-    case 1:
-        op_lsl_l_imm(dm, reg);
-        break;
-    case 2:
-        op_roxl_l_imm(dm, reg);
-        break;
-    case 3:
-        op_rol_l_imm(dm, reg);
-        break;
-    case 4:
-        op_asl_l_reg(dm, reg);
-        break;
-    case 5:
-        op_lsl_l_reg(dm, reg);
-        break;
-    case 6:
-        op_roxl_l_reg(dm, reg);
-        break;
-    case 7:
-        op_rol_l_reg(dm, reg);
-        break;
-    }
-}
-OP(asl_ea) {
-    EA_Update16(type, reg, [](auto v) { return DO_ASL_W(v, 1); });
-}
-OP(lsl_ea) {
-    EA_Update16(type, reg, [](auto v) { return DO_LSL_W(v, 1); });
-}
-OP(roxl_ea) {
-    EA_Update16(type, reg, [](auto v) { return DO_ROXL_W(v, 1); });
-}
-OP(rol_ea) {
-    EA_Update16(type, reg, [](auto v) { return DO_ROL_W(v, 1); });
 }

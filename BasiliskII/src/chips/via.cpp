@@ -22,6 +22,11 @@ void VIA::cb1_in() { do_irq(IRQ_FLAG::CB1); }
 
 void VIA::ca2_in() { do_irq(IRQ_FLAG::CA2); }
 
+void VIA::cb2_in_byte(uint8_t byte) {
+    sr = byte;
+    do_irq(IRQ_FLAG::SREG);
+}
+
 void VIA::cb2_in(bool v) {
     sr = sr << 1 | v;
     if(++sr_c == 8) {

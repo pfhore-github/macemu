@@ -49,34 +49,31 @@ uint8_t read8(uint32_t addr) {
     try {
         return b_read8(mmu_d.do_mmu(addr, false, regs.S));
     } catch(BUS_ERROR_EX &e) {
-        e.addr = addr;
-        e.tm = regs.S ? TM::SUPER_DATA : TM::USER_DATA;
         e.size = SZ::BYTE;
+        e.tm = regs.S ? TM::SUPER_DATA : TM::USER_DATA;
         e.lk = regs.ea_rw;
-        e.rw = true;
         throw e;
     }
 }
 uint16_t read16(uint32_t addr) {
     try {
         if(addr & 1) {
-            uint16_t v = read8(addr) << 8;
             try {
+                uint16_t v = read8(addr) << 8;
                 v |= read8(addr + 1);
+                return v;
             } catch(BUS_ERROR_EX &e) {
+                e.addr = addr;
                 e.ma = true;
                 throw e;
             }
-            return v;
         } else {
             return b_read16(mmu_d.do_mmu(addr, false, regs.S));
         }
     } catch(BUS_ERROR_EX &e) {
-        e.addr = addr;
-        e.tm = regs.S ? TM::SUPER_DATA : TM::USER_DATA;
         e.size = SZ::WORD;
+        e.tm = regs.S ? TM::SUPER_DATA : TM::USER_DATA;
         e.lk = regs.ea_rw;
-        e.rw = true;
         throw e;
     }
 }
@@ -86,9 +83,8 @@ uint16_t FETCH() {
     try {
         return b_read16(mmu_i.do_mmu(addr, false, regs.S));
     } catch(BUS_ERROR_EX &e) {
-        e.addr = addr;
-        e.tm = regs.S ? TM::SUPER_CODE : TM::USER_CODE;
         e.size = SZ::WORD;
+        e.tm = regs.S ? TM::SUPER_CODE : TM::USER_CODE;
         e.rw = true;
         throw e;
     }
@@ -116,32 +112,33 @@ uint32_t read32(uint32_t addr) {
             return b_read32(mmu_d.do_mmu(addr, false, regs.S));
         case 1:
         case 3: // mis-aligned
-            v = b_read8(mmu_d.do_mmu(addr, false, regs.S)) << 24;
             try {
+                v = b_read8(mmu_d.do_mmu(addr, false, regs.S)) << 24;
                 v |= b_read16(mmu_d.do_mmu((addr + 2), false, regs.S)) << 8;
                 v |= b_read8(mmu_d.do_mmu(addr + 3, false, regs.S));
                 return v;
             } catch(BUS_ERROR_EX &e) {
-                e.ma = true;
+                e.ma = e.addr != addr;
+                e.addr = addr;
+                e.size = SZ::LONG;
                 throw e;
             }
         case 2: // half-aligned
-            v = b_read16(mmu_d.do_mmu(addr, false, regs.S)) << 16;
             try {
+                v = b_read16(mmu_d.do_mmu(addr, false, regs.S)) << 16;
                 v |= b_read16(mmu_d.do_mmu(addr + 2, false, regs.S));
                 return v;
             } catch(BUS_ERROR_EX &e) {
-                e.ma = true;
+                e.ma = e.addr != addr;
+                e.addr = addr;
+                e.size = SZ::LONG;
                 throw e;
             }
         }
         return 0;
     } catch(BUS_ERROR_EX &e) {
-        e.addr = addr;
         e.tm = regs.S ? TM::SUPER_DATA : TM::USER_DATA;
-        e.size = SZ::LONG;
         e.lk = regs.ea_rw;
-        e.rw = true;
         throw e;
     }
 }
@@ -151,7 +148,7 @@ uint32_t FETCH32() {
         return b_read32(mmu_i.do_mmu(addr, false, regs.S));
     } catch(BUS_ERROR_EX &e) {
         e.addr = addr;
-         e.tm = regs.S ? TM::SUPER_CODE : TM::USER_CODE;
+        e.tm = regs.S ? TM::SUPER_CODE : TM::USER_CODE;
         e.size = SZ::LONG;
         e.rw = true;
         throw e;
@@ -208,7 +205,7 @@ void write32(uint32_t addr, uint32_t v) {
             b_write32(mmu_d.do_mmu(addr, true, regs.S), v);
         }
     } catch(BUS_ERROR_EX &e) {
-       e.addr = addr;
+        e.addr = addr;
         e.tm = regs.S ? TM::SUPER_DATA : TM::USER_DATA;
         e.size = SZ::LONG;
         e.lk = regs.ea_rw;

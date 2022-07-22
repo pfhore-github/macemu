@@ -136,7 +136,7 @@ uint32_t mmu_68040::do_mmu(uint32_t vaddr, bool rw, bool s) {
     presult ttr_result = test_TTR(vaddr >> 12);
     if(ttr_result.T) {
         if(ttr_result.W && rw) {
-            throw BUS_ERROR_EX{.atc = false};
+            throw BUS_ERROR_EX{.addr = vaddr, .atc = false};
         }
         return vaddr;
     }
@@ -147,21 +147,22 @@ uint32_t mmu_68040::do_mmu(uint32_t vaddr, bool rw, bool s) {
         presult result = ptest(vaddr >> 12, rw, s);
         if(!result.R) {
             // no entry for the address
-            throw BUS_ERROR_EX{};
+            throw BUS_ERROR_EX{.addr = vaddr};
         }
         // Supervisor table
         if(result.S && !s) {
-            throw BUS_ERROR_EX{};
+            throw BUS_ERROR_EX{.addr = vaddr};
         }
 
         // readonly table
         if(result.W && rw) {
-            throw BUS_ERROR_EX{};
+            throw BUS_ERROR_EX{.addr = vaddr};
         }
 
         return (result.addr<<12) | (vaddr & 0xfff);
     } catch(BUS_ERROR_EX &e) {
         // BUS ERROR during table search
+        e.addr = vaddr;
         throw e;
     }
 }

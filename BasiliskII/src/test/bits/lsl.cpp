@@ -9,7 +9,7 @@ BOOST_AUTO_TEST_SUITE(Byte)
 BOOST_AUTO_TEST_CASE(Imm) {
     regs.v = true;
     regs.d[2] = 0x1;
-    write16(0, 0163412);
+    raw_write16(0, 0163412);
     regs.v = true;
     m68k_do_execute();
     BOOST_TEST(!regs.v);
@@ -18,7 +18,7 @@ BOOST_AUTO_TEST_CASE(Imm) {
 
 BOOST_AUTO_TEST_CASE(Imm8) {
     regs.d[2] = 0x1;
-    write16(0, 0160412);
+    raw_write16(0, 0160412);
     regs.v = true;
     m68k_do_execute();
     BOOST_TEST(regs.d[2] == 0);
@@ -27,7 +27,7 @@ BOOST_AUTO_TEST_CASE(Imm8) {
 BOOST_AUTO_TEST_CASE(Reg) {
     regs.d[3] = 4;
     regs.d[2] = 1;
-    write16(0, 0163452);
+    raw_write16(0, 0163452);
     m68k_do_execute();
     BOOST_TEST(regs.d[2] == 0x10);
 }
@@ -36,7 +36,7 @@ BOOST_AUTO_TEST_CASE(Reg0) {
     regs.d[3] = 0;
     regs.d[2] = 1;
     regs.c = regs.x = true;
-    write16(0, 0163452);
+    raw_write16(0, 0163452);
     m68k_do_execute();
     BOOST_TEST(regs.d[2] == 1);
     BOOST_TEST(regs.x);
@@ -45,7 +45,7 @@ BOOST_AUTO_TEST_CASE(Reg0) {
 BOOST_AUTO_TEST_CASE(RegOver) {
     regs.d[1] = 32;
     regs.d[2] = 66;
-    write16(0, 0160450 | 2 << 9 | 1);
+    raw_write16(0, 0160450 | 2 << 9 | 1);
     m68k_do_execute();
     BOOST_TEST(regs.d[1] == 128);
 }
@@ -53,7 +53,7 @@ BOOST_AUTO_TEST_CASE(RegOver) {
 BOOST_AUTO_TEST_CASE(cx) {
     regs.c = regs.x = false;
     regs.d[1] = 0x80;
-    write16(0, 0161411);
+    raw_write16(0, 0161411);
     m68k_do_execute();
     BOOST_TEST(regs.c);
     BOOST_TEST(regs.x);
@@ -61,14 +61,14 @@ BOOST_AUTO_TEST_CASE(cx) {
 
 BOOST_AUTO_TEST_CASE(n) {
     regs.d[1] = 0x40;
-    write16(0, 0161411);
+    raw_write16(0, 0161411);
     m68k_do_execute();
     BOOST_TEST(regs.n);
 }
 
 BOOST_AUTO_TEST_CASE(z) {
     regs.d[1] = 0;
-    write16(0, 0161411);
+    raw_write16(0, 0161411);
     m68k_do_execute();
     BOOST_TEST(regs.z);
 }
@@ -78,7 +78,7 @@ BOOST_AUTO_TEST_SUITE(Word)
 BOOST_AUTO_TEST_CASE(Imm) {
     regs.v = true;
     regs.d[2] = 0x80;
-    write16(0, 0163512);
+    raw_write16(0, 0163512);
     m68k_do_execute();
     BOOST_TEST(regs.d[2] == 0x400);
     BOOST_TEST(!regs.v);
@@ -86,7 +86,7 @@ BOOST_AUTO_TEST_CASE(Imm) {
 
 BOOST_AUTO_TEST_CASE(Imm8) {
     regs.d[2] = 0x1;
-    write16(0, 0160512);
+    raw_write16(0, 0160512);
     m68k_do_execute();
     BOOST_TEST(regs.d[2] == 0x100);
 }
@@ -94,7 +94,7 @@ BOOST_AUTO_TEST_CASE(Imm8) {
 BOOST_AUTO_TEST_CASE(Reg) {
     regs.d[3] = 4;
     regs.d[2] = 0x80;
-    write16(0, 0163552);
+    raw_write16(0, 0163552);
     m68k_do_execute();
     BOOST_TEST(regs.d[2] == 0x800);
 }
@@ -103,7 +103,7 @@ BOOST_AUTO_TEST_CASE(Reg0) {
     regs.d[3] = 0;
     regs.d[2] = 1;
     regs.c = regs.x = true;
-    write16(0, 0163552);
+    raw_write16(0, 0163552);
     m68k_do_execute();
     BOOST_TEST(regs.d[2] == 1);
     BOOST_TEST(regs.x);
@@ -113,7 +113,7 @@ BOOST_AUTO_TEST_CASE(Reg0) {
 BOOST_AUTO_TEST_CASE(RegOver) {
     regs.d[1] = 32;
     regs.d[2] = 66;
-    write16(0, 0160550 | 2 << 9 | 1);
+    raw_write16(0, 0160550 | 2 << 9 | 1);
     m68k_do_execute();
     BOOST_TEST(regs.d[1] == 128);
 }
@@ -121,7 +121,7 @@ BOOST_AUTO_TEST_CASE(RegOver) {
 BOOST_AUTO_TEST_CASE(cx) {
     regs.c = regs.x = false;
     regs.d[1] = 0x8000;
-    write16(0, 0161511);
+    raw_write16(0, 0161511);
     m68k_do_execute();
     BOOST_TEST(regs.c);
     BOOST_TEST(regs.x);
@@ -129,14 +129,14 @@ BOOST_AUTO_TEST_CASE(cx) {
 
 BOOST_AUTO_TEST_CASE(n) {
     regs.d[1] = 0x4000;
-    write16(0, 0161511);
+    raw_write16(0, 0161511);
     m68k_do_execute();
     BOOST_TEST(regs.n);
 }
 
 BOOST_AUTO_TEST_CASE(z) {
     regs.d[1] = 0;
-    write16(0, 0161511);
+    raw_write16(0, 0161511);
     m68k_do_execute();
     BOOST_TEST(regs.z);
 }
@@ -144,7 +144,7 @@ BOOST_AUTO_TEST_CASE(z) {
 BOOST_AUTO_TEST_CASE(ea) {
     regs.a[2] = 0x10;
     raw_write16(0x10, 0x4000);
-    write16(0, 0161722);
+    raw_write16(0, 0161722);
     m68k_do_execute();
     BOOST_TEST(raw_read16(0x10) = 0x8000);
 }
@@ -155,7 +155,7 @@ BOOST_AUTO_TEST_SUITE(Long)
 
 BOOST_AUTO_TEST_CASE(Imm) {
     regs.d[2] = 0x10000;
-    write16(0, 0163612);
+    raw_write16(0, 0163612);
     regs.v = true;
     m68k_do_execute();
     BOOST_TEST(regs.d[2] == 0x80000);
@@ -165,7 +165,7 @@ BOOST_AUTO_TEST_CASE(Imm) {
 BOOST_AUTO_TEST_CASE(Reg) {
     regs.d[3] = 4;
     regs.d[1] = 0x10000;
-    write16(0, 0163651);
+    raw_write16(0, 0163651);
     m68k_do_execute();
     BOOST_TEST(regs.d[1] == 0x100000);
 }
@@ -174,7 +174,7 @@ BOOST_AUTO_TEST_CASE(Reg0) {
     regs.d[3] = 0;
     regs.d[1] = 0x10000;
     regs.c = regs.x = true;
-    write16(0, 0163651);
+    raw_write16(0, 0163651);
     m68k_do_execute();
     BOOST_TEST(regs.d[1] == 0x10000);
     BOOST_TEST(regs.x);
@@ -183,7 +183,7 @@ BOOST_AUTO_TEST_CASE(Reg0) {
 BOOST_AUTO_TEST_CASE(RegOver) {
     regs.d[1] = 32;
     regs.d[2] = 66;
-    write16(0, 0162651);
+    raw_write16(0, 0162651);
     m68k_do_execute();
     BOOST_TEST(regs.d[1] == 128);
 }
@@ -191,7 +191,7 @@ BOOST_AUTO_TEST_CASE(RegOver) {
 BOOST_AUTO_TEST_CASE(cx) {
     regs.c = regs.x = false;
     regs.d[1] = 0x80000000;
-    write16(0, 0161611);
+    raw_write16(0, 0161611);
     m68k_do_execute();
     BOOST_TEST(regs.c);
     BOOST_TEST(regs.x);
@@ -201,7 +201,7 @@ BOOST_AUTO_TEST_CASE(cx_0) {
     regs.c = regs.x = true;
     regs.d[2] = 0xffffffff;
     regs.d[1] = 0;
-    write16(0, 0161652);
+    raw_write16(0, 0161652);
     m68k_do_execute();
     BOOST_TEST(!regs.c);
     BOOST_TEST(regs.x);
@@ -209,14 +209,14 @@ BOOST_AUTO_TEST_CASE(cx_0) {
 
 BOOST_AUTO_TEST_CASE(n) {
     regs.d[1] = 0x40000000;
-    write16(0, 0161611);
+    raw_write16(0, 0161611);
     m68k_do_execute();
     BOOST_TEST(regs.n);
 }
 
 BOOST_AUTO_TEST_CASE(z) {
     regs.d[1] = 0;
-    write16(0, 0161611);
+    raw_write16(0, 0161611);
     m68k_do_execute();
     BOOST_TEST(regs.z);
 }

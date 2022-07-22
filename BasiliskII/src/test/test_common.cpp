@@ -98,6 +98,21 @@ void set_fpu_reg(int reg, float v) { fpu.fp[reg] = v; }
 std::unordered_map<uint32_t, void (*)()> rom_functions;
 void dump_regs() {}
 void EmulOp(uint16_t opcode, M68kRegisters *r) {}
+bool jit_jump(uint32_t to) ;
+void jit_exception_check(int e) {
+    regs.M = false;
+    regs.usp = regs.isp = regs.a[7] = 0x1000;
+    regs.vbr = 0x3000;
+    raw_write32(0x3000 + e * 4, 0x5000);
+     jit_jump(0);
+    if(e) {
+        BOOST_TEST(regs.S);
+        BOOST_TEST(regs.pc == 0x5000);
+        BOOST_TEST((raw_read16(regs.a[7] + 6) & 0xfff) == e * 4);
+    } else {
+        BOOST_TEST(regs.pc != 0x5000);
+    }
+}
 
 void exception_check(int e, int tp) {
     regs.M = false;

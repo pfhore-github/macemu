@@ -78,7 +78,7 @@ uint32_t get_eaext(uint32_t base) {
         }
     }
 }
-enum class EA_OP { DR, AR, MEM, INCR, DECR, OFFSET, EXT, EXT2 };
+
 uint32_t EA_Addr(int type, int reg, int sz, bool w) {
     uint32_t &base = regs.a[reg];
     switch(EA_OP{type}) {
@@ -198,6 +198,17 @@ uint32_t EA_READ32(int type, int reg, bool override) {
     return read32(regs.i_ea = EA_Addr(type, reg, 4, override));
 }
 
+void EA_UPDATE8(int type, int reg, uint8_t v) {
+    switch(EA_OP{type}) {
+    case EA_OP::DR:
+        regs.d[reg] = (regs.d[reg] & 0xffffff00) | v;
+        return;
+    case EA_OP::AR:
+        ILLEGAL_INST();
+    default:
+        write8(regs.i_ea, v);
+    }
+}
 void EA_WRITE8(int type, int reg, uint8_t v) {
     switch(EA_OP{type}) {
     case EA_OP::DR:
@@ -206,10 +217,20 @@ void EA_WRITE8(int type, int reg, uint8_t v) {
     case EA_OP::AR:
         ILLEGAL_INST();
     default:
-        if(!regs.i_ea) {
-            regs.i_ea = EA_Addr(type, reg, 1, true);
-        }
+        regs.i_ea = EA_Addr(type, reg, 1, true);
         write8(regs.i_ea, v);
+    }
+}
+void EA_UPDATE16(int type, int reg, uint16_t v) {
+    switch(EA_OP{type}) {
+    case EA_OP::DR:
+        regs.d[reg] = (regs.d[reg] & 0xffff0000) | v;
+        return;
+    case EA_OP::AR:
+        regs.a[reg] = DO_EXT_L(v);
+        return;
+    default:
+        write16(regs.i_ea, v);
     }
 }
 void EA_WRITE16(int type, int reg, uint16_t v) {
@@ -221,10 +242,21 @@ void EA_WRITE16(int type, int reg, uint16_t v) {
         regs.a[reg] = DO_EXT_L(v);
         return;
     default:
-        if(!regs.i_ea) {
-            regs.i_ea = EA_Addr(type, reg, 2, true);
-        }
+        regs.i_ea = EA_Addr(type, reg, 2, true);
         write16(regs.i_ea, v);
+    }
+}
+
+void EA_UPDATE32(int type, int reg, uint32_t v) {
+    switch(EA_OP{type}) {
+    case EA_OP::DR:
+        regs.d[reg] = v;
+        return;
+    case EA_OP::AR:
+        regs.a[reg] = v;
+        return;
+    default:
+        write32(regs.i_ea, v);
     }
 }
 void EA_WRITE32(int type, int reg, uint32_t v) {
@@ -236,9 +268,7 @@ void EA_WRITE32(int type, int reg, uint32_t v) {
         regs.a[reg] = v;
         return;
     default:
-        if(!regs.i_ea) {
-            regs.i_ea = EA_Addr(type, reg, 4, true);
-        }
+        regs.i_ea = EA_Addr(type, reg, 4, true);
         write32(regs.i_ea, v);
     }
 }

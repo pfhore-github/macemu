@@ -200,7 +200,7 @@ BOOST_AUTO_TEST_CASE(sr_invalid) {
     exception_check(8);
 }
 
-BOOST_DATA_TEST_CASE(sr_valid, bdata::xrange(8), i) {
+BOOST_AUTO_TEST_CASE(sr_valid) {
     regs.S = true;
     regs.M = false;
     regs.d[1] = 0x3000;
@@ -264,7 +264,7 @@ BOOST_AUTO_TEST_CASE(sr_invalid) {
     exception_check(8);
 }
 
-BOOST_DATA_TEST_CASE(sr_valid, bdata::xrange(8), i) {
+BOOST_AUTO_TEST_CASE(sr_valid) {
     regs.S = true;
     regs.M = true;
     raw_write16(0, 0040301);
