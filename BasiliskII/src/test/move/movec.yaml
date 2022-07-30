@@ -1,0 +1,258 @@
+- name: MOVEC/From/Unpriv
+  init:
+    S: false
+  opcodes: [ 0047172]
+  expected:
+    exception: 8
+
+- name: MOVEC/From/SFC
+  init:
+    S: true
+    SFC: 1
+  opcodes: [ 0047172, 0x1000]
+  expected:
+    D1: 1
+
+- name: MOVEC/From/DFC
+  init:
+    S: true
+    DFC: 2
+  opcodes: [ 0047172, 0x1001]
+  expected:
+    D1: 2
+
+- name: MOVEC/From/USP
+  init:
+    S: true
+    USP: 0x1000
+  opcodes: [ 0047172, 0x2800]
+  expected:
+    D2: 0x1000
+
+- name: MOVEC/From/VBR
+  init:
+    S: true
+    VBR: 0x2000
+  opcodes: [ 0047172, 0x3801]
+  expected:
+    D3: 0x2000
+
+- name: MOVEC/From/CACR
+  init:
+    S: true
+    CACR: 0xFFFFFFFF
+  opcodes: [ 0047172, 0x4002]
+  expected:
+    D4: 0x80008000
+
+
+- name: MOVEC/From/MSP
+  init:
+    S: true
+    MSP: 0x2000
+  opcodes: [ 0047172, 0x5803]
+  expected:
+    D5: 0x2000
+
+- name: MOVEC/From/ISP
+  init:
+    S: true
+    ISP: 0x3000
+  opcodes: [ 0047172, 0x6804]
+  expected:
+    D6: 0x3000
+
+- name: MOVEC/From/TCR
+  init:
+    S: true
+    TCR: 0x4000
+  opcodes: [ 0047172, 0x7003]
+  expected:
+    D7: 0x4000
+
+- name: MOVEC/From/ITTR/0
+  init:
+    S: true
+    ITTR0: 0x20300000
+  opcodes: [ 0047172, 0x0004]
+  expected:
+    D0: 0x20300000
+
+- name: MOVEC/From/ITTR/1
+  init:
+    S: true
+    ITTR1: 0x20300000
+  opcodes: [ 0047172, 0x0005]
+  expected:
+    D0: 0x20300000
+
+- name: MOVEC/From/DTTR/0
+  init:
+    S: true
+    DTTR0: 0x20300000
+  opcodes: [ 0047172, 0x0006]
+  expected:
+    D0: 0x20300000
+
+- name: MOVEC/From/DTTR/1
+  init:
+    S: true
+    DTTR1: 0x20300000
+  opcodes: [ 0047172, 0x0007]
+  expected:
+    D0: 0x20300000
+
+- name: MOVEC/From/MMUSR
+  init:
+    S: true
+    MMUSR: 0x64000481
+  opcodes: [ 0047172, 0x2805]
+  expected:
+    D2: 0x64000481
+
+- name: MOVEC/From/URP
+  init:
+    S: true
+    URP: 0x5000
+  opcodes: [ 0047172, 0x2806]
+  expected:
+    D2: 0x5000
+
+- name: MOVEC/From/SRP
+  init:
+    S: true
+    SRP: 0x6000
+  opcodes: [ 0047172, 0x2807]
+  expected:
+    D2: 0x6000
+
+
+
+- name: MOVEC/To/Unpriv
+  init:
+    S: false
+  opcodes: [ 0047173]
+  expected:
+    exception: 8
+
+- name: MOVEC/To/SFC
+  init:
+    S: true
+    D1: 1
+  opcodes: [ 0047173, 0x1000]
+  expected:
+    SFC: 1
+
+- name: MOVEC/To/DFC
+  init:
+    S: true
+    D1: 2
+  opcodes: [ 0047173, 0x1001]
+  expected:
+    DFC: 2
+
+- name: MOVEC/To/USP
+  init:
+    S: true
+    D2: 0x1000
+  opcodes: [ 0047173, 0x2800]
+  expected:
+    USP: 0x1000
+
+- name: MOVEC/To/VBR
+  init:
+    S: true
+    D3: 0x2000
+  opcodes: [ 0047173, 0x3801]
+  expected:
+    VBR: 0x2000
+
+- name: MOVEC/To/CACR
+  init:
+    S: true
+    D4: 0xFFFFFFFF
+  opcodes: [ 0047173, 0x4002]
+  expected:
+    CACR: 0x80008000
+
+
+- name: MOVEC/To/MSP
+  init:
+    S: true
+    D5: 0x2000
+  opcodes: [ 0047173, 0x5803]
+  expected:
+   MSP: 0x2000
+ 
+- name: MOVEC/To/ISP
+  init:
+    S: true
+    D6: 0x3000
+  opcodes: [ 0047173, 0x6804]
+  expected:
+    ISP: 0x3000
+
+- name: MOVEC/To/TCR
+  init:
+    S: true
+    D7: 0x4000
+  opcodes: [ 0047173, 0x7003]
+  expected:
+    TCR: 0x4000
+
+- name: MOVEC/To/ITTR/0
+  init:
+    S: true
+    D0: 0x20300000
+  opcodes: [ 0047173, 0x0004]
+  expected:
+    ITTR0: 0x20300000
+
+- name: MOVEC/To/ITTR/1
+  init:
+    S: true
+    D0: 0x20300000
+  opcodes: [ 0047173, 0x0005]
+  expected:
+    ITTR1: 0x20300000
+
+- name: MOVEC/To/DTTR/0
+  init:
+    S: true
+    D0: 0x20300000
+  opcodes: [ 0047173, 0x0006]
+  expected:
+    DTTR0: 0x20300000
+
+- name: MOVEC/To/DTTR/1
+  init:
+    S: true
+    D0: 0x20300000
+  opcodes: [ 0047173, 0x0007]
+  expected:
+    DTTR1: 0x20300000
+
+- name: MOVEC/To/MMUSR
+  init:
+    S: true
+    D2: 0x64000481
+  opcodes: [ 0047173, 0x2805]
+  expected:
+    MMUSR: 0x64000481
+
+- name: MOVEC/To/URP
+  init:
+    S: true
+    D2: 0x5000
+  opcodes: [ 0047173, 0x2806]
+  expected:
+    URP: 0x5000
+
+- name: MOVEC/To/SRP
+  init:
+    S: true
+    D2: 0x6000
+  opcodes: [ 0047173, 0x2807]
+  expected:
+    SRP: 0x6000
+

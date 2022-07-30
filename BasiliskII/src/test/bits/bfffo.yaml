@@ -1,0 +1,102 @@
+- name : BFFFO/REG/range/exist
+  init:
+    D2: 0xf01fffff
+  opcodes: [ 0166702, 030410 ]
+  expected: 
+    D3: 11
+
+- name : BFFFO/REG/range/non_exist 
+  init: 
+    D2: 0xf00fffff
+  opcodes: [ 0166702, 030410 ]
+  expected: 
+    D3: 12
+
+- name : BFFFO/REG/wrap/exist
+  init:
+    D2: 0x01ffff00
+  opcodes: [ 0166702, 033020 ]
+  expected: 
+    D3: 39
+
+- name : BFFFO/REG/wrap/non_exist 
+  init: 
+    D2: 0x00ffff00
+  opcodes: [ 0166702, 033020 ]
+  expected: 
+    D3: 40
+
+- name : BFFFO/MEM/1
+  init: 
+    A1: 0x1000
+    MEM:
+      0x1000/B: 0x11 
+  opcodes: [ 0166721, 030404 ]
+  expected: 
+    D3: 7
+
+
+- name : BFFFO/MEM/2
+  init: 
+    A1: 0x1000
+    MEM:
+      0x1000/B: 0x10 
+      0x1001/B: 0x13 
+  opcodes: [ 0166721, 030410 ]
+  expected: 
+    D3: 11
+
+- name : BFFFO/MEM/3
+  init: 
+    A1: 0x1000
+    MEM:
+      0x1000/B: 0x10 
+      0x1001/B: 0x00 
+      0x1002/B: 0x15 
+  opcodes: [ 0166721, 030420 ]
+  expected: 
+    D3: 19
+
+- name : BFFFO/MEM/4
+  init: 
+    A1: 0x1000
+    MEM:
+      0x1000/B: 0x10 
+      0x1001/B: 0x00 
+      0x1002/B: 0x00 
+      0x1003/B: 0x17 
+  opcodes: [ 0166721, 030430 ]
+  expected: 
+    D3: 27
+
+- name : BFFFO/MEM/5
+  init: 
+    A1: 0x1000
+    MEM:
+      0x1000/B: 0x10 
+      0x1001/B: 0x00 
+      0x1002/B: 0x00 
+      0x1003/B: 0x00 
+      0x1004/B: 0x19 
+  opcodes: [ 0166721, 030400 ]
+  expected: 
+    D3: 35
+
+- name : BFFFO/MEM/Negative_offset
+  init: 
+    A1: 0x1001
+    D2: -4
+    MEM:
+      0x1000/B: 0x01 
+  opcodes: [ 0166721, 034204 ]
+  expected: 
+    D3: -1
+
+- name : BFFFO/MEM/Over_offset
+  init: 
+    A1: 0x1000
+    MEM:
+      0x1001/B: 0x11 
+  opcodes: [ 0166721, 031404 ]
+  expected: 
+    D3: 15

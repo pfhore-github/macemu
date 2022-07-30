@@ -1,0 +1,90 @@
+- name: EOR/Byte/value
+  init:
+    D2: 0xff
+    D1: 0x2f
+    X: true
+    V: true
+    C: true
+  opcodes: [0131402]
+  expected:
+    D2: 0xD0
+    X: true
+    V: false
+    C: false
+
+- name: EOR/Byte/N
+  init:
+    D1: 0x80
+    D2: 0
+  opcodes: [0131402]
+  expected:
+    N: true
+
+- name: EOR/Byte/Z
+  init:
+    D1: 0xff
+    D2: 0xff
+  opcodes: [0131402]
+  expected:
+    Z: true
+    
+- name: EOR/Word/value
+  init:
+    D2: 0xffff
+    D1: 0x1234
+    X: true
+    V: true
+    C: true
+  opcodes: [0132501]
+  expected:
+    D1: 0xEDCB
+    X: true
+    V: false
+    C: false
+
+- name: EOR/Word/N
+  init:
+    D1: 0x8000
+    D2: 0
+  opcodes: [0131502]
+  expected:
+    N: true
+
+- name: EOR/Word/Z
+  init:
+    D1: 0xffff
+    D2: 0xffff
+  opcodes: [0131502]
+  expected:
+    Z: true
+    
+- name: EOR/Long/value
+  init:
+    D2: 0xffffffff
+    D1: 0x12345678
+    X: true
+    V: true
+    C: true
+  opcodes: [0132601]
+  expected:
+    D1: 0xEDCBA987
+    X: true
+    V: false
+    C: false
+
+- name: EOR/Long/N
+  init:
+    D1: 0x80000000
+    D2: 0
+  opcodes: [0131602]
+  expected:
+    N: true
+
+- name: EOR/Long/Z
+  init:
+    D1: 0xffffffff
+    D2: 0xffffffff
+  opcodes: [0131602]
+  expected:
+    Z: true
+    

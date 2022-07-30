@@ -1,0 +1,185 @@
+- name: SUBQ/Byte/non_8
+  init: 
+    D1: 40
+  opcodes: [ 0053401 ]
+  expected:
+    D1: 37
+
+
+- name: SUBQ/Byte/8
+  init: 
+    D1: 40
+  opcodes: [ 0050401 ]
+  expected:
+    D1: 32
+
+- name: SUBQ/Byte/CX
+  init: 
+    D1: 0
+  opcodes: [ 0051401 ]
+  expected:
+    X: true
+    C: true
+
+- name: SUBQ/Byte/Z
+  init: 
+    D1: 1
+  opcodes: [ 0051401 ]
+  expected:
+    Z: true
+
+- name: SUBQ/Byte/V
+  init: 
+    D1: 0x80
+  opcodes: [ 0051401 ]
+  expected:
+    V: true
+
+
+- name: SUBQ/Byte/N
+  init: 
+    D1: 0xFE
+  opcodes: [ 0051401 ]
+  expected:
+    N: true
+
+- name: SUBQ/Byte/Invalid(An)
+  opcodes: [ 0051411 ]
+  expected:
+    exception: 4
+
+- name: SUBQ/Byte/Invalid(Imm)
+  opcodes: [ 0051474 ]
+  expected:
+    exception: 4
+
+
+- name: SUBQ/Word/non_8
+  init: 
+    D1: 1000
+  opcodes: [ 0053501 ]
+  expected:
+    D1: 997
+
+
+- name: SUBQ/Word/8
+  init: 
+    D1: 1000
+  opcodes: [ 0050501 ]
+  expected:
+    D1: 992
+
+- name: SUBQ/Word/CX
+  init: 
+    D1: 0
+  opcodes: [ 0051501 ]
+  expected:
+    X: true
+    C: true
+
+- name: SUBQ/Word/Z
+  init: 
+    D1: 1
+  opcodes: [ 0051501 ]
+  expected:
+    Z: true
+
+- name: SUBQ/Word/V
+  init: 
+    D1: 0x8000
+  opcodes: [ 0051501 ]
+  expected:
+    V: true
+
+- name: SUBQ/Word/N
+  init: 
+    D1: 0xFFFE
+  opcodes: [ 0051501 ]
+  expected:
+    N: true
+
+- name: SUBQ/Word/Invalid(Imm)
+  opcodes: [ 0051574 ]
+  expected:
+    exception: 4
+
+- name: SUBQ/AWord/non_8
+  init: 
+    A2: 0x1234
+  opcodes: [ 0052512 ]
+  expected:
+    A2: 0x1232
+
+
+- name: SUBQ/AWord/8
+  init: 
+    A2: 2000
+  opcodes: [ 0050512 ]
+  expected:
+    A2: 1992
+
+
+
+- name: SUBQ/Long/non_8
+  init: 
+    D1: 100009
+  opcodes: [ 0053601 ]
+  expected:
+    D1: 100006
+
+
+- name: SUBQ/Long/8
+  init: 
+    D1: 100009
+  opcodes: [ 0050601 ]
+  expected:
+    D1: 100001
+
+- name: SUBQ/Long/CX
+  init: 
+    D1: 0
+  opcodes: [ 0051601 ]
+  expected:
+    X: true
+    C: true
+
+- name: SUBQ/Long/Z
+  init: 
+    D1: 1
+  opcodes: [ 0051601 ]
+  expected:
+    Z: true
+
+- name: SUBQ/Long/V
+  init: 
+    D1: 0x80000000
+  opcodes: [ 0051601 ]
+  expected:
+    V: true
+
+- name: SUBQ/Long/N
+  init: 
+    D1: 0xFFFFFFFE
+  opcodes: [ 0051601 ]
+  expected:
+    N: true
+
+- name: SUBQ/Long/Invalid(Imm)
+  opcodes: [ 0051674 ]
+  expected:
+    exception: 4
+
+- name: SUBQ/ALong/non_8
+  init: 
+    A1: 10000004
+  opcodes: [ 0052611 ]
+  expected:
+    A1: 10000002
+
+
+- name: SUBQ/ALong/8
+  init: 
+    A1: 10000008
+  opcodes: [ 0050611 ]
+  expected:
+    A1: 10000000

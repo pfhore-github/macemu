@@ -1,0 +1,7 @@
+- name: JMP
+  init:
+    A2: 0x1000
+  opcodes: [ 0047322 ]
+  expected:
+    PC: 0x1000
+

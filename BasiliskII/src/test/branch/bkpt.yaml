@@ -1,0 +1,4 @@
+- name: BKPT
+  opcodes: [ 0044110 ]
+  expected:
+    exception: 4

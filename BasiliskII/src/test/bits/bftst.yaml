@@ -1,0 +1,47 @@
+- name: BFTST/REG/Z
+  init:
+    D2: 0xf00fffff
+  opcodes: [ 0164302, 0410 ]
+  expected:
+    Z: true
+
+- name: BFTST/REG/N
+  init:
+    D2: 0xf80fffff
+  opcodes: [ 0164302, 0410 ]
+  expected:
+    N: true
+
+- name: BFTST/REG/Width_Reg
+  init:
+    D2: 0xf80fffff
+    D3: 8
+  opcodes: [ 0164302, 0453 ]
+  expected:
+    N: true
+
+- name: BFTST/REG/Off_Reg
+  init:
+    D2: 0xf80fffff
+    D3: 4
+  opcodes: [ 0164302, 04310 ]
+  expected:
+    N: true
+
+- name: BFTST/MEM/N
+  init:
+    A1: 0x1000
+    MEM:
+      0x1000/B: 0x18
+  opcodes: [ 0164321, 0404 ]
+  expected:
+    N: true
+
+- name: BFTST/MEM/Z
+  init:
+    A1: 0x1000
+    MEM:
+      0x1000/B: 0x10
+  opcodes: [ 0164321, 0404 ]
+  expected:
+    Z: true

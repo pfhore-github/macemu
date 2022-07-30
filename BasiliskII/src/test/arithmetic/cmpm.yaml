@@ -1,0 +1,138 @@
+- name: CMPM/Byte/Z
+  init: 
+    A1: 0x1000
+    A2: 0x2000
+    MEM:
+      0x1000/B: 10
+      0x2000/B: 10
+  opcodes: [ 0131412 ]
+  expected:
+    Z: true
+    A1: 0x1001
+    A2: 0x2001
+
+- name: CMPM/Byte/N
+  init: 
+    A1: 0x1000
+    A2: 0x2000
+    MEM:
+      0x1000/B: 10
+      0x2000/B: 20
+  opcodes: [ 0131412 ]
+  expected:
+    N: true
+
+- name: CMPM/Byte/V
+  init: 
+    A1: 0x1000
+    A2: 0x2000
+    MEM:
+      0x1000/B: 0x80
+      0x2000/B: 1
+  opcodes: [ 0131412 ]
+  expected:
+    V: true
+
+- name: CMPM/Byte/C
+  init: 
+    A1: 0x1000
+    A2: 0x2000
+    MEM:
+      0x1000/B: 0
+      0x2000/B: 1
+  opcodes: [ 0131412 ]
+  expected:
+    C: true
+
+- name: CMPM/Word/Z
+  init: 
+    A1: 0x1000
+    A2: 0x2000
+    MEM:
+      0x1000/W: 1000
+      0x2000/W: 1000
+  opcodes: [ 0131512 ]
+  expected:
+    Z: true
+    A1: 0x1002
+    A2: 0x2002
+
+- name: CMPM/Word/N
+  init: 
+    A1: 0x1000
+    A2: 0x2000
+    MEM:
+      0x1000/W: 1000
+      0x2000/W: 2000
+  opcodes: [ 0131512 ]
+  expected:
+    N: true
+
+- name: CMPM/Word/V
+  init: 
+    A1: 0x1000
+    A2: 0x2000
+    MEM:
+      0x1000/W: 0x8000
+      0x2000/W: 1
+  opcodes: [ 0131512 ]
+  expected:
+    V: true
+
+- name: CMPM/Word/C
+  init: 
+    A1: 0x1000
+    A2: 0x2000
+    MEM:
+      0x1000/W: 0
+      0x2000/W: 1
+  opcodes: [ 0131512 ]
+  expected:
+    C: true
+
+
+- name: CMPM/Long/Z
+  init: 
+    A1: 0x1000
+    A2: 0x2000
+    MEM:
+      0x1000/L: 100000
+      0x2000/L: 100000
+  opcodes: [ 0131612 ]
+  expected:
+    Z: true
+    A1: 0x1004
+    A2: 0x2004
+
+- name: CMPM/Long/N
+  init: 
+    A1: 0x1000
+    A2: 0x2000
+    MEM:
+      0x1000/L: 100000
+      0x2000/L: 200000
+  opcodes: [ 0131612 ]
+  expected:
+    N: true
+
+- name: CMPM/Long/V
+  init: 
+    A1: 0x1000
+    A2: 0x2000
+    MEM:
+      0x1000/L: 0x80000000
+      0x2000/L: 1
+  opcodes: [ 0131612 ]
+  expected:
+    V: true
+
+- name: CMPM/Long/C
+  init: 
+    A1: 0x1000
+    A2: 0x2000
+    MEM:
+      0x1000/L: 0
+      0x2000/L: 1
+  opcodes: [ 0131612 ]
+  expected:
+    C: true

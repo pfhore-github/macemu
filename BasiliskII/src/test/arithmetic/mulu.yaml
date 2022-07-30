@@ -1,0 +1,53 @@
+- name: MULU/Long/value
+  init:
+    D2: 0x80000000
+    D4: 2
+  opcodes: [ 0046004, 0x2403 ]
+  expected:
+    D3: 1
+    D2: 0
+    V: false
+
+- name: MULU/Long/Z
+  init:
+    D1: 12345
+    D2: 0
+  opcodes: [ 0046001, 0x2000 ]
+  expected:
+    D2: 0
+    Z: true
+
+- name: MULU/Long/V
+  init:
+    D1: 0x10000
+    D2: 0x10000
+  opcodes: [ 0046001, 0x2000 ]
+  expected:
+    D2: 0
+    V: true
+
+- name: MULU/Word/value
+  init:
+    D3: 120
+    D2: 3
+  opcodes: [ 0142303 ]
+  expected:
+    D2: 360
+    V: false
+    C: false
+
+- name: MULU/Word/Z
+  init:
+    D1: 12345
+    D2: 0
+  opcodes: [ 0142301 ]
+  expected:
+    Z: true
+
+- name: MULU/Word/N
+  init:
+    D1: 0xFFFF
+    D2: 0xFFFF
+  opcodes: [ 0142301 ]
+  expected:
+    N: true

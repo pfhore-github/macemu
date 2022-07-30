@@ -1,0 +1,221 @@
+- name: LSL/Byte/Imm
+  init:
+    D2: 1
+    V: true
+  opcodes: [ 0163412 ]
+  expected:
+    V: false
+    D2: 0x8
+
+- name: LSL/Byte/Imm8
+  init:
+    D2: 1
+  opcodes: [ 0160412 ]
+  expected:
+    D2: 0
+
+- name: LSL/Byte/Reg
+  init:
+    D2: 1
+    D3: 4
+  opcodes: [ 0163452 ]
+  expected:
+    D2: 0x10
+
+- name: LSL/Byte/Reg0
+  init:
+    D2: 1
+    D3: 0
+    C: true
+    X: true
+  opcodes: [ 0163452 ]
+  expected:
+    D2: 1
+    X: true
+    C: false
+
+- name: LSL/Byte/RegOver
+  init:
+    D2: 32
+    D3: 66
+  opcodes: [ 0163452 ]
+  expected:
+    D2: 128
+
+- name: LSL/Byte/CX
+  init:
+    D1: 0x80
+  opcodes: [ 0161411 ]
+  expected:
+    C: true
+    X: true
+
+- name: LSL/Byte/N
+  init:
+    D1: 0x40
+  opcodes: [ 0161411 ]
+  expected:
+    N: true
+
+- name: LSL/Byte/Z
+  init:
+    D1: 0
+  opcodes: [ 0161411 ]
+  expected:
+    Z: true
+
+
+- name: LSL/Word/Imm
+  init:
+    D2: 0x80
+    V: true
+  opcodes: [ 0163512 ]
+  expected:
+    V: false
+    D2: 0x400
+
+- name: LSL/Word/Imm8
+  init:
+    D2: 1
+  opcodes: [ 0160512 ]
+  expected:
+    D2: 0x100
+
+- name: LSL/Word/Reg
+  init:
+    D2: 0x80
+    D3: 4
+  opcodes: [ 0163552 ]
+  expected:
+    D2: 0x800
+
+- name: LSL/Word/Reg0
+  init:
+    D2: 1
+    D3: 0
+    C: true
+    X: true
+  opcodes: [ 0163552 ]
+  expected:
+    D2: 1
+    X: true
+    C: false
+
+- name: LSL/Word/RegOver
+  init:
+    D2: 32
+    D3: 66
+  opcodes: [ 0163552 ]
+  expected:
+    D2: 128
+
+- name: LSL/Word/CX
+  init:
+    D1: 0x8000
+  opcodes: [ 0161511 ]
+  expected:
+    C: true
+    X: true
+
+- name: LSL/Word/N
+  init:
+    D1: 0x4000
+  opcodes: [ 0161511 ]
+  expected:
+    N: true
+
+- name: LSL/Word/Z
+  init:
+    D1: 0
+  opcodes: [ 0161511 ]
+  expected:
+    Z: true
+
+- name: LSL/Word/EA
+  init: 
+    A2: 0x1000
+    MEM:
+      0x1000/W: 0xC000
+  opcodes: [ 0161722 ]
+  expected: 
+    MEM:
+      0x1000/W: 0x8000
+    N: true
+    X: true
+    C: true
+    V: false
+
+- name: LSL/Word/EA/Z
+  init: 
+    A2: 0x1000
+    MEM:
+      0x1000/W: 0
+  opcodes: [ 0161722 ]
+  expected: 
+    Z: true
+
+- name: LSL/Long/Imm
+  init:
+    D2: 0x10000
+    V: true
+  opcodes: [ 0163612 ]
+  expected:
+    V: false
+    D2: 0x80000
+
+- name: LSL/Long/Imm8
+  init:
+    D2: 0x10000
+  opcodes: [ 0160612 ]
+  expected:
+    D2: 0x1000000
+
+- name: LSL/Long/Reg
+  init:
+    D1: 0x10000
+    D3: 4
+  opcodes: [ 0163651 ]
+  expected:
+    D1: 0x100000
+
+- name: LSL/Long/Reg0
+  init:
+    D1: 0x10000
+    D3: 0
+    C: true
+    X: true
+  opcodes: [ 0163651 ]
+  expected:
+    D1: 0x10000
+    X: true
+    C: false
+
+- name: LSL/Long/RegOver
+  init:
+    D1: 32
+    D3: 66
+  opcodes: [ 0163651 ]
+  expected:
+    D1: 128
+
+- name: LSL/Long/CX
+  init:
+    D1: 0x80000000
+  opcodes: [ 0161611 ]
+  expected:
+    C: true
+    X: true
+
+- name: LSL/Long/N
+  init:
+    D1: 0x40000000
+  opcodes: [ 0161611 ]
+  expected:
+    N: true
+
+- name: LSL/Long/Z
+  init:
+    D1: 0
+  opcodes: [ 0161611 ]
+  expected:
+    Z: true

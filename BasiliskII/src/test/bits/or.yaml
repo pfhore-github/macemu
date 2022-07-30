@@ -1,0 +1,123 @@
+- name: OR/Byte/ToReg
+  init:
+    D2: 0x12
+    D3: 0x23
+    X: true
+    V: true
+    C: true
+  opcodes: [ 0102003 ]
+  expected:
+    D2: 0x33
+    X: true
+    C: false
+    V: false
+
+- name: OR/Byte/ToMem
+  init:
+    A2: 0x1000
+    D3: 0x12
+    MEM:
+      0x1000/B: 0x23
+  opcodes: [ 0103422 ]
+  expected:
+    MEM:
+      0x1000/B: 0x33
+
+- name: OR/Byte/N
+  init:
+    D1: 0x80
+    D2: 0
+  opcodes: [ 0101002 ]
+  expected:
+    N: true
+
+- name: OR/Byte/Z
+  init:
+    D1: 0
+    D2: 0
+  opcodes: [ 0101002 ]
+  expected:
+    Z: true
+
+
+- name: OR/Word/ToReg
+  init:
+    D2: 0x1234
+    D3: 0xbeaf
+    X: true
+    V: true
+    C: true
+  opcodes: [ 0102103 ]
+  expected:
+    D2: 0xbebf
+    X: true
+    C: false
+    V: false
+
+- name: OR/Word/ToMem
+  init:
+    A2: 0x1000
+    D3: 0x1234
+    MEM:
+      0x1000/W: 0xbeaf
+  opcodes: [ 0103522 ]
+  expected:
+    MEM:
+      0x1000/W: 0xbebf
+
+- name: OR/Word/N
+  init:
+    D2: 0x8000
+    D3: 0
+  opcodes: [ 0102103 ]
+  expected:
+    N: true
+
+- name: OR/Word/Z
+  init:
+    D2: 0
+    D3: 0
+  opcodes: [ 0102103 ]
+  expected:
+    Z: true
+
+- name: OR/Long/ToReg
+  init:
+    D1: 0x12345678
+    D2: 0xdeaddead
+    X: true
+    V: true
+    C: true
+  opcodes: [ 0101202 ]
+  expected:
+    D1: 0xdebddefd
+    X: true
+    C: false
+    V: false
+
+- name: OR/Long/ToMem
+  init:
+    A2: 0x1000
+    D3: 0x12345678
+    MEM:
+      0x1000/L: 0xdeaddead
+  opcodes: [ 0103622 ]
+  expected:
+    MEM:
+      0x1000/L: 0xdebddefd
+
+- name: OR/Long/N
+  init:
+    D1: 0x80000000
+    D2: 0
+  opcodes: [ 0101202 ]
+  expected:
+    N: true
+
+- name: OR/Long/Z
+  init:
+    D1: 0
+    D2: 0
+  opcodes: [ 0101202 ]
+  expected:
+    Z: true

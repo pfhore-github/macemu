@@ -1,0 +1,155 @@
+- name: ADD/Byte/ToReg
+  init:
+    D2: 33
+    D3: 29
+  opcodes: [ 0152003 ]
+  expected:
+    D2: 62
+
+- name: ADD/Byte/ToMem
+  init:
+    A3: 0x1000
+    D4: 33
+    MEM:
+      0x1000/B: 29
+  opcodes: [ 0154423 ]
+  expected:
+    MEM:
+      0x1000/B: 62
+
+- name: ADD/Byte/CX
+  init:
+    D2: 0xFF
+    D1: 2
+  opcodes: [ 0152001 ]
+  expected:
+    C: true
+    X: true
+
+- name: ADD/Byte/V
+  init:
+    D2: 0x7F
+    D1: 1
+  opcodes: [ 0152001 ]
+  expected:
+    V: true
+
+- name: ADD/Byte/Z
+  init:
+    D2: 0
+    D1: 0
+  opcodes: [ 0152001 ]
+  expected:
+    Z: true
+
+- name: ADD/Byte/N
+  init:
+    D2: 0xF0
+    D1: 1
+  opcodes: [ 0152001 ]
+  expected:
+    N: true
+
+- name: ADD/Word/ToReg
+  init:
+    D2: 1111
+    D3: 2222
+  opcodes: [ 0152103 ]
+  expected:
+    D2: 3333
+
+- name: ADD/Word/ToMem
+  init:
+    A2: 0x1000
+    D3: 1111
+    MEM:
+      0x1000/W: 2222
+  opcodes: [ 0153522 ]
+  expected:
+    MEM:
+      0x1000/W: 3333
+
+- name: ADD/Word/CX
+  init:
+    D2: 0xFFFF
+    D1: 2
+  opcodes: [ 0152101 ]
+  expected:
+    C: true
+    X: true
+
+- name: ADD/Word/V
+  init:
+    D2: 0x7FFF
+    D1: 1
+  opcodes: [ 0152101 ]
+  expected:
+    V: true
+
+- name: ADD/Word/Z
+  init:
+    D2: 0
+    D1: 0
+  opcodes: [ 0152101 ]
+  expected:
+    Z: true
+
+- name: ADD/Word/N
+  init:
+    D2: 0xF000
+    D1: 1
+  opcodes: [ 0152101 ]
+  expected:
+    N: true
+
+- name: ADD/Long/ToReg
+  init:
+    D1: 1111111
+    D2: 2222222
+  opcodes: [ 0151202 ]
+  expected:
+    D1: 3333333
+
+- name: ADD/Long/ToMem
+  init:
+    A1: 0x1000
+    D2: 111111
+    MEM:
+      0x1000/L: 222222
+  opcodes: [ 0152621 ]
+  expected:
+    MEM:
+      0x1000/L: 333333
+
+- name: ADD/Long/CX
+  init:
+    D2: 0xFFFFFFFF
+    D1: 2
+  opcodes: [ 0152201 ]
+  expected:
+    C: true
+    X: true
+
+- name: ADD/Long/V
+  init:
+    D2: 0x7FFFFFFF
+    D1: 1
+  opcodes: [ 0152201 ]
+  expected:
+    V: true
+
+- name: ADD/Long/Z
+  init:
+    D2: 0
+    D1: 0
+  opcodes: [ 0152201 ]
+  expected:
+    Z: true
+
+- name: ADD/Long/N
+  init:
+    D2: 0xF0000000
+    D1: 1
+  opcodes: [ 0152201 ]
+  expected:
+    N: true

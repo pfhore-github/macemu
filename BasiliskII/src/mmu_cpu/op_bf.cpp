@@ -74,7 +74,7 @@ void do_bftst(int type, int reg, uint16_t op2) {
         bf_m_common(addr, offset, width);
     }
 }
-OP(bftst) {
+void op_bftst(uint16_t  xop, int dm, int type, int  reg) {
     uint16_t op2 = FETCH();
     do_bftst(type, reg, op2);
 }
@@ -105,7 +105,7 @@ void do_bfchg(int type, int reg, uint16_t op2) {
     }
 }
 
-OP(bfchg) {
+void op_bfchg(uint16_t  xop, int dm, int type, int  reg) {
     uint16_t op2 = FETCH();
     do_bfchg(type, reg, op2);
 }
@@ -135,7 +135,7 @@ void do_bfclr(int type, int reg, uint16_t op2) {
         }
     }
 }
-OP(bfclr) {
+void op_bfclr(uint16_t  xop, int dm, int type, int  reg) {
     uint16_t op2 = FETCH();
     do_bfclr(type, reg, op2);
 }
@@ -165,7 +165,7 @@ void do_bfset(int type, int reg, uint16_t op2) {
         }
     }
 }
-OP(bfset) {
+void op_bfset(uint16_t  xop, int dm, int type, int  reg) {
     uint16_t op2 = FETCH();
     do_bfset(type, reg, op2);
 }
@@ -184,7 +184,7 @@ void do_bfextu(int type, int reg, uint16_t op2) {
         regs.d[op2 >> 12 & 7] = get_bf_m<uint32_t>(addr, offset, width);
     }
 }
-OP(bfextu) {
+void op_bfextu(uint16_t  xop, int dm, int type, int  reg) {
     uint16_t op2 = FETCH();
     do_bfextu(type, reg, op2);
 }
@@ -200,7 +200,7 @@ void do_bfexts(int type, int reg, uint16_t op2) {
         regs.d[op2 >> 12 & 7] = get_bf_m<int32_t>(addr, offset, width);
     }
 }
-OP(bfexts) {
+void op_bfexts(uint16_t  xop, int dm, int type, int  reg) {
     uint16_t op2 = FETCH();
     do_bfexts(type, reg, op2);
 }
@@ -220,7 +220,7 @@ void do_bfffo(int type, int reg, uint16_t op2) {
     }
 }
 
-OP(bfffo) {
+void op_bfffo(uint16_t  xop, int dm, int type, int  reg) {
     uint16_t op2 = FETCH();
     do_bfffo(type, reg, op2);
 }
@@ -287,7 +287,7 @@ void do_bfins(int type, int reg, uint16_t op2) {
         }
     }
 }
-OP(bfins) {
+void op_bfins(uint16_t  xop, int dm, int type, int  reg) {
     uint16_t op2 = FETCH();
     do_bfins(type, reg, op2);
 }

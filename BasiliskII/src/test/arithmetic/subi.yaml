@@ -1,0 +1,111 @@
+# Byte
+- name: SUBI/Byte/operand
+  init:
+    D2: 100
+  opcodes: [ 0002002, 10]
+  expected:
+    D2: 90
+
+- name: SUBI/Byte/CX
+  init:
+    D1: 1
+  opcodes: [ 0002001, 2]
+  expected:
+    X: true
+    C: true
+
+- name: SUBI/Byte/V
+  init:
+    D1: 0x80
+  opcodes: [ 0002001, 1]
+  expected:
+    V: true
+
+- name: SUBI/Byte/Z
+  init:
+    D1: 1
+  opcodes: [ 0002001, 1]
+  expected:
+    Z: true
+
+- name: SUBI/Byte/N
+  init:
+    D1: 0xfe
+  opcodes: [ 0002001, 1]
+  expected:
+    N: true
+
+# Word
+- name: SUBI/Word/operand
+  init:
+    D2: 1000
+  opcodes: [ 0002102, 300]
+  expected:
+    D2: 700
+
+- name: SUBI/Word/CX
+  init:
+    D1: 1000
+  opcodes: [ 0002101, 1001]
+  expected:
+    X: true
+    C: true
+
+- name: SUBI/Word/V
+  init:
+    D1: 0x8000
+  opcodes: [ 0002101, 2]
+  expected:
+    V: true
+
+- name: SUBI/Word/Z
+  init:
+    D1: 1000
+  opcodes: [ 0002101, 1000]
+  expected:
+    Z: true
+
+- name: SUBI/Word/N
+  init:
+    D1: 0xfffe
+  opcodes: [ 0002101, 1]
+  expected:
+    N: true
+
+# Long
+- name: SUBI/Long/operand
+  init:
+    D2: 1000000
+  opcodes: [ 0002202, 600000]
+  expected:
+    D2: 400000
+
+- name: SUBI/Long/CX
+  init:
+    D1: 1
+  opcodes: [ 0002201, 0, 2]
+  expected:
+    X: true
+    C: true
+
+- name: SUBI/Long/V
+  init:
+    D1: 0x80000000
+  opcodes: [ 0002201, 0, 2]
+  expected:
+    V: true
+
+- name: SUBI/Long/Z
+  init:
+    D1: 0x80000000
+  opcodes: [ 0002201, 0x80000000]
+  expected:
+    Z: true
+
+- name: SUBI/Long/N
+  init:
+    D1: 0xfffffffe
+  opcodes: [ 0002201, 0, 1]
+  expected:
+    N: true
+

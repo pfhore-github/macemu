@@ -8,7 +8,7 @@
 #include "intop.h"
 #include "newcpu.h"
 
-OP(cmp2_chk2_b) {
+void op_cmp2_chk2_b(uint16_t  xop, int dm, int type, int  reg) {
     uint16_t op2 = FETCH();
     regs.i_ea = EA_Addr(type, reg, 0, false);
     uint8_t low = read8(regs.i_ea);
@@ -30,7 +30,7 @@ OP(cmp2_chk2_b) {
     }
 }
 
-OP(cmp2_chk2_w) {
+void op_cmp2_chk2_w(uint16_t  xop, int dm, int type, int  reg) {
     uint16_t op2 = FETCH();
     regs.i_ea = EA_Addr(type, reg, 0, false);
     uint16_t low = read16(regs.i_ea);
@@ -52,22 +52,22 @@ OP(cmp2_chk2_w) {
     }
 }
 
-OP(subi_b) {
+void op_subi_b(uint16_t  xop, int dm, int type, int  reg) {
     uint8_t v2 = FETCH();
     EA_Update8(type, reg, [v2](auto v1) { return DO_SUB_B(v1, v2); });
 }
 
-OP(subi_w) {
+void op_subi_w(uint16_t  xop, int dm, int type, int  reg) {
     uint16_t v2 = FETCH();
     EA_Update16(type, reg, [v2](auto v1) { return DO_SUB_W(v1, v2); });
 }
 
-OP(subi_l) {
+void op_subi_l(uint16_t  xop, int dm, int type, int  reg) {
     uint32_t v2 = FETCH32();
     EA_Update32(type, reg, [v2](auto v1) { return DO_SUB_L(v1, v2); });
 }
 
-OP(cmp2_chk2_l) {
+void op_cmp2_chk2_l(uint16_t  xop, int dm, int type, int  reg) {
     uint32_t op2 = FETCH();
     regs.i_ea = EA_Addr(type, reg, 0, false);
     uint32_t low = read32(regs.i_ea);
@@ -89,22 +89,22 @@ OP(cmp2_chk2_l) {
     }
 }
 
-OP(addi_b) {
+void op_addi_b(uint16_t  xop, int dm, int type, int  reg) {
     uint8_t v2 = FETCH();
     EA_Update8(type, reg, [v2](auto v1) { return DO_ADD_B(v1, v2); });
 }
 
-OP(addi_w) {
+void op_addi_w(uint16_t  xop, int dm, int type, int  reg) {
     uint16_t v2 = FETCH();
     EA_Update16(type, reg, [v2](auto v1) { return DO_ADD_W(v1, v2); });
 }
 
-OP(addi_l) {
+void op_addi_l(uint16_t  xop, int dm, int type, int  reg) {
     uint32_t v2 = FETCH32();
     EA_Update32(type, reg, [v2](auto v1) { return DO_ADD_L(v1, v2); });
 }
 
-OP(cas_b) {
+void op_cas_b(uint16_t  xop, int dm, int type, int  reg) {
     uint16_t op2 = FETCH();
     regs.traced = true;
     regs.i_ea = EA_Addr(type, reg, 1, true);
@@ -117,7 +117,7 @@ OP(cas_b) {
     }
 }
 
-OP(cas_w) {
+void op_cas_w(uint16_t  xop, int dm, int type, int  reg) {
     if(type == 7 && reg == 4) {
         uint16_t op2 = FETCH();
         uint16_t op3 = FETCH();
@@ -157,7 +157,7 @@ OP(cas_w) {
     }
 }
 
-OP(cas_l) {
+void op_cas_l(uint16_t  xop, int dm, int type, int  reg) {
     if(type == 7 && reg == 4) {
         uint16_t op2 = FETCH();
         uint16_t op3 = FETCH();
@@ -195,25 +195,25 @@ OP(cas_l) {
     }
 }
 
-OP(cmpi_b) {
+void op_cmpi_b(uint16_t  xop, int dm, int type, int  reg) {
     uint8_t v2 = FETCH();
     uint8_t v1 = EA_READ8(type, reg);
     DO_CMP_B(v1, v2);
 }
 
-OP(cmpi_w) {
+void op_cmpi_w(uint16_t  xop, int dm, int type, int  reg) {
     uint16_t v2 = FETCH();
     uint16_t v1 = EA_READ16(type, reg);
     DO_CMP_W(v1, v2);
 }
 
-OP(cmpi_l) {
+void op_cmpi_l(uint16_t  xop, int dm, int type, int  reg) {
     uint32_t v2 = FETCH32();
     uint32_t v1 = EA_READ32(type, reg);
     DO_CMP_L(v1, v2);
 }
 
-OP(negx_b) {
+void op_negx_b(uint16_t  xop, int dm, int type, int  reg) {
     EA_Update8(type, reg, [](auto v1) {
         bool tp = regs.z;
         uint8_t v = DO_SUB_B(0, v1 + regs.x);
@@ -226,7 +226,7 @@ OP(negx_b) {
     });
 }
 
-OP(negx_w) {
+void op_negx_w(uint16_t  xop, int dm, int type, int  reg) {
     EA_Update16(type, reg, [](auto v1) {
         bool tp = regs.z;
         uint16_t v = DO_SUB_W(0, v1 + regs.x);
@@ -239,7 +239,7 @@ OP(negx_w) {
     });
 }
 
-OP(negx_l) {
+void op_negx_l(uint16_t  xop, int dm, int type, int  reg) {
     EA_Update32(type, reg, [](auto v1) {
         bool tp = regs.z;
         uint32_t v = DO_SUB_L(0, v1 + regs.x);
@@ -252,33 +252,33 @@ OP(negx_l) {
     });
 }
 
-OP(clr_b) {
+void op_clr_b(uint16_t  xop, int dm, int type, int  reg) {
     EA_WRITE8(type, reg, 0);
     regs.n = regs.v = regs.c = false;
     regs.z = true;
 }
 
-OP(clr_w) {
+void op_clr_w(uint16_t  xop, int dm, int type, int  reg) {
     EA_WRITE16(type, reg, 0);
     regs.n = regs.v = regs.c = false;
     regs.z = true;
 }
 
-OP(clr_l) {
+void op_clr_l(uint16_t  xop, int dm, int type, int  reg) {
     EA_WRITE32(type, reg, 0);
     regs.n = regs.v = regs.c = false;
     regs.z = true;
 }
 
-OP(neg_b) {
+void op_neg_b(uint16_t  xop, int dm, int type, int  reg) {
     EA_Update8(type, reg, [](auto v1) { return DO_SUB_B(0, v1); });
 }
 
-OP(neg_w) {
+void op_neg_w(uint16_t  xop, int dm, int type, int  reg) {
     EA_Update16(type, reg, [](auto v1) { return DO_SUB_W(0, v1); });
 }
 
-OP(neg_l) {
+void op_neg_l(uint16_t  xop, int dm, int type, int  reg) {
     EA_Update32(type, reg, [](auto v1) { return DO_SUB_L(0, v1); });
 }
 
@@ -296,7 +296,7 @@ void op_ext_l(int reg) {
     EA_WRITE32(0, reg, DO_EXT_L(v));
 }
 
-OP(mul_l) {
+void op_mul_l(uint16_t  xop, int dm, int type, int  reg) {
     uint16_t op2 = FETCH();
     int dl = op2 >> 12 & 7;
     int dh = op2 & 7;
@@ -370,7 +370,7 @@ uint64_t do_divu(uint32_t ah, uint32_t al, uint32_t b) {
         return (ret1 & 0xffffffff) | (ret2 & 0xffffffff) << 32;
     }
 }
-OP(div_l) {
+void op_div_l(uint16_t  xop, int dm, int type, int  reg) {
     uint16_t op2 = FETCH();
     int dq = op2 >> 12 & 7;
     int dr = op2 & 7;
@@ -379,10 +379,11 @@ OP(div_l) {
     uint64_t ret;
     if(op2 & 1 << 11) {
         // divs
-        int32_t ah = (op2 & 1 << 10) ? regs.d[dr] : (static_cast<int32_t>(regs.d[dq]) >> 31); 
+        int32_t ah = (op2 & 1 << 10) ? regs.d[dr]
+                                     : (static_cast<int32_t>(regs.d[dq]) >> 31);
         ret = do_divs(ah, regs.d[dq], vd);
     } else {
-        int32_t ah = (op2 & 1 << 10) ? regs.d[dr] : 0; 
+        int32_t ah = (op2 & 1 << 10) ? regs.d[dr] : 0;
         ret = do_divu(ah, regs.d[dq], vd);
     }
     regs.d[dq] = ret & 0xffffffff;
@@ -391,7 +392,7 @@ OP(div_l) {
     }
 }
 
-OP(chk_w) {
+void op_chk_w(uint16_t  xop, int dm, int type, int  reg) {
     int16_t limit = EA_READ16(type, reg);
     int16_t v = regs.d[dm];
     if(v < 0) {
@@ -404,7 +405,7 @@ OP(chk_w) {
     }
 }
 
-OP(chk_l) {
+void op_chk_l(uint16_t  xop, int dm, int type, int  reg) {
     int32_t limit = EA_READ32(type, reg);
     int32_t v = regs.d[dm];
     if(v < 0) {
@@ -424,12 +425,12 @@ void op_extb(int reg) {
     EA_WRITE32(0, reg, v);
 }
 
-OP(addq_b) {
+void op_addq_b(uint16_t  xop, int dm, int type, int  reg) {
     int v2 = dm ? dm : 8;
     EA_Update8(type, reg, [v2](auto v1) { return DO_ADD_B(v1, v2); });
 }
 
-OP(addq_w) {
+void op_addq_w(uint16_t  xop, int dm, int type, int  reg) {
     int v2 = dm ? dm : 8;
     if(type == 1) {
         regs.a[reg] += v2;
@@ -438,7 +439,7 @@ OP(addq_w) {
     }
 }
 
-OP(addq_l) {
+void op_addq_l(uint16_t  xop, int dm, int type, int  reg) {
     int v2 = dm ? dm : 8;
     if(type == 1) {
         regs.a[reg] += v2;
@@ -447,12 +448,12 @@ OP(addq_l) {
     }
 }
 
-OP(subq_b) {
+void op_subq_b(uint16_t  xop, int dm, int type, int  reg) {
     int v2 = dm ? dm : 8;
     EA_Update8(type, reg, [v2](auto v1) { return DO_SUB_B(v1, v2); });
 }
 
-OP(subq_w) {
+void op_subq_w(uint16_t  xop, int dm, int type, int  reg) {
     int v2 = dm ? dm : 8;
     if(type == 1) {
         regs.a[reg] -= v2;
@@ -461,7 +462,7 @@ OP(subq_w) {
     }
 }
 
-OP(subq_l) {
+void op_subq_l(uint16_t  xop, int dm, int type, int  reg) {
     int v2 = dm ? dm : 8;
     if(type == 1) {
         regs.a[reg] -= v2;
@@ -469,56 +470,61 @@ OP(subq_l) {
         EA_Update32(type, reg, [v2](auto v1) { return DO_SUB_L(v1, v2); });
     }
 }
-
-OP(divu_w) {
-    uint32_t dx = regs.d[dm];
-    uint32_t dy = EA_READ16(type, reg);
+uint32_t do_divu_w(uint32_t dx, uint16_t dy) {
     if(dy == 0) {
         DIV0_ERROR();
-        return;
+        return dx;
     }
     regs.c = false;
     uint32_t q = dx / dy;
     uint32_t r = dx % dy;
     regs.v = (q >> 16) != 0;
-    regs.d[dm] = (q & 0xffff) | (r << 16);
     regs.n = q >> 15;
     regs.z = q == 0;
+    return (q & 0xffff) | (r << 16);
 }
-
-OP(divs_w) {
-    int32_t dx = regs.d[dm];
-    int32_t dy = DO_EXT_L(EA_READ16(type, reg));
+void op_divu_w(uint16_t  xop, int dm, int type, int  reg) {
+    uint32_t dx = regs.d[dm];
+    uint32_t dy = EA_READ16(type, reg);
+    regs.d[dm] = do_divu_w(dx, dy);
+}
+uint32_t do_divs_w(int32_t dx, int16_t dy) {
     if(dy == 0) {
         DIV0_ERROR();
-        return;
+        return dx;
     }
     regs.c = false;
     int32_t q = dx / dy;
     int32_t r = dx % dy;
     regs.v = q > std::numeric_limits<short>::max() ||
              q < std::numeric_limits<short>::min();
-    regs.d[dm] = (q & 0xffff) | static_cast<uint16_t>(r) << 16;
     regs.n = q < 0;
     regs.z = q == 0;
+    return (q & 0xffff) | static_cast<uint16_t>(r) << 16;
 }
 
-OP(sub_b) {
+void op_divs_w(uint16_t  xop, int dm, int type, int  reg) {
+    int32_t dx = regs.d[dm];
+    int32_t dy = DO_EXT_L(EA_READ16(type, reg));
+    regs.d[dm] = do_divs_w(dx, dy);
+}
+
+void op_sub_b(uint16_t  xop, int dm, int type, int  reg) {
     uint8_t v2 = EA_READ8(type, reg);
     WRITE_D8(dm, DO_SUB_B(regs.d[dm], v2));
 }
 
-OP(sub_w) {
+void op_sub_w(uint16_t  xop, int dm, int type, int  reg) {
     uint16_t v2 = EA_READ16(type, reg);
     WRITE_D16(dm, DO_SUB_W(regs.d[dm], v2));
 }
 
-OP(sub_l) {
+void op_sub_l(uint16_t  xop, int dm, int type, int  reg) {
     uint32_t v2 = EA_READ32(type, reg);
     regs.d[dm] = DO_SUB_L(regs.d[dm], v2);
 }
 
-OP(suba_w) {
+void op_suba_w(uint16_t  xop, int dm, int type, int  reg) {
     int16_t v2 = EA_READ16(type, reg);
     WRITE_A16(dm, regs.a[dm] - v2);
 }
@@ -548,7 +554,7 @@ void subx_b_a(int dst_r, int src_r) {
     }
     write8(regs.a[dst_r], v);
 }
-OP(sub_to_ea_b) {
+void op_sub_to_ea_b(uint16_t  xop, int dm, int type, int  reg) {
     if(type == 0) {
         // SUBX.B
         subx_b_d(dm, reg);
@@ -586,7 +592,7 @@ void subx_w_a(int dst_r, int src_r) {
     write16(regs.a[dst_r], v);
 }
 
-OP(sub_to_ea_w) {
+void op_sub_to_ea_w(uint16_t  xop, int dm, int type, int  reg) {
     if(type == 0) {
         // SUBX.W
         subx_w_d(dm, reg);
@@ -625,7 +631,7 @@ void subx_l_a(int dst_r, int src_r) {
     write32(regs.a[dst_r], v);
 }
 
-OP(sub_to_ea_l) {
+void op_sub_to_ea_l(uint16_t  xop, int dm, int type, int  reg) {
     if(type == 0) {
         // SUBX.L
         subx_l_d(dm, reg);
@@ -638,32 +644,32 @@ OP(sub_to_ea_l) {
     }
 }
 
-OP(suba_l) {
+void op_suba_l(uint16_t  xop, int dm, int type, int  reg) {
     int32_t v2 = EA_READ32(type, reg);
     regs.a[dm] -= v2;
 }
 
-OP(cmp_b) {
+void op_cmp_b(uint16_t  xop, int dm, int type, int  reg) {
     uint8_t v2 = EA_READ8(type, reg);
     DO_CMP_B(regs.d[dm], v2);
 }
 
-OP(cmp_w) {
+void op_cmp_w(uint16_t  xop, int dm, int type, int  reg) {
     uint16_t v2 = EA_READ16(type, reg);
     DO_CMP_W(regs.d[dm], v2);
 }
 
-OP(cmp_l) {
+void op_cmp_l(uint16_t  xop, int dm, int type, int  reg) {
     uint32_t v2 = EA_READ32(type, reg);
     DO_CMP_L(regs.d[dm], v2);
 }
 
-OP(cmpa_w) {
-    uint16_t v2 = EA_READ16(type, reg);
-    DO_CMP_W(regs.a[dm], v2);
+void op_cmpa_w(uint16_t  xop, int dm, int type, int  reg) {
+    int16_t v2 = EA_READ16(type, reg);
+    DO_CMP_L(regs.a[dm], v2);
 }
 
-OP(cmpa_l) {
+void op_cmpa_l(uint16_t  xop, int dm, int type, int  reg) {
     uint32_t v2 = EA_READ32(type, reg);
     DO_CMP_L(regs.a[dm], v2);
 }
@@ -689,7 +695,7 @@ void op_cmpm_l(int y, int x) {
     regs.a[y] += 4;
     regs.a[x] += 4;
 }
-OP(mulu_w) {
+void op_mulu_w(uint16_t  xop, int dm, int type, int  reg) {
     uint32_t v2 = EA_READ16(type, reg);
     uint32_t v1 = regs.d[dm] & 0xffff;
     uint32_t re = v1 * v2;
@@ -699,7 +705,7 @@ OP(mulu_w) {
     regs.d[dm] = re;
 }
 
-OP(muls_w) {
+void op_muls_w(uint16_t  xop, int dm, int type, int  reg) {
     int32_t v2 = DO_EXT_L(EA_READ16(type, reg));
     int32_t v1 = DO_EXT_L(regs.d[dm] & 0xffff);
     int32_t re = v1 * v2;
@@ -709,22 +715,22 @@ OP(muls_w) {
     regs.d[dm] = re;
 }
 
-OP(add_b) {
+void op_add_b(uint16_t  xop, int dm, int type, int  reg) {
     uint8_t v2 = EA_READ8(type, reg);
     WRITE_D8(dm, DO_ADD_B(regs.d[dm], v2));
 }
 
-OP(add_w) {
+void op_add_w(uint16_t  xop, int dm, int type, int  reg) {
     uint16_t v2 = EA_READ16(type, reg);
     WRITE_D16(dm, DO_ADD_W(regs.d[dm], v2));
 }
 
-OP(add_l) {
+void op_add_l(uint16_t  xop, int dm, int type, int  reg) {
     uint32_t v2 = EA_READ32(type, reg);
     regs.d[dm] = DO_ADD_L(regs.d[dm], v2);
 }
 
-OP(adda_w) {
+void op_adda_w(uint16_t  xop, int dm, int type, int  reg) {
     int16_t v2 = EA_READ16(type, reg);
     regs.a[dm] += v2;
 }
@@ -794,7 +800,7 @@ void addx_l_a(int dm, int reg) {
     write32(regs.a[dm], do_addx_l(dst, src));
 }
 
-OP(add_to_ea_b) {
+void op_add_to_ea_b(uint16_t  xop, int dm, int type, int  reg) {
     if(type == 0) {
         addx_b_d(dm, reg);
     } else if(type == 1) {
@@ -805,7 +811,7 @@ OP(add_to_ea_b) {
     }
 }
 
-OP(add_to_ea_w) {
+void op_add_to_ea_w(uint16_t  xop, int dm, int type, int  reg) {
     if(type == 0) {
         addx_w_d(dm, reg);
     } else if(type == 1) {
@@ -816,7 +822,7 @@ OP(add_to_ea_w) {
     }
 }
 
-OP(add_to_ea_l) {
+void op_add_to_ea_l(uint16_t  xop, int dm, int type, int  reg) {
     if(type == 0) {
         addx_l_d(dm, reg);
     } else if(type == 1) {
@@ -827,7 +833,7 @@ OP(add_to_ea_l) {
     }
 }
 
-OP(adda_l) {
+void op_adda_l(uint16_t  xop, int dm, int type, int  reg) {
     int32_t v2 = EA_READ32(type, reg);
     regs.a[dm] += v2;
 }

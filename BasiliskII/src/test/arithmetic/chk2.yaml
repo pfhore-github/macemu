@@ -1,0 +1,197 @@
+# Byte
+- name: CHK2/WithDn/Byte/in_range
+  init:
+    A3: 0x1000
+    D4: 0x40
+    MEM:
+      0x1000/B: 0x10
+      0x1001/B: 0x50 
+  opcodes: [0000323, 0x4800]
+  expected:
+      exception: 0
+      Z: false
+      C: false
+
+- name: CHK2/WithDn/Byte/low_eq
+  init:
+    A3: 0x1000
+    D4: 0x10
+    MEM:
+      0x1000/B: 0x10
+      0x1001/B: 0x50 
+  opcodes: [0000323, 0x4800]
+  expected:
+      exception: 0
+      Z: true
+      C: false
+
+- name: CHK2/WithDn/Byte/high_eq
+  init:
+    A3: 0x1000
+    D4: 0x50
+    MEM:
+      0x1000/B: 0x10
+      0x1001/B: 0x50 
+  opcodes: [0000323, 0x4800]
+  expected:
+      exception: 0
+      Z: true
+      C: false
+
+- name: CHK2/WithDn/Byte/under
+  init:
+    A3: 0x1000
+    D4: 0x05
+    MEM:
+      0x1000/B: 0x10
+      0x1001/B: 0x50 
+  opcodes: [0000323, 0x4800]
+  expected:
+      exception: 6
+      Z: false
+      C: true
+
+- name: CHK2/WithDn/Byte/over
+  init:
+    A3: 0x1000
+    D4: 0x55
+    MEM:
+      0x1000/B: 0x10
+      0x1001/B: 0x50 
+  opcodes: [0000323, 0x4800]
+  expected:
+      exception: 6
+      Z: false
+      C: true
+
+# Word
+- name: CHK2/WithDn/Word/in_range
+  init:
+    A3: 0x1000
+    D4: 0x4000
+    MEM:
+      0x1000/W: 0x1000
+      0x1002/W: 0x5000 
+  opcodes: [0001323, 0x4800]
+  expected:
+      exception: 0
+      Z: false
+      C: false
+
+- name: CHK2/WithDn/Word/low_eq
+  init:
+    A3: 0x1000
+    D4: 0x1000
+    MEM:
+      0x1000/W: 0x1000
+      0x1002/W: 0x5000 
+  opcodes: [0001323, 0x4800]
+  expected:
+      exception: 0
+      Z: true
+      C: false
+
+- name: CHK2/WithDn/Word/high_eq
+  init:
+    A3: 0x1000
+    D4: 0x5000
+    MEM:
+      0x1000/W: 0x1000
+      0x1002/W: 0x5000 
+  opcodes: [0001323, 0x4800]
+  expected:
+      exception: 0
+      Z: true
+      C: false
+
+- name: CHK2/WithDn/Word/under
+  init:
+    A3: 0x1000
+    D4: 0x0500
+    MEM:
+      0x1000/W: 0x1000
+      0x1002/W: 0x5000 
+  opcodes: [0001323, 0x4800]
+  expected:
+      exception: 6
+      Z: false
+      C: true
+
+- name: CHK2/WithDn/Word/over
+  init:
+    A3: 0x1000
+    D4: 0x5500
+    MEM:
+      0x1000/W: 0x1000
+      0x1002/W: 0x5000 
+  opcodes: [0001323, 0x4800]
+  expected:
+      exception: 6
+      Z: false
+      C: true
+
+# Long
+- name: CHK2/WithDn/Long/in_range
+  init:
+    A3: 0x1000
+    D4: 0x40000000
+    MEM:
+      0x1000/L: 0x10000000
+      0x1004/L: 0x50000000 
+  opcodes: [0002323, 0x4800]
+  expected:
+      exception: 0
+      Z: false
+      C: false
+
+- name: CHK2/WithDn/Long/low_eq
+  init:
+    A3: 0x1000
+    D4: 0x10000000
+    MEM:
+      0x1000/L: 0x10000000
+      0x1004/L: 0x50000000 
+  opcodes: [0002323, 0x4800]
+  expected:
+      exception: 0
+      Z: true
+      C: false
+
+- name: CHK2/WithDn/Long/high_eq
+  init:
+    A3: 0x1000
+    D4: 0x50000000
+    MEM:
+      0x1000/L: 0x10000000
+      0x1004/L: 0x50000000 
+  opcodes: [0002323, 0x4800]
+  expected:
+      exception: 0
+      Z: true
+      C: false
+
+- name: CHK2/WithDn/Long/under
+  init:
+    A3: 0x1000
+    D4: 0x05000000
+    MEM:
+      0x1000/L: 0x10000000
+      0x1004/L: 0x50000000 
+  opcodes: [0002323, 0x4800]
+  expected:
+      exception: 6
+      Z: false
+      C: true
+
+- name: CHK2/WithDn/Long/over
+  init:
+    A3: 0x1000
+    D4: 0x5500
+    MEM:
+      0x1000/L: 0x10000000
+      0x1004/L: 0x50000000 
+  opcodes: [0002323, 0x4800]
+  expected:
+      exception: 6
+      Z: false
+      C: true

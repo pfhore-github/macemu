@@ -1,0 +1,10 @@
+- name: PEA
+  init: 
+    A7: 0x1004
+    A2: 0x10
+  opcodes: [ 0044122 ]
+  expected:
+    MEM:
+      0x1000/L: 0x10
+    A7: 0x1000
+

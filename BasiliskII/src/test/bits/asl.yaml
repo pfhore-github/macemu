@@ -1,0 +1,251 @@
+- name: ASL/Byte/Imm
+  init:
+    V: true
+    D2: 1
+  opcodes: [ 0163402 ]
+  expected:
+    D2: 8
+    V: false
+  
+- name: ASL/Byte/Imm8
+  init:
+    D2: 1
+  opcodes: [ 0160402 ]
+  expected:
+    D2: 0
+
+- name: ASL/Byte/Reg
+  init:
+    D2: 1
+    D3: 4
+  opcodes: [ 0163442 ]
+  expected:
+    D2: 0x10
+
+- name: ASL/Byte/Reg0
+  init:
+    D2: 1
+    D3: 0
+    X: true
+    C: true
+  opcodes: [ 0163442 ]
+  expected:
+    D2: 1
+    X: true
+    C: false
+
+- name: ASL/Byte/RegOver
+  init:
+    D1: 1
+    D2: 66
+  opcodes: [ 0162441 ]
+  expected:
+    D1: 4
+
+- name: ASL/Byte/CX
+  init:
+    D1: 0xC0
+  opcodes: [ 0161401 ]
+  expected:
+    X: true
+    C: true
+
+- name: ASL/Byte/N
+  init:
+    D1: 0x40
+  opcodes: [ 0161401 ]
+  expected:
+    N: true
+
+- name: ASL/Byte/Z
+  init:
+    D1: 0x80
+  opcodes: [ 0161401 ]
+  expected:
+    Z: true
+
+- name: ASL/Byte/V
+  init:
+    D1: 0x60
+  opcodes: [ 0162401 ]
+  expected:
+    V: true
+
+
+- name: ASL/Word/Imm
+  init:
+    V: true
+    D2: 0x80
+  opcodes: [ 0163502 ]
+  expected:
+    D2: 0x400
+    V: false
+  
+- name: ASL/Word/Imm8
+  init:
+    D2: 1
+  opcodes: [ 0160502 ]
+  expected:
+    D2: 0x100
+
+- name: ASL/Word/Reg
+  init:
+    D2: 0x80
+    D3: 4
+  opcodes: [ 0163542 ]
+  expected:
+    D2: 0x800
+
+- name: ASL/Word/Reg0
+  init:
+    D2: 1
+    D3: 0
+    X: true
+    C: true
+  opcodes: [ 0163542 ]
+  expected:
+    D2: 1
+    X: true
+    C: false
+
+- name: ASL/Word/RegOver
+  init:
+    D1: 0x80
+    D2: 66
+  opcodes: [ 0162541 ]
+  expected:
+    D1: 0x200
+
+- name: ASL/Word/CX
+  init:
+    D1: 0xC000
+  opcodes: [ 0161501 ]
+  expected:
+    X: true
+    C: true
+
+- name: ASL/Word/N
+  init:
+    D1: 0x4000
+  opcodes: [ 0161501 ]
+  expected:
+    N: true
+
+- name: ASL/Word/Z
+  init:
+    D1: 0x8000
+  opcodes: [ 0161501 ]
+  expected:
+    Z: true
+
+- name: ASL/Word/V
+  init:
+    D1: 0x6000
+  opcodes: [ 0162501 ]
+  expected:
+    V: true
+
+- name: ASL/Word/EA
+  init: 
+    A2: 0x1000
+    MEM:
+      0x1000/W: 0xffff
+  opcodes: [ 0160722 ]
+  expected: 
+    MEM:
+      0x1000/W: 0xfffe
+    N: true
+    X: true
+    C: true
+
+- name: ASL/Word/V
+  init: 
+    A2: 0x1000
+    MEM:
+      0x1000/W: 0x4000
+  opcodes: [ 0160722 ]
+  expected: 
+    V: true
+
+- name: ASL/Word/EA/Z
+  init: 
+    A2: 0x1000
+    MEM:
+      0x1000/W: 0
+  opcodes: [ 0160722 ]
+  expected: 
+    Z: true
+
+
+- name: ASL/Long/Imm
+  init:
+    V: true
+    D2: 0x10000
+  opcodes: [ 0163602 ]
+  expected:
+    D2: 0x80000
+    V: false
+  
+- name: ASL/Long/Imm8
+  init:
+    D2: 0x100
+  opcodes: [ 0160602 ]
+  expected:
+    D2: 0x10000
+
+- name: ASL/Long/Reg
+  init:
+    D1: 0x10000
+    D3: 4
+  opcodes: [ 0163641 ]
+  expected:
+    D1: 0x100000
+
+- name: ASL/Long/Reg0
+  init:
+    D1: 0x10000
+    D3: 0
+    X: true
+    C: true
+  opcodes: [ 0163641 ]
+  expected:
+    D1: 0x10000
+    X: true
+    C: false
+
+- name: ASL/Long/RegOver
+  init:
+    D1: 32
+    D2: 66
+  opcodes: [ 0162641 ]
+  expected:
+    D1: 128
+
+- name: ASL/Long/CX
+  init:
+    D1: 0x80000000
+  opcodes: [ 0161601 ]
+  expected:
+    X: true
+    C: true
+
+- name: ASL/Long/N
+  init:
+    D1: 0x40000000
+  opcodes: [ 0161601 ]
+  expected:
+    N: true
+
+- name: ASL/Long/Z
+  init:
+    D1: 0
+  opcodes: [ 0161601 ]
+  expected:
+    Z: true
+
+- name: ASL/Long/V
+  init:
+    D1: 0x60000000
+  opcodes: [ 0162601 ]
+  expected:
+    V: true

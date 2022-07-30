@@ -1,0 +1,175 @@
+# Byte
+- name: EORI/Byte/value
+  init:
+    D1: 0x23
+    X: true
+    V: true
+    C: true
+  opcodes: [ 0005001, 0xff]
+  expected:
+    D1: 0xDC
+    X: true
+    C: false
+    V: false
+
+- name: EORI/Byte/N
+  init:
+    D1: 0x80
+  opcodes: [ 0005001, 0]
+  expected:
+    N: true
+
+- name: EORI/Byte/Z
+  init:
+    D1: 0x80
+  opcodes: [ 0005001, 0x80]
+  expected:
+    Z: true
+
+- name: EORI/Byte/CCR/C
+  init:
+    X: true
+    V: true
+    C: true
+    N: true
+    Z: true
+  opcodes: [ 0005074, 1]
+  expected:
+    X: true
+    V: true
+    C: false
+    N: true
+    Z: true
+
+- name: EORI/Byte/CCR/V
+  init:
+    X: true
+    V: true
+    C: true
+    N: true
+    Z: true
+  opcodes: [ 0005074, 2]
+  expected:
+    X: true
+    V: false
+    C: true
+    N: true
+    Z: true
+
+- name: EORI/Byte/CCR/Z
+  init:
+    X: true
+    V: true
+    C: true
+    N: true
+    Z: true
+  opcodes: [ 0005074, 4]
+  expected:
+    X: true
+    V: true
+    C: true
+    N: true
+    Z: false
+
+
+- name: EORI/Byte/CCR/N
+  init:
+    X: true
+    V: true
+    C: true
+    N: true
+    Z: true
+  opcodes: [ 0005074, 8]
+  expected:
+    X: true
+    V: true
+    C: true
+    N: false
+    Z: true
+
+- name: EORI/Byte/CCR/X
+  init:
+    X: true
+    V: true
+    C: true
+    N: true
+    Z: true
+  opcodes: [ 0005074, 16]
+  expected:
+    X: false
+    V: true
+    C: true
+    N: true
+    Z: true
+
+# word
+- name: EORI/Word/value
+  init:
+    D2: 0x5432
+    X: true
+    V: true
+    C: true
+  opcodes: [ 0005102, 0xffff]
+  expected:
+    D2: 0xABCD
+    X: true
+    C: false
+    V: false
+
+- name: EORI/Word/N
+  init:
+    D1: 0x8000
+  opcodes: [ 0005101, 0]
+  expected:
+    N: true
+
+- name: EORI/Word/Z
+  init:
+    D1: 0x8000
+  opcodes: [ 0005101, 0x8000]
+  expected:
+    Z: true
+
+- name: EORI/Word/SR/Invalid
+  init:
+    S: false
+  opcodes: [ 0005174, 0xffff]
+  expected:
+    exception: 8
+
+- name: EORI/Word/SR/Valid
+  init:
+    S: true
+    IM: 7
+  opcodes: [ 0005174, 0x2f00]
+  expected:
+    S: false
+    IM: 0
+
+#Long 
+- name: EORI/Long/value
+  init:
+    D1: 0x12345678
+    X: true
+    V: true
+    C: true
+  opcodes: [ 0005201, 0xffffffff]
+  expected:
+    D1: 0xEDCBA987
+    X: true
+    C: false
+    V: false
+
+- name: EORI/Long/N
+  init:
+    D1: 0x80000000
+  opcodes: [ 0005201, 0, 0]
+  expected:
+    N: true
+
+- name: EORI/Long/Z
+  init:
+    D1: 0x80000000
+  opcodes: [ 0005201, 0x80000000]
+  expected:
+    Z: true

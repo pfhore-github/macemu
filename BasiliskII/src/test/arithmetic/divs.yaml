@@ -1,0 +1,84 @@
+- name: DIVS/Long/value
+  init:
+    D1: -13
+    D3: 4
+  opcodes: [ 0046103, 0x1802]
+  expected:
+    D1: -3
+    D2: -1
+
+- name: DIVS/Long/N
+  init:
+    D1: -2
+    D2: 10
+  opcodes: [ 0046101, 0x2802]
+  expected:
+    N: true
+    
+- name: DIVS/Long/Z
+  init:
+    D1: -12345
+    D2: 0
+  opcodes: [ 0046101, 0x2802]
+  expected:
+    Z: true
+
+- name: DIVS/Long/V
+  init:
+    D1: -2
+    D2: 2
+    D3: 0
+  opcodes: [ 0046101, 0x3C02]
+  expected:
+    V: true
+
+- name: DIVS/Long/Div0
+  init:
+    D2: 1
+    D1: 0
+  opcodes: [ 0046101, 0x2802]
+  expected:
+    exception: 5
+
+- name: DIVS/Long/DWord
+  init:
+    D1: 30
+    D2: 0
+    D3: -1
+  opcodes: [ 0046101, 0x2C03]
+  expected:
+    D3: -16
+    D2: -143165576
+
+- name: DIVS/Word/value
+  init:
+    D1: -1000
+    D3: 3
+  opcodes: [ 0101703]
+  expected:
+    D1: 0xFFFFFEB3
+
+- name: DIVS/Word/Z
+  init:
+    D2: 0
+    D1: 100
+  opcodes: [ 0102701]
+  expected:
+    Z: true
+
+- name: DIVS/Word/V
+  init:
+    D2: -1000000
+    D1: 2
+  opcodes: [ 0102701]
+  expected:
+    V: true
+
+- name: DIVS/Word/div0
+  init:
+    D2: 1
+    D1: 0
+  opcodes: [ 0102701]
+  expected:
+    exception: 5
+

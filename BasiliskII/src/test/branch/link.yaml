@@ -1,0 +1,21 @@
+- name: LINK/Long
+  init:
+    A3: 0x200000 
+    A7: 0x204
+  opcodes: [ 0044013, 0x100000 ]
+  expected:
+    MEM:
+      0x200/L: 0x200000
+      A3: 0x200
+      A7: 0x100200
+
+- name: LINK/Word
+  init:
+    A3: 0x2000
+    A7: 0x204
+  opcodes: [ 0047123, 0x1000 ]
+  expected:
+    MEM:
+      0x200/L: 0x2000
+      A3: 0x200
+      A7: 0x1200

@@ -1,0 +1,60 @@
+- name: MULS/Long/value
+  init:
+    D3: -4
+    D4: 0x40000000
+  opcodes: [ 0046004, 0x3C02 ]
+  expected:
+    D2: -1
+    D3: 0
+    V: false
+
+- name: MULS/Long/N
+  init:
+    D1: -2
+    D2: 10
+  opcodes: [ 0046001, 0x2802 ]
+  expected:
+    N: true
+
+- name: MULS/Long/Z
+  init:
+    D1: -12345
+    D2: 0
+  opcodes: [ 0046001, 0x2802 ]
+  expected:
+    Z: true
+
+- name: MULS/Long/V
+  init:
+    D1: -65536
+    D2: -65536
+  opcodes: [ 0046001, 0x2800 ]
+  expected:
+    V: true
+
+
+- name: MULS/Word/value
+  init:
+    D3: -24
+    D2: 12
+  opcodes: [ 0143702 ]
+  expected:
+    D3: -288
+    V: false
+    C: false
+
+- name: MULS/Word/Z
+  init:
+    D1: 12345
+    D2: 0
+  opcodes: [ 0142701 ]
+  expected:
+    Z: true
+
+- name: MULS/Word/N
+  init:
+    D1: 1
+    D2: -1
+  opcodes: [ 0142701 ]
+  expected:
+    N: true

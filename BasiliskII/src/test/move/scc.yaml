@@ -1,0 +1,321 @@
+- name: SCC/T
+  opcodes: [ 0x50C2 ]
+  expected: 
+    D2: 0xff
+
+- name: SCC/F
+  opcodes: [ 0x51C2 ]
+  expected: 
+    D2: 0
+
+- name: SCC/HI/T
+  init: 
+    C: false
+    Z: false
+  opcodes: [ 0x52C2 ]
+  expected:
+    D2: 0xFF
+
+- name: SCC/HI/F/1
+  init: 
+    C: true
+    Z: false
+  opcodes: [ 0x52C2 ]
+  expected:
+    D2: 0
+
+- name: SCC/HI/F/2
+  init: 
+    C: false
+    Z: true
+  opcodes: [ 0x52C2 ]
+  expected:
+    D2: 0
+
+- name: SCC/LS/T/1
+  init:
+    C: true
+    Z: false
+  opcodes: [ 0x53C2 ]
+  expected:
+    D2: 0xff
+
+- name: SCC/LS/T/2
+  init:
+    C: false
+    Z: true
+  opcodes: [ 0x53C2 ]
+  expected:
+    D2: 0xff
+
+- name: SCC/LS/F
+  init:
+    C: false
+    Z: false
+  opcodes: [ 0x53C2 ]
+  expected:
+    D2: 0
+
+
+- name: SCC/CC/T
+  init:
+    C: false
+  opcodes: [ 0x54C2 ]
+  expected:
+    D2: 0xff
+
+- name: SCC/CC/F
+  init:
+    C: true
+  opcodes: [ 0x54C2 ]
+  expected:
+    D2: 0
+
+- name: SCC/CS/T
+  init:
+    C: true
+  opcodes: [ 0x55C2 ]
+  expected:
+    D2: 0xff
+
+- name: SCC/CS/F
+  init:
+    C: false
+  opcodes: [ 0x55C2 ]
+  expected:
+    D2: 0
+
+- name: SCC/NE/T
+  init:
+    Z: false
+  opcodes: [ 0x56C2 ]
+  expected:
+    D2: 0xff
+
+- name: SCC/NE/F
+  init:
+    Z: true
+  opcodes: [ 0x56C2 ]
+  expected:
+    D2: 0
+
+- name: SCC/EQ/T
+  init:
+    Z: true
+  opcodes: [ 0x57C2 ]
+  expected:
+    D2: 0xff
+
+- name: SCC/EQ/F
+  init:
+    Z: false
+  opcodes: [ 0x57C2 ]
+  expected:
+    D2: 0
+
+- name: SCC/VC/T
+  init:
+    V: false
+  opcodes: [ 0x58C2 ]
+  expected:
+    D2: 0xff
+
+- name: SCC/VC/F
+  init:
+    V: true
+  opcodes: [ 0x58C2 ]
+  expected:
+    D2: 0
+
+- name: SCC/VS/T
+  init:
+    V: true
+  opcodes: [ 0x59C2 ]
+  expected:
+    D2: 0xff
+
+- name: SCC/VS/F
+  init:
+    V: false
+  opcodes: [ 0x59C2 ]
+  expected:
+    D2: 0
+
+- name: SCC/PL/T
+  init:
+    N: false
+  opcodes: [ 0x5AC2 ]
+  expected:
+    D2: 0xff
+
+- name: SCC/PL/F
+  init:
+    N: true
+  opcodes: [ 0x5AC2 ]
+  expected:
+    D2: 0
+
+- name: SCC/MI/T
+  init:
+    N: true
+  opcodes: [ 0x5BC2 ]
+  expected:
+    D2: 0xff
+
+- name: SCC/MI/F
+  init:
+    N: false
+  opcodes: [ 0x5BC2 ]
+  expected:
+    D2: 0
+
+- name: SCC/GE/T/1
+  init:
+    N: true
+    V: true
+  opcodes: [ 0x5CC2 ]
+  expected:
+    D2: 0xFF
+
+- name: SCC/GE/T/2
+  init:
+    N: false
+    V: false
+  opcodes: [ 0x5CC2 ]
+  expected:
+    D2: 0xFF
+
+- name: SCC/GE/F/1
+  init:
+    N: true
+    V: false
+  opcodes: [ 0x5CC2 ]
+  expected:
+    D2: 0
+
+- name: SCC/GE/F/2
+  init:
+    N: false
+    V: true
+  opcodes: [ 0x5CC2 ]
+  expected:
+    D2: 0
+
+- name: SCC/LT/T/1
+  init:
+    N: true
+    V: false
+  opcodes: [ 0x5DC2 ]
+  expected:
+    D2: 0xff
+
+- name: SCC/LT/T/2
+  init:
+    N: false
+    V: true
+  opcodes: [ 0x5DC2 ]
+  expected:
+    D2: 0xff
+
+- name: SCC/LT/F/1
+  init:
+    N: true
+    V: true
+  opcodes: [ 0x5DC2 ]
+  expected:
+    D2: 0
+
+- name: SCC/LT/F/2
+  init:
+    N: false
+    V: false
+  opcodes: [ 0x5DC2 ]
+  expected:
+    D2: 0
+
+- name: SCC/GT/T/1
+  init:
+    Z: false
+    N: true
+    V: true
+  opcodes: [ 0x5EC2 ]
+  expected:
+    D2: 0xff
+
+- name: SCC/GT/T/2
+  init:
+    Z: false
+    N: false
+    V: false
+  opcodes: [ 0x5EC2 ]
+  expected:
+    D2: 0xff
+
+- name: SCC/GT/F/1
+  init:
+    Z: false
+    N: true
+    V: false
+  opcodes: [ 0x5EC2 ]
+  expected:
+    D2: 0
+
+- name: SCC/GT/F/2
+  init:
+    Z: false
+    N: false
+    V: true
+  opcodes: [ 0x5EC2 ]
+  expected:
+    D2: 0
+
+- name: SCC/GT/F/3
+  init:
+    Z: true
+  opcodes: [ 0x5EC2 ]
+  expected:
+    D2: 0
+
+- name: SCC/LE/T/1
+  init:
+    Z: true
+  opcodes: [ 0x5FC2 ]
+  expected:
+    D2: 0xff
+
+- name: SCC/LE/T/2
+  init:
+    Z: false
+    N: true
+    V: false
+  opcodes: [ 0x5FC2 ]
+  expected:
+    D2: 0xff
+
+- name: SCC/LE/T/3
+  init:
+    Z: false
+    N: false
+    V: true
+  opcodes: [ 0x5FC2 ]
+  expected:
+    D2: 0xff
+
+
+- name: SCC/LE/F/1
+  init:
+    Z: false
+    N: true
+    V: true
+  opcodes: [ 0x5FC2 ]
+  expected:
+    D2: 0
+
+- name: SCC/LE/F/2
+  init:
+    Z: false
+    N: false
+    V: false
+  opcodes: [ 0x5FC2 ]
+  expected:
+    D2: 0

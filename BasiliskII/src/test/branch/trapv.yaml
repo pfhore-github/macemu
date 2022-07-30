@@ -1,0 +1,13 @@
+- name: TRAPV/Success
+  init:
+    V: false
+  opcodes: [ 0047166]
+  expected:
+    exception: 0
+
+- name: TRAPV/Failure
+  init:
+    V: true
+  opcodes: [ 0047166]
+  expected:
+    exception: 7

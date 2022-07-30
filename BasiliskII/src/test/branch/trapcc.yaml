@@ -1,0 +1,246 @@
+- name: TRAPcc/NoWord
+  init:
+  opcodes: [ 0x51FC, 0x7001 ]
+  expected:
+    exception: 0
+    D0: 1
+
+- name: TRAPcc/Word
+  init:
+  opcodes: [ 0x51FA, 0x1000, 0x7001 ]
+  expected:
+    exception: 0
+    D0: 1
+
+- name: TRAPcc/Long
+  init:
+  opcodes: [ 0x51FB, 0x10000000, 0x7001 ]
+  expected:
+    exception: 0
+    D0: 1
+
+- name: TRAPcc/T
+  init:
+  opcodes: [ 0x50FC ]
+  expected:
+    exception: 7
+
+- name: TRAPcc/F
+  init:
+  opcodes: [ 0x51FC ]
+  expected:
+    exception: 0
+
+- name: TRAPcc/HI/T
+  init:
+    C: false
+    Z: false
+  opcodes: [ 0x52FC ]
+  expected:
+    exception: 7
+
+- name: TRAPcc/HI/F
+  init:
+    C: true
+    Z: false
+  opcodes: [ 0x52FC ]
+  expected:
+    exception: 0
+
+- name: TRAPcc/LS/T
+  init:
+    C: true
+    Z: false
+  opcodes: [ 0x53FC ]
+  expected:
+    exception: 7
+
+- name: TRAPcc/LS/F
+  init:
+    C: false
+    Z: false
+  opcodes: [ 0x53FC ]
+  expected:
+    exception: 0
+
+- name: TRAPcc/CC/T
+  init:
+    C: false
+  opcodes: [ 0x54FC ]
+  expected:
+    exception: 7
+
+- name: TRAPcc/CC/F
+  init:
+    C: true
+  opcodes: [ 0x54FC ]
+  expected:
+    exception: 0
+
+- name: TRAPcc/CS/T
+  init:
+    C: true
+  opcodes: [ 0x55FC ]
+  expected:
+    exception: 7
+
+- name: TRAPcc/CS/F
+  init:
+    C: false
+  opcodes: [ 0x55FC ]
+  expected:
+    exception: 0
+
+- name: TRAPcc/NE/T
+  init:
+    Z: false
+  opcodes: [ 0x56FC ]
+  expected:
+    exception: 7
+
+
+- name: TRAPcc/NE/F
+  init:
+    Z: true
+  opcodes: [ 0x56FC ]
+  expected:
+    exception: 0
+
+- name: TRAPcc/EQ/T
+  init:
+    Z: true
+  opcodes: [ 0x57FC ]
+  expected:
+    exception: 7
+
+- name: TRAPcc/EQ/F
+  init:
+    Z: false
+  opcodes: [ 0x57FC ]
+  expected:
+    exception: 0
+
+
+- name: TRAPcc/VC/T
+  init:
+    V: false
+  opcodes: [ 0x58FC ]
+  expected:
+    exception: 7
+
+
+- name: TRAPcc/VC/F
+  init:
+    V: true
+  opcodes: [ 0x58FC ]
+  expected:
+    exception: 0
+
+- name: TRAPcc/VS/T
+  init:
+    V: true
+  opcodes: [ 0x59FC ]
+  expected:
+    exception: 7
+
+- name: TRAPcc/VS/F
+  init:
+    V: false
+  opcodes: [ 0x59FC ]
+  expected:
+    exception: 0
+
+- name: TRAPcc/PL/T
+  init:
+    N: false
+  opcodes: [ 0x5AFC ]
+  expected:
+    exception: 7
+
+
+- name: TRAPcc/PL/F
+  init:
+    N: true
+  opcodes: [ 0x5AFC ]
+  expected:
+    exception: 0
+
+- name: TRAPcc/MI/T
+  init:
+    N: true
+  opcodes: [ 0x5BFC ]
+  expected:
+    exception: 7
+
+- name: TRAPcc/MI/F
+  init:
+    N: false
+  opcodes: [ 0x5BFC ]
+  expected:
+    exception: 0
+
+- name: TRAPcc/GE/T
+  init:
+    N: true
+    V: true
+  opcodes: [ 0x5CFC ]
+  expected:
+    exception: 7
+
+- name: TRAPcc/GE/F
+  init:
+    N: true
+    V: false
+  opcodes: [ 0x5CFC ]
+  expected:
+    exception: 0
+
+- name: TRAPcc/LT/T
+  init:
+    N: true
+    V: false
+  opcodes: [ 0x5DFC ]
+  expected:
+    exception: 7
+
+- name: TRAPcc/LT/F
+  init:
+    N: true
+    V: true
+  opcodes: [ 0x5DFC ]
+  expected:
+    exception: 0
+
+- name: TRAPcc/GT/T
+  init:
+    Z: false
+    N: true
+    V: true
+  opcodes: [ 0x5EFC ]
+  expected:
+    exception: 7
+
+- name: TRAPcc/GT/F
+  init:
+    Z: false
+    N: true
+    V: true
+  opcodes: [ 0x5EFC ]
+  expected:
+    exception: 0
+
+- name: TRAPcc/LE/T
+  init:
+    Z: true
+  opcodes: [ 0x5FFC ]
+  expected:
+    exception: 7
+
+- name: TRAPcc/LE/F
+  init:
+    Z: false
+    N: true
+    V: true
+  opcodes: [ 0x5FFC ]
+  expected:
+    exception: 0

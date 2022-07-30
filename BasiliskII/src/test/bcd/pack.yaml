@@ -1,0 +1,20 @@
+- name: PACK/Dx
+  init:
+    D2: 0x1234
+  opcodes: [ 0103502, 0x100 ]
+  expected:
+    D3: 0x34
+
+- name: PACK/Ax
+  init:
+    A2: 0x2002
+    A3: 0x1001
+    MEM:
+      0x2000/W: 0x1234
+  opcodes: [ 0103512, 0x100 ]
+  expected:
+    A2: 0x2000
+    A3: 0x1000
+    MEM:
+      0x1000/B: 0x34
+

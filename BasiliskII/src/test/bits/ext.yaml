@@ -1,0 +1,53 @@
+- name: EXT/Byte/positive
+  init:
+    D2: 0x3f
+  opcodes: [ 0044202]
+  expected: 
+    D2: 0x3f
+    Z: false
+    N: false
+
+- name: EXT/Byte/zero
+  init:
+    D2: 0
+  opcodes: [ 0044202]
+  expected: 
+    D2: 0
+    Z: true
+    N: false
+
+- name: EXT/Byte/negative
+  init:
+    D2: 0xc0
+  opcodes: [ 0044202]
+  expected: 
+    D2: 0xffc0
+    Z: false
+    N: true
+
+- name: EXT/Word/positive
+  init:
+    D1: 0x3fff
+  opcodes: [ 0044301]
+  expected: 
+    D1: 0x3fff
+    Z: false
+    N: false
+
+- name: EXT/Word/zero
+  init:
+    D1: 0
+  opcodes: [ 0044301]
+  expected: 
+    D1: 0
+    Z: true
+    N: false
+
+- name: EXT/Word/negative
+  init:
+    D1: 0xc000
+  opcodes: [ 0044301]
+  expected: 
+    D1: 0xffffc000
+    Z: false
+    N: true

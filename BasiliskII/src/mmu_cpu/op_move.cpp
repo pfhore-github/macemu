@@ -15,7 +15,7 @@
 #include "newcpu.h"
 #include "op.h"
 
-OP(moves_b) {
+void op_moves_b(uint16_t  xop, int dm, int type, int  reg) {
     uint16_t op2 = FETCH();
     if(!regs.S) {
         PRIV_ERROR();
@@ -45,7 +45,7 @@ OP(moves_b) {
     }
 }
 
-OP(moves_w) {
+void op_moves_w(uint16_t  xop, int dm, int type, int  reg) {
     uint16_t op2 = FETCH();
     if(!regs.S) {
         PRIV_ERROR();
@@ -87,7 +87,7 @@ OP(moves_w) {
     }
 }
 
-OP(moves_l) {
+void op_moves_l(uint16_t  xop, int dm, int type, int  reg) {
     uint16_t op2 = FETCH();
     if(!regs.S) {
         PRIV_ERROR();
@@ -179,7 +179,7 @@ void op_movep_l_to(int dm, int reg) {
     write8(addr + 6, v);
 }
 
-OP(move_b) {
+void op_move_b(uint16_t  xop, int dm, int type, int  reg) {
     uint8_t v = EA_READ8(type, reg);
     regs.i_ea = 0;
     TEST_NZ8(v);
@@ -188,7 +188,7 @@ OP(move_b) {
     EA_WRITE8(xop >> 6 & 7, dm, v);
 }
 
-OP(move_w) {
+void op_move_w(uint16_t  xop, int dm, int type, int  reg) {
     uint16_t v = EA_READ16(type, reg);
     regs.i_ea = 0;
     TEST_NZ16(v);
@@ -197,7 +197,7 @@ OP(move_w) {
     EA_WRITE16(xop >> 6 & 7, dm, v);
 }
 
-OP(move_l) {
+void op_move_l(uint16_t  xop, int dm, int type, int  reg) {
     uint32_t v = EA_READ32(type, reg);
     regs.i_ea = 0;
     TEST_NZ32(v);
@@ -206,17 +206,17 @@ OP(move_l) {
     EA_WRITE32(xop >> 6 & 7, dm, v);
 }
 
-OP(movea_w) {
+void op_movea_w(uint16_t  xop, int dm, int type, int  reg) {
     uint16_t v = EA_READ16(type, reg);
     EA_WRITE16(1, dm, v);
 }
 
-OP(movea_l) {
+void op_movea_l(uint16_t  xop, int dm, int type, int  reg) {
     uint32_t v = EA_READ32(type, reg);
     EA_WRITE32(1, dm, v);
 }
 
-OP(move_from_sr) {
+void op_move_from_sr(uint16_t  xop, int dm, int type, int  reg) {
     if(!regs.S) {
         PRIV_ERROR();
         return;
@@ -224,11 +224,11 @@ OP(move_from_sr) {
     EA_WRITE16(type, reg, GET_SR());
 }
 
-OP(move_from_ccr) { EA_WRITE16(type, reg, GET_CCR()); }
+void op_move_from_ccr(uint16_t  xop, int dm, int type, int  reg) { EA_WRITE16(type, reg, GET_CCR()); }
 
-OP(move_to_ccr) { SET_CCR(EA_READ16(type, reg)); }
+void op_move_to_ccr(uint16_t  xop, int dm, int type, int  reg) { SET_CCR(EA_READ16(type, reg)); }
 
-OP(move_to_sr) {
+void op_move_to_sr(uint16_t  xop, int dm, int type, int  reg) {
     if(!regs.S) {
         PRIV_ERROR();
         return;
@@ -265,7 +265,7 @@ void do_movem_to_w(int type, int reg, uint16_t reg_list) {
         throw e;
     }
 }
-OP(movem_to_w) {
+void op_movem_to_w(uint16_t  xop, int dm, int type, int  reg) {
     if(type == 0) {
         op_ext_w(reg);
     } else {
@@ -303,7 +303,7 @@ void do_movem_to_l(int type, int reg, uint16_t reg_list) {
         throw e;
     }
 }
-OP(movem_to_l) {
+void op_movem_to_l(uint16_t  xop, int dm, int type, int  reg) {
     if(type == 0) {
         op_ext_l(reg);
     } else {
@@ -334,7 +334,7 @@ void do_movem_from_w(int type, int reg, uint32_t reg_list) {
         throw e;
     }
 }
-OP(movem_from_w) {
+void op_movem_from_w(uint16_t  xop, int dm, int type, int  reg) {
     uint16_t reg_list = FETCH();
     do_movem_from_w(type, reg, reg_list);
 }
@@ -360,7 +360,7 @@ void do_movem_from_l(int type, int reg, uint32_t reg_list) {
         throw e;
     }
 }
-OP(movem_from_l) {
+void op_movem_from_l(uint16_t  xop, int dm, int type, int  reg) {
     uint16_t reg_list = FETCH();
     do_movem_from_l(type, reg, reg_list);
 }
@@ -406,7 +406,7 @@ void op_movec_to() {
     do_op_movec_to(next & 0xfff, regs.r[src]);
 }
 
-OP(moveq) {
+void op_moveq(uint16_t  xop, int dm, int type, int  reg) {
     auto v = static_cast<int8_t>(xop & 0x7f);
     v <<= 1;
     v >>= 1;
@@ -425,7 +425,7 @@ void op_exg_da(int dm, int reg) { std::swap(regs.a[reg], regs.d[dm]); }
 void read_line(uint32_t addr, std::byte *dst) { b_readline(addr, dst); }
 void write_line(uint32_t addr, const std::byte *src) { b_writeline(addr, src); }
 
-OP(move16) {
+void op_move16(uint16_t  xop, int dm, int type, int  reg) {
     std::byte buf[16];
     uint32_t addr;
     switch(type) {

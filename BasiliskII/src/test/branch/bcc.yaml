@@ -1,0 +1,62 @@
+- name: BCC/Byte/Forward
+  init:
+    Z: false
+  opcodes: [ 0x6604, 0x7000, 0x6002, 0x7001, 0x4E71]
+  expected:
+    D0: 1
+
+- name: BCC/Byte/Backward
+  init:
+    Z: false
+  opcodes: [ 0x6004, 0x7001, 0x6004, 0x66FA, 0x7000, 0x4E71]
+  expected:
+    D0: 1
+
+- name: BCC/Byte/False
+  init:
+    Z: true
+  opcodes: [ 0x6604, 0x7000, 0x6002, 0x7001, 0x4E71]
+  expected:
+    D0: 0
+
+- name: BCC/Word/Forward
+  init:
+    Z: false
+  opcodes: [ 0x6600, 0x0006, 0x7000, 0x6002, 0x7001, 0x4E71]
+  expected:
+    D0: 1
+
+- name: BCC/Word/Backward
+  init:
+    Z: false
+  opcodes: [ 0x6004, 0x7001, 0x6006, 0x6600, 0xFFFA, 0x7000, 0x4E71]
+  expected:
+    D0: 1
+
+- name: BCC/Word/False
+  init:
+    Z: true
+  opcodes: [ 0x6600, 0x0006, 0x7000, 0x6002, 0x7001, 0x4E71]
+  expected:
+    D0: 0
+
+- name: BCC/Long/Forward
+  init:
+    Z: false
+  opcodes: [ 0x66FF, 0x0000, 0x0008, 0x7000, 0x6002, 0x7001, 0x4E71]
+  expected:
+    D0: 1
+
+- name: BCC/Long/Backward
+  init:
+    Z: false
+  opcodes: [ 0x6004, 0x7001, 0x6008, 0x66FF, 0xFFFF, 0xFFFA, 0x7000, 0x4E71]
+  expected:
+    D0: 1
+
+- name: BCC/Word/False
+  init:
+    Z: true
+  opcodes: [ 0x66FF, 0x0000, 0x0008, 0x7000, 0x6002, 0x7001, 0x4E71]
+  expected:
+    D0: 0

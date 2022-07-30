@@ -1,0 +1,174 @@
+# Byte
+- name: ANDI/Byte/value
+  init:
+    D2: 0xff
+    X: true
+    V: true
+    C: true
+  opcodes: [ 0001002, 0x2f]
+  expected:
+    D2: 0x2f
+    X: true
+    C: false
+    V: false
+
+- name: ANDI/Byte/N
+  init:
+    D1: 0xff
+  opcodes: [ 0001001, 0x80]
+  expected:
+    N: true
+
+- name: ANDI/Byte/Z
+  init:
+    D1: 0xff
+  opcodes: [ 0001001, 0]
+  expected:
+    Z: true
+
+- name: ANDI/Byte/CCR/C
+  init:
+    X: true
+    V: true
+    C: true
+    N: true
+    Z: true
+  opcodes: [ 0001074, 1]
+  expected:
+    X: false
+    V: false
+    C: true
+    N: false
+    Z: false
+
+- name: ANDI/Byte/CCR/V
+  init:
+    X: true
+    V: true
+    C: true
+    N: true
+    Z: true
+  opcodes: [ 0001074, 2]
+  expected:
+    X: false
+    V: true
+    C: false
+    N: false
+    Z: false
+
+- name: ANDI/Byte/CCR/Z
+  init:
+    X: true
+    V: true
+    C: true
+    N: true
+    Z: true
+  opcodes: [ 0001074, 4]
+  expected:
+    X: false
+    V: false
+    C: false
+    N: false
+    Z: true
+
+- name: ANDI/Byte/CCR/N
+  init:
+    X: true
+    V: true
+    C: true
+    N: true
+    Z: true
+  opcodes: [ 0001074, 8]
+  expected:
+    X: false
+    V: false
+    C: false
+    N: true
+    Z: false
+
+- name: ANDI/Byte/CCR/X
+  init:
+    X: true
+    V: true
+    C: true
+    N: true
+    Z: true
+  opcodes: [ 0001074, 16]
+  expected:
+    X: true
+    V: false
+    C: false
+    N: false
+    Z: false
+
+# word
+- name: ANDI/Word/value
+  init:
+    D2: 0xffff
+    X: true
+    V: true
+    C: true
+  opcodes: [ 0001102, 0x2fff]
+  expected:
+    D2: 0x2fff
+    X: true
+    C: false
+    V: false
+
+- name: ANDI/Word/N
+  init:
+    D1: 0xffff
+  opcodes: [ 0001101, 0x8000]
+  expected:
+    N: true
+
+- name: ANDI/Word/Z
+  init:
+    D1: 0xffff
+  opcodes: [ 0001101, 0]
+  expected:
+    Z: true
+
+- name: ANDI/Word/SR/Invalid
+  init:
+    S: false
+  opcodes: [ 0001174, 0xffff]
+  expected:
+    exception: 8
+
+- name: ANDI/Word/SR/Valid
+  init:
+    S: true
+    IM: 7
+  opcodes: [ 0001174, 0]
+  expected:
+    S: false
+    IM: 0
+
+#Long 
+- name: ANDI/Long/value
+  init:
+    D2: 0xffffffff
+    X: true
+    V: true
+    C: true
+  opcodes: [ 0001202, 0x2fffffff]
+  expected:
+    D2: 0x2fffffff
+    X: true
+    C: false
+    V: false
+
+- name: ANDI/Long/N
+  init:
+    D1: 0xffffffff
+  opcodes: [ 0001201, 0x80000000]
+  expected:
+    N: true
+
+- name: ANDI/Long/Z
+  init:
+    D1: 0xffffffff
+  opcodes: [ 0001201, 0, 0]
+  expected:
+    Z: true

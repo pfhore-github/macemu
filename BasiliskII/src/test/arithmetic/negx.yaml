@@ -1,0 +1,178 @@
+- name: NEGX/Byte/oldx/false
+  init: 
+    D2: 10
+    X: false
+  opcodes: [ 0040002 ]
+  expected: 
+    D2: 0xf6
+
+- name: NEGX/Byte/oldx/true
+  init: 
+    D2: 10
+    X: true
+  opcodes: [ 0040002 ]
+  expected: 
+    D2: 0xf5
+
+- name: NEGX/Byte/CX
+  init: 
+    D1: 1
+    X: false
+  opcodes: [ 0040001 ]
+  expected: 
+    C: true
+    X: true
+
+- name: NEGX/Byte/V
+  init: 
+    D1: 0x80
+    X: false
+  opcodes: [ 0040001 ]
+  expected: 
+    V: true
+
+- name: NEGX/Byte/Z/true
+  init: 
+    D1: 0
+    X: false
+    Z: true
+  opcodes: [ 0040001 ]
+  expected: 
+    Z: true
+
+- name: NEGX/Byte/Z/false
+  init: 
+    D1: 1
+    X: false
+    Z: true
+  opcodes: [ 0040001 ]
+  expected: 
+    Z: false
+
+- name: NEGX/Byte/N
+  init: 
+    D1: 3
+    X: false
+  opcodes: [ 0040001 ]
+  expected: 
+    N: true
+
+- name: NEGX/Word/oldx/false
+  init: 
+    D2: 1000
+    X: false
+  opcodes: [ 0040102 ]
+  expected: 
+    D2: 0xfc18
+
+- name: NEGX/Word/oldx/true
+  init: 
+    D2: 1000
+    X: true
+  opcodes: [ 0040102 ]
+  expected: 
+    D2: 0xfc17
+
+- name: NEGX/Word/CX
+  init: 
+    D1: 1
+    X: false
+  opcodes: [ 0040101 ]
+  expected: 
+    C: true
+    X: true
+
+- name: NEGX/Word/V
+  init: 
+    D1: 0x8000
+    X: false
+  opcodes: [ 0040101 ]
+  expected: 
+    V: true
+
+- name: NEGX/Word/Z/true
+  init: 
+    D1: 0
+    X: false
+    Z: true
+  opcodes: [ 0040101 ]
+  expected: 
+    Z: true
+
+- name: NEGX/Word/Z/false
+  init: 
+    D1: 1
+    X: false
+    Z: true
+  opcodes: [ 0040101 ]
+  expected: 
+    Z: false
+
+- name: NEGX/Word/N
+  init: 
+    D1: 3
+    X: false
+  opcodes: [ 0040101 ]
+  expected: 
+    N: true
+
+
+- name: NEGX/Long/oldx/false
+  init: 
+    D2: 100000
+    X: false
+  opcodes: [ 0040202 ]
+  expected: 
+    D2: -100000
+
+- name: NEGX/Long/oldx/true
+  init: 
+    D2: 100000
+    X: true
+  opcodes: [ 0040202 ]
+  expected: 
+    D2: -100001
+
+- name: NEGX/Long/CX
+  init: 
+    D1: 1
+    X: false
+  opcodes: [ 0040201 ]
+  expected: 
+    C: true
+    X: true
+
+- name: NEGX/Long/V
+  init: 
+    D1: 0x80000000
+    X: false
+  opcodes: [ 0040201 ]
+  expected: 
+    V: true
+
+- name: NEGX/Long/Z/true
+  init: 
+    D1: 0
+    X: false
+    Z: true
+  opcodes: [ 0040201 ]
+  expected: 
+    Z: true
+
+- name: NEGX/Long/Z/false
+  init: 
+    D1: 1
+    X: false
+    Z: true
+  opcodes: [ 0040201 ]
+  expected: 
+    Z: false
+
+- name: NEGX/Long/N
+  init: 
+    D1: 3
+    X: false
+  opcodes: [ 0040201 ]
+  expected: 
+    N: true
+

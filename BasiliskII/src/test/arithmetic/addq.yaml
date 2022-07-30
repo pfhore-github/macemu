@@ -1,0 +1,154 @@
+- name: ADDQ/Byte/non_8
+  init: 
+    D1: 11
+  opcodes: [ 0053001 ]
+  expected:
+    D1: 14
+
+
+- name: ADDQ/Byte/8
+  init: 
+    D1: 11
+  opcodes: [ 0050001 ]
+  expected:
+    D1: 19
+
+- name: ADDQ/Byte/CXZ
+  init: 
+    D1: 0xFF
+  opcodes: [ 0051001 ]
+  expected:
+    X: true
+    C: true
+    Z: true
+    D1: 0
+
+- name: ADDQ/Byte/VN
+  init: 
+    D1: 0x7F
+  opcodes: [ 0052001 ]
+  expected:
+    V: true
+    D1: 0x81
+    N: true
+
+- name: ADDQ/Byte/Invalid(An)
+  opcodes: [ 0051011 ]
+  expected:
+    exception: 4
+
+- name: ADDQ/Byte/Invalid(Imm)
+  opcodes: [ 0051074 ]
+  expected:
+    exception: 4
+
+
+- name: ADDQ/Word/non_8
+  init: 
+    D1: 1111
+  opcodes: [ 0053101 ]
+  expected:
+    D1: 1114
+
+
+- name: ADDQ/Word/8
+  init: 
+    D1: 1111
+  opcodes: [ 0050101 ]
+  expected:
+    D1: 1119
+
+- name: ADDQ/Word/CXZ
+  init: 
+    D1: 0xFFFF
+  opcodes: [ 0051101 ]
+  expected:
+    X: true
+    C: true
+    Z: true
+    D1: 0
+
+- name: ADDQ/Word/VN
+  init: 
+    D1: 0x7FFF
+  opcodes: [ 0052101 ]
+  expected:
+    V: true
+    D1: 0x8001
+    N: true
+
+- name: ADDQ/Word/Invalid(Imm)
+  opcodes: [ 0051174 ]
+  expected:
+    exception: 4
+
+- name: ADDQ/AWord/non_8
+  init: 
+    A2: 0xffff0000
+  opcodes: [ 0052112 ]
+  expected:
+    A2: 0xffff0002
+
+
+- name: ADDQ/AWord/8
+  init: 
+    A2: 0xffff0000
+  opcodes: [ 0050112 ]
+  expected:
+    A2: 0xffff0008
+
+
+
+- name: ADDQ/Long/non_8
+  init: 
+    D1: 111111
+  opcodes: [ 0053201 ]
+  expected:
+    D1: 111114
+
+
+- name: ADDQ/Long/8
+  init: 
+    D1: 111111
+  opcodes: [ 0050201 ]
+  expected:
+    D1: 111119
+
+- name: ADDQ/Long/CXZ
+  init: 
+    D1: 0xFFFFFFFF
+  opcodes: [ 0051201 ]
+  expected:
+    X: true
+    C: true
+    Z: true
+    D1: 0
+
+- name: ADDQ/Long/VN
+  init: 
+    D1: 0x7FFFFFFF
+  opcodes: [ 0052201 ]
+  expected:
+    V: true
+    D1: 0x80000001
+    N: true
+
+- name: ADDQ/Long/Invalid(Imm)
+  opcodes: [ 0051274 ]
+  expected:
+    exception: 4
+
+- name: ADDQ/ALong/non_8
+  init: 
+    A2: 0x10000000
+  opcodes: [ 0052212 ]
+  expected:
+    A2: 0x10000002
+
+
+- name: ADDQ/ALong/8
+  init: 
+    A2: 0x10000000
+  opcodes: [ 0050212 ]
+  expected:
+    A2: 0x10000008

@@ -1,0 +1,22 @@
+- name: NBCD/CX
+  init: 
+    D3: 0x27
+    Z: true
+    X: true
+  opcodes: [ 0044003 ]
+  expected:
+    D3: 0x72
+    C: true
+    X: true
+    Z: false
+
+- name: NBCD/Z
+  init: 
+    D1: 0
+    Z: true
+    X: false
+  opcodes: [ 0044001 ]
+  expected:
+    C: false
+    X: false
+    Z: true

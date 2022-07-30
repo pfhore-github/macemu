@@ -1,0 +1,24 @@
+- name: SWAP/value
+  init:
+    D2: 0x12345678
+    C: true
+    V: true
+  opcodes: [ 0044102 ]    
+  expected:
+    D2: 0x56781234
+    C: false
+    V: false
+
+- name: SWAP/N
+  init:
+    D1: 0x8000
+  opcodes: [ 0044101 ]    
+  expected:
+    N: true
+
+- name: SWAP/Z
+  init:
+    D1: 0
+  opcodes: [ 0044101 ]    
+  expected:
+    Z: true

@@ -1,0 +1,189 @@
+- name: ROR/Byte/Imm
+  init:
+    D1: 0x31
+  opcodes: [ 0162031 ]
+  expected: 
+    D1: 0x4C
+
+- name: ROR/Byte/Imm8
+  init:
+    D1: 0x31
+  opcodes: [ 0160031 ]
+  expected: 
+    D1: 0x31
+
+- name: ROR/Byte/Reg
+  init:
+    D1: 0x31
+    D3: 2
+  opcodes: [ 0163071 ]
+  expected: 
+    D1: 0x4c
+
+- name: ROR/Byte/Reg0
+  init:
+    D1: 0x31
+    D3: 0
+    C: true
+  opcodes: [ 0163071 ]
+  expected: 
+    D1: 0x31
+    C: false
+
+- name: ROR/Byte/RegOver
+  init:
+    D1: 0x39
+    D3: 68
+    C: true
+  opcodes: [ 0163071 ]
+  expected: 
+    D1: 0x93
+
+- name: ROR/Byte/CN
+  init:
+    D1: 1
+  opcodes: [ 0161031 ]
+  expected: 
+    C: true
+    N: true
+
+- name: ROR/Byte/Z
+  init:
+    D1: 0
+  opcodes: [ 0161031 ]
+  expected: 
+    Z: true
+
+- name: ROR/Word/Imm
+  init:
+    D1: 0x1234
+  opcodes: [ 0164131 ]
+  expected: 
+    D1: 0x4123
+
+- name: ROR/Word/Imm8
+  init:
+    D1: 0x1234
+  opcodes: [ 0160131 ]
+  expected: 
+    D1: 0x3412
+
+- name: ROR/Word/Reg
+  init:
+    D1: 0x1234
+    D2: 4
+  opcodes: [ 0162171 ]
+  expected: 
+    D1: 0x4123
+
+- name: ROR/Word/Reg0
+  init:
+    D1: 0x1234
+    D2: 0
+    C: true
+  opcodes: [ 0162171 ]
+  expected: 
+    D1: 0x1234
+    C: false
+
+- name: ROR/Word/RegOver
+  init:
+    D1: 0x3456
+    D2: 68
+    C: true
+  opcodes: [ 0162171 ]
+  expected: 
+    D1: 0x6345
+
+- name: ROR/Word/CN
+  init:
+    D1: 1
+  opcodes: [ 0161131 ]
+  expected: 
+    C: true
+    N: true
+
+- name: ROR/Word/Z
+  init:
+    D1: 0
+  opcodes: [ 0161131 ]
+  expected: 
+    Z: true
+
+- name: ROR/Word/EA
+  init: 
+    A1: 0x1000
+    MEM:
+      0x1000/W: 0x4001
+  opcodes: [ 0163321 ]
+  expected:
+    C: true
+    N: true
+    V: false
+    MEM:
+      0x1000/W: 0xA000
+
+- name: ROR/Word/EA/Z
+  init: 
+    A1: 0x1000
+    MEM:
+      0x1000/W: 0
+  opcodes: [ 0163321 ]
+  expected:
+    Z: true
+
+- name: ROR/Long/Imm
+  init:
+    D1: 0x12345678
+  opcodes: [ 0164231 ]
+  expected: 
+    D1: 0x81234567
+
+- name: ROR/Long/Imm8
+  init:
+    D1: 0x12345678
+  opcodes: [ 0160231 ]
+  expected: 
+    D1: 0x78123456
+
+- name: ROR/Long/Reg
+  init:
+    D1: 0x12345678
+    D2: 4
+  opcodes: [ 0162271 ]
+  expected: 
+    D1: 0x81234567
+
+- name: ROR/Long/Reg0
+  init:
+    D1: 0x12345678
+    D2: 0
+    C: true
+  opcodes: [ 0162271 ]
+  expected: 
+    D1: 0x12345678
+    C: false
+
+- name: ROR/Long/RegOver
+  init:
+    D1: 0x3456789A
+    D2: 68
+    C: true
+  opcodes: [ 0162271 ]
+  expected: 
+    D1: 0xA3456789
+
+- name: ROR/Long/CN
+  init:
+    D1: 1
+  opcodes: [ 0161231 ]
+  expected: 
+    C: true
+    N: true
+
+- name: ROR/Long/Z
+  init:
+    D1: 0
+  opcodes: [ 0161231 ]
+  expected: 
+    Z: true

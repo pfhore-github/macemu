@@ -45,13 +45,10 @@ void get_eaext(x86::Assembler &a) {
         bool bs = nextw >> 7 & 1;
         bool is = nextw >> 6 & 1;
         int bd_c = nextw >> 4 & 3;
-        bool pre = nextw >> 2 & 1;
+        bool post = nextw >> 2 & 1;
         int od_c = nextw & 3;
         int32_t bd = 0;
         int32_t od = 0;
-        if(pre && bs && is) {
-            ILLEGAL_INST();
-        }
         switch(bd_c) {
         case 0:
             ILLEGAL_INST();
@@ -67,9 +64,10 @@ void get_eaext(x86::Assembler &a) {
         if(bs) {
             a.mov(x86::rbx, 0);
         }
+        
         switch(od_c) {
         case 0:
-            if(pre) {
+            if(post) {
                 ILLEGAL_INST();
             }
             if(!is) {
@@ -87,7 +85,7 @@ void get_eaext(x86::Assembler &a) {
             od = FETCH32();
             break;
         }
-        if(!pre) {
+        if(!post) {
             if(!is) {
                 a.lea(x86::rbx, x86::dword_ptr(x86::rbx, x86::r9, scale, bd));
             } else {
@@ -101,7 +99,11 @@ void get_eaext(x86::Assembler &a) {
             a.lea(ARG1, x86::dword_ptr(x86::rbx, bd));
             a.call(jit_read32);
             a.pop(x86::r9);
-            a.lea(x86::rbx, x86::dword_ptr(x86::rax, x86::r9, scale, od));
+            if(!is) {
+                a.lea(x86::rbx, x86::dword_ptr(x86::rax, x86::r9, scale, od));
+            } else {
+                a.lea(x86::rbx, x86::dword_ptr(x86::rax, od));
+            }
         }
     }
 }
@@ -112,6 +114,7 @@ void jit_ea_addr(int type, int reg, int sz, bool w, x86::Assembler &a) {
     case EA_OP::DR:
     case EA_OP::AR:
         ILLEGAL_INST();
+        break;
     case EA_OP::MEM:
         break;
     case EA_OP::INCR:
@@ -161,6 +164,8 @@ void jit_ea_addr(int type, int reg, int sz, bool w, x86::Assembler &a) {
                 a.mov(x86::ebx, regs.pc);
                 get_eaext(a);
                 break;
+            }else {
+                ILLEGAL_INST();
             }
             break;
         }
@@ -184,6 +189,7 @@ void jit_ea_read8(int type, int reg, bool override, x86::Assembler &a) {
         }
         if(reg == 4 && !override) {
             a.mov(x86::al, FETCH());
+            return;
         } else {
             throw ILLEGAL_INST_EX{};
         }
@@ -210,6 +216,7 @@ void jit_ea_read16(int type, int reg, bool override, x86::Assembler &a) {
         }
         if(reg == 4 && !override) {
             a.mov(x86::ax, FETCH());
+            return;
         } else {
             throw ILLEGAL_INST_EX{};
         }
@@ -236,6 +243,7 @@ void jit_ea_read32(int type, int reg, bool override, x86::Assembler &a) {
         }
         if(reg == 4 && !override) {
             a.mov(x86::eax, FETCH32());
+            return;
         } else {
             throw ILLEGAL_INST_EX{};
         }

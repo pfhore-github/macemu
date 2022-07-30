@@ -234,7 +234,7 @@ using op_t = void (*)(uint16_t, int, int, int);
 extern op_t opc_map[65536 >> 6];
 
 // CINV( used only for jit)
-OP(cinv_push_dc) {
+void op_cinv_push_dc(uint16_t  xop, int dm, int type, int  reg) {
     if(!regs.S) {
         PRIV_ERROR();
         return;
@@ -259,7 +259,7 @@ OP(cinv_push_dc) {
     }
 }
 
-OP(cinv_push_ic) {
+void op_cinv_push_ic(uint16_t  xop, int dm, int type, int  reg) {
     if(!regs.S) {
         PRIV_ERROR();
         return;
@@ -284,7 +284,7 @@ OP(cinv_push_ic) {
     }
 }
 
-OP(cinv_push_bc) {
+void op_cinv_push_bc(uint16_t  xop, int dm, int type, int  reg) {
     if(!regs.S) {
         PRIV_ERROR();
         return;
@@ -309,7 +309,7 @@ OP(cinv_push_bc) {
     }
 }
 
-OP(pflush) {
+void op_pflush(uint16_t  xop, int dm, int type, int  reg) {
     if(!regs.S) {
         PRIV_ERROR();
         return;
@@ -340,7 +340,7 @@ OP(pflush) {
     }
 }
 
-OP(ptest) {
+void op_ptest(uint16_t  xop, int dm, int type, int  reg) {
     if(!regs.S) {
         PRIV_ERROR();
         return;

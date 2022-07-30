@@ -1,0 +1,466 @@
+- name: MOVE/Byte/N
+  init: 
+    D1: 0x80
+  opcodes: [ 0012001 ]
+  expected: 
+    N: true
+
+- name: MOVE/Byte/Z
+  init: 
+    D1: 0
+  opcodes: [ 0012001 ]
+  expected: 
+    Z: true
+
+- name: MOVE/Byte/To/Reg
+  init: 
+    D1: 0x01234567
+    D2: 0x89ABCDEF
+  opcodes: [0012001]
+  expected:
+    D2: 0x89ABCD67
+
+- name: MOVE/Byte/To/INC
+  init: 
+    D1: 0x12
+    A2: 0x1000
+  opcodes: [0012301]
+  expected:
+    A2: 0x1001
+    MEM:
+      0x1000/B: 0x12
+
+- name: MOVE/Byte/To/INC/SP
+  init: 
+    D1: 0x12
+    A7: 0x1000
+  opcodes: [0017301]
+  expected:
+    A7: 0x1002
+    MEM:
+      0x1000/B: 0x12
+
+- name: MOVE/Byte/To/DEC
+  init: 
+    D1: 0x12
+    A2: 0x1001
+  opcodes: [0012401]
+  expected:
+    A2: 0x1000
+    MEM:
+      0x1000/B: 0x12
+
+- name: MOVE/Byte/To/DEC/SP
+  init: 
+    D1: 0x12
+    A7: 0x1002
+  opcodes: [0017401]
+  expected:
+    A7: 0x1000
+    MEM:
+      0x1000/B: 0x12
+
+- name: MOVE/Byte/To/EXT/PC/1
+  opcodes: [0012701, 0x1000]
+  expected:
+    exception: 4
+
+- name: MOVE/Byte/To/EXT/PC/2
+  opcodes: [0013701, 0x2920, 100]
+  expected:
+    exception: 4
+
+- name: MOVE/Byte/From/INC
+  init:
+    A2: 0x1000
+    MEM:
+      0x1000/B: 0x23
+  opcodes: [ 0013032]
+  expected:
+    A2: 0x1001
+    D3: 0x23
+
+- name: MOVE/Byte/From/DEC
+  init:
+    A2: 0x1001
+    MEM:
+      0x1000/B: 0x23
+  opcodes: [ 0013042]
+  expected:
+    A2: 0x1000
+    D3: 0x23
+
+- name: MOVE/Byte/From/ADDR/W
+  init:
+    MEM:
+      0x2000/B: 0x23
+  opcodes: [ 0012070, 0x2000]
+  expected:
+    D2: 0x23
+
+- name: MOVE/Byte/From/ADDR/L
+  init:
+    MEM:
+      0x2000/B: 0x23
+  opcodes: [ 0012071, 0, 0x2000]
+  expected:
+    D2: 0x23
+
+- name: MOVE/Byte/From/IMM
+  opcodes: [ 0012074, 0x12]
+  expected:
+    D2: 0x12
+
+- name: MOVE/Word/N
+  init: 
+    D1: 0x8000
+  opcodes: [ 0032001 ]
+  expected: 
+    N: true
+
+- name: MOVE/Word/Z
+  init: 
+    D1: 0
+  opcodes: [ 0032001 ]
+  expected: 
+    Z: true
+
+- name: MOVE/Word/To/Reg
+  init: 
+    D2: 0x01234567
+    D3: 0x89ABCDEF
+  opcodes: [0033002]
+  expected:
+    D3: 0x89AB4567
+
+- name: MOVE/Word/To/INC
+  init: 
+    D2: 0x1234
+    A3: 0x1000
+  opcodes: [0033302]
+  expected:
+    A3: 0x1002
+    MEM:
+      0x1000/W: 0x1234
+
+- name: MOVE/Word/To/DEC
+  init: 
+    D2: 0x5678
+    A3: 0x1002
+  opcodes: [0033402]
+  expected:
+    A3: 0x1000
+    MEM:
+      0x1000/W: 0x5678
+
+
+- name: MOVE/Word/To/EXT/PC/1
+  opcodes: [0032701, 0x1000]
+  expected:
+    exception: 4
+
+- name: MOVE/Word/To/EXT/PC/2
+  opcodes: [0033701, 0x2920, 100]
+  expected:
+    exception: 4
+
+- name: MOVE/Word/To/CCR
+  init:
+    C: false
+    D1: 1
+  opcodes: [0042301]
+  expected: 
+    C: true
+
+- name: MOVE/Word/To/CCR/V
+  init:
+    V: false
+    D1: 2
+  opcodes: [0042301]
+  expected: 
+    V: true
+
+- name: MOVE/Word/To/CCR/Z
+  init:
+    Z: false
+    D1: 4
+  opcodes: [0042301]
+  expected: 
+    Z: true
+
+- name: MOVE/Word/To/CCR/N
+  init:
+    N: false
+    D1: 8
+  opcodes: [0042301]
+  expected: 
+    N: true
+
+- name: MOVE/Word/To/CCR/X
+  init:
+    X: false
+    D1: 16
+  opcodes: [0042301]
+  expected: 
+    X: true
+
+- name: MOVE/Word/To/SR/Invalid
+  init: 
+    S: false
+  opcodes: [ 0043301 ]
+  expected:
+    exception: 8
+
+- name: MOVE/Word/To/SR/Valid
+  init: 
+    S: true
+    IM: 0
+    D1: 0x2700
+  opcodes: [ 0043301 ]
+  expected:
+    IM: 7
+
+
+
+- name: MOVE/Word/From/INC
+  init:
+    A2: 0x1000
+    MEM:
+      0x1000/W: 0x2356
+  opcodes: [ 0033032]
+  expected:
+    A2: 0x1002
+    D3: 0x2356
+
+- name: MOVE/Word/From/DEC
+  init:
+    A2: 0x1002
+    MEM:
+      0x1000/W: 0x2378
+  opcodes: [ 0033042]
+  expected:
+    A2: 0x1000
+    D3: 0x2378
+
+- name: MOVE/Word/From/ADDR/W
+  init:
+    MEM:
+      0x2000/W: 0x2357
+  opcodes: [ 0032070, 0x2000]
+  expected:
+    D2: 0x2357
+
+- name: MOVE/Word/From/ADDR/L
+  init:
+    MEM:
+      0x2000/W: 0x2389
+  opcodes: [ 0032071, 0, 0x2000]
+  expected:
+    D2: 0x2389
+
+- name: MOVE/Word/From/IMM
+  opcodes: [ 0032074, 0x1234]
+  expected:
+    D2: 0x1234
+
+- name: MOVE/Word/From/CCR/C
+  init:
+    C: true
+    X: false
+    V: false
+    N: false
+    Z: false
+  opcodes: [0041301]
+  expected: 
+    D1: 1
+
+- name: MOVE/Word/From/CCR/V
+  init:
+    C: false
+    X: false
+    V: true
+    N: false
+    Z: false
+  opcodes: [0041301]
+  expected: 
+    D1: 2
+
+- name: MOVE/Word/From/CCR/Z
+  init:
+    C: false
+    X: false
+    V: false
+    N: false
+    Z: true
+  opcodes: [0041301]
+  expected: 
+    D1: 4
+
+- name: MOVE/Word/From/CCR/N
+  init:
+    C: false
+    X: false
+    V: false
+    N: true
+    Z: false
+  opcodes: [0041301]
+  expected: 
+    D1: 8
+
+- name: MOVE/Word/From/CCR/X
+  init:
+    C: false
+    X: true
+    V: false
+    N: false
+    Z: false
+  opcodes: [0041301]
+  expected: 
+    D1: 16
+
+- name: MOVE/Word/From/SR/Invalid
+  init: 
+    S: false
+  opcodes: [ 0040301 ]
+  expected:
+    exception: 8
+
+- name: MOVE/Word/From/SR/Valid
+  init: 
+    S: true
+    IM: 7
+    X: false
+    C: false
+    V: false
+    N: false
+    Z: false
+  opcodes: [ 0040301 ]
+  expected:
+    D1: 0x2700
+ 
+- name: MOVE/Long/N
+  init: 
+    D1: 0x80000000
+  opcodes: [ 0022001 ]
+  expected: 
+    N: true
+
+- name: MOVE/Long/Z
+  init: 
+    D1: 0
+  opcodes: [ 0022001 ]
+  expected: 
+    Z: true
+
+- name: MOVE/Long/To/Reg
+  init: 
+    D2: 0x01234567
+    D3: 0x89ABCDEF
+  opcodes: [0023002]
+  expected:
+    D3: 0x01234567
+
+- name: MOVE/Long/To/INC
+  init: 
+    D2: 0x12345678
+    A3: 0x1000
+  opcodes: [0023302]
+  expected:
+    A3: 0x1004
+    MEM:
+      0x1000/L: 0x12345678
+
+- name: MOVE/Word/To/DEC
+  init: 
+    D2: 0x12345678
+    A3: 0x1004
+  opcodes: [0023402]
+  expected:
+    A3: 0x1000
+    MEM:
+      0x1000/L: 0x12345678
+
+
+- name: MOVE/Word/To/EXT/PC/1
+  opcodes: [0022701, 0x1000]
+  expected:
+    exception: 4
+
+- name: MOVE/Word/To/EXT/PC/2
+  opcodes: [0023701, 0x2920, 100]
+  expected:
+    exception: 4
+
+- name: MOVE/Long/To/USP/Invalid
+  init:
+    S: false
+  opcodes: [ 0047140 ]
+  expected:
+    exception: 8
+
+
+- name: MOVE/Long/To/USP/Valid
+  init:
+    S: true
+    A2: 0x14
+  opcodes: [ 0047142 ]
+  expected:
+    USP: 0x14
+
+
+- name: MOVE/Long/From/INC
+  init:
+    A2: 0x1000
+    MEM:
+      0x1000/L: 0x12345678
+  opcodes: [ 0023032]
+  expected:
+    A2: 0x1004
+    D3: 0x12345678
+
+- name: MOVE/Long/From/DEC
+  init:
+    A2: 0x1004
+    MEM:
+      0x1000/L: 0x12345678
+  opcodes: [ 0023042]
+  expected:
+    A2: 0x1000
+    D3: 0x12345678
+
+- name: MOVE/Long/From/ADDR/W
+  init:
+    MEM:
+      0x2000/L: 0x98765432
+  opcodes: [ 0022070, 0x2000]
+  expected:
+    D2: 0x98765432
+
+- name: MOVE/Long/From/ADDR/L
+  init:
+    MEM:
+      0x2000/L: 0x10203040
+  opcodes: [ 0022071, 0, 0x2000]
+  expected:
+    D2: 0x10203040
+
+- name: MOVE/Long/From/IMM
+  opcodes: [ 0023074, 0x12345678]
+  expected:
+    D3: 0x12345678
+
+- name: MOVE/Long/From/USP/Invalid
+  init:
+    S: false
+  opcodes: [ 0047150 ]
+  expected:
+    exception: 8
+
+
+- name: MOVE/Long/From/USP/Valid
+  init:
+    S: true
+    USP: 0x1234
+  opcodes: [ 0047152 ]
+  expected:
+    A2: 0x1234

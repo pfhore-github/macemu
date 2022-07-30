@@ -1,0 +1,11 @@
+- name: RTR
+  init:
+    C: false
+    A7: 0x1000
+    MEM:
+      0x1000/W: 1
+      0x1002/L: 0x2000
+  opcodes: [ 0047167 ]
+  expected:
+    C: true
+    PC: 0x2000

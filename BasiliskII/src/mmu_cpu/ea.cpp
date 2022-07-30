@@ -25,13 +25,11 @@ uint32_t get_eaext(uint32_t base) {
         bool bs = nextw >> 7 & 1;
         bool is = nextw >> 6 & 1;
         int bd_c = nextw >> 4 & 3;
-        bool pre = nextw >> 2 & 1;
+        bool post = nextw >> 2 & 1;
         int od_c = nextw & 3;
         int32_t bd = 0;
         int32_t od = 0;
-        if(pre && bs && is) {
-            ILLEGAL_INST();
-        }
+       
         switch(bd_c) {
         case 0:
             ILLEGAL_INST();
@@ -50,7 +48,7 @@ uint32_t get_eaext(uint32_t base) {
         }
         switch(od_c) {
         case 0:
-            if(pre) {
+            if(post) {
                 ILLEGAL_INST();
             }
             if(!is) {
@@ -66,7 +64,7 @@ uint32_t get_eaext(uint32_t base) {
             od = FETCH32();
             break;
         }
-        if(!pre) {
+        if(!post) {
             if(!is) {
                 ret += xn << scale;
             }
@@ -74,7 +72,10 @@ uint32_t get_eaext(uint32_t base) {
             return vx + od;
         } else {
             uint32_t vx = read32(ret);
-            return vx + (xn << scale) + od;
+             if(!is) {
+                vx += xn << scale;
+            }
+            return vx + od;
         }
     }
 }

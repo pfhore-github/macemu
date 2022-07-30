@@ -1,0 +1,274 @@
+- name: ADDX/Byte/REG/false
+  init:
+    D2: 11
+    D3: 22
+    X: false
+  opcodes: [0152403]
+  expected:
+    D2: 33
+
+- name: ADDX/Byte/REG/true
+  init:
+    D2: 11
+    D3: 22
+    X: true
+  opcodes: [0152403]
+  expected:
+    D2: 34
+
+- name: ADDX/Byte/Memory/false
+  init:
+    A2: 0x1001
+    A3: 0x2001
+    X: false
+    MEM:
+      0x1000/B: 22
+      0x2000/B: 33
+  opcodes: [0152413]
+  expected:
+    A2: 0x1000
+    A3: 0x2000
+    MEM:
+      0x1000/B: 55
+
+- name: ADDX/Byte/Memory/true
+  init:
+    A2: 0x1001
+    A3: 0x2001
+    X: true
+    MEM:
+      0x1000/B: 22
+      0x2000/B: 33
+  opcodes: [0152413]
+  expected:
+    A2: 0x1000
+    A3: 0x2000
+    MEM:
+      0x1000/B: 56
+
+- name: ADDX/Byte/CX
+  init:
+    D1: 0xff
+    D2: 2
+  opcodes: [ 0151402 ]
+  expected:
+    C: true
+    X: true
+
+- name: ADDX/Byte/V
+  init:
+    D1: 0x7F
+    D2: 1
+  opcodes: [ 0151402 ]
+  expected:
+    V: true
+
+- name: ADDX/Byte/N
+  init:
+    D1: 0x82
+    D2: 1
+  opcodes: [ 0151402 ]
+  expected:
+    N: true
+
+- name: ADDX/Byte/Z/non-zero
+  init:
+    D1: 2
+    D2: 1
+    Z: true
+  opcodes: [ 0151402 ]
+  expected:
+    Z: false
+
+- name: ADDX/Byte/Z/zero
+  init:
+    D1: 0
+    D2: 0
+    Z: true
+  opcodes: [ 0151402 ]
+  expected:
+    Z: true
+
+
+- name: ADDX/Word/REG/false
+  init:
+    D2: 1111
+    D3: 2222
+    X: false
+  opcodes: [0152503]
+  expected:
+    D2: 3333
+
+- name: ADDX/Word/REG/true
+  init:
+    D2: 1111
+    D3: 2222
+    X: true
+  opcodes: [0152503]
+  expected:
+    D2: 3334
+
+- name: ADDX/Word/Memory/false
+  init:
+    A2: 0x1002
+    A3: 0x2002
+    X: false
+    MEM:
+      0x1000/W: 2222
+      0x2000/W: 3333
+  opcodes: [0152513]
+  expected:
+    A2: 0x1000
+    A3: 0x2000
+    MEM:
+      0x1000/W: 5555
+
+- name: ADDX/Word/Memory/true
+  init:
+    A2: 0x1002
+    A3: 0x2002
+    X: true
+    MEM:
+      0x1000/W: 2222
+      0x2000/W: 3333
+  opcodes: [0152513]
+  expected:
+    A2: 0x1000
+    A3: 0x2000
+    MEM:
+      0x1000/W: 5556
+
+- name: ADDX/Word/CX
+  init:
+    D1: 0xffff
+    D2: 1
+  opcodes: [ 0151502 ]
+  expected:
+    C: true
+    X: true
+
+- name: ADDX/Word/V
+  init:
+    D1: 0x7fff
+    D2: 1
+  opcodes: [ 0151502 ]
+  expected:
+    V: true
+
+- name: ADDX/Word/N
+  init:
+    D1: 0xFFF0
+    D2: 1
+  opcodes: [ 0151502 ]
+  expected:
+    N: true
+
+- name: ADDX/Word/Z/non-zero
+  init:
+    D1: 2000
+    D2: 1000
+    Z: true
+  opcodes: [ 0151502 ]
+  expected:
+    Z: false
+
+- name: ADDX/Word/Z/zero
+  init:
+    D1: 0
+    D2: 0
+    Z: true
+  opcodes: [ 0151502 ]
+  expected:
+    Z: true
+
+
+- name: ADDX/Long/REG/false
+  init:
+    D2: 111111
+    D3: 222222
+    X: false
+  opcodes: [0152603]
+  expected:
+    D2: 333333
+
+- name: ADDX/Long/REG/true
+  init:
+    D2: 111111
+    D3: 222222
+    X: true
+  opcodes: [0152603]
+  expected:
+    D2: 333334
+
+- name: ADDX/Long/Memory/false
+  init:
+    A2: 0x1004
+    A3: 0x2004
+    X: false
+    MEM:
+      0x1000/L: 222222
+      0x2000/L: 333333
+  opcodes: [0152613]
+  expected:
+    A2: 0x1000
+    A3: 0x2000
+    MEM:
+      0x1000/L: 555555
+
+- name: ADDX/Long/Memory/true
+  init:
+    A2: 0x1004
+    A3: 0x2004
+    X: true
+    MEM:
+      0x1000/L: 222222
+      0x2000/L: 333333
+  opcodes: [0152613]
+  expected:
+    A2: 0x1000
+    A3: 0x2000
+    MEM:
+      0x1000/L: 555556
+
+- name: ADDX/Long/CX
+  init:
+    D1: 0xffffffff
+    D2: 2
+  opcodes: [ 0151602 ]
+  expected:
+    C: true
+    X: true
+
+- name: ADDX/Word/V
+  init:
+    D1: 0x7fffffff
+    D2: 1
+  opcodes: [ 0151602 ]
+  expected:
+    V: true
+
+- name: ADDX/Word/N
+  init:
+    D1: 0xFFFFFFF0
+    D2: 1
+  opcodes: [ 0151602 ]
+  expected:
+    N: true
+
+- name: ADDX/Word/Z/non-zero
+  init:
+    D1: 200000
+    D2: 100000
+    Z: true
+  opcodes: [ 0151602 ]
+  expected:
+    Z: false
+
+- name: ADDX/Word/Z/zero
+  init:
+    D1: 0
+    D2: 0
+    Z: true
+  opcodes: [ 0151602 ]
+  expected:
+    Z: true

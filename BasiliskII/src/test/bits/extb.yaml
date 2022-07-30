@@ -1,0 +1,26 @@
+- name: EXTB/positive
+  init:
+    D1: 0x20
+  opcodes: [ 0044701 ]
+  expected: 
+    D1: 0x20
+    Z: false
+    N: false
+
+- name: EXTB/zero
+  init:
+    D1: 0
+  opcodes: [ 0044701 ]
+  expected: 
+    D1: 0
+    Z: true
+    N: false
+
+- name: EXTB/negative
+  init:
+    D1: 0xc0
+  opcodes: [ 0044701 ]
+  expected: 
+    D1: 0xffffffc0
+    Z: false
+    N: true

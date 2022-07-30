@@ -1,0 +1,70 @@
+- name: NOT/Byte/operand
+  init: 
+    D2: 0x12
+  opcodes: [ 0043002 ]
+  expected: 
+    D2: 0xED
+
+
+- name: NOT/Byte/N
+  init: 
+    D1: 20
+  opcodes: [ 0043001 ]
+  expected: 
+    N: true
+
+- name: NOT/Byte/Z
+  init: 
+    D1: 0xff
+  opcodes: [ 0043001 ]
+  expected: 
+    Z: true
+
+- name: NOT/Word/value
+  init: 
+    D3: 0x1234
+  opcodes: [ 0043103 ]
+  expected: 
+    D3: 0xEDCB
+
+- name: NOT/Word/N
+  init: 
+    D1: 200
+    X: false
+  opcodes: [ 0043101 ]
+  expected: 
+    N: true
+
+- name: NOT/Word/Z
+  init: 
+    D1: 0xffff
+  opcodes: [ 0043101 ]
+  expected: 
+    Z: true
+
+
+- name: NOT/Long/value
+  init: 
+    D1: 0x12345678
+  opcodes: [ 0043201 ]
+  expected: 
+    D1: 0xEDCBA987
+
+- name: NOT/Long/N
+  init: 
+    D1: 300000
+  opcodes: [ 0043201 ]
+  expected: 
+    N: true
+
+- name: NOT/Long/Z
+  init: 
+    D1: 0xffffffff
+  opcodes: [ 0043201 ]
+  expected: 
+    Z: true
+    C: false
+    X: false
+
+
+

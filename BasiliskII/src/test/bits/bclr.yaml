@@ -1,0 +1,40 @@
+
+- name: BCLR/Imm/Byte
+  init:
+    A2: 0x1000
+    MEM:
+      0x1000/B: 4
+  opcodes: [ 0004222, 2]
+  expected:
+    Z: false
+    MEM: 
+      0x1000/B: 0
+
+- name: BCLR/Imm/Long
+  init:
+    D2: 0x10000
+  opcodes: [ 0004202, 16]
+  expected:
+    Z: false
+    D2: 0
+
+- name: BCLR/Reg/Byte
+  init:
+    A3: 0x1000
+    D5: 2
+    MEM:
+      0x1000/B: 4
+  opcodes: [ 0005623]
+  expected:
+    Z: false
+    MEM:
+      0x1000/B: 0
+
+- name: BCLR/Imm/Long
+  init:
+    D2: 0x10000
+    D3: 16
+  opcodes: [ 0003602]
+  expected:
+    Z: false
+    D2: 0

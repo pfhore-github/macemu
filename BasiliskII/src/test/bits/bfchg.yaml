@@ -1,0 +1,104 @@
+- name: BFCHG/REG/in_range
+  init: 
+    D2: 0xAAAAAAAA
+  opcodes: [ 0165302, 0420 ]
+  expected:
+    D2: 0xA5555AAA
+
+- name: BFCHG/REG/wrap
+  init: 
+    D2: 0xAAAAAAAA
+  opcodes: [ 0165302, 03020 ]
+  expected:
+    D2: 0x55AAAA55
+
+- name: BFCHG/MEM/1
+  init: 
+    A1: 0x1000
+    MEM:
+      0x1000/B: 0x13
+  opcodes: [ 0165321, 0404]
+  expected:
+    MEM: 
+      0x1000/B: 0x1C
+
+- name: BFCHG/MEM/2
+  init: 
+    A1: 0x1000
+    MEM:
+      0x1000/B: 0x11
+      0x1001/B: 0x23
+  opcodes: [ 0165321, 0410]
+  expected:
+    MEM: 
+      0x1000/B: 0x1E
+      0x1001/B: 0xD3
+
+- name: BFCHG/MEM/3
+  init: 
+    A1: 0x1000
+    MEM:
+      0x1000/B: 0x11
+      0x1001/B: 0x23
+      0x1002/B: 0x45
+  opcodes: [ 0165321, 0420]
+  expected:
+    MEM: 
+      0x1000/B: 0x1E
+      0x1001/B: 0xDC
+      0x1002/B: 0xB5
+
+- name: BFCHG/MEM/4
+  init: 
+    A1: 0x1000
+    MEM:
+      0x1000/B: 0x11
+      0x1001/B: 0x23
+      0x1002/B: 0x45
+      0x1003/B: 0x67
+  opcodes: [ 0165321, 0430]
+  expected:
+    MEM: 
+      0x1000/B: 0x1E
+      0x1001/B: 0xDC
+      0x1002/B: 0xBA
+      0x1003/B: 0x97
+
+- name: BFCHG/MEM/5
+  init: 
+    A1: 0x1000
+    MEM:
+      0x1000/B: 0x11
+      0x1001/B: 0x23
+      0x1002/B: 0x45
+      0x1003/B: 0x67
+      0x1004/B: 0x89
+  opcodes: [ 0165321, 0400]
+  expected:
+    MEM: 
+      0x1000/B: 0x1E
+      0x1001/B: 0xDC
+      0x1002/B: 0xBA
+      0x1003/B: 0x98
+      0x1004/B: 0x79
+
+- name: BFCHG/MEM/Negative_offset
+  init: 
+    A1: 0x1001
+    D2: -4
+    MEM:
+      0x1000/B: 0x13
+  opcodes: [ 0165321, 04204]
+  expected:
+    MEM: 
+      0x1000/B: 0x1C
+
+- name: BFCHG/MEM/Over_offset
+  init: 
+    A1: 0x1000
+    MEM:
+      0x1001/B: 0x13
+  opcodes: [ 0165321, 01404]
+  expected:
+    MEM: 
+      0x1001/B: 0x1C

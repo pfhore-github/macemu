@@ -1,0 +1,14 @@
+- name: MOVEA/Word
+  init: 
+    D2: 0xC000
+  opcodes: [ 0033102 ]
+  expected:
+    A3: 0xFFFFC000
+
+- name: MOVEA/Long
+  init: 
+    D2: 0x10000
+  opcodes: [ 0023102 ]
+  expected:
+    A3: 0x10000
+

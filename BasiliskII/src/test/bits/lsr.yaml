@@ -1,0 +1,183 @@
+- name: LSR/Byte/Imm
+  init: 
+    D2: 0x80
+  opcodes: [ 0163012 ]
+  expected:
+    V: false
+    D2: 0x10
+
+- name: LSR/Byte/Imm8
+  init: 
+    D2: 0x80
+  opcodes: [ 0160012 ]
+  expected:
+    D2: 0
+
+- name: LSR/Byte/Reg
+  init: 
+    D2: 0x80
+    D3: 2
+  opcodes: [ 0163052 ]
+  expected:
+    D2: 0x20
+
+- name: LSR/Byte/Reg0
+  init: 
+    D2: 0x80
+    D3: 0
+    C: true
+    X: true
+  opcodes: [ 0163052 ]
+  expected:
+    D2: 0x80
+    C: false
+    X: true
+
+- name: LSR/Byte/RegOver
+  init: 
+    D1: 32
+    D2: 66
+    C: true
+    X: true
+  opcodes: [ 0162051 ]
+  expected:
+    D1: 8
+
+- name: LSR/Byte/CXZ
+  init: 
+    D1: 1
+  opcodes: [ 0161011 ]
+  expected:
+    C: true
+    X: true
+    Z: true
+
+- name: LSR/Word/Imm
+  init: 
+    D2: 0x8000
+  opcodes: [ 0163112 ]
+  expected:
+    V: false
+    D2: 0x1000
+
+- name: LSR/Word/Imm8
+  init: 
+    D2: 0x8000
+  opcodes: [ 0160112 ]
+  expected:
+    D2: 0x0080
+
+- name: LSR/Word/Reg
+  init: 
+    D2: 0x8000
+    D3: 2
+  opcodes: [ 0163152 ]
+  expected:
+    D2: 0x2000
+
+- name: LSR/Word/Reg0
+  init: 
+    D2: 0x8001
+    D3: 0
+    C: true
+    X: true
+  opcodes: [ 0163151 ]
+  expected:
+    D2: 0x8001
+    C: false
+    X: true
+
+- name: LSR/Word/RegOver
+  init: 
+    D1: 32
+    D2: 66
+    C: true
+    X: true
+  opcodes: [ 0162151 ]
+  expected:
+    D1: 8
+
+- name: LSR/Word/CXZ
+  init: 
+    D1: 1
+  opcodes: [ 0161111 ]
+  expected:
+    C: true
+    X: true
+    Z: true
+
+- name: LSR/Word/EA
+  init:
+    A2: 0x1000
+    MEM:
+      0x1000/W: 0x8000
+  opcodes: [0161322]
+  expected:
+    MEM: 
+      0x1000/W: 0x4000
+    V: false
+      
+- name: LSR/Word/EA/CXZ
+  init:
+    A2: 0x1000
+    MEM:
+      0x1000/W: 1
+  opcodes: [0161322]
+  expected:
+    C: true
+    X: true
+    Z: true
+      
+- name: LSR/Long/Imm
+  init: 
+    D2: 0x80000000
+  opcodes: [ 0163212 ]
+  expected:
+    V: false
+    D2: 0x10000000
+
+- name: LSR/Long/Imm8
+  init: 
+    D2: 0x80000000
+  opcodes: [ 0160212 ]
+  expected:
+    D2: 0x00800000
+
+- name: LSR/Long/Reg
+  init: 
+    D2: 0x80000000
+    D3: 2
+  opcodes: [ 0163252 ]
+  expected:
+    D2: 0x20000000
+
+- name: LSR/Long/Reg0
+  init: 
+    D2: 0x80000001
+    D3: 0
+    C: true
+    X: true
+  opcodes: [ 0160252 ]
+  expected:
+    D2: 0x80000001
+    C: false
+    X: true
+
+- name: LSR/Long/RegOver
+  init: 
+    D1: 32
+    D2: 66
+    C: true
+    X: true
+  opcodes: [ 0162251 ]
+  expected:
+    D1: 8
+
+- name: LSR/Long/CXZ
+  init: 
+    D1: 1
+  opcodes: [ 0161211 ]
+  expected:
+    C: true
+    X: true
+    Z: true

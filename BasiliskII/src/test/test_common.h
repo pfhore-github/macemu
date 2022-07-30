@@ -2,8 +2,13 @@
 #include <boost/test/unit_test.hpp>
 #include "fpu/fpu.h"
 #include <vector>
+#include <optional>
+#include "yaml-cpp/yaml.h"
 namespace bdata = boost::unit_test::data;
-void asm_m68k(const char *a, int offset = 0);
+
+void load_test(const char *file) ;
+bool cpu_test(const YAML::Node& test, bool jit = false);
+
 void m68k_do_execute();
 extern std::vector<std::byte> RAM;
 

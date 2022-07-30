@@ -82,11 +82,6 @@ void jit_write32(uint32_t addr, uint32_t v) {
     }
 }
 
-struct JIT_CODE {
-    asmjit::CodeHolder holder;
-    std::unordered_map<uint32_t, uint64_t> init_entry;
-    void (*func)(void);
-};
 static asmjit::JitRuntime jit_rt;
 std::unordered_map<uint32_t, std::shared_ptr<JIT_CODE>> jit_codes;
 jit_t jit_map[65536 >> 6];
@@ -121,14 +116,14 @@ void jit_illegal(uint32_t pc) {
     }
     exit_jit();
 }
-
+JIT_CODE *compiling = nullptr;
 bool jit_compile(uint32_t from, uint32_t to) {
-    std::unordered_map<uint32_t, Label> jit_labels;
     std::shared_ptr<JIT_CODE> code(new JIT_CODE);
+    compiling = code.get();
     code->holder.init(jit_rt.environment());
     x86::Assembler a(&code->holder);
     for(uint32_t u = from; u < to; u += 2) {
-        jit_labels[u] = a.newLabel();
+        code->jit_labels[u] = a.newLabel();
     }
     uint32_t pp = regs.pc;
     a.push(x86::rbp);
@@ -150,7 +145,7 @@ bool jit_compile(uint32_t from, uint32_t to) {
     a.call(get_jit_address);
     a.jmp(x86::rax);
     for(regs.pc = from; regs.pc < to;) {
-        a.bind(jit_labels[regs.pc]);
+        a.bind(code->jit_labels[regs.pc]);
         a.mov(REG_BYTE(trace_suspend), 0);
         regs.opc = regs.pc;
         uint16_t opc = FETCH();
@@ -164,6 +159,7 @@ bool jit_compile(uint32_t from, uint32_t to) {
                 throw ILLEGAL_INST_EX{};
             }
             f(opc, type, reg, a);
+            a.call(m68k_postop);
         } catch(ILLEGAL_INST_EX &) {
             a.mov(ARG1, regs.opc);
             a.call(jit_illegal);
@@ -171,7 +167,6 @@ bool jit_compile(uint32_t from, uint32_t to) {
         } catch(BUS_ERROR_EX &e) {
             return false;
         }
-        a.call(m68k_postop);
     }
     a.pop(x86::r15);
     a.pop(x86::r14);
@@ -191,7 +186,7 @@ bool jit_compile(uint32_t from, uint32_t to) {
     if(err) {
         return false;
     }
-    for(auto &[i, v] : jit_labels) {
+    for(auto &[i, v] : code->jit_labels) {
         if(v.isValid()) {
             code->init_entry[i] = reinterpret_cast<ptrdiff_t>(code->func) +
                                   code->holder.labelOffset(v);
@@ -206,6 +201,7 @@ void jit_pea(int type, int reg, x86::Assembler &a);
 
 void jit_0441(uint16_t op, int type, int reg, x86::Assembler &a) {
     if(type == 0) {
+        // SWAP
         a.mov(x86::eax, JIT_REG_D_L(reg));
         a.ror(x86::eax, 16);
         a.mov(JIT_REG_D_L(reg), x86::eax);
@@ -215,6 +211,7 @@ void jit_0441(uint16_t op, int type, int reg, x86::Assembler &a) {
         a.mov(REG_BYTE(v), 0);
         a.mov(REG_BYTE(c), 0);
     } else if(type == 1) {
+        // BPKT
         a.mov(ARG1, regs.opc);
         a.call(jit_illegal);
     } else {
@@ -222,6 +219,16 @@ void jit_0441(uint16_t op, int type, int reg, x86::Assembler &a) {
     }
 }
 void TRAP(int v);
+
+void jit_aline(uint16_t op, int type, int reg, asmjit::x86::Assembler &a) {
+    a.call(ALINE_EXCEPTION);
+    a.call(exit_jit);
+}
+
+void jit_fline(uint16_t op, int type, int reg, asmjit::x86::Assembler &a) {
+    a.call(FP_UNDEF);
+    a.call(exit_jit);
+}
 
 void build_jitfunctbl() {
 
@@ -324,6 +331,118 @@ void build_jitfunctbl() {
     jit_map[01677] = jit_bfins;
 
     for(int dn = 0; dn < 8; ++dn) {
-        jit_map[00407 | dn << 3] = jit_lea;
+        jit_map[00004 | dn << 3] = jit_btst_dm; // or movep
+        jit_map[00005 | dn << 3] = jit_bchg_dm; // or movep
+        jit_map[00006 | dn << 3] = jit_bclr_dm; // or movep
+        jit_map[00007 | dn << 3] = jit_bset_dm; // or movep
+
+        jit_map[00201 | dn << 3] = jit_movea_l;
+        jit_map[00301 | dn << 3] = jit_movea_w;
+
+        jit_map[00404 | dn << 3] = jit_chk_l;
+        jit_map[00406 | dn << 3] = jit_chk_w;
+        jit_map[00407 | dn << 3] = jit_lea; // or extb
+
+        jit_map[00500 | dn << 3] = jit_addq_b;
+        jit_map[00501 | dn << 3] = jit_addq_w;
+        jit_map[00502 | dn << 3] = jit_addq_l;
+
+        jit_map[00504 | dn << 3] = jit_subq_b;
+        jit_map[00505 | dn << 3] = jit_subq_w;
+        jit_map[00506 | dn << 3] = jit_subq_l;
+
+        jit_map[01000 | dn << 3] = jit_or_b;
+        jit_map[01001 | dn << 3] = jit_or_w;
+        jit_map[01002 | dn << 3] = jit_or_l;
+        jit_map[01003 | dn << 3] = jit_divu_w;
+
+        jit_map[01004 | dn << 3] = jit_or_to_ea_b; // or sbcd
+        jit_map[01005 | dn << 3] = jit_or_to_ea_w; // or pack
+        jit_map[01006 | dn << 3] = jit_or_to_ea_l; // or unpk
+        jit_map[01007 | dn << 3] = jit_divs_w;
+
+        jit_map[01100 | dn << 3] = jit_sub_b;
+        jit_map[01101 | dn << 3] = jit_sub_w;
+        jit_map[01102 | dn << 3] = jit_sub_l;
+        jit_map[01103 | dn << 3] = jit_suba_w;
+
+        jit_map[01104 | dn << 3] = jit_sub_to_ea_b; // or subx
+        jit_map[01105 | dn << 3] = jit_sub_to_ea_w; // or subx
+        jit_map[01106 | dn << 3] = jit_sub_to_ea_l; // or subx
+        jit_map[01107 | dn << 3] = jit_suba_l;
+
+        jit_map[01300 | dn << 3] = jit_cmp_b;
+        jit_map[01301 | dn << 3] = jit_cmp_w;
+        jit_map[01302 | dn << 3] = jit_cmp_l;
+        jit_map[01303 | dn << 3] = jit_cmpa_w;
+
+        jit_map[01304 | dn << 3] = jit_eor_b; // cmpm.b
+        jit_map[01305 | dn << 3] = jit_eor_w; // cmpm.w
+        jit_map[01306 | dn << 3] = jit_eor_l; // cmpm.l
+        jit_map[01307 | dn << 3] = jit_cmpa_l;
+
+        jit_map[01400 | dn << 3] = jit_and_b;
+        jit_map[01401 | dn << 3] = jit_and_w;
+        jit_map[01402 | dn << 3] = jit_and_l;
+        jit_map[01403 | dn << 3] = jit_mulu_w;
+
+        jit_map[01404 | dn << 3] = jit_and_to_ea_b; // or abcd
+        jit_map[01405 | dn << 3] = jit_and_to_ea_w; // or exg
+        jit_map[01406 | dn << 3] = jit_and_to_ea_l; // or exg D<>A
+        jit_map[01407 | dn << 3] = jit_muls_w;
+
+        jit_map[01500 | dn << 3] = jit_add_b;
+        jit_map[01501 | dn << 3] = jit_add_w;
+        jit_map[01502 | dn << 3] = jit_add_l;
+        jit_map[01503 | dn << 3] = jit_adda_w;
+
+        jit_map[01504 | dn << 3] = jit_add_to_ea_b; // or addx.b
+        jit_map[01505 | dn << 3] = jit_add_to_ea_w; // or addx.w
+        jit_map[01506 | dn << 3] = jit_add_to_ea_l; // or addx.l
+        jit_map[01507 | dn << 3] = jit_adda_l;
+
+        jit_map[01600 | dn << 3] = jit_shr_b;
+        jit_map[01601 | dn << 3] = jit_shr_w;
+        jit_map[01602 | dn << 3] = jit_shr_l;
+
+        jit_map[01604 | dn << 3] = jit_shl_b;
+        jit_map[01605 | dn << 3] = jit_shl_w;
+        jit_map[01606 | dn << 3] = jit_shl_l;
+
+        for(int i = 0; i < 4; ++i) {
+            jit_map[00700 | dn << 3 | i] = jit_moveq;
+            //            opc_map[00704 | dn << 3 | i] = op_emul_op;
+        }
+
+        for(int xg = 0; xg < 8; ++xg) {
+            if(xg != 1) {
+                jit_map[00100 | xg | dn << 3] = jit_move_b;
+                jit_map[00200 | xg | dn << 3] = jit_move_l;
+                jit_map[00300 | xg | dn << 3] = jit_move_w;
+            }
+        }
     }
+
+    for(int cd = 0; cd < 16; ++cd) {
+        jit_map[00503 | cd << 2] = jit_scc; // or dbcc or trapcc
+        for(int i = 0; i < 4; ++i) {
+            if(cd == 0) {
+                jit_map[00600 | cd << 2 | i] = jit_bra;
+            } else if(cd == 1) {
+                jit_map[00600 | cd << 2 | i] = jit_bsr;
+            } else {
+                jit_map[00600 | cd << 2 | i] = jit_bcc;
+            }
+        }
+    }
+
+    for(int i = 0; i < 0100; ++i) {
+        jit_map[01200 | i] = jit_aline;
+    }
+
+    for(int i = 0; i < 0100; ++i) {
+        jit_map[01700 | i] = jit_fline;
+    }
+
+    jit_map[01730] = jit_move16;
 }

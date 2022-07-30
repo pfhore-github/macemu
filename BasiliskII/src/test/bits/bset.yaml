@@ -1,0 +1,40 @@
+
+- name: BSET/Imm/Byte
+  init:
+    A2: 0x1000
+    MEM:
+      0x1000/B: 0
+  opcodes: [ 0004322, 3]
+  expected:
+    Z: true
+    MEM: 
+      0x1000/B: 0x08
+
+- name: BSET/Imm/Long
+  init:
+    D2: 0
+  opcodes: [ 0004302, 16]
+  expected:
+    Z: true
+    D2: 0x10000
+
+- name: BSET/Reg/Byte
+  init:
+    A2: 0x1000
+    D4: 3
+    MEM:
+      0x1000/B: 0
+  opcodes: [ 004722]
+  expected:
+    Z: true
+    MEM:
+      0x1000/B: 0x08
+
+- name: BSET/Imm/Long
+  init:
+    D2: 0
+    D3: 16
+  opcodes: [ 0003702]
+  expected:
+    Z: true
+    D2: 0x10000

@@ -1,0 +1,85 @@
+- name: DIVU/Long/value
+  init:
+    D3: 10000
+    D2: 3
+  opcodes: [ 0046102, 0x3001]
+  expected:
+    D3: 3333
+    D1: 1
+
+- name: DIVU/Long/N
+  init:
+    D1: 1
+    D2: 0x80000000
+  opcodes: [ 0046101, 0x2002]
+  expected:
+    N: true
+    
+- name: DIVU/Long/Z
+  init:
+    D1: 12345
+    D2: 0
+  opcodes: [ 0046101, 0x2002]
+  expected:
+    Z: true
+
+- name: DIVU/Long/V
+  init:
+    D1: 2
+    D2: 2
+    D3: 0
+  opcodes: [ 0046101, 0x3402]
+  expected:
+    V: true
+
+- name: DIVU/Long/Div0
+  init:
+    D2: 1
+    D1: 0
+  opcodes: [ 0046101, 0x2002]
+  expected:
+    exception: 5
+
+- name: DIVU/Long/DWord
+  init:
+    D1: 30
+    D2: 0
+    D3: 1
+  opcodes: [ 0046101, 0x2403]
+  expected:
+    D3: 16
+    D2: 143165576
+
+- name: DIVU/Word/value
+  init:
+    D2: 1000
+    D1: 3
+  opcodes: [ 0102301 ]
+  expected:
+    D2: 0x0001014D
+    V: false
+    Z: false
+
+- name: DIVU/Word/Z
+  init:
+    D2: 0
+    D1: 100
+  opcodes: [ 0102301 ]
+  expected:
+    Z: true
+
+- name: DIVU/Word/V
+  init:
+    D2: 1000000
+    D1: 2
+  opcodes: [ 0102301 ]
+  expected:
+    V: true
+
+- name: DIVU/Word/Div0
+  init:
+    D2: 100
+    D1: 0
+  opcodes: [ 0102301 ]
+  expected:
+    exception: 5

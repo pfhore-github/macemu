@@ -1,0 +1,158 @@
+- name: SUB/Byte/ToReg
+  init: 
+    D2: 50
+    D3: 24
+  opcodes: [ 0112003 ]
+  expected:
+    D2: 26
+
+- name: SUB/Byte/ToMem
+  init:
+    A2: 0x1000
+    D1: 24
+    MEM:
+      0x1000/B: 50
+  opcodes: [ 0111422 ]
+  expected:
+    MEM:
+      0x1000/B: 26
+
+- name: SUB/Byte/CX
+  init:
+    D0: 1
+    D1: 2
+  opcodes: [ 0110001 ]
+  expected:
+    C: true
+    X: true
+
+- name: SUB/Byte/V
+  init:
+    D0: 0x80
+    D1: 1
+  opcodes: [ 0110001 ]
+  expected:
+    V: true
+
+- name: SUB/Byte/Z
+  init:
+    D0: 1
+    D1: 1
+  opcodes: [ 0110001 ]
+  expected:
+    Z: true
+
+
+- name: SUB/Byte/N
+  init:
+    D0: 0xF3
+    D1: 1
+  opcodes: [ 0110001 ]
+  expected:
+    N: true
+
+- name: SUB/Word/ToReg
+  init: 
+    D1: 1000
+    D2: 200
+  opcodes: [ 0111102 ]
+  expected:
+    D1: 800
+
+- name: SUB/Word/ToMem
+  init:
+    A2: 0x1000
+    D3: 200
+    MEM:
+      0x1000/W: 1000
+  opcodes: [ 0113522 ]
+  expected:
+    MEM:
+      0x1000/W: 800
+
+- name: SUB/Word/CX
+  init:
+    D0: 1
+    D1: 2
+  opcodes: [ 0110101 ]
+  expected:
+    C: true
+    X: true
+
+- name: SUB/Word/V
+  init:
+    D0: 0x8000
+    D1: 1
+  opcodes: [ 0110101 ]
+  expected:
+    V: true
+
+- name: SUB/Word/Z
+  init:
+    D0: 1000
+    D1: 1000
+  opcodes: [ 0110101 ]
+  expected:
+    Z: true
+
+
+- name: SUB/Word/N
+  init:
+    D0: 0xFFF3
+    D1: 1
+  opcodes: [ 0110101 ]
+  expected:
+    N: true
+
+- name: SUB/Long/ToReg
+  init: 
+    D3: 100000
+    D2: 40000
+  opcodes: [ 0113202 ]
+  expected:
+    D3: 60000
+
+- name: SUB/Long/ToMem
+  init:
+    A2: 0x1000
+    D4: 40000
+    MEM:
+      0x1000/L: 100000
+  opcodes: [ 0114622 ]
+  expected:
+    MEM:
+      0x1000/L: 60000
+
+- name: SUB/Long/CX
+  init:
+    D0: 1000
+    D1: 2000
+  opcodes: [ 0110201 ]
+  expected:
+    C: true
+    X: true
+
+- name: SUB/Long/V
+  init:
+    D0: 0x80000000
+    D1: 1
+  opcodes: [ 0110201 ]
+  expected:
+    V: true
+
+- name: SUB/Long/Z
+  init:
+    D0: 100000
+    D1: 100000
+  opcodes: [ 0110201 ]
+  expected:
+    Z: true
+
+
+- name: SUB/Long/N
+  init:
+    D0: 0xFFFFFFF3
+    D1: 1
+  opcodes: [ 0110201 ]
+  expected:
+    N: true

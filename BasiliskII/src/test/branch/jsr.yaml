@@ -1,0 +1,10 @@
+- name: JSR
+  init: 
+    PC: 0
+    A2: 0x10
+    A7: 0x1004
+  opcodes: [ 0047222 ]
+  expected:
+    MEM:
+      0x1000/L: 2
+    PC: 0x10

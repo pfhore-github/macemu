@@ -2,6 +2,7 @@
 #define COMPILER_JIT_
 #include <asmjit/x86.h>
 #include <stdint.h>
+#include <unordered_map>
 using jit_t = void (*)(uint16_t, int type, int reg, asmjit::x86::Assembler &a);
 using op_t = void (*)(uint16_t, int, int, int);
 #ifdef _WIN64
@@ -54,4 +55,11 @@ void exit_jit () __attribute__((noreturn));
 #define JIT_REG_D_L(n) (x86::dword_ptr(x86::r15, (n)*4))
 #define JIT_REG_A_W(n) (x86::word_ptr(x86::r15, 8*4+(n)*4))
 #define JIT_REG_A_L(n) (x86::dword_ptr(x86::r15, 8*4+(n)*4))
+
+struct JIT_CODE {
+    asmjit::CodeHolder holder;
+    std::unordered_map<uint32_t, asmjit::Label> jit_labels;
+    std::unordered_map<uint32_t, uint64_t> init_entry;
+    void (*func)(void);
+};
 #endif

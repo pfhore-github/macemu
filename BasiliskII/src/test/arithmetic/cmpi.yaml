@@ -1,0 +1,83 @@
+- name: CMPI/Byte/Z
+  init:
+    D1: 24
+  opcodes: [0006001, 24]
+  expected:
+    Z: true
+
+- name: CMPI/Byte/N
+  init:
+    D1: 24
+  opcodes: [0006001, 25]
+  expected:
+    N: true
+
+- name: CMPI/Byte/V
+  init:
+    D1: 0x80
+  opcodes: [0006001, 1]
+  expected:
+    V: true
+
+- name: CMPI/Byte/C
+  init:
+    D1: 0
+  opcodes: [0006001, 1]
+  expected:
+    C: true
+
+- name: CMPI/Word/Z
+  init:
+    D1: 2400
+  opcodes: [0006101, 2400]
+  expected:
+    Z: true
+
+- name: CMPI/Word/N
+  init:
+    D1: 2400
+  opcodes: [0006101, 2500]
+  expected:
+    N: true
+
+- name: CMPI/Word/V
+  init:
+    D1: 0x8000
+  opcodes: [0006101, 1]
+  expected:
+    V: true
+
+- name: CMPI/Word/C
+  init:
+    D1: 0
+  opcodes: [0006101, 1]
+  expected:
+    C: true
+
+- name: CMPI/Long/Z
+  init:
+    D1: 0x10000
+  opcodes: [0006201, 0x10000]
+  expected:
+    Z: true
+
+- name: CMPI/Long/N
+  init:
+    D1: 0x10000
+  opcodes: [0006201, 0x10001]
+  expected:
+    N: true
+
+- name: CMPI/Long/V
+  init:
+    D1: 0x80000000
+  opcodes: [0006201, 1]
+  expected:
+    V: true
+
+- name: CMPI/Long/C
+  init:
+    D1: 0
+  opcodes: [0006201, 1]
+  expected:
+    C: true

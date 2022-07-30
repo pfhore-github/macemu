@@ -1,0 +1,217 @@
+- name: ASR/Byte/Imm
+  init: 
+    D2: 0x80
+  opcodes: [ 0163002 ]
+  expected:
+    V: false
+    D2: 0xF0
+
+- name: ASR/Byte/Imm8
+  init: 
+    D2: 0x80
+  opcodes: [ 0160002 ]
+  expected:
+    D2: 0xFF
+
+- name: ASR/Byte/Reg
+  init: 
+    D2: 0x80
+    D3: 2
+  opcodes: [ 0163042 ]
+  expected:
+    D2: 0xE0
+
+- name: ASR/Byte/Reg0
+  init: 
+    D2: 0x80
+    D3: 0
+    C: true
+    X: true
+  opcodes: [ 0163042 ]
+  expected:
+    D2: 0x80
+    X: true
+    C: false
+
+- name: ASR/Byte/RegOver
+  init: 
+    D1: 0x80
+    D2: 66
+  opcodes: [ 0162041 ]
+  expected:
+    D1: 0xE0
+
+- name: ASR/Byte/CX
+  init: 
+    D1: 0x81
+  opcodes: [ 0161001 ]
+  expected:
+    C: true
+    X: true
+
+- name: ASR/Byte/N
+  init: 
+    D1: 0x80
+  opcodes: [ 0161001 ]
+  expected:
+    N: true
+
+- name: ASR/Byte/Z
+  init: 
+    D1: 1
+  opcodes: [ 0161001 ]
+  expected:
+    Z: true
+
+- name: ASR/Word/Imm
+  init: 
+    D2: 0x8000
+  opcodes: [ 0163102 ]
+  expected:
+    V: false
+    D2: 0xF000
+
+- name: ASR/Word/Imm8
+  init: 
+    D2: 0x8000
+  opcodes: [ 0160102 ]
+  expected:
+    D2: 0xff80
+
+- name: ASR/Word/Reg
+  init: 
+    D2: 0x8000
+    D3: 2
+  opcodes: [ 0163142 ]
+  expected:
+    D2: 0xE000
+
+- name: ASR/Word/Reg0
+  init: 
+    D2: 0x8001
+    D3: 0
+    C: true
+    X: true
+  opcodes: [ 0163142 ]
+  expected:
+    D2: 0x8001
+    X: true
+    C: false
+
+- name: ASR/Word/RegOver
+  init: 
+    D1: 0x8000
+    D2: 66
+  opcodes: [ 0162141 ]
+  expected:
+    D1: 0xE000
+
+- name: ASR/Word/CX
+  init: 
+    D1: 0x8001
+  opcodes: [ 0161101 ]
+  expected:
+    C: true
+    X: true
+
+- name: ASR/Word/N
+  init: 
+    D1: 0x8000
+  opcodes: [ 0161101 ]
+  expected:
+    N: true
+
+- name: ASR/Word/Z
+  init: 
+    D1: 1
+  opcodes: [ 0161101 ]
+  expected:
+    Z: true
+
+- name: ASR/Word/EA
+  init: 
+    A2: 0x1000
+    MEM:
+      0x1000/W: 0x8000
+  opcodes: [ 0160322 ]
+  expected: 
+    MEM:
+      0x1000/W: 0xC000
+    N: true
+    V: false
+
+- name: ASR/Word/EA/CXZ
+  init: 
+    A2: 0x1000
+    MEM:
+      0x1000/W: 1
+  opcodes: [ 0160322 ]
+  expected: 
+    Z: true
+    X: true
+    C: true
+
+- name: ASR/Long/Imm
+  init: 
+    D2: 0x80000000
+  opcodes: [ 0163202 ]
+  expected:
+    V: false
+    D2: 0xF0000000
+
+- name: ASR/Long/Imm8
+  init: 
+    D2: 0x80000000
+  opcodes: [ 0160202 ]
+  expected:
+    D2: 0xff800000
+
+- name: ASR/Long/Reg
+  init: 
+    D2: 0x80000000
+    D3: 2
+  opcodes: [ 0163242 ]
+  expected:
+    D2: 0xE0000000
+
+- name: ASR/Long/Reg0
+  init: 
+    D2: 0x80000001
+    D3: 0
+    C: true
+    X: true
+  opcodes: [ 0163242 ]
+  expected:
+    D2: 0x80000001
+    X: true
+    C: false
+
+- name: ASR/Long/RegOver
+  init: 
+    D1: 0x80000000
+    D2: 66
+  opcodes: [ 0162241 ]
+  expected:
+    D1: 0xE0000000
+
+- name: ASR/Long/CX
+  init: 
+    D1: 0x80000001
+  opcodes: [ 0161201 ]
+  expected:
+    C: true
+    X: true
+
+- name: ASR/Long/N
+  init: 
+    D1: 0x80000000
+  opcodes: [ 0161201 ]
+  expected:
+    N: true
+
+- name: ASR/Long/Z
+  init: 
+    D1: 1
+  opcodes: [ 0161201 ]
+  expected:
+    Z: true

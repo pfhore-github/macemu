@@ -895,7 +895,7 @@ void fmove_from_cr(int type, int reg, uint16_t op2) {
         break;
     }
 }
-OP(fpu_op) {
+void op_fpu_op(uint16_t  xop, int dm, int type, int  reg) {
     mpfr_clear_flags();
     uint16_t op2 = FETCH();
     if(op2 >> 15 & 1) {
@@ -1114,7 +1114,7 @@ bool fpcc(int c) {
     }
     return false;
 }
-OP(fpu_fscc) {
+void op_fpu_fscc(uint16_t  xop, int dm, int type, int  reg) {
     uint16_t op2 = FETCH();
     bool ret = fpcc(op2 & 0x3f);
     if(type == 1) {
@@ -1155,7 +1155,7 @@ OP(fpu_fscc) {
     }
 }
 
-OP(fbcc_w) {
+void op_fbcc_w(uint16_t  xop, int dm, int type, int  reg) {
     int opc = xop & 0x3f;
     uint32_t pc = regs.pc;
     int32_t offset = static_cast<int16_t>(FETCH());
@@ -1166,7 +1166,7 @@ OP(fbcc_w) {
     fpu_checkexception();
 }
 
-OP(fbcc_l) {
+void op_fbcc_l(uint16_t  xop, int dm, int type, int  reg) {
     int opc = xop & 0x3f;
     uint32_t pc = regs.pc;
     int32_t offset = FETCH32();
@@ -1174,7 +1174,7 @@ OP(fbcc_l) {
         JUMP(pc + offset);
     }
 }
-OP(fsave) {
+void op_fsave(uint16_t  xop, int dm, int type, int  reg) {
     // only idle frame
     if(!regs.S) {
         PRIV_ERROR();
@@ -1182,7 +1182,7 @@ OP(fsave) {
     regs.traced = true;
     EA_WRITE32(type, reg, 0x41000000);
 }
-OP(frestore) {
+void op_frestore(uint16_t  xop, int dm, int type, int  reg) {
     if(!regs.S) {
         PRIV_ERROR();
     }

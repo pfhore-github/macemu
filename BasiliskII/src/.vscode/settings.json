@@ -75,6 +75,7 @@
         "any": "cpp",
         "codecvt": "cpp",
         "*.ipp": "cpp",
-        "stack": "cpp"
+        "stack": "cpp",
+        "shared_mutex": "cpp"
     }
 }

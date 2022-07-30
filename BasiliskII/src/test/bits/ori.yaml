@@ -1,0 +1,173 @@
+# Byte
+- name: ORI/Byte/value
+  init:
+    D2: 0x12
+    X: true
+    V: true
+    C: true
+  opcodes: [ 0000002, 0x23]
+  expected:
+    D2: 0x33
+    X: true
+    C: false
+    V: false
+
+- name: ORI/Byte/N
+  init:
+    D1: 0x80
+  opcodes: [ 0000001, 0]
+  expected:
+    N: true
+
+- name: ORI/Byte/Z
+  init:
+    D1: 0
+  opcodes: [ 0000001, 0]
+  expected:
+    Z: true
+
+- name: ORI/Byte/CCR/C
+  init:
+    X: false
+    V: false
+    C: false
+    N: false
+    Z: false
+  opcodes: [ 0000074, 1]
+  expected:
+    X: false
+    V: false
+    C: true
+    N: false
+    Z: false
+
+- name: ORI/Byte/CCR/V
+  init:
+    X: false
+    V: false
+    C: false
+    N: false
+    Z: false
+  opcodes: [ 0000074, 2]
+  expected:
+    X: false
+    V: true
+    C: false
+    N: false
+    Z: false
+
+- name: ORI/Byte/CCR/Z
+  init:
+    X: false
+    V: false
+    C: false
+    N: false
+    Z: false
+  opcodes: [ 0000074, 4]
+  expected:
+    X: false
+    V: false
+    C: false
+    N: false
+    Z: true
+
+- name: ORI/Byte/CCR/N
+  init:
+    X: false
+    V: false
+    C: false
+    N: false
+    Z: false
+  opcodes: [ 0000074, 8]
+  expected:
+    X: false
+    V: false
+    C: false
+    N: true
+    Z: false
+
+- name: ORI/Byte/CCR/X
+  init:
+    X: false
+    V: false
+    C: false
+    N: false
+    Z: false
+  opcodes: [ 0000074, 16]
+  expected:
+    X: true
+    V: false
+    C: false
+    N: false
+    Z: false
+
+# word
+- name: ORI/Word/value
+  init:
+    D2: 0x1234
+    X: true
+    V: true
+    C: true
+  opcodes: [ 0000102, 0xbeaf]
+  expected:
+    D2: 0xbebf
+    X: true
+    C: false
+    V: false
+
+- name: ORI/Word/N
+  init:
+    D1: 0x8000
+  opcodes: [ 0000101, 0]
+  expected:
+    N: true
+
+- name: ORI/Word/Z
+  init:
+    D1: 0
+  opcodes: [ 0000101, 0]
+  expected:
+    Z: true
+
+- name: ORI/Word/SR/Invalid
+  init:
+    S: false
+  opcodes: [ 0000174, 0xffff]
+  expected:
+    exception: 8
+
+- name: ORI/Word/SR/Valid
+  init:
+    S: true
+    IM: 0
+  opcodes: [ 0000174, 0xff00]
+  expected:
+    IM: 7
+
+#Long 
+- name: ORI/Long/value
+  init:
+    D2: 0x12345678
+    X: true
+    V: true
+    C: true
+  opcodes: [ 0000202, 0xdeaddead]
+  expected:
+    D2: 0xdebddefd
+    X: true
+    C: false
+    V: false
+
+- name: ORI/Long/N
+  init:
+    D1: 0x80000000
+  opcodes: [ 0000201, 0, 0]
+  expected:
+    N: true
+
+- name: ORI/Long/Z
+  init:
+    D1: 0
+  opcodes: [ 0000201, 0, 0]
+  expected:
+    Z: true

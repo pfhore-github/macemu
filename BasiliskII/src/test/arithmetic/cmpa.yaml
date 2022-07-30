@@ -1,0 +1,64 @@
+- name: CMPA/Word/Z
+  init:
+    A1: 2400
+    A2: 2400
+  opcodes: [ 0131312 ]
+  expected:
+    Z: true
+
+- name: CMPA/Word/N
+  init:
+    A1: -1000
+    A2: 0
+  opcodes: [ 0131312 ]
+  expected:
+    N: true
+
+- name: CMPA/Word/V
+  init:
+    A1: 0x7fff8001
+    A2: 0x8000
+  opcodes: [ 0131312 ]
+  expected:
+    V: true
+
+- name: CMPA/Word/C
+  init:
+    A1: 0
+    A2: 0xffffffff
+  opcodes: [ 0131312 ]
+  expected:
+    C: true
+
+- name: CMPA/Long/Z
+  init:
+    A1: 240000
+    A2: 240000
+  opcodes: [ 0131712 ]
+  expected:
+    Z: true
+
+- name: CMPA/Long/N
+  init:
+    A1: -100000
+    A2: 0
+  opcodes: [ 0131712 ]
+  expected:
+    N: true
+
+- name: CMPA/Long/V
+  init:
+    A1: 0x80000000
+    A2: 1
+  opcodes: [ 0131712 ]
+  expected:
+    V: true
+
+- name: CMPA/Long/C
+  init:
+    A1: 0
+    A2: 0xffffffff
+  opcodes: [ 0131712 ]
+  expected:
+    C: true
+

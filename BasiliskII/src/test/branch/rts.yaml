@@ -1,0 +1,9 @@
+- name: RTS
+  init: 
+    A7: 0x1000
+    MEM:
+      0x1000/L: 0x2000
+  opcodes: [ 0047165]
+  expected:
+    A7: 0x1004
+    PC: 0x2000

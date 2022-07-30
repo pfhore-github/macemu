@@ -1,0 +1,21 @@
+- name: UNPK/Dx
+  init:
+    D2: 0x1234
+  opcodes: [ 0103602, 0x10]
+  expected:
+    D3: 0x314
+
+- name: UNPK/Ax
+  init:
+    A2: 0x2001
+    A3: 0x1002
+    MEM:
+      0x2000/B: 0x12
+  opcodes: [ 0103612, 0x10]
+  expected:
+    A2: 0x2000
+    A3: 0x1000
+    MEM:
+      0x1000/W: 0x0112
+
+

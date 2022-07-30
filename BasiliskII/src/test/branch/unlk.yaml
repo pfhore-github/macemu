@@ -1,0 +1,10 @@
+- name: UNLK
+  init:
+    A2: 0x200
+    MEM:
+      0x200/L: 0x1000
+  opcodes: [ 0047132 ]
+  expected: 
+    A2: 0x1000
+    A7: 0x204
+

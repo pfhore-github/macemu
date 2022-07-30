@@ -1,0 +1,26 @@
+- name: EXG/DR2DR
+  init:
+    D2: 0x12345678
+    D3: 0x9abcdef0
+  opcodes: [0142503]
+  expected:
+    D2: 0x9abcdef0
+    D3: 0x12345678
+
+- name: EXG/AR2AR
+  init:
+    A2: 0xa0000000
+    A3: 0x40000000
+  opcodes: [0142513]
+  expected:
+    A2: 0x40000000
+    A3: 0xa0000000
+
+- name: EXG/AR2DR
+  init:
+    D2: 0xa0000000
+    A3: 0x40000000
+  opcodes: [0142613]
+  expected:
+    D2: 0x40000000
+    A3: 0xa0000000

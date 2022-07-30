@@ -1,0 +1,125 @@
+# Byte
+- name: AND/Byte/ToReg
+  init:
+      D1: 0xff
+      D2: 0x2f
+      X: true
+      V: true
+      C: true
+  opcodes: [0141002]
+  expected:
+      D1: 0x2f
+      X: true
+      V: false
+      C: false
+
+- name: AND/Byte/ToMem
+  init:
+      D1: 0x2f
+      A2: 0x2000
+      MEM:
+          0x2000/B: 0xff
+  opcodes: [0141422]
+  expected:
+      MEM:
+          0x2000/B: 0x2f
+
+- name: AND/Byte/N
+  init:
+      D1: 0xff
+      D2: 0x80
+  opcodes: [0141002]
+  expected:
+      N: true
+
+- name: AND/Byte/Z
+  init:
+      D1: 0xff
+      D2: 0
+  opcodes: [0141002]
+  expected:
+      Z: true
+
+# WORD
+- name: AND/Word/ToReg
+  init:
+      D1: 0xffff
+      D2: 0x2fff
+      X: true
+      V: true
+      C: true
+  opcodes: [0141102]
+  expected:
+      D1: 0x2fff
+      X: true
+      V: false
+      C: false
+
+- name: AND/Word/ToMem
+  init:
+      D1: 0x2fff
+      A2: 0x2000
+      MEM:
+          0x2000/W: 0xffff
+  opcodes: [0141522]
+  expected:
+      MEM:
+          0x2000/W: 0x2fff
+
+- name: AND/Word/N
+  init:
+      D1: 0xffff
+      D2: 0x8000
+  opcodes: [0141102]
+  expected:
+      N: true
+
+- name: AND/Word/Z
+  init:
+      D1: 0xffff
+      D2: 0
+  opcodes: [0141102]
+  expected:
+      Z: true
+
+# Long
+- name: AND/Long/ToReg
+  init:
+      D1: 0xffffffff
+      D2: 0x2fffffff
+      X: true
+      V: true
+      C: true
+  opcodes: [0141202]
+  expected:
+      D1: 0x2fffffff
+      X: true
+      V: false
+      C: false
+
+- name: AND/Long/ToMem
+  init:
+      D1: 0x2fffffff
+      A2: 0x2000
+      MEM:
+          0x2000/L: 0xffffffff
+  opcodes: [0141622]
+  expected:
+      MEM:
+          0x2000/L: 0x2fffffff
+
+- name: AND/Long/N
+  init:
+      D1: 0xffffffff
+      D2: 0x80000000
+  opcodes: [0141202]
+  expected:
+      N: true
+
+- name: AND/Long/Z
+  init:
+      D1: 0xffffffff
+      D2: 0
+  opcodes: [0141202]
+  expected:
+      Z: true

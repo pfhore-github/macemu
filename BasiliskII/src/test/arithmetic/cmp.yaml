@@ -1,0 +1,98 @@
+- name: CMP/Byte/Z
+  init:
+    D1: 24
+    D2: 24
+  opcodes: [ 0131002 ]
+  expected:
+    Z: true
+
+- name: CMP/Byte/N
+  init:
+    D1: -1
+    D2: 0
+  opcodes: [ 0131002 ]
+  expected:
+    N: true
+
+- name: CMP/Byte/V
+  init:
+    D1: 0x80
+    D2: 1
+  opcodes: [ 0131002 ]
+  expected:
+    V: true
+
+- name: CMP/Byte/C
+  init:
+    D1: 0
+    D2: 0xFF
+  opcodes: [ 0131002 ]
+  expected:
+    C: true
+
+- name: CMP/Word/Z
+  init:
+    D1: 2400
+    D2: 2400
+  opcodes: [ 0131102 ]
+  expected:
+    Z: true
+
+- name: CMP/Word/N
+  init:
+    D1: -1000
+    D2: 0
+  opcodes: [ 0131102 ]
+  expected:
+    N: true
+
+- name: CMP/Word/V
+  init:
+    D1: 0x8000
+    D2: 1
+  opcodes: [ 0131102 ]
+  expected:
+    V: true
+
+- name: CMP/Word/C
+  init:
+    D1: 0
+    D2: 0xFFFF
+  opcodes: [ 0131102 ]
+  expected:
+    C: true
+
+
+
+- name: CMP/Long/Z
+  init:
+    D1: 240000
+    D2: 240000
+  opcodes: [ 0131202 ]
+  expected:
+    Z: true
+
+- name: CMP/Long/N
+  init:
+    D1: -100000
+    D2: 0
+  opcodes: [ 0131202 ]
+  expected:
+    N: true
+
+- name: CMP/Long/V
+  init:
+    D1: 0x80000000
+    D2: 1
+  opcodes: [ 0131202 ]
+  expected:
+    V: true
+
+- name: CMP/Long/C
+  init:
+    D1: 0
+    D2: 0xFFFFFFFF
+  opcodes: [ 0131202 ]
+  expected:
+    C: true
+

@@ -1,0 +1,60 @@
+- name: ABCD/REG
+  init:
+    D1: 0x51
+    D2: 0x27
+    X: false
+  opcodes: [ 0141402 ]
+  expected:
+    D1: 0x78
+
+- name: ABCD/Memory
+  init:
+    A1: 0x1001
+    A2: 0x2001
+    X: false
+    MEM:
+      0x1000/B: 0x51
+      0x2000/B: 0x27
+  opcodes: [ 0141412]
+  expected:
+    A1: 0x1000
+    A2: 0x2000
+    MEM:
+      0x1000/B: 0x78
+
+- name: ABCD/X
+  init:
+    D1: 0x51
+    D2: 0x27
+    X: true
+  opcodes: [ 0141402 ]
+  expected:
+    D1: 0x79
+
+- name: ABCD/C
+  init:
+    D1: 0x70
+    D2: 0x70
+  opcodes: [ 0141402 ]
+  expected:
+    D1: 0x40
+    X: true
+    C: true
+
+- name: ABCD/Z/non-zero
+  init:
+    D1: 0x30
+    D2: 0x20
+    Z: true
+  opcodes: [ 0141402 ]
+  expected:
+    Z: false
+
+- name: ABCD/Z/zero
+  init:
+    D1: 0
+    D2: 0
+    Z: true
+  opcodes: [ 0141402 ]
+  expected:
+    Z: true

@@ -1,0 +1,52 @@
+- name: CHK/Word/OK
+  init:
+    D3: 0x4000
+    D4: 0x6000
+  opcodes: [ 0043604 ]
+  expected:
+    exception: 0
+
+- name: CHK/Word/under
+  init:
+    D3: 0xC000
+    D4: 0x6000
+  opcodes: [ 0043604 ]
+  expected:
+    exception: 6
+    N: true
+
+- name: CHK/Word/over
+  init:
+    D3: 0x5555
+    D4: 0x3000
+  opcodes: [ 0043604 ]
+  expected:
+    exception: 6
+    N: false
+
+- name: CHK/Long/OK
+  init:
+    D3: 0x400000
+    D4: 0x600000
+  opcodes: [ 0043404 ]
+  expected:
+    exception: 0
+
+- name: CHK/Long/under
+  init:
+    D3: 0xC0000000
+    D4: 0x10000000
+  opcodes: [ 0043404 ]
+  expected:
+    exception: 6
+    N: true
+
+- name: CHK/Long/over
+  init:
+    D3: 0x70000000
+    D4: 0x30000000
+  opcodes: [ 0043404 ]
+  expected:
+    exception: 6
+    N: false
+

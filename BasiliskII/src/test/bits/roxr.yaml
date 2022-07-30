@@ -1,0 +1,235 @@
+- name: ROXR/Byte/Imm
+  init: 
+    D1: 0x81
+    X: true
+  opcodes: [ 0162021 ]
+  expected:
+    D1: 0xE0
+
+- name: ROXR/Byte/Imm8
+  init: 
+    D1: 0x81
+    X: true
+  opcodes: [ 0160021 ]
+  expected:
+    D1: 0x03
+
+- name: ROXR/Byte/Reg
+  init: 
+    D1: 0x81
+    D3: 2 
+    X: true
+  opcodes: [ 0163061 ]
+  expected:
+    D1: 0xE0
+
+- name: ROXR/Byte/Reg0
+  init: 
+    D1: 0x81
+    D3: 0 
+    X: true
+    C: false
+  opcodes: [ 0163061 ]
+  expected:
+    D1: 0x81
+    X: true
+    C: true
+
+- name: ROXR/Byte/RegOver
+  init: 
+    D1: 0xC3
+    D3: 67
+    X: false
+  opcodes: [ 0163061 ]
+  expected:
+    D1: 0xD8
+    
+- name: ROXR/Byte/CX
+  init: 
+    D1: 1
+  opcodes: [ 0161021 ]
+  expected:
+    C: true
+    X: true
+
+- name: ROXR/Byte/N
+  init: 
+    D1: 0
+    X: true
+  opcodes: [ 0161021 ]
+  expected:
+    N: true
+
+- name: ROXR/Byte/Z
+  init: 
+    D1: 0
+    X: false
+  opcodes: [ 0161021 ]
+  expected:
+    Z: true
+
+- name: ROXR/Word/Imm
+  init: 
+    D1: 0x8001
+    X: true
+  opcodes: [ 0162121 ]
+  expected:
+    D1: 0xE000
+
+- name: ROXR/Word/Imm8
+  init: 
+    D1: 0x8001
+    X: true
+  opcodes: [ 0160121 ]
+  expected:
+    D1: 0x380
+
+- name: ROXR/Word/Reg
+  init: 
+    D1: 0x8001
+    D3: 2 
+    X: true
+  opcodes: [ 0163161 ]
+  expected:
+    D1: 0xE000
+
+- name: ROXR/Word/Reg0
+  init: 
+    D1: 0x8001
+    D3: 0 
+    X: true
+    C: false
+  opcodes: [ 0163161 ]
+  expected:
+    D1: 0x8001
+    X: true
+    C: true
+
+- name: ROXR/Word/RegOver
+  init: 
+    D1: 0x1234
+    D3: 67
+    X: true
+  opcodes: [ 0163161 ]
+  expected:
+    D1: 0x2246
+    
+- name: ROXR/Word/CX
+  init: 
+    D1: 1
+  opcodes: [ 0161121 ]
+  expected:
+    C: true
+    X: true
+
+- name: ROXR/Word/N
+  init: 
+    D1: 1
+    X: true
+  opcodes: [ 0161121 ]
+  expected:
+    N: true
+
+- name: ROXR/Word/Z
+  init: 
+    D1: 1
+    X: false
+  opcodes: [ 0161121 ]
+  expected:
+    Z: true
+
+- name: ROXR/Word/EA
+  init:
+    X: true
+    A2: 0x1000
+    MEM:
+      0x1000/W: 0x8001
+  opcodes: [ 0162322 ]
+  expected: 
+    MEM:
+      0x1000/W: 0xC000
+    N: true
+    C: true
+    X: true
+    V: false
+
+- name: ROXR/Word/EA/Z
+  init:
+    X: false
+    A2: 0x1000
+    MEM:
+      0x1000/W: 0
+  opcodes: [ 0162322 ]
+  expected: 
+    Z: true
+
+
+- name: ROXR/Long/Imm
+  init: 
+    D1: 0x80000001
+    X: true
+  opcodes: [ 0162221 ]
+  expected:
+    D1: 0xE0000000
+
+- name: ROXR/Long/Imm8
+  init: 
+    D1: 0x80000001
+    X: true
+  opcodes: [ 0160221 ]
+  expected:
+    D1: 0x3800000
+
+- name: ROXR/Long/Reg
+  init: 
+    D1: 0x80000001
+    D3: 2 
+    X: true
+  opcodes: [ 0163261 ]
+  expected:
+    D1: 0xE0000000
+
+- name: ROXR/Long/Reg0
+  init: 
+    D1: 0x80000001
+    D3: 0 
+    X: true
+    C: false
+  opcodes: [ 0163261 ]
+  expected:
+    D1: 0x80000001
+    X: true
+    C: true
+
+- name: ROXR/Long/RegOver
+  init: 
+    D1: 0x12345678
+    D2: 67
+    X: true
+  opcodes: [ 0162261 ]
+  expected:
+    D1: 0x22468ACF
+    
+- name: ROXR/Long/CX
+  init: 
+    D1: 1
+  opcodes: [ 0161221 ]
+  expected:
+    C: true
+    X: true
+
+- name: ROXR/Long/N
+  init: 
+    D1: 1
+    X: true
+  opcodes: [ 0161221 ]
+  expected:
+    N: true
+
+- name: ROXR/Long/Z
+  init: 
+    D1: 1
+    X: false
+  opcodes: [ 0161221 ]
+  expected:
+    Z: true

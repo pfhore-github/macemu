@@ -1,0 +1,21 @@
+- name: TAS/value
+  init:
+    D2: 1
+  opcodes: [ 0045302 ]
+  expected:
+    D2: 0x81
+
+- name: TAS/N
+  init:
+    D1: 0x80
+  opcodes: [ 0045301 ]
+  expected:
+    N: true
+
+- name: TAS/Z
+  init:
+    D1: 0
+  opcodes: [ 0045301 ]
+  expected:
+    Z: true
+    

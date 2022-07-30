@@ -1,0 +1,111 @@
+# Byte
+- name: ADDI/Byte/operand
+  init:
+    D2: 11
+  opcodes: [ 0003002, 22]
+  expected:
+    D2: 33
+
+- name: ADDI/Byte/CX
+  init:
+    D1: 0xff
+  opcodes: [ 0003001, 1]
+  expected:
+    X: true
+    C: true
+
+- name: ADDI/Byte/V
+  init:
+    D1: 0x7f
+  opcodes: [ 0003001, 1]
+  expected:
+    V: true
+
+- name: ADDI/Byte/Z
+  init:
+    D1: 0xff
+  opcodes: [ 0003001, 1]
+  expected:
+    Z: true
+
+- name: ADDI/Byte/N
+  init:
+    D1: 0x7f
+  opcodes: [ 0003001, 1]
+  expected:
+    N: true
+
+# Word
+- name: ADDI/Word/operand
+  init:
+    D2: 1111
+  opcodes: [ 0003102, 2222]
+  expected:
+    D2: 3333
+
+- name: ADDI/Word/CX
+  init:
+    D1: 0xffff
+  opcodes: [ 0003101, 1]
+  expected:
+    X: true
+    C: true
+
+- name: ADDI/Word/V
+  init:
+    D1: 0x7fff
+  opcodes: [ 0003101, 1]
+  expected:
+    V: true
+
+- name: ADDI/Word/Z
+  init:
+    D1: 0xffff
+  opcodes: [ 0003101, 1]
+  expected:
+    Z: true
+
+- name: ADDI/Word/N
+  init:
+    D1: 0x7fff
+  opcodes: [ 0003101, 1]
+  expected:
+    N: true
+
+# Long
+- name: ADDI/Long/operand
+  init:
+    D2: 100000
+  opcodes: [ 0003202, 70000]
+  expected:
+    D2: 170000
+
+- name: ADDI/Long/CX
+  init:
+    D1: 0xffffffff
+  opcodes: [ 0003201, 0, 2]
+  expected:
+    X: true
+    C: true
+
+- name: ADDI/Long/V
+  init:
+    D1: 0x7fffffff
+  opcodes: [ 0003201, 0, 2]
+  expected:
+    V: true
+
+- name: ADDI/Long/Z
+  init:
+    D1: 0xffffffff
+  opcodes: [ 0003201, 0, 1]
+  expected:
+    Z: true
+
+- name: ADDI/Long/N
+  init:
+    D1: 0x7fffffff
+  opcodes: [ 0003201, 0, 1]
+  expected:
+    N: true
+

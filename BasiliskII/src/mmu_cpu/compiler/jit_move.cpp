@@ -187,7 +187,7 @@ void jit_move_to_sr(uint16_t op, int type, int reg, x86::Assembler &a) {
     a.bind(lb2);
 }
 
-void jit_lea(uint16_t op, int type, int reg,  x86::Assembler &a) {
+void jit_lea(uint16_t op, int type, int reg, x86::Assembler &a) {
     if(type == 0) {
         a.movsx(x86::eax, JIT_REG_D_B(reg));
         a.test(x86::eax, x86::eax);
@@ -285,7 +285,7 @@ void jit_movem_from_w(uint16_t op, int type, int reg, x86::Assembler &a) {
     a.call(jit_do_movem_from_w);
 }
 
-void do_movem_from_l(int type, int reg, uint32_t reg_list) ;
+void do_movem_from_l(int type, int reg, uint32_t reg_list);
 void jit_do_movem_from_l(int type, int reg, uint16_t reg_list) {
     try {
         do_movem_from_l(type, reg, reg_list);
@@ -301,4 +301,219 @@ void jit_movem_from_l(uint16_t op, int type, int reg, x86::Assembler &a) {
     a.mov(ARG2, reg);
     a.mov(ARG3, reg_list);
     a.call(jit_do_movem_from_l);
+}
+void jit_movep_w_from(int dm, int reg, x86::Assembler &a) {
+    int16_t disp = FETCH();
+    a.mov(x86::ebx, JIT_REG_A_L(reg));
+    a.add(x86::ebx, disp);
+    a.mov(eARG1, x86::ebx);
+    a.call(jit_read8);
+    a.mov(x86::r12b, x86::al);
+    a.lea(eARG1, x86::dword_ptr(x86::rbx, 2));
+    a.call(jit_read8);
+    a.mov(x86::dl, x86::r12b);
+    a.mov(x86::dh, x86::al);
+    a.xchg(x86::dl, x86::dh);
+    a.mov(JIT_REG_D_W(dm), x86::dx);
+}
+
+void jit_movep_l_from(int dm, int reg, x86::Assembler &a) {
+    int16_t disp = FETCH();
+    a.mov(x86::ebx, JIT_REG_A_L(reg));
+    a.add(x86::ebx, disp);
+    a.mov(eARG1, x86::ebx);
+    a.call(jit_read8);
+    a.mov(x86::r12b, x86::al);
+    a.lea(eARG1, x86::dword_ptr(x86::rbx, 2));
+    a.call(jit_read8);
+    a.mov(x86::dl, x86::r12b);
+    a.mov(x86::dh, x86::al);
+    a.xchg(x86::dl, x86::dh);
+    a.mov(x86::r12w, x86::dx);
+    a.ror(x86::r12d, 16);
+    a.lea(eARG1, x86::dword_ptr(x86::rbx, 4));
+    a.call(jit_read8);
+    a.mov(x86::r13b, x86::al);
+    a.lea(eARG1, x86::dword_ptr(x86::rbx, 6));
+    a.call(jit_read8);
+    a.mov(x86::dl, x86::r13b);
+    a.mov(x86::dh, x86::al);
+    a.xchg(x86::dl, x86::dh);
+    a.mov(x86::r12w, x86::dx);
+    a.mov(JIT_REG_D_L(dm), x86::r12d);
+}
+
+void jit_movep_w_to(int dm, int reg, x86::Assembler &a) {
+    int16_t disp = FETCH();
+    a.mov(x86::ebx, JIT_REG_A_L(reg));
+    a.add(x86::ebx, disp);
+    a.mov(eARG1, x86::ebx);
+    a.mov(x86::r8w, JIT_REG_D_W(dm));
+    a.mov(x86::dx, x86::r8w);
+    a.movzx(x86::eax, x86::dh);
+    a.mov(eARG2, x86::eax);
+    a.call(jit_write8);
+
+    a.lea(eARG1, x86::dword_ptr(x86::rbx, 2));
+    a.movzx(eARG2, x86::r8b);
+
+    a.call(jit_write8);
+}
+
+void jit_movep_l_to(int dm, int reg, x86::Assembler &a) {
+    int16_t disp = FETCH();
+    a.mov(x86::ebx, JIT_REG_A_L(reg));
+    a.add(x86::ebx, disp);
+    a.mov(eARG1, x86::ebx);
+    a.mov(x86::r8d, JIT_REG_D_L(dm));
+    a.mov(x86::eax, x86::r8d);
+    a.shr(x86::eax, 24);
+    a.movzx(eARG2, x86::al);
+    a.call(jit_write8);
+
+    a.lea(eARG1, x86::dword_ptr(x86::rbx, 2));
+    a.mov(x86::eax, x86::r8d);
+    a.shr(x86::eax, 16);
+    a.movzx(eARG2, x86::al);
+    a.call(jit_write8);
+
+    a.lea(eARG1, x86::dword_ptr(x86::rbx, 4));
+    a.mov(x86::eax, x86::r8d);
+    a.movzx(eARG2, x86::ah);
+    a.call(jit_write8);
+
+    a.lea(eARG1, x86::dword_ptr(x86::rbx, 6));
+    a.mov(x86::eax, x86::r8d);
+    a.movzx(eARG2, x86::al);
+    a.call(jit_write8);
+}
+
+void jit_movea_w(uint16_t op, int type, int reg, x86::Assembler &a) {
+    int dm = op >> 9 & 7;
+    jit_ea_read16(type, reg, false, a);
+    a.cwde();
+    a.mov(JIT_REG_A_L(dm), x86::eax);
+}
+
+void jit_movea_l(uint16_t op, int type, int reg, x86::Assembler &a) {
+    int dm = op >> 9 & 7;
+    jit_ea_read32(type, reg, false, a);
+    a.mov(JIT_REG_A_L(dm), x86::eax);
+}
+
+void jit_moveq(uint16_t op, int type, int reg, x86::Assembler &a) {
+    int dm = op >> 9 & 7;
+    int8_t v = op & 0xff;
+    a.mov(REG_BYTE(v), 0);
+    a.mov(REG_BYTE(c), 0);
+    a.mov(x86::eax, v);
+    a.test(x86::eax, x86::eax);
+    a.setz(REG_BYTE(z));
+    a.sets(REG_BYTE(n));
+    a.mov(JIT_REG_D_L(dm), x86::eax);
+}
+
+void jit_move_b(uint16_t op, int type, int reg, x86::Assembler &a) {
+    int d_type = op >> 6 & 7;
+    int dm = op >> 9 & 7;
+    a.mov(REG_BYTE(v), 0);
+    a.mov(REG_BYTE(c), 0);
+    jit_ea_read8(type, reg, false, a);
+    a.test(x86::al, x86::al);
+    a.setz(REG_BYTE(z));
+    a.sets(REG_BYTE(n));
+    jit_ea_write8(d_type, dm, a);
+}
+
+void jit_move_w(uint16_t op, int type, int reg, x86::Assembler &a) {
+    int d_type = op >> 6 & 7;
+    int dm = op >> 9 & 7;
+    a.mov(REG_BYTE(v), 0);
+    a.mov(REG_BYTE(c), 0);
+    jit_ea_read16(type, reg, false, a);
+    a.test(x86::ax, x86::ax);
+    a.setz(REG_BYTE(z));
+    a.sets(REG_BYTE(n));
+    jit_ea_write16(d_type, dm, a);
+}
+
+void jit_move_l(uint16_t op, int type, int reg, x86::Assembler &a) {
+    int d_type = op >> 6 & 7;
+    int dm = op >> 9 & 7;
+    a.mov(REG_BYTE(v), 0);
+    a.mov(REG_BYTE(c), 0);
+    jit_ea_read32(type, reg, false, a);
+    a.test(x86::eax, x86::eax);
+    a.setz(REG_BYTE(z));
+    a.sets(REG_BYTE(n));
+    jit_ea_write32(d_type, dm, a);
+}
+void read_line(uint32_t addr, std::byte *dst);
+void write_line(uint32_t addr, const std::byte *src);
+void jit_move16(uint16_t op, int type, int reg, x86::Assembler &a) {
+    a.sub(x86::rsp, 16);
+    uint32_t addr;
+    switch(type) {
+    case 0:
+        addr = FETCH32() &~ 0xf;
+        a.mov(eARG1, JIT_REG_A_L(reg));
+        a.and_(eARG1, ~0xf);
+        a.lea(ARG2, x86::ptr(x86::rsp, 16));
+        a.call(read_line);
+        a.mov(eARG1, addr);
+        a.lea(ARG2, x86::ptr(x86::rsp, 16));
+        a.call(write_line);
+        a.add(JIT_REG_A_L(reg), 16);
+        break;
+    case 1:
+        addr = FETCH32() &~ 0xf;
+        a.mov(eARG1, addr);
+        a.lea(ARG2, x86::ptr(x86::rsp, 16));
+        a.call(read_line);
+        a.mov(eARG1, JIT_REG_A_L(reg));
+        a.and_(eARG1, ~0xf);
+        a.lea(ARG2, x86::ptr(x86::rsp, 16));
+        a.call(write_line);
+        a.add(JIT_REG_A_L(reg), 16);
+        break;
+    case 2:
+        addr = FETCH32() &~ 0xf;
+        a.mov(eARG1, JIT_REG_A_L(reg));
+        a.and_(eARG1, ~0xf);
+        a.lea(ARG2, x86::ptr(x86::rsp, 16));
+        a.call(read_line);
+        a.mov(eARG1, addr);
+        a.lea(ARG2, x86::ptr(x86::rsp, 16));
+        a.call(write_line);
+        break;
+    case 3:
+        addr = FETCH32() &~ 0xf;
+        a.mov(eARG1, addr);
+        a.lea(ARG2, x86::ptr(x86::rsp, 16));
+        a.call(read_line);
+        a.mov(eARG1, JIT_REG_A_L(reg));
+        a.and_(eARG1, ~0xf);
+        a.lea(ARG2, x86::ptr(x86::rsp, 16));
+        a.call(write_line);
+        break;
+    case 4: {
+        uint16_t op2 = FETCH();
+        int ay = op2 >> 12 & 7;
+        a.mov(eARG1, JIT_REG_A_L(reg));
+        a.and_(eARG1, ~0xf);
+        a.lea(ARG2, x86::ptr(x86::rsp, 16));
+        a.call(read_line);
+        a.mov(eARG1, JIT_REG_A_L(ay));
+        a.and_(eARG1, ~0xf);
+        a.lea(ARG2, x86::ptr(x86::rsp, 16));
+        a.call(write_line);
+        a.add(JIT_REG_A_L(reg), 16);
+        a.add(JIT_REG_A_L(ay), 16);
+        break;
+    }
+    default:
+        a.add(x86::rsp, 16);
+        throw ILLEGAL_INST_EX{};
+    }
+     a.add(x86::rsp, 16);
 }

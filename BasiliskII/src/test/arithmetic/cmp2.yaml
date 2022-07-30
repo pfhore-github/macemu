@@ -1,0 +1,362 @@
+# Byte
+- name: CMP2/WithDn/Byte/in_range
+  init:
+    A3: 0x1000
+    D4: 0x40
+    MEM:
+      0x1000/B: 0x10
+      0x1001/B: 0x50 
+  opcodes: [0000323, 0x4000]
+  expected:
+      Z: false
+      C: false
+
+- name: CMP2/WithDn/Byte/low_eq
+  init:
+    A3: 0x1000
+    D4: 0x10
+    MEM:
+      0x1000/B: 0x10
+      0x1001/B: 0x50 
+  opcodes: [0000323, 0x4000]
+  expected:
+      Z: true
+      C: false
+
+- name: CMP2/WithDn/Byte/high_eq
+  init:
+    A3: 0x1000
+    D4: 0x50
+    MEM:
+      0x1000/B: 0x10
+      0x1001/B: 0x50 
+  opcodes: [0000323, 0x4000]
+  expected:
+      Z: true
+      C: false
+
+- name: CMP2/WithDn/Byte/under
+  init:
+    A3: 0x1000
+    D4: 0x05
+    MEM:
+      0x1000/B: 0x10
+      0x1001/B: 0x50 
+  opcodes: [0000323, 0x4000]
+  expected:
+      Z: false
+      C: true
+
+- name: CMP2/WithDn/Byte/over
+  init:
+    A3: 0x1000
+    D4: 0x55
+    MEM:
+      0x1000/B: 0x10
+      0x1001/B: 0x50 
+  opcodes: [0000323, 0x4000]
+  expected:
+      Z: false
+      C: true
+
+- name: CMP2/WithAn/Byte/in_range
+  init:
+    A3: 0x1000
+    A4: -10
+    MEM:
+      0x1000/B: -20
+      0x1001/B: -5 
+  opcodes: [0000323, 0xC000]
+  expected:
+      Z: false
+      C: false
+
+- name: CMP2/WithAn/Byte/low_eq
+  init:
+    A3: 0x1000
+    A4: -20
+    MEM:
+      0x1000/B: -20
+      0x1001/B: -5 
+  opcodes: [0000323, 0xC000]
+  expected:
+      Z: true
+      C: false
+
+- name: CMP2/WithDn/Byte/high_eq
+  init:
+    A3: 0x1000
+    D4: -5
+    MEM:
+      0x1000/B: -20
+      0x1001/B: -5 
+  opcodes: [0000323, 0x4000]
+  expected:
+      Z: true
+      C: false
+
+- name: CMP2/WithDn/Byte/under
+  init:
+    A3: 0x1000
+    D4: -30
+    MEM:
+      0x1000/B: -20
+      0x1001/B: -5 
+  opcodes: [0000323, 0x4000]
+  expected:
+      Z: false
+      C: true
+
+- name: CMP2/WithDn/Byte/over
+  init:
+    A3: 0x1000
+    D4: -2
+    MEM:
+      0x1000/B: -20
+      0x1001/B: -5 
+  opcodes: [0000323, 0x4000]
+  expected:
+      Z: false
+      C: true
+
+#Word
+- name: CMP2/WithDn/Word/in_range
+  init:
+    A3: 0x1000
+    D4: 0x4000
+    MEM:
+      0x1000/W: 0x1000
+      0x1002/W: 0x5000 
+  opcodes: [0001323, 0x4000]
+  expected:
+      Z: false
+      C: false
+
+- name: CMP2/WithDn/Word/low_eq
+  init:
+    A3: 0x1000
+    D4: 0x1000
+    MEM:
+      0x1000/W: 0x1000
+      0x1002/W: 0x5000 
+  opcodes: [0001323, 0x4000]
+  expected:
+      Z: true
+      C: false
+
+- name: CMP2/WithDn/Word/high_eq
+  init:
+    A3: 0x1000
+    D4: 0x5000
+    MEM:
+      0x1000/W: 0x1000
+      0x1002/W: 0x5000 
+  opcodes: [0001323, 0x4000]
+  expected:
+      Z: true
+      C: false
+
+- name: CMP2/WithDn/Word/under
+  init:
+    A3: 0x1000
+    D4: 0x0500
+    MEM:
+      0x1000/W: 0x1000
+      0x1002/W: 0x5000 
+  opcodes: [0001323, 0x4000]
+  expected:
+      Z: false
+      C: true
+
+- name: CMP2/WithDn/Word/over
+  init:
+    A3: 0x1000
+    D4: 0x5500
+    MEM:
+      0x1000/W: 0x1000
+      0x1002/W: 0x5000 
+  opcodes: [0001323, 0x4000]
+  expected:
+      Z: false
+      C: true
+
+- name: CMP2/WithAn/Word/in_range
+  init:
+    A3: 0x1000
+    A4: -500
+    MEM:
+      0x1000/W: -1000
+      0x1002/W: -200 
+  opcodes: [0001323, 0xC000]
+  expected:
+      Z: false
+      C: false
+
+- name: CMP2/WithDn/Word/low_eq
+  init:
+    A3: 0x1000
+    A4: -1000
+    MEM:
+      0x1000/W: -1000
+      0x1002/W: -200 
+  opcodes: [0001323, 0xC000]
+  expected:
+      Z: true
+      C: false
+
+- name: CMP2/WithAn/Word/high_eq
+  init:
+    A3: 0x1000
+    A4: -200
+    MEM:
+      0x1000/W: -1000
+      0x1002/W: -200 
+  opcodes: [0001323, 0xC000]
+  expected:
+      Z: true
+      C: false
+
+- name: CMP2/WithAn/Word/under
+  init:
+    A3: 0x1000
+    A4: -2000
+    MEM:
+      0x1000/W: -1000
+      0x1002/W: -200 
+  opcodes: [0001323, 0xC000]
+  expected:
+      Z: false
+      C: true
+
+- name: CMP2/WithAn/Word/over
+  init:
+    A3: 0x1000
+    D4: -20
+    MEM:
+      0x1000/W: -1000
+      0x1002/W: -200 
+  opcodes: [0001323, 0xC000]
+  expected:
+      Z: false
+      C: true
+
+#Long
+- name: CMP2/WithDn/Long/in_range
+  init:
+    A3: 0x1000
+    D4: 0x40000000
+    MEM:
+      0x1000/L: 0x10000000
+      0x1004/L: 0x50000000
+  opcodes: [0002323, 0x4000]
+  expected:
+      Z: false
+      C: false
+
+- name: CMP2/WithDn/Long/low_eq
+  init:
+    A3: 0x1000
+    D4: 0x10000000
+    MEM:
+      0x1000/L: 0x10000000
+      0x1004/L: 0x50000000
+  opcodes: [0002323, 0x4000]
+  expected:
+      Z: true
+      C: false
+
+- name: CMP2/WithDn/Long/high_eq
+  init:
+    A3: 0x1000
+    D4: 0x50000000
+    MEM:
+      0x1000/L: 0x10000000
+      0x1004/L: 0x50000000
+  opcodes: [0002323, 0x4000]
+  expected:
+      Z: true
+      C: false
+
+- name: CMP2/WithDn/Long/under
+  init:
+    A3: 0x1000
+    D4: 0x05000000
+    MEM:
+      0x1000/L: 0x10000000
+      0x1004/L: 0x50000000
+  opcodes: [0002323, 0x4000]
+  expected:
+      Z: false
+      C: true
+
+- name: CMP2/WithDn/Long/over
+  init:
+    A3: 0x1000
+    D4: 0x55000000
+    MEM:
+      0x1000/L: 0x10000000
+      0x1004/L: 0x50000000
+  opcodes: [0002323, 0x4000]
+  expected:
+      Z: false
+      C: true
+
+- name: CMP2/WithAn/Long/in_range
+  init:
+    A3: 0x1000
+    A4: -80000
+    MEM:
+      0x1000/L: -100000
+      0x1004/L: -60000
+  opcodes: [0002323, 0xC000]
+  expected:
+      Z: false
+      C: false
+
+- name: CMP2/WithDn/Long/low_eq
+  init:
+    A3: 0x1000
+    A4: -100000
+    MEM:
+      0x1000/L: -100000
+      0x1004/L: -60000
+  opcodes: [0002323, 0xC000]
+  expected:
+      Z: true
+      C: false
+
+- name: CMP2/WithDn/Long/high_eq
+  init:
+    A3: 0x1000
+    A4: -60000
+    MEM:
+      0x1000/L: -100000
+      0x1004/L: -60000
+  opcodes: [0002323, 0xC000]
+  expected:
+      Z: true
+      C: false
+
+- name: CMP2/WithDn/Long/under
+  init:
+    A3: 0x1000
+    A4: -200000
+    MEM:
+      0x1000/L: -100000
+      0x1004/L: -60000
+  opcodes: [0002323, 0xC000]
+  expected:
+      Z: false
+      C: true
+
+- name: CMP2/WithDn/Long/over
+  init:
+    A3: 0x1000
+    A4: -20000
+    MEM:
+      0x1000/L: -100000
+      0x1004/L: -60000
+  opcodes: [0002323, 0xC000]
+  expected:
+      Z: false
+      C: true

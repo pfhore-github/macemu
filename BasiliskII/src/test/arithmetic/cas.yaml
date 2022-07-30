@@ -1,0 +1,83 @@
+- name: CAS/Byte/eq
+  init:
+    D4: 2
+    D3: 1
+    MEM:
+      0x1000/B: 1
+    A2: 0x1000
+  opcodes: [ 005322, 0403]
+  expected:
+    D3: 1
+    MEM: 
+      0x1000/B: 2
+    Z: true
+
+- name: CAS/Byte/ne
+  init:
+    D4: 5
+    D3: 11
+    MEM:
+      0x1000/B: 1
+    A2: 0x1000
+  opcodes: [ 005322, 0403]
+  expected:
+    D3: 1
+    MEM: 
+      0x1000/B: 1
+    Z: false
+
+- name: CAS/Word/eq
+  init:
+    D4: 1000
+    D3: 500
+    MEM:
+      0x1000/W: 500
+    A2: 0x1000
+  opcodes: [ 0006322, 0403]
+  expected:
+    D3: 500
+    MEM: 
+      0x1000/W: 1000
+    Z: true
+
+- name: CAS/Word/ne
+  init:
+    D4: 500
+    D3: 600
+    MEM:
+      0x1000/W: 700
+    A2: 0x1000
+  opcodes: [ 006322, 0403]
+  expected:
+    D3: 700
+    MEM: 
+      0x1000/W: 700
+    Z: false
+
+- name: CAS/Long/eq
+  init:
+    D4: 20000
+    D3: 10000
+    MEM:
+      0x1000/L: 10000
+    A2: 0x1000
+  opcodes: [ 0007322, 0403]
+  expected:
+    D3: 10000
+    MEM: 
+      0x1000/L: 20000
+    Z: true
+
+- name: CAS/Long/ne
+  init:
+    D4: 50000
+    D3: 60000
+    MEM:
+      0x1000/L: 70000
+    A2: 0x1000
+  opcodes: [ 007322, 0403]
+  expected:
+    D3: 70000
+    MEM: 
+      0x1000/L: 70000
+    Z: false

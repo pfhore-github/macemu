@@ -1,0 +1,5 @@
+- name: NOP
+  opcodes: [ 0047161 ]
+  expected:
+    exception: 0
+  

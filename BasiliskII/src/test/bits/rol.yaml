@@ -1,0 +1,208 @@
+- name: ROL/Byte/Imm
+  init:
+    D2: 0x8B
+  opcodes: [ 0162432 ]
+  expected:
+    D2: 0x2E
+
+- name: ROL/Byte/Imm8
+  init:
+    D2: 0x8B
+  opcodes: [ 0160432 ]
+  expected:
+    D2: 0x8B
+
+
+- name: ROL/Byte/Reg
+  init:
+    D1: 0x8B
+    D3: 2
+  opcodes: [ 0163471 ]
+  expected:
+    D1: 0x2E
+
+- name: ROL/Byte/Reg0
+  init:
+    C: false
+    D1: 0x8B
+    D3: 0
+  opcodes: [ 0163471 ]
+  expected:
+    D1: 0x8B
+    C: false
+
+- name: ROL/Byte/RegOver
+  init:
+    D1: 0x39
+    D2: 68
+  opcodes: [ 0162471 ]
+  expected:
+    D1: 0x93
+
+- name: ROL/Byte/C
+  init:
+    D1: 0x80
+  opcodes: [ 0161431 ]
+  expected:
+    C: true
+
+- name: ROL/Byte/N
+  init:
+    D1: 0x40
+  opcodes: [ 0161431 ]
+  expected:
+    N: true
+
+- name: ROL/Byte/Z
+  init:
+    D1: 0
+  opcodes: [ 0161431 ]
+  expected:
+    Z: true
+
+- name: ROL/Word/Imm
+  init:
+    D2: 0x1234
+  opcodes: [ 0164532 ]
+  expected:
+    D2: 0x2341
+
+- name: ROL/Word/Imm8
+  init:
+    D2: 0x1234
+  opcodes: [ 0160532 ]
+  expected:
+    D2: 0x3412
+
+
+- name: ROL/Word/Reg
+  init:
+    D2: 0x1234
+    D3: 4
+  opcodes: [ 0163572 ]
+  expected:
+    D2: 0x2341
+
+- name: ROL/Word/Reg0
+  init:
+    C: false
+    D1: 0x1234
+    D3: 0
+  opcodes: [ 0163572 ]
+  expected:
+    D1: 0x1234
+    C: false
+
+- name: ROL/Word/RegOver
+  init:
+    D1: 0x3456
+    D2: 68
+  opcodes: [ 0162571 ]
+  expected:
+    D1: 0x4563
+
+- name: ROL/Word/C
+  init:
+    D1: 0x8000
+  opcodes: [ 0161531 ]
+  expected:
+    C: true
+
+- name: ROL/Word/N
+  init:
+    D1: 0x4000
+  opcodes: [ 0161531 ]
+  expected:
+    N: true
+
+- name: ROL/Word/Z
+  init:
+    D1: 0
+  opcodes: [ 0161531 ]
+  expected:
+    Z: true
+
+- name: ROL/Word/EA
+  init: 
+    A2: 0x1000
+    MEM:
+      0x1000/W: 0xC000
+  opcodes: [ 0163722 ]
+  expected:
+    C: true
+    N: true
+    V: false
+    MEM:
+      0x1000/W: 0x8001
+
+- name: ROL/Word/EA/Z
+  init: 
+    A2: 0x1000
+    MEM:
+      0x1000/W: 0
+  opcodes: [ 0163722 ]
+  expected:
+    Z: true
+
+
+- name: ROL/Long/Imm
+  init:
+    D1: 0x12345678
+  opcodes: [ 0164631 ]
+  expected:
+    D1: 0x23456781
+
+- name: ROL/Long/Imm8
+  init:
+    D1: 0x12345678
+  opcodes: [ 0160631 ]
+  expected:
+    D1: 0x34567812
+
+
+- name: ROL/Long/Reg
+  init:
+    D2: 0x12345678
+    D3: 4
+  opcodes: [ 0163672 ]
+  expected:
+    D2: 0x23456781
+
+- name: ROL/Long/Reg0
+  init:
+    C: false
+    D2: 0x12345678
+    D3: 0
+  opcodes: [ 0163672 ]
+  expected:
+    D2: 0x12345678
+    C: false
+
+- name: ROL/Long/RegOver
+  init:
+    D1: 0x3456789A
+    D2: 68
+  opcodes: [ 0162671 ]
+  expected:
+    D1: 0x456789A3
+
+- name: ROL/Long/C
+  init:
+    D1: 0x80000000
+  opcodes: [ 0161631 ]
+  expected:
+    C: true
+
+- name: ROL/Long/N
+  init:
+    D1: 0x40000000
+  opcodes: [ 0161631 ]
+  expected:
+    N: true
+
+- name: ROL/Long/Z
+  init:
+    D1: 0
+  opcodes: [ 0161631 ]
+  expected:
+    Z: true

@@ -1,0 +1,60 @@
+- name: SBCD/REG
+  init: 
+    D1: 0x51
+    D2: 0x27
+    X: false
+  opcodes: [ 0101402 ]
+  expected: 
+    D1: 0x24
+
+- name: SBCD/Memory
+  init: 
+    A1: 0x1001
+    A2: 0x2001
+    X: false
+    MEM:
+      0x1000/B: 0x51
+      0x2000/B: 0x27
+  opcodes: [ 0101412 ]
+  expected: 
+    A1: 0x1000
+    A2: 0x2000
+    MEM:
+      0x1000/B: 0x24
+
+- name: SBCD/C
+  init: 
+    D1: 0x30
+    D2: 0x50
+  opcodes: [ 0101402 ]
+  expected: 
+    C: true
+    X: true
+
+- name: SBCD/X
+  init: 
+    D1: 0x51
+    D2: 0x27
+    X: true
+  opcodes: [ 0101402 ]
+  expected: 
+    D1: 0x23
+
+
+- name: SBCD/Z/false
+  init: 
+    D1: 2
+    D2: 1
+    Z: true
+  opcodes: [ 0101402 ]
+  expected: 
+    Z: false
+
+- name: SBCD/Z/true
+  init: 
+    D1: 1
+    D2: 1
+    Z: true
+  opcodes: [ 0101402 ]
+  expected: 
+    Z: true

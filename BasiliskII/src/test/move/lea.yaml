@@ -1,0 +1,291 @@
+- name: LEA/Illegal/AR_direct
+  opcodes: [ 0043712]
+  expected:
+    exception: 4
+
+
+- name: LEA/AR
+  init:
+    A2: 0x1000
+  opcodes: [ 0043722 ]
+  expected:
+    A3: 0x1000
+  
+- name: LEA/Illegal/Increment
+  opcodes: [ 0043732]
+  expected:
+    exception: 4
+  
+- name: LEA/Illegal/Decrement
+  opcodes: [ 0043742]
+  expected:
+    exception: 4
+
+- name: LEA/D16
+  init:
+    A2: 0x1000
+  opcodes: [ 0043752, 0xFFF6]
+  expected:
+    A3: 0xFF6
+
+- name: LEA/Xn(W)
+  init:
+    A2: 0x1000
+    D3: 0xFFFA
+  opcodes: [ 0043762, 0x30F0]
+  expected:
+    A3: 0xFEA
+
+- name: LEA/Xn(L)
+  init:
+    A2: 0x1000
+    D3: 0x10
+  opcodes: [ 0043762, 0x3804]
+  expected:
+    A3: 0x1014
+
+- name: LEA/Xn.CC/1
+  init:
+    A2: 0x1000
+    D3: 0x10
+  opcodes: [ 0043762, 0x3A00]
+  expected:
+    A3: 0x1020
+
+- name: LEA/Xn.CC/2
+  init:
+    A2: 0x1000
+    D3: 0x10
+  opcodes: [ 0043762, 0x3C00]
+  expected:
+    A3: 0x1040
+
+- name: LEA/Xn.CC/3
+  init:
+    A2: 0x1000
+    D3: 0x10
+  opcodes: [ 0043762, 0x3E00]
+  expected:
+    A3: 0x1080
+
+- name: LEA/Illegal/Bit3
+  init:
+    A2: 0x1000
+    D3: 0x10
+  opcodes: [ 0043762, 0x108]
+  expected:
+    exception: 4
+
+- name: LEA/BD/Illegal
+  init:
+    A2: 0x1000
+    D3: 0x10
+  opcodes: [ 0043762, 0x3900]
+  expected:
+    exception: 4
+
+- name: LEA/BD/0
+  init:
+    A2: 0x1000
+    D3: 4
+  opcodes: [ 0043762, 0x3910]
+  expected:
+    A3: 0x1004
+
+- name: LEA/BD/Word
+  init:
+    A2: 0x1000
+    D3: 4
+  opcodes: [ 0043762, 0x3920, -60]
+  expected:
+    A3: 0xFC8
+
+- name: LEA/BD/Long
+  init:
+    A2: 0x1000
+    D3: 4
+  opcodes: [ 0043762, 0x3930, 0x10000]
+  expected:
+    A3: 0x11004
+
+- name: LEA/DirectIndex/AR/Supressed
+  init:
+    D3: 10
+    A2: 0x1000
+  opcodes: [ 0043762, 0x3990]
+  expected:
+    A3: 10
+
+- name: LEA/DirectIndex/Xn/Supressed
+  init:
+    D3: 10
+    A2: 0x1000
+  opcodes: [ 0043762, 0x3950]
+  expected:
+    A3: 0x1000
+
+- name: LEA/PreIndex/OD/0
+  init:
+    D2: 0x10
+    A3: 0x1000
+    MEM:
+      0x1140/L: 0x2000
+  opcodes: [ 0044763, 0x2D21, 0x100]
+  expected: 
+    A4: 0x2000
+
+- name: LEA/PreIndex/OD/W
+  init:
+    D2: 0x10
+    A3: 0x1000
+    MEM:
+      0x1140/L: 0x2000
+  opcodes: [ 0044763, 0x2D22, 0x100, -32]
+  expected: 
+    A4: 0x1FE0
+
+- name: LEA/PreIndex/OD/L
+  init:
+    D2: 0x10
+    A3: 0x1000
+    MEM:
+      0x1140/L: 0x2000
+  opcodes: [ 0044763, 0x2D23, 0x100, 0x10000]
+  expected: 
+    A4: 0x12000
+
+- name: LEA/PreIndex/AR/Supressed
+  init:
+    D2: 0x10
+    A3: 0x1000
+    MEM:
+      0x2010/L: 0x3000
+  opcodes: [ 0044763, 0x29A2, 0x2000, 0x100]
+  expected: 
+    A4: 0x3100
+
+- name: LEA/PreIndex/Xn/Supressed
+  init:
+    D2: 0x10
+    A3: 0x1000
+    MEM:
+      0x3000/L: 0x4000
+  opcodes: [ 0044763, 0x2962, 0x2000, 0x100]
+  expected: 
+    A4: 0x4100
+
+- name: LEA/PostIndex/OD/Invalid
+  init:
+    D2: 0x10
+    A3: 0x1000
+    MEM:
+      0x1140/L: 0x2000
+  opcodes: [ 0044763, 0x2D24, 0x100]
+  expected: 
+    exception: 4
+
+- name: LEA/PostIndex/OD/0
+  init:
+    D2: 0x30
+    A3: 0x1000
+    MEM:
+      0x1100/L: 0x2000
+  opcodes: [ 0044763, 0x2925, 0x100]
+  expected: 
+    A4: 0x2030
+
+
+- name: LEA/PostIndex/OD/W
+  init:
+    D2: 0x30
+    A3: 0x1000
+    MEM:
+      0x1100/L: 0x2000
+  opcodes: [ 0044763, 0x2926, 0x100, -32]
+  expected: 
+    A4: 0x2010
+
+- name: LEA/PostIndex/OD/L
+  init:
+    D2: 0x10
+    A3: 0x1000
+    MEM:
+      0x1100/L: 0x2000
+  opcodes: [ 0044763, 0x2927, 0x100, 0x10000]
+  expected: 
+    A4: 0x12010
+
+
+- name: LEA/PostIndex/AR/Supressed
+  init:
+    D2: 0x10
+    A3: 0x1000
+    MEM:
+      0x2000/L: 0x3000
+  opcodes: [ 0044763, 0x29A6, 0x2000, 0x100]
+  expected: 
+    A4: 0x3110
+
+- name: LEA/PostIndex/Xn/Supressed
+  init:
+    D2: 0x10
+    A3: 0x1000
+    MEM:
+      0x3000/L: 0x4000
+  opcodes: [ 0044763, 0x2966, 0x2000, 0x100]
+  expected: 
+    A4: 0x4100
+
+- name: LEA/imm/Word
+  opcodes: [ 0043770, -200]
+  expected: 
+    A3: -200
+
+- name: LEA/imm/Long
+  opcodes: [ 0043771, 0x10000]
+  expected: 
+    A3: 0x10000
+
+- name: LEA/PC/d16
+  init:
+    PC: 0x1000
+  opcodes: [ 0043772, 0xfff0]
+  expected:
+    A3: 0x0FF2
+
+- name: LEA/PC/Brief
+  init:
+    D2: 0x10
+    PC: 0x1000
+  opcodes: [ 0043773, 0x28E0]
+  expected:
+    A3: 0x0FF2
+
+- name: LEA/PC/Extend
+  init:
+    D2: 0x10
+    PC: 0x1000
+  opcodes: [ 0043773, 0x2920, 0x100]
+  expected:
+    A3: 0x1112
+
+- name: LEA/PC/PreIndex
+  init:
+    D2: 0x10
+    PC: 0x1000
+    MEM:
+      0x1142/L: 0x2000
+  opcodes: [ 0043773, 0x2D22, 0x100, 0x200]
+  expected:
+    A3: 0x2200
+
+- name: LEA/PC/PostIndex
+  init:
+    D2: 0x10
+    PC: 0x1000
+    MEM:
+      0x1102/L: 0x2000
+  opcodes: [ 0043773, 0x2D26, 0x100, 0x200]
+  expected:
+    A3: 0x2240
+

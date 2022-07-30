@@ -21,17 +21,15 @@ uint8_t do_nbcd(uint8_t v1) {
     }
     return to_bcd(v);
 }
-OP(nbcd) {
+void op_nbcd(uint16_t  xop, int dm, int type, int  reg) {
     if(type == 1) {
         op_link_l(reg);
     } else {
         EA_Update8(type, reg, do_nbcd);
     }
 }
-void op_sbcd_d(int dm, int reg) {
-    uint8_t src = regs.d[reg];
-    uint8_t dst = regs.d[dm];
-    int v = from_bcd(dst) - from_bcd(src) - regs.x;
+uint8_t do_sbcd(uint8_t a, uint8_t b) {
+    int v = from_bcd(a) - from_bcd(b) - regs.x;
     if(v < 0) {
         regs.c = true;
         v += 100;
@@ -40,29 +38,24 @@ void op_sbcd_d(int dm, int reg) {
     }
     regs.x = regs.c;
     regs.z = v == 0;
-    WRITE_D8(dm, to_bcd(v));
+    return to_bcd(v);
+}
+void op_sbcd_d(int dm, int reg) {
+    uint8_t src = regs.d[reg];
+    uint8_t dst = regs.d[dm];
+    WRITE_D8(dm, do_sbcd(dst, src));
 }
 
 void op_sbcd_a(int dm, int reg) {
     uint8_t src = read8(--regs.a[reg]);
     uint8_t dst = read8(--regs.a[dm]);
-    int v = from_bcd(dst) - from_bcd(src) - regs.x;
-    if(v < 0) {
-        regs.c = true;
-        v += 100;
-    } else {
-        regs.c = false;
-    }
-    regs.x = regs.c;
-    regs.z = v == 0;
-    write8(regs.a[dm], to_bcd(v));
+    write8(regs.a[dm], do_sbcd(dst, src));
 }
-
+uint8_t do_pack(uint16_t v) { return (v & 0xf) | (v >> 4 & 0xf0); }
 void op_pack_d(int dm, int reg) {
     uint16_t src = regs.d[reg];
     uint16_t adjust = FETCH();
-    uint16_t dst = src + adjust;
-    WRITE_D16(dm, (dst & 0xf) | (dst >> 4 & 0xf0));
+    WRITE_D16(dm, do_pack(src + adjust));
 }
 
 void op_pack_a(int dm, int reg) {
@@ -70,19 +63,20 @@ void op_pack_a(int dm, int reg) {
     uint8_t src1 = read8(--regs.a[reg]);
     uint8_t src2 = read8(--regs.a[reg]);
     uint16_t dst = (src1 | src2 << 8) + adjust;
-    write8(--regs.a[dm], (dst & 0xf) | (dst >> 4 & 0xf0));
+    write8(--regs.a[dm], do_pack(dst));
 }
-
+uint16_t do_unpk(uint8_t v) {
+    return (v & 0xf0) << 4 | (v & 0x0f);
+}
 void op_unpk_d(int dm, int reg) {
-    uint16_t src = (regs.d[reg] & 0xf0) << 4 | (regs.d[reg] & 0x0f);
     uint16_t adjust = FETCH();
-    WRITE_D16(dm, src + adjust);
+    WRITE_D16(dm, do_unpk(regs.d[reg]) + adjust);
 }
 
 void op_unpk_a(int dm, int reg) {
     uint16_t adjust = FETCH();
     uint8_t src = read8(--regs.a[reg]);
-    uint16_t dst = ((src & 0xf0) << 4 | (src & 0x0f)) + adjust;
+    uint16_t dst = do_unpk(src) + adjust;
     write16(regs.a[dm] -= 2, dst);
 }
 uint8_t do_abcd(uint8_t a, uint8_t b) {
@@ -94,7 +88,9 @@ uint8_t do_abcd(uint8_t a, uint8_t b) {
         regs.c = false;
     }
     regs.x = regs.c;
-    regs.z = v == 0 ? false : regs.z;
+    if( v ) {
+        regs.z = false;
+    }
     return to_bcd(v);
 }
 void op_abcd_d(int dm, int reg) {

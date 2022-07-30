@@ -1,0 +1,274 @@
+- name: SUBX/Byte/REG/false
+  init:
+    D1: 40
+    D2: 30
+    X: false
+  opcodes: [0111402]
+  expected:
+    D1: 10
+
+- name: SUBX/Byte/REG/true
+  init:
+    D1: 40
+    D2: 30
+    X: true
+  opcodes: [0111402]
+  expected:
+    D1: 9
+
+- name: SUBX/Byte/Memory/false
+  init:
+    A1: 0x1001
+    A2: 0x2001
+    X: false
+    MEM:
+      0x1000/B: 40
+      0x2000/B: 30
+  opcodes: [0111412]
+  expected:
+    A1: 0x1000
+    A2: 0x2000
+    MEM:
+      0x1000/B: 10
+
+- name: SUBX/Byte/Memory/true
+  init:
+    A1: 0x1001
+    A2: 0x2001
+    X: true
+    MEM:
+      0x1000/B: 40
+      0x2000/B: 30
+  opcodes: [0111412]
+  expected:
+    A1: 0x1000
+    A2: 0x2000
+    MEM:
+      0x1000/B: 9
+
+- name: SUBX/Byte/CX
+  init:
+    D1: 1
+    D2: 2
+  opcodes: [ 0111402 ]
+  expected:
+    C: true
+    X: true
+
+- name: SUBX/Byte/V
+  init:
+    D1: 0x80
+    D2: 1
+  opcodes: [ 0111402 ]
+  expected:
+    V: true
+
+- name: SUBX/Byte/N
+  init:
+    D1: 0xFE
+    D2: 1
+  opcodes: [ 0111402 ]
+  expected:
+    N: true
+
+- name: SUBX/Byte/Z/non-zero
+  init:
+    D1: 2
+    D2: 1
+    Z: true
+  opcodes: [ 0111402 ]
+  expected:
+    Z: false
+
+- name: SUBX/Byte/Z/zero
+  init:
+    D1: 1
+    D2: 1
+    Z: true
+  opcodes: [ 0111402 ]
+  expected:
+    Z: true
+
+
+- name: SUBX/Word/REG/false
+  init:
+    D1: 1000
+    D2: 300
+    X: false
+  opcodes: [0111502]
+  expected:
+    D1: 700
+
+- name: SUBX/Word/REG/true
+  init:
+    D1: 1000
+    D2: 300
+    X: true
+  opcodes: [0111502]
+  expected:
+    D1: 699
+
+- name: SUBX/Word/Memory/false
+  init:
+    A1: 0x1002
+    A2: 0x2002
+    X: false
+    MEM:
+      0x1000/W: 4000
+      0x2000/W: 3000
+  opcodes: [0111512]
+  expected:
+    A1: 0x1000
+    A2: 0x2000
+    MEM:
+      0x1000/W: 1000
+
+- name: SUBX/Word/Memory/true
+  init:
+    A1: 0x1002
+    A2: 0x2002
+    X: true
+    MEM:
+      0x1000/W: 4000
+      0x2000/W: 3000
+  opcodes: [0111512]
+  expected:
+    A1: 0x1000
+    A2: 0x2000
+    MEM:
+      0x1000/W: 999
+
+- name: SUBX/Word/CX
+  init:
+    D1: 1000
+    D2: 1002
+  opcodes: [ 0111502 ]
+  expected:
+    C: true
+    X: true
+
+- name: SUBX/Word/V
+  init:
+    D1: 0x8000
+    D2: 1
+  opcodes: [ 0111502 ]
+  expected:
+    V: true
+
+- name: SUBX/Word/N
+  init:
+    D1: 0xFFFE
+    D2: 1
+  opcodes: [ 0111502 ]
+  expected:
+    N: true
+
+- name: SUBX/Word/Z/non-zero
+  init:
+    D1: 2000
+    D2: 1000
+    Z: true
+  opcodes: [ 0111502 ]
+  expected:
+    Z: false
+
+- name: SUBX/Word/Z/zero
+  init:
+    D1: 1000
+    D2: 1000
+    Z: true
+  opcodes: [ 0111502 ]
+  expected:
+    Z: true
+
+
+- name: SUBX/Long/REG/false
+  init:
+    D1: 400000
+    D2: 300000
+    X: false
+  opcodes: [0111602]
+  expected:
+    D1: 100000
+
+- name: SUBX/Long/REG/true
+  init:
+    D1: 400000
+    D2: 300000
+    X: true
+  opcodes: [0111602]
+  expected:
+    D1: 99999
+
+- name: SUBX/Long/Memory/false
+  init:
+    A1: 0x1004
+    A2: 0x2004
+    X: false
+    MEM:
+      0x1000/L: 400000
+      0x2000/L: 300000
+  opcodes: [0111612]
+  expected:
+    A1: 0x1000
+    A2: 0x2000
+    MEM:
+      0x1000/L: 100000
+
+- name: SUBX/Long/Memory/true
+  init:
+    A1: 0x1004
+    A2: 0x2004
+    X: true
+    MEM:
+      0x1000/L: 400000
+      0x2000/L: 300000
+  opcodes: [0111612]
+  expected:
+    A1: 0x1000
+    A2: 0x2000
+    MEM:
+      0x1000/L: 99999
+
+- name: SUBX/Long/CX
+  init:
+    D1: 100000
+    D2: 100002
+  opcodes: [ 0111602 ]
+  expected:
+    C: true
+    X: true
+
+- name: SUBX/Word/V
+  init:
+    D1: 0x80000000
+    D2: 1
+  opcodes: [ 0111602 ]
+  expected:
+    V: true
+
+- name: SUBX/Word/N
+  init:
+    D1: 0xFFFFFFFE
+    D2: 1
+  opcodes: [ 0111602 ]
+  expected:
+    N: true
+
+- name: SUBX/Word/Z/non-zero
+  init:
+    D1: 200000
+    D2: 100000
+    Z: true
+  opcodes: [ 0111602 ]
+  expected:
+    Z: false
+
+- name: SUBX/Word/Z/zero
+  init:
+    D1: 100000
+    D2: 100000
+    Z: true
+  opcodes: [ 0111602 ]
+  expected:
+    Z: true

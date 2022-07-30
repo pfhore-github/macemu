@@ -88,17 +88,17 @@ void SET_SR(uint16_t v) {
     LOAD_SP();
 }
 
-OP(aline) {
+void op_aline(uint16_t  xop, int dm, int type, int  reg) {
     PREFETCH();
     ALINE_EXCEPTION();
 }
 
-OP(fline) {
+void op_fline(uint16_t  xop, int dm, int type, int  reg) {
     PREFETCH();
     FP_UNDEF();
 }
 void EmulOp(uint16_t opcode, M68kRegisters *r);
-OP(emul_op) {
+void op_emul_op(uint16_t  xop, int dm, int type, int  reg) {
     M68kRegisters rr;
     memcpy(&rr.d, &regs.d, sizeof(uint32_t) * 8);
     memcpy(&rr.a, &regs.a, sizeof(uint32_t) * 8);
@@ -447,7 +447,7 @@ void m68k_execute() {
     SDL_DetachThread(t);
 }
 
-OP(0441) {
+void op_0441(uint16_t  xop, int dm, int type, int  reg) {
     if(type == 0) {
         op_swap(reg);
     } else if(type == 1) {
@@ -464,7 +464,7 @@ void op_pea(int type, int reg) {
 
 void op_nop() { regs.traced = true; }
 
-OP(0471) {
+void op_0471(uint16_t  xop, int dm, int type, int  reg) {
     switch(type) {
     case 0:
     case 1:
@@ -521,7 +521,7 @@ OP(0471) {
     }
 }
 
-OP(lea) {
+void op_lea(uint16_t  xop, int dm, int type, int  reg) {
     if(type == 0) {
         op_extb(reg);
     } else {

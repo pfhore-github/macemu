@@ -1,0 +1,79 @@
+- name: TRAP/0
+  opcodes: [ 0047100]
+  expected:
+    exception: 32
+
+- name: TRAP/1
+  opcodes: [ 0047101]
+  expected:
+    exception: 33
+
+- name: TRAP/2
+  opcodes: [ 0047102]
+  expected:
+    exception: 34
+
+- name: TRAP/3
+  opcodes: [ 0047103]
+  expected:
+    exception: 35
+
+- name: TRAP/4
+  opcodes: [ 0047104]
+  expected:
+    exception: 36
+
+- name: TRAP/5
+  opcodes: [ 0047105]
+  expected:
+    exception: 37
+
+- name: TRAP/6
+  opcodes: [ 0047106]
+  expected:
+    exception: 38
+
+- name: TRAP/7
+  opcodes: [ 0047107]
+  expected:
+    exception: 39
+
+- name: TRAP/8
+  opcodes: [ 0047110]
+  expected:
+    exception: 40
+
+- name: TRAP/9
+  opcodes: [ 0047111]
+  expected:
+    exception: 41
+
+- name: TRAP/10
+  opcodes: [ 0047112]
+  expected:
+    exception: 42
+
+- name: TRAP/11
+  opcodes: [ 0047113]
+  expected:
+    exception: 43
+
+- name: TRAP/12
+  opcodes: [ 0047114]
+  expected:
+    exception: 44
+
+- name: TRAP/13
+  opcodes: [ 0047115]
+  expected:
+    exception: 45
+
+- name: TRAP/14
+  opcodes: [ 0047116]
+  expected:
+    exception: 46
+
+- name: TRAP/15
+  opcodes: [ 0047117]
+  expected:
+    exception: 47

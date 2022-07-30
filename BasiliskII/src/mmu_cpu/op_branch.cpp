@@ -53,7 +53,6 @@ void do_stop(uint16_t next) {
     cpu.sleep = std::make_unique<std::promise<void>>();
     std::future<void> f = cpu.sleep->get_future();
     f.wait();
-
 }
 void op_stop() {
     uint16_t next = FETCH();
@@ -89,7 +88,9 @@ BEGIN:
         if(ssw & 1 << 13) {
             // TRACE
             SET_SR(sr);
+            JUMP(pc);
             TRACE();
+            return;
         }
         if(ssw & 1 << 12) {
             // MOVEM continution
@@ -137,14 +138,14 @@ void op_rtr() {
     JUMP(pc);
 }
 
-OP(jsr) {
+void op_jsr(uint16_t xop, int dm, int type, int reg) {
     regs.traced = true;
     uint32_t dst = EA_Addr(type, reg, 0, false);
     PUSH32(regs.pc);
     JUMP(dst);
 }
 
-OP(jmp) {
+void op_jmp(uint16_t xop, int dm, int type, int reg) {
     regs.traced = true;
     uint32_t dst = EA_Addr(type, reg, 0, false);
     JUMP(dst);
@@ -187,7 +188,7 @@ bool cc_test(int cc) {
     }
     return false;
 }
-OP(scc) {
+void op_scc(uint16_t xop, int dm, int type, int reg) {
     int cond = xop >> 8 & 15;
     bool ret = cc_test(cond);
     if(type == 1) {
@@ -224,7 +225,7 @@ OP(scc) {
     }
 }
 
-OP(bra) {
+void op_bra(uint16_t xop, int dm, int type, int reg) {
     uint32_t pc = regs.pc;
     int32_t disp = DO_EXTB_L(xop & 0xff);
     if(disp == 0) {
@@ -236,7 +237,7 @@ OP(bra) {
     JUMP(pc + disp);
 }
 
-OP(bsr) {
+void op_bsr(uint16_t xop, int dm, int type, int reg) {
     uint32_t pc = regs.pc;
     int32_t disp = DO_EXTB_L(xop & 0xff);
     if(disp == 0) {
@@ -245,11 +246,11 @@ OP(bsr) {
         disp = FETCH32();
     }
     regs.traced = true;
-    PUSH32(pc);
+    PUSH32(regs.pc);
     JUMP(pc + disp);
 }
 
-OP(bcc) {
+void op_bcc(uint16_t xop, int dm, int type, int reg) {
     uint32_t pc = regs.pc;
     int cond = xop >> 8 & 15;
     int32_t disp = DO_EXTB_L(xop & 0xff);

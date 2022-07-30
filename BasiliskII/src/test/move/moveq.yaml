@@ -1,0 +1,14 @@
+- name: MOVEQ/value
+  opcodes: [ 0x76F0]
+  expected:
+    D3: 0xfffffff0
+
+- name: MOVEQ/N
+  opcodes: [ 0071377]
+  expected:
+    N: true
+
+- name: MOVEQ/Z
+  opcodes: [ 0071000]
+  expected:
+    Z: true

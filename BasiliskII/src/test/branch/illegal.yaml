@@ -1,0 +1,4 @@
+- name: ILLEGAL
+  opcodes: [ 0045374 ]
+  expected:
+    exception: 4

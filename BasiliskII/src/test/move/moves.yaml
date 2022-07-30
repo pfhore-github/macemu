@@ -1,0 +1,86 @@
+- name: MOVES/Byte/unpriv
+  init:
+    S: false
+  opcodes: [ 0007021, 0x4000]
+  expected: 
+    exception: 8
+
+- name: MOVES/Byte/from
+  init: 
+    S: true
+    A1: 0x1000
+    MEM:
+      0x1000/B: 0x23
+  opcodes: [ 0007021, 0x5000 ]
+  expected:
+    D5: 0x23
+    exception: 0
+
+- name: MOVES/Byte/to
+  init: 
+    S: true
+    A1: 0x1000
+    D5: 0x23
+  opcodes: [ 0007021, 0x5800 ]
+  expected:
+    MEM:
+      0x1000/B: 0x23
+    exception: 0
+
+- name: MOVES/Word/unpriv
+  init:
+    S: false
+  opcodes: [ 0007121, 0x4000]
+  expected: 
+    exception: 8
+
+- name: MOVES/Word/from
+  init: 
+    S: true
+    A1: 0x1000
+    MEM:
+      0x1000/W: 0x2345
+  opcodes: [ 0007121, 0x5000 ]
+  expected:
+    D5: 0x2345
+    exception: 0
+
+- name: MOVES/Word/to
+  init: 
+    S: true
+    A1: 0x1000
+    D5: 0x2345
+  opcodes: [ 0007121, 0x5800 ]
+  expected:
+    MEM:
+      0x1000/W: 0x2345
+    exception: 0
+
+- name: MOVES/Long/unpriv
+  init:
+    S: false
+  opcodes: [ 0007221, 0x4000]
+  expected: 
+    exception: 8
+
+- name: MOVES/Long/from
+  init: 
+    S: true
+    A1: 0x1000
+    MEM:
+      0x1000/L: 0x23456789
+  opcodes: [ 0007221, 0x5000 ]
+  expected:
+    D5: 0x23456789
+    exception: 0
+
+- name: MOVES/Long/to
+  init: 
+    S: true
+    A1: 0x1000
+    D5: 0x23456789
+  opcodes: [ 0007221, 0x5800 ]
+  expected:
+    MEM:
+      0x1000/L: 0x23456789
+    exception: 0

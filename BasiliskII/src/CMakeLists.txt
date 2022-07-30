@@ -12,7 +12,7 @@ if ( MSVC )
 endif()
 
 
-include_directories(./Unix ./mmu_cpu include .)
+include_directories(./Unix ./mmu_cpu include . ./test)
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
@@ -91,110 +91,11 @@ ELSE()
   # set stuff for other systems
 ENDIF()
 set(TEST_COMMON ${CPU_FILE}  test/test_common.cpp )
-set(TEST_LIB fmt boost_unit_test_framework ${SDL2_LIBRARIES} ${LIBRARY})
+set(TEST_LIB fmt boost_unit_test_framework ${SDL2_LIBRARIES} ${LIBRARY} yaml-cpp)
 add_executable(ut ${TEST_COMMON}
+test/cpu.cpp
+
 test/exception.cpp 
-
-test/bits/bchg.cpp
-test/bits/bset.cpp
-test/bits/bclr.cpp
-test/bits/btst.cpp
-test/bits/andi.cpp
-test/bits/and.cpp
-test/bits/ori.cpp
-test/bits/or.cpp
-test/bits/eori.cpp
-test/bits/eor.cpp
-test/bits/clr.cpp
-test/bits/not.cpp
-test/bits/swap.cpp
-test/bits/ext.cpp
-test/bits/extb.cpp
-test/bits/tst.cpp
-test/bits/tas.cpp
-test/bits/asr.cpp
-test/bits/lsr.cpp
-test/bits/roxr.cpp
-test/bits/ror.cpp
-test/bits/asl.cpp
-test/bits/lsl.cpp
-test/bits/roxl.cpp
-test/bits/rol.cpp
-
-test/bits/bfchg.cpp
-test/bits/bfclr.cpp
-test/bits/bfexts.cpp
-test/bits/bfextu.cpp
-test/bits/bfffo.cpp
-test/bits/bfins.cpp
-test/bits/bfset.cpp
-test/bits/bftst.cpp
-
-test/arithmetic/add.cpp
-test/arithmetic/addi.cpp
-test/arithmetic/addq.cpp
-test/arithmetic/addx.cpp
-test/arithmetic/adda.cpp
-test/arithmetic/sub.cpp
-test/arithmetic/subi.cpp
-test/arithmetic/subq.cpp
-test/arithmetic/suba.cpp
-test/arithmetic/subx.cpp
-test/arithmetic/cmp.cpp
-test/arithmetic/cmpi.cpp
-test/arithmetic/cmpa.cpp
-test/arithmetic/cmpm.cpp
-test/arithmetic/neg.cpp
-test/arithmetic/negx.cpp
-test/arithmetic/mulu.cpp
-test/arithmetic/muls.cpp
-test/arithmetic/divu.cpp
-test/arithmetic/divs.cpp
-test/arithmetic/cmp2.cpp
-test/arithmetic/cas.cpp
-test/arithmetic/cas2.cpp
-test/arithmetic/chk.cpp
-test/arithmetic/chk2.cpp
-
-test/bcd/nbcd.cpp
-test/bcd/sbcd.cpp
-test/bcd/abcd.cpp
-test/bcd/pack.cpp
-test/bcd/unpk.cpp
-
-test/move/exg.cpp
-test/move/lea.cpp
-test/move/move.cpp
-test/move/movea.cpp
-test/move/move16.cpp
-test/move/movem.cpp
-test/move/movep.cpp
-test/move/moveq.cpp
-test/move/pea.cpp
-test/move/scc.cpp
-test/move/moves.cpp
-test/move/movec.cpp
-
-test/branch/bcc.cpp
-test/branch/bkpt.cpp
-test/branch/bra.cpp
-test/branch/bsr.cpp
-test/branch/dbcc.cpp
-test/branch/illegal.cpp
-test/branch/link.cpp
-test/branch/nop.cpp
-test/branch/unlk.cpp
-test/branch/bkpt.cpp
-test/branch/trap.cpp
-test/branch/trapcc.cpp
-test/branch/reset.cpp
-test/branch/rte.cpp
-test/branch/rtd.cpp
-test/branch/rts.cpp
-test/branch/trapv.cpp
-test/branch/rtr.cpp
-test/branch/jsr.cpp
-test/branch/jmp.cpp
 
 test/fpu/fabs.cpp
 test/fpu/facos.cpp
@@ -263,75 +164,11 @@ test/via.cpp
 )
 
 add_executable(jit ${TEST_COMMON}
+test/cpu_jit.cpp
 
 
-test/compiler/move/jit_lea.cpp
-test/compiler/move/jit_pea.cpp
-test/compiler/move/jit_moves.cpp
-test/compiler/move/jit_move.cpp
-test/compiler/move/jit_movec.cpp
-test/compiler/move/jit_movem.cpp
-
-test/compiler/bits/jit_ori.cpp
-test/compiler/bits/jit_ext.cpp
-test/compiler/bits/jit_extb.cpp
-test/compiler/bits/jit_andi.cpp
-test/compiler/bits/jit_eori.cpp
-test/compiler/bits/jit_clr.cpp
-test/compiler/bits/jit_not.cpp
-test/compiler/bits/jit_tst.cpp
-test/compiler/bits/jit_tas.cpp
-test/compiler/bits/jit_swap.cpp
-test/compiler/bits/jit_bclr.cpp
-test/compiler/bits/jit_btst.cpp
-test/compiler/bits/jit_bchg.cpp
-test/compiler/bits/jit_bset.cpp
-
-test/compiler/bits/jit_asr.cpp
-test/compiler/bits/jit_lsr.cpp
-test/compiler/bits/jit_roxr.cpp
-test/compiler/bits/jit_ror.cpp
-test/compiler/bits/jit_asl.cpp
-test/compiler/bits/jit_lsl.cpp
-test/compiler/bits/jit_roxl.cpp
-test/compiler/bits/jit_rol.cpp
-
-test/compiler/bits/jit_bftst.cpp
-test/compiler/bits/jit_bfchg.cpp
-test/compiler/bits/jit_bfclr.cpp
-test/compiler/bits/jit_bfset.cpp
-test/compiler/bits/jit_bfextu.cpp
-test/compiler/bits/jit_bfexts.cpp
-test/compiler/bits/jit_bfffo.cpp
-test/compiler/bits/jit_bfins.cpp
 
 
-test/compiler/arithmetic/jit_addi.cpp
-test/compiler/arithmetic/jit_subi.cpp
-test/compiler/arithmetic/jit_cmpi.cpp
-test/compiler/arithmetic/jit_neg.cpp
-test/compiler/arithmetic/jit_negx.cpp
-test/compiler/arithmetic/jit_cas.cpp
-test/compiler/arithmetic/jit_cmp2.cpp
-test/compiler/arithmetic/jit_chk2.cpp
-test/compiler/arithmetic/jit_mulu.cpp
-test/compiler/arithmetic/jit_muls.cpp
-test/compiler/arithmetic/jit_divs.cpp
-test/compiler/bcd/jit_nbcd.cpp
-test/compiler/branch/jit_bkpt.cpp
-test/compiler/branch/jit_link.cpp
-test/compiler/branch/jit_illegal.cpp
-test/compiler/branch/jit_trap.cpp
-test/compiler/branch/jit_trapv.cpp
-test/compiler/branch/jit_unlk.cpp
-test/compiler/branch/jit_nop.cpp
-test/compiler/branch/jit_reset.cpp
-test/compiler/branch/jit_rte.cpp
-test/compiler/branch/jit_rts.cpp
-test/compiler/branch/jit_rtr.cpp
-test/compiler/branch/jit_rtd.cpp
-test/compiler/branch/jit_jsr.cpp
-test/compiler/branch/jit_jmp.cpp
 
 )
 target_link_libraries(ut ${TEST_LIB})

@@ -237,7 +237,7 @@ inline int8_t DO_ASL_B(int8_t v, uint8_t sc) {
     }
     int16_t tv = static_cast<int16_t>(v) << sc;
     regs.c = regs.x = tv & 0x100;
-    uint8_t out = (uint8_t)(tv >> 8);
+    uint8_t out = (uint8_t)(tv >> 7);
     regs.v = out != 0 && out != 0xff;
     TEST_NZ8(tv);
     return tv;
@@ -252,7 +252,7 @@ inline int16_t DO_ASL_W(int16_t v, uint8_t sc) {
     }
     int32_t tv = static_cast<int32_t>(v) << sc;
     regs.c = regs.x = tv & 0x10000;
-    uint16_t out = (uint16_t)(tv >> 16);
+    uint16_t out = (uint16_t)(tv >> 15);
     regs.v = out != 0 && out != 0xffff;
     TEST_NZ16(tv);
     return tv;
@@ -267,7 +267,7 @@ inline int32_t DO_ASL_L(int32_t v, uint8_t sc) {
     }
     int64_t tv = static_cast<int64_t>(v) << sc;
     regs.c = regs.x = tv & 0x100000000;
-    uint32_t out = (uint32_t)(tv >> 32);
+    uint32_t out = (uint32_t)(tv >> 31);
     regs.v = out != 0 && out != 0xffffffff;
     TEST_NZ32(tv);
     return tv;

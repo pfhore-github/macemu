@@ -1,0 +1,86 @@
+- name: TST/Byte/false
+  init:
+    X: true
+    V: true 
+    C: true
+    D1: 1
+  opcodes: [ 0045001 ]
+  expected: 
+    Z: false
+    N: false
+    X: true
+    C: false
+    V: false 
+
+- name: TST/Byte/N
+  init:
+    D1: 0x80
+  opcodes: [ 0045001 ]
+  expected: 
+    N: true
+
+
+- name: TST/Byte/Z
+  init:
+    D1: 0
+  opcodes: [ 0045001 ]
+  expected: 
+    Z: true 
+
+- name: TST/Word/false
+  init:
+    X: true
+    V: true 
+    C: true
+    D1: 1
+  opcodes: [ 0045101 ]
+  expected: 
+    Z: false
+    N: false
+    X: true
+    C: false
+    V: false 
+
+- name: TST/Word/N
+  init:
+    D1: 0x8000
+  opcodes: [ 0045101 ]
+  expected: 
+    N: true
+
+
+- name: TST/Word/Z
+  init:
+    D1: 0
+  opcodes: [ 0045101 ]
+  expected: 
+    Z: true 
+
+- name: TST/Long/false
+  init:
+    X: true
+    V: true 
+    C: true
+    D1: 1
+  opcodes: [ 0045201 ]
+  expected: 
+    Z: false
+    N: false
+    X: true
+    C: false
+    V: false 
+
+- name: TST/Long/N
+  init:
+    D1: 0x80000000
+  opcodes: [ 0045201 ]
+  expected: 
+    N: true
+
+
+- name: TST/Long/Z
+  init:
+    D1: 0
+  opcodes: [ 0045201 ]
+  expected: 
+    Z: true 

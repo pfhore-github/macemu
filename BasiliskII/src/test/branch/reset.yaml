@@ -1,0 +1,14 @@
+- name: RESET/invalid
+  init: 
+    S: false
+  opcodes: [ 0047160 ]
+  expected:
+    exception: 8
+  
+- name: RESET/Valid
+  init: 
+    S: true
+  opcodes: [ 0047160 ]
+  expected:
+    exception: 0
+  

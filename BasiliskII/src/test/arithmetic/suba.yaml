@@ -1,0 +1,16 @@
+- name: SUBA/Word
+  init:
+    A2: 3456
+    D4: 100
+  opcodes: [ 0112304 ]
+  expected:
+    A2: 3356
+
+- name: SUBA/Long
+  init:
+    A2: 123456789
+    D3: 100000000
+  opcodes: [ 0112703 ]
+  expected:
+    A2: 23456789
+
