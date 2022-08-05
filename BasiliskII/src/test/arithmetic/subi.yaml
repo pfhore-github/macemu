@@ -76,14 +76,14 @@
 - name: SUBI/Long/operand
   init:
     D2: 1000000
-  opcodes: [ 0002202, 600000]
+  opcodes: [ 0002202, 600000L]
   expected:
     D2: 400000
 
 - name: SUBI/Long/CX
   init:
     D1: 1
-  opcodes: [ 0002201, 0, 2]
+  opcodes: [ 0002201, 2L]
   expected:
     X: true
     C: true
@@ -91,21 +91,21 @@
 - name: SUBI/Long/V
   init:
     D1: 0x80000000
-  opcodes: [ 0002201, 0, 2]
+  opcodes: [ 0002201, 2L]
   expected:
     V: true
 
 - name: SUBI/Long/Z
   init:
     D1: 0x80000000
-  opcodes: [ 0002201, 0x80000000]
+  opcodes: [ 0002201, 0x80000000L]
   expected:
     Z: true
 
 - name: SUBI/Long/N
   init:
     D1: 0xfffffffe
-  opcodes: [ 0002201, 0, 1]
+  opcodes: [ 0002201, 1L]
   expected:
     N: true
 

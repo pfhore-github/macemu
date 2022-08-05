@@ -104,7 +104,7 @@
   init:
     A2: 0x1000
     D3: 4
-  opcodes: [ 0043762, 0x3930, 0x10000]
+  opcodes: [ 0043762, 0x3930, 0x10000L]
   expected:
     A3: 0x11004
 
@@ -150,7 +150,7 @@
     A3: 0x1000
     MEM:
       0x1140/L: 0x2000
-  opcodes: [ 0044763, 0x2D23, 0x100, 0x10000]
+  opcodes: [ 0044763, 0x2D23, 0x100, 0x10000L]
   expected: 
     A4: 0x12000
 
@@ -211,7 +211,7 @@
     A3: 0x1000
     MEM:
       0x1100/L: 0x2000
-  opcodes: [ 0044763, 0x2927, 0x100, 0x10000]
+  opcodes: [ 0044763, 0x2927, 0x100, 0x10000L]
   expected: 
     A4: 0x12010
 
@@ -242,7 +242,7 @@
     A3: -200
 
 - name: LEA/imm/Long
-  opcodes: [ 0043771, 0x10000]
+  opcodes: [ 0043771, 0x10000L]
   expected: 
     A3: 0x10000
 

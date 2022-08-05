@@ -151,7 +151,7 @@
     X: true
     V: true
     C: true
-  opcodes: [ 0000202, 0xdeaddead]
+  opcodes: [ 0000202, 0xdeaddeadL]
   expected:
     D2: 0xdebddefd
     X: true
@@ -161,13 +161,13 @@
 - name: ORI/Long/N
   init:
     D1: 0x80000000
-  opcodes: [ 0000201, 0, 0]
+  opcodes: [ 0000201, 0L]
   expected:
     N: true
 
 - name: ORI/Long/Z
   init:
     D1: 0
-  opcodes: [ 0000201, 0, 0]
+  opcodes: [ 0000201, 0L]
   expected:
     Z: true

@@ -1,5 +1,6 @@
 #include "newcpu.h"
 #include <stdint.h>
+#include <limits>
 inline uint32_t DO_EXT_L(uint16_t v) {
     return static_cast<int32_t>(static_cast<int16_t>(v));
 }
@@ -10,6 +11,27 @@ inline uint16_t DO_EXT_W(uint8_t v) {
 
 inline uint32_t DO_EXTB_L(uint8_t v) {
     return static_cast<int32_t>(static_cast<int8_t>(v));
+}
+
+inline void TEST_ALL8(int8_t v) {
+    regs.n = v < 0;
+    regs.z = v == 0;
+    regs.v = false;
+    regs.c = false;
+}
+
+inline void TEST_ALL16(int16_t v) {
+    regs.n = v < 0;
+    regs.z = v == 0;
+    regs.v = false;
+    regs.c = false;
+}
+
+inline void TEST_ALL32(int32_t v) {
+    regs.n = v < 0;
+    regs.z = v == 0;
+    regs.v = false;
+    regs.c = false;
 }
 
 inline void TEST_NZ8(int8_t v) {
@@ -26,73 +48,55 @@ inline void TEST_NZ32(int32_t v) {
 }
 inline uint8_t DO_OR_B(uint8_t a, uint8_t b) {
     uint8_t v = a | b;
-    TEST_NZ8(v);
-    regs.v = false;
-    regs.c = false;
+    TEST_ALL8(v);
     return v;
 }
 
 inline uint16_t DO_OR_W(uint16_t a, uint16_t b) {
     uint16_t v = a | b;
-    TEST_NZ16(v);
-    regs.v = false;
-    regs.c = false;
+    TEST_ALL16(v);
     return v;
 }
 
 inline uint32_t DO_OR_L(uint32_t a, uint32_t b) {
     uint32_t v = a | b;
-    TEST_NZ32(v);
-    regs.v = false;
-    regs.c = false;
+    TEST_ALL32(v);
     return v;
 }
 
 inline uint8_t DO_AND_B(uint8_t a, uint8_t b) {
     uint8_t v = a & b;
-    TEST_NZ8(v);
-    regs.v = false;
-    regs.c = false;
+    TEST_ALL8(v);
     return v;
 }
 
 inline uint16_t DO_AND_W(uint16_t a, uint16_t b) {
     uint16_t v = a & b;
-    TEST_NZ16(v);
-    regs.v = false;
-    regs.c = false;
+    TEST_ALL16(v);
     return v;
 }
 
 inline uint32_t DO_AND_L(uint32_t a, uint32_t b) {
     uint32_t v = a & b;
-    TEST_NZ32(v);
-    regs.v = false;
-    regs.c = false;
+    TEST_ALL32(v);
     return v;
 }
 
 inline uint8_t DO_EOR_B(uint8_t a, uint8_t b) {
     uint8_t v = a ^ b;
-    TEST_NZ8(v);
-    regs.v = false;
-    regs.c = false;
+    TEST_ALL8(v);
     return v;
 }
 
 inline uint16_t DO_EOR_W(uint16_t a, uint16_t b) {
     uint16_t v = a ^ b;
-    TEST_NZ16(v);
-    regs.v = false;
-    regs.c = false;
+    TEST_ALL16(v);
     return v;
 }
 
 inline uint32_t DO_EOR_L(uint32_t a, uint32_t b) {
     uint32_t v = a ^ b;
-    TEST_NZ32(v);
-    regs.v = false;
-    regs.c = false;
+    TEST_ALL32(v);
     return v;
 }
 
@@ -167,25 +171,19 @@ inline void DO_CMP_L(uint32_t a, uint32_t b) {
 
 inline uint8_t DO_NOT_B(uint8_t a) {
     uint8_t v = ~a;
-    TEST_NZ8(v);
-    regs.v = false;
-    regs.c = false;
+    TEST_ALL8(v);
     return v;
 }
 
 inline uint16_t DO_NOT_W(uint16_t a) {
     uint16_t v = ~a;
-    TEST_NZ16(v);
-    regs.v = false;
-    regs.c = false;
+    TEST_ALL16(v);
     return v;
 }
 
 inline uint32_t DO_NOT_L(uint32_t a) {
     uint32_t v = ~a;
-    TEST_NZ32(v);
-    regs.v = false;
-    regs.c = false;
+    TEST_ALL32(v);
     return v;
 }
 
@@ -230,9 +228,7 @@ inline int32_t DO_ASR_L(int32_t v, uint8_t sc) {
 
 inline int8_t DO_ASL_B(int8_t v, uint8_t sc) {
     if(sc == 0) {
-        regs.c = false;
-        regs.v = false;
-        TEST_NZ8(v);
+        TEST_ALL8(v);
         return v;
     }
     int16_t tv = static_cast<int16_t>(v) << sc;
@@ -245,9 +241,7 @@ inline int8_t DO_ASL_B(int8_t v, uint8_t sc) {
 
 inline int16_t DO_ASL_W(int16_t v, uint8_t sc) {
     if(sc == 0) {
-        regs.c = false;
-        regs.v = false;
-        TEST_NZ16(v);
+        TEST_ALL16(v);
         return v;
     }
     int32_t tv = static_cast<int32_t>(v) << sc;
@@ -260,9 +254,7 @@ inline int16_t DO_ASL_W(int16_t v, uint8_t sc) {
 
 inline int32_t DO_ASL_L(int32_t v, uint8_t sc) {
     if(sc == 0) {
-        regs.c = false;
-        regs.v = false;
-        TEST_NZ32(v);
+        TEST_ALL32(v);
         return v;
     }
     int64_t tv = static_cast<int64_t>(v) << sc;
@@ -545,4 +537,25 @@ inline uint8_t DO_BCLR_B(uint8_t v, int bn) {
 inline uint32_t DO_BCLR_L(uint32_t v, int bn) {
     regs.z = DO_BTST(v, bn);
     return v &~ (1 << bn);
+}
+
+inline uint8_t DO_BSET_B(uint8_t v, int bn) {
+    regs.z = DO_BTST(v, bn);
+    return v | (1 << bn);
+}
+
+inline uint32_t DO_BSET_L(uint32_t v, int bn) {
+    regs.z = DO_BTST(v, bn);
+    return v | (1 << bn);
+}
+
+template<class T>
+inline bool OVERFLOW_U(uint64_t v) {
+    return v > std::numeric_limits<T>::max();
+}
+
+template<class T>
+inline bool OVERFLOW_S(int64_t v) {
+    return v > std::numeric_limits<T>::max() ||
+    v < std::numeric_limits<T>::min();
 }

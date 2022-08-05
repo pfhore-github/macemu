@@ -76,7 +76,7 @@
 - name: ADDI/Long/operand
   init:
     D2: 100000
-  opcodes: [ 0003202, 70000]
+  opcodes: [ 0003202, 70000L]
   expected:
     D2: 170000
 

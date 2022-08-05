@@ -269,7 +269,7 @@ BOOST_DATA_TEST_CASE(TRAP, bdata::xrange(0, 16), n) {
     exception_check(32 + n, 0);
     BOOST_TEST(raw_read32(regs.a[7] + 2) == 2);
 }
-
+#if 0
 BOOST_DATA_TEST_CASE(BSUN, BIT, enabled) {
     fpu.FPSR.nan = true;
     fpu.FPCR.bsun = enabled;
@@ -831,5 +831,5 @@ BOOST_DATA_TEST_CASE(inex2, BIT, enabled) {
         exception_check(0);
     }
 }
-
+#endif
 BOOST_AUTO_TEST_SUITE_END()

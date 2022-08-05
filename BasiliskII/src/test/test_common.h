@@ -7,7 +7,7 @@
 namespace bdata = boost::unit_test::data;
 
 void load_test(const char *file) ;
-bool cpu_test(const YAML::Node& test, bool jit = false);
+bool cpu_test(const YAML::Node& test);
 
 void m68k_do_execute();
 extern std::vector<std::byte> RAM;
@@ -97,7 +97,7 @@ void fpu_test(char op, T v1, T v2, T2 expected) {
     m68k_do_execute();
     fpu_check(2, expected);
 }
-bool jit_compile(uint32_t from, uint32_t to);
+bool op_compile(uint32_t from, uint32_t to);
 bool jit_jump(uint32_t to);
 void jit_exception_check(int e);
 

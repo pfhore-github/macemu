@@ -28,7 +28,7 @@
 #include "timer.h"
 #include "memory.h"
 #include "newcpu.h"
-#include "compiler/jit.h"
+#include "compiler/compiler.h"
 #include <unordered_map>
 
 // RAM and ROM pointers

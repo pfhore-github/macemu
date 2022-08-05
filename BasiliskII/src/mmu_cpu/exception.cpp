@@ -64,3 +64,51 @@ void RAISE(int e, int f, const std::vector<uint16_t> &data, bool next,
 }
 
 
+void op_rte() {
+    if(!regs.S) {
+        PRIV_ERROR();
+        return;
+    }
+    regs.traced = true;
+BEGIN:
+    uint16_t sr = POP16();
+    uint32_t pc = POP32();
+    uint16_t sx = POP16();
+    switch(sx >> 12) {
+    case 0:
+        break;
+    case 1:
+        SET_SR(sr);
+        goto BEGIN;
+    case 2:
+        POP32();
+        break;
+    case 3:
+        POP32();
+        break;
+    case 7: {
+        uint32_t ea = POP32();
+        uint16_t ssw = POP16();
+        regs.a[7] += 2 * 23;
+        if(ssw & 1 << 13) {
+            // TRACE
+            SET_SR(sr);
+            JUMP(pc);
+            TRACE();
+            return;
+        }
+        if(ssw & 1 << 12) {
+            // MOVEM continution
+            regs.i_ea = ea;
+        }
+        break;
+    }
+    default:
+        FORMAT_ERROR();
+        return;
+    }
+    SET_SR(sr);
+    JUMP(pc);
+    regs.exception = false;
+    return;
+}

@@ -26,22 +26,15 @@ pkg_check_modules(GTK REQUIRED gtk+-3.0)
 set(CPU_FILE mmu_cpu/memory.cpp
 mmu_cpu/newcpu.cpp mmu_cpu/exception.cpp  mmu_cpu/ea.cpp 
 mmu_cpu/mbus.cpp
-mmu_cpu/op_move.cpp
-mmu_cpu/op_arithmetic.cpp
-mmu_cpu/op_bits.cpp
-mmu_cpu/op_branch.cpp
-mmu_cpu/op_bcd.cpp
-mmu_cpu/op_bf.cpp
 mmu_cpu/fpu/fpu_mpfr.cpp 
 mmu_cpu/mmu/mmu_68040.cpp
-mmu_cpu/compiler/jit.cpp
-mmu_cpu/compiler/jit_ea.cpp
-mmu_cpu/compiler/jit_bits.cpp
-mmu_cpu/compiler/jit_arithmetic.cpp
-mmu_cpu/compiler/jit_move.cpp
-mmu_cpu/compiler/jit_bcd.cpp
-mmu_cpu/compiler/jit_branch.cpp
-mmu_cpu/compiler/jit_bf.cpp
+mmu_cpu/compiler/compiler.cpp
+mmu_cpu/compiler/bits.cpp
+mmu_cpu/compiler/arithmetic.cpp
+mmu_cpu/compiler/move.cpp
+mmu_cpu/compiler/bcd.cpp
+mmu_cpu/compiler/branch.cpp
+mmu_cpu/compiler/bitfield.cpp
 )
 
 #add_executable(Basillisk2 main.cpp prefs.cpp prefs_items.cpp Unix/sys_unix.cpp rom_patches.cpp slot_rom.cpp rsrc_patches.cpp emul_op.cpp macos_util.cpp xpram.cpp 
@@ -80,7 +73,7 @@ rom/boot.cpp
 rom/boot2.cpp
 rom/romdata.cpp
 )
-set( LIBRARY ${SDL2_LIBRARIES} vdeplug Threads::Threads fmt mpfr gmp asmjit)
+set( LIBRARY ${SDL2_LIBRARIES} vdeplug Threads::Threads fmt mpfr gmp)
 #target_link_libraries(Basillisk2 PRIVATE ${SDL2_LIBRARIES} vdeplug Threads::Threads mpfr gmp)
 target_link_libraries(Yame PRIVATE ${LIBRARY} )
 #target_include_directories(Basillisk2 PRIVATE ${GTK_INCLUDE_DIRS})
@@ -94,8 +87,8 @@ set(TEST_COMMON ${CPU_FILE}  test/test_common.cpp )
 set(TEST_LIB fmt boost_unit_test_framework ${SDL2_LIBRARIES} ${LIBRARY} yaml-cpp)
 add_executable(ut ${TEST_COMMON}
 test/cpu.cpp
-
 test/exception.cpp 
+#[[
 
 test/fpu/fabs.cpp
 test/fpu/facos.cpp
@@ -160,21 +153,12 @@ chips/easc.cpp
 
 peripheral/adb.cpp
 test/via.cpp
-
+]]
 )
 
-add_executable(jit ${TEST_COMMON}
-test/cpu_jit.cpp
 
-
-
-
-
-)
 target_link_libraries(ut ${TEST_LIB})
-target_link_libraries(jit ${TEST_LIB})
 add_test(NAME ut COMMAND ./ut)
-add_test(NAME jit COMMAND ./jit)
 
 
 

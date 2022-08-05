@@ -57,14 +57,14 @@
 - name: CMPI/Long/Z
   init:
     D1: 0x10000
-  opcodes: [0006201, 0x10000]
+  opcodes: [0006201, 0x10000L]
   expected:
     Z: true
 
 - name: CMPI/Long/N
   init:
     D1: 0x10000
-  opcodes: [0006201, 0x10001]
+  opcodes: [0006201, 0x10001L]
   expected:
     N: true
 

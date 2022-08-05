@@ -94,7 +94,7 @@ struct m68k_reg {
     bool traced = false;
 
     bool cdis = false;
-
+    bool jumped = false;
 };
 // no multi cpu
 extern m68k_reg regs;

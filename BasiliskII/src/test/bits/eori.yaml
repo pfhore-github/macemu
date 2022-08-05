@@ -153,7 +153,7 @@
     X: true
     V: true
     C: true
-  opcodes: [ 0005201, 0xffffffff]
+  opcodes: [ 0005201, 0xffffffffL]
   expected:
     D1: 0xEDCBA987
     X: true
@@ -170,6 +170,6 @@
 - name: EORI/Long/Z
   init:
     D1: 0x80000000
-  opcodes: [ 0005201, 0x80000000]
+  opcodes: [ 0005201, 0x80000000L]
   expected:
     Z: true

@@ -12,6 +12,7 @@
 #include <unordered_map>
 #include <vector>
 
+#include "compiler/compiler.h"
 #include "cpu_emulation.h"
 #include "main.h"
 #include "newcpu.h"
@@ -23,11 +24,12 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
-
+#include <sstream>
 std::vector<std::byte> RAM;
 uint8_t *ROMBaseHost;
 std::unique_ptr<std::mt19937> rnd;
 void init_m68k();
+void jit_exec(uint32_t to);
 extern bool rom_overlay;
 bool reset = false;
 void reset_all() { reset = true; }
@@ -47,6 +49,9 @@ struct MyGlobalFixture {
         rom_overlay = false;
         for(const auto &path : paths) {
             DIR *p = opendir(path.c_str());
+            if(!p) {
+                continue;
+            }
             struct dirent *d;
             while((d = readdir(p)) != nullptr) {
                 std::string name = d->d_name;
@@ -64,7 +69,6 @@ struct MyGlobalFixture {
 void init_mmu();
 std::unordered_map<std::string, YAML::Node> tests;
 void load_test(const char *file) {
-
     for(auto i : YAML::LoadFile(file)) {
         std::string name = i["name"].as<std::string>();
         tests[name] = static_cast<YAML::Node>(i);
@@ -72,7 +76,25 @@ void load_test(const char *file) {
 }
 uint32_t do_op_movec_from(int o);
 void do_op_movec_to(int op, uint32_t v);
-bool cpu_test(const YAML::Node &test, bool jit) {
+
+int32_t parse_opcodes(const std::string &s) {
+    std::stringstream ss{s + '|'};
+    std::string buf;
+    int32_t v = 0;
+    while(std::getline(ss, buf, '|')) {
+        const char *p = buf.c_str();
+        char *np;
+        int32_t base = strtol(p, &np, 0);
+        if( *np == '_') {
+            int d = atoi(np+1);
+            base <<= d;
+        }
+        v |= base;
+    }
+    return v;
+}
+
+bool cpu_test(const YAML::Node &test) {
     InitFix f;
     std::string name = test["name"].as<std::string>();
     BOOST_TEST_CONTEXT(name) {
@@ -162,10 +184,9 @@ bool cpu_test(const YAML::Node &test, bool jit) {
         }
         uint32_t pc = start_address;
         for(const auto &value : test["opcodes"]) {
-
-            long v = value.as<long>();
-            if(v < std::numeric_limits<int16_t>::min() ||
-               v > std::numeric_limits<uint16_t>::max()) {
+            std::string x = value.as<std::string>();
+            int32_t v = parse_opcodes(x);
+            if(x[x.size()-1] == 'L' ) {
                 raw_write32(pc, v);
                 pc += 4;
             } else {
@@ -174,14 +195,9 @@ bool cpu_test(const YAML::Node &test, bool jit) {
             }
         }
         regs.pc = start_address;
-        regs.exception = false;
-        if(!jit) {
-            while( regs.pc < pc) {
-                m68k_do_execute();
-            }
-        } else {
-            jit_compile(start_address, pc);
-            jit_jump(start_address);
+
+        while(regs.pc < pc) {
+            m68k_do_execute();
         }
 
         // TEST
@@ -195,6 +211,32 @@ bool cpu_test(const YAML::Node &test, bool jit) {
                 uint32_t expected = value.as<long>();
                 BOOST_TEST(regs.a[(key[1] - '0')] == expected);
             } else if(key.starts_with("FP") && isdigit(key[2])) {
+                std::string expected = value.as<std::string>();
+                int rn = key[2] - '0';
+                if(expected == "NAN") {
+                    BOOST_TEST(fpu.fp[rn].is_nan());
+                } else if(expected == "INFINITY") {
+                    BOOST_TEST(fpu.fp[rn].is_inf());
+                    BOOST_TEST(!fpu.fp[rn].signbit());
+                } else if(expected == "-INFINITY") {
+                    BOOST_TEST(fpu.fp[rn].is_inf());
+                    BOOST_TEST(fpu.fp[rn].signbit());
+                } else if(expected == "0") {
+                    BOOST_TEST(fpu.fp[rn].is_zero());
+                    BOOST_TEST(!fpu.fp[rn].signbit());
+                } else if(expected == "-0") {
+                    BOOST_TEST(fpu.fp[rn].is_zero());
+                    BOOST_TEST(fpu.fp[rn].signbit());
+                } else if(expected.ends_with("f")) {
+                    // Float
+                    float f = static_cast<float>(atof(expected.c_str()));
+                    BOOST_CHECK_CLOSE(static_cast<float>(fpu.fp[rn]), f, 1e-04);
+                } else {
+                    // double
+                    double d = value.as<double>();
+                    BOOST_CHECK_CLOSE(static_cast<double>(fpu.fp[rn]), d,
+                                      1e-10);
+                }
                 // TODO
             } else if(key == "MEM") {
                 for(const auto &j : value) {
@@ -281,6 +323,7 @@ bool cpu_test(const YAML::Node &test, bool jit) {
 InitFix::InitFix() {
     RAM.clear();
     RAM.resize(0x6000);
+    compiled.clear();
     memset(regs.r, 0, sizeof(uint32_t) * 16);
     regs.exception = false;
     regs.pc = 0;
@@ -295,7 +338,11 @@ InitFix::InitFix() {
     init_mmu();
 }
 BOOST_TEST_GLOBAL_FIXTURE(MyGlobalFixture);
-
+void jit_exec(uint32_t addr) {
+    auto [f, nop] = compiled[addr];
+    f();
+    regs.pc = nop;
+}
 bool done = false;
 size_t ROMSize = 0x3fff;
 void Exit680x0() { done = true; }
@@ -331,13 +378,13 @@ void set_fpu_reg(int reg, float v) { fpu.fp[reg] = v; }
 std::unordered_map<uint32_t, void (*)()> rom_functions;
 void dump_regs() {}
 void EmulOp(uint16_t opcode, M68kRegisters *r) {}
-bool jit_jump(uint32_t to);
+
 void jit_exception_check(int e) {
     regs.M = false;
     regs.usp = regs.isp = regs.a[7] = 0x1000;
     regs.vbr = 0x3000;
     raw_write32(0x3000 + e * 4, 0x5000);
-    jit_jump(0);
+    jit_exec(0);
     if(e) {
         BOOST_TEST(regs.S);
         BOOST_TEST(regs.pc == 0x5000);

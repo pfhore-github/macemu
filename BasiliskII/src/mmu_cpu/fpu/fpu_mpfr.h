@@ -4,14 +4,13 @@
 #include <stdint.h>
 #include <tuple>
 #include <utility>
-class fpvalue {
+struct fpvalue {
     mpfr_t mp;
     uint64_t payload = ~0LLU;
 
-  public:
-    mpfr_ptr ptr() const { return const_cast<mpfr_ptr>(&mp[0]); }
     int mpfr_ret = 0;
 
+    mpfr_ptr ptr() const { return const_cast<mpfr_ptr>(&mp[0]); }
     fpvalue();
     fpvalue(fpvalue &&old);
     fpvalue(double v);

@@ -5,6 +5,8 @@
 #include "newcpu.h"
 #include <stdint.h>
 #include <stdlib.h>
+struct M68K_EXCEPTION {};
+
 inline uint16_t LOW(uint32_t v) { return v & 0xffff; }
 inline uint16_t HIGH(uint32_t v) { return v >> 16; }
 void RAISE(int e, int f, const std::vector<uint16_t> &data, bool next,
@@ -20,21 +22,68 @@ inline void RAISE3(int e) {
     RAISE(e, 3, {LOW(regs.i_ea), HIGH(regs.i_ea)}, true);
 }
 
-inline __attribute__((noreturn)) void ILLEGAL_INST() { throw ILLEGAL_INST_EX{}; }
-inline void DIV0_ERROR() { RAISE2(5, regs.opc, true); }
-inline void CHK_ERROR() { RAISE2(6, regs.opc, true); }
-inline void TRPPcc() { RAISE2(7, regs.opc, true); }
-inline void PRIV_ERROR() { RAISE0(8, false); }
+inline __attribute__((noreturn)) void ILLEGAL_INST() {
+    throw ILLEGAL_INST_EX{};
+}
+inline void DIV0_ERROR() {
+    RAISE2(5, regs.opc, true);
+    throw M68K_EXCEPTION{};
+}
+inline void CHK_ERROR() {
+    RAISE2(6, regs.opc, true);
+    throw M68K_EXCEPTION{};
+}
+inline void TRPPcc() {
+    RAISE2(7, regs.opc, true);
+    throw M68K_EXCEPTION{};
+}
+inline void PRIV_ERROR() {
+    RAISE0(8, false);
+    throw M68K_EXCEPTION{};
+}
 inline void TRACE() { RAISE2(9, regs.opc, true); }
-inline void ALINE_EXCEPTION() { RAISE0(10, false); }
-inline void FP_UNDEF() { RAISE0(11, false); }
-inline void FORMAT_ERROR() { RAISE0(14, false); }
-inline void TRAP(int v) { RAISE0(32 + v, true); }
-inline void FP_UNCND() { RAISE0(48, false); }
-inline void FP_INEX() { RAISE0(49, false); }
-inline void FP_DIV0() { RAISE0(50, false); }
-inline void FP_UNFL() { RAISE0(51, false); }
-inline void FP_OPERR() { RAISE0(52, false); }
-inline void FP_OVFR() { RAISE0(53, false); }
-inline void FP_SNAN() { RAISE0(54, false); }
+inline void ALINE_EXCEPTION() {
+    RAISE0(10, false);
+    throw M68K_EXCEPTION{};
+}
+inline void FP_UNDEF() {
+    RAISE0(11, false);
+    throw M68K_EXCEPTION{};
+}
+inline void FORMAT_ERROR() {
+    RAISE0(14, false);
+    throw M68K_EXCEPTION{};
+}
+inline void TRAP(int v) {
+    RAISE0(32 + v, true);
+    throw M68K_EXCEPTION{};
+}
+inline void FP_UNCND() {
+    RAISE0(48, false);
+    throw M68K_EXCEPTION{};
+}
+inline void FP_INEX() {
+    RAISE0(49, false);
+    throw M68K_EXCEPTION{};
+}
+inline void FP_DIV0() {
+    RAISE0(50, false);
+    throw M68K_EXCEPTION{};
+}
+inline void FP_UNFL() {
+    RAISE0(51, false);
+    throw M68K_EXCEPTION{};
+}
+inline void FP_OPERR() {
+    RAISE0(52, false);
+    throw M68K_EXCEPTION{};
+}
+inline void FP_OVFR() {
+    RAISE0(53, false);
+    throw M68K_EXCEPTION{};
+}
+inline void FP_SNAN() {
+    RAISE0(54, false);
+    throw M68K_EXCEPTION{};
+}
 #endif

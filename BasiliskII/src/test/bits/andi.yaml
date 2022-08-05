@@ -152,7 +152,7 @@
     X: true
     V: true
     C: true
-  opcodes: [ 0001202, 0x2fffffff]
+  opcodes: [ 0001202, 0x2fffffffL]
   expected:
     D2: 0x2fffffff
     X: true
@@ -162,7 +162,7 @@
 - name: ANDI/Long/N
   init:
     D1: 0xffffffff
-  opcodes: [ 0001201, 0x80000000]
+  opcodes: [ 0001201, 0x80000000L]
   expected:
     N: true
 

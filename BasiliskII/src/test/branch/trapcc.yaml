@@ -14,7 +14,7 @@
 
 - name: TRAPcc/Long
   init:
-  opcodes: [ 0x51FB, 0x10000000, 0x7001 ]
+  opcodes: [ 0x51FB, 0x10000000L, 0x7001 ]
   expected:
     exception: 0
     D0: 1

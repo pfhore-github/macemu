@@ -445,7 +445,7 @@
     D2: 0x10203040
 
 - name: MOVE/Long/From/IMM
-  opcodes: [ 0023074, 0x12345678]
+  opcodes: [ 0023074, 0x12345678L]
   expected:
     D3: 0x12345678
 

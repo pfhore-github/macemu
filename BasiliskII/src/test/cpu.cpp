@@ -5,10 +5,13 @@
 extern std::unordered_map<std::string, YAML::Node> tests;
 BOOST_AUTO_TEST_SUITE(CPU) 
 BOOST_AUTO_TEST_CASE(run) {
+//    /*
     for(const auto &[k, v] : tests) {
-        cpu_test(v, false);
+        regs.exception = false;
+        cpu_test(v);
     }
-//    cpu_test(tests["LEA/Xn/Supressed/Post"], false);
+ //   */
+//    cpu_test(tests["CHK2/WithDn/Long/under"]);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

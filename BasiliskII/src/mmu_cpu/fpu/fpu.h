@@ -49,4 +49,15 @@ struct M68881 {
     // internal
     fpvalue src_v, dst_v;
 };
+
+void load_single(uint32_t addr, fpvalue *dst);
+void load_ext(uint32_t addr, fpvalue *dst);
+void load_packed(uint32_t addr, fpvalue *dst);
+void load_double(uint32_t addr, fpvalue *dst);
+void fmove_cr(uint8_t op, fpvalue *v);
+void fmovem_from_mem(uint32_t *addr, int mask);
+void fmovem_to_mem(uint32_t addr, int mask);
+void fmovem_to_mem_decr(uint32_t *addr, int mask);
+void fmove_cr(uint8_t op, fpvalue *v) ;
+void fpu_postprocess(fpvalue &d, RND_PREC round = RND_PREC::ROUND_DEF);
 #endif

@@ -3,40 +3,35 @@
 #include "newcpu.h"
 enum class EA_OP { DR, AR, MEM, INCR, DECR, OFFSET, EXT, EXT2 };
 uint32_t EA_Addr(int type, int reg, int sz, bool w);
-uint8_t EA_READ8(int type, int reg, bool override = false);
-uint16_t EA_READ16(int type, int reg, bool override = false);
-uint32_t EA_READ32(int type, int reg, bool override = false);
-void EA_WRITE8(int type, int reg, uint8_t v);
-void EA_WRITE16(int type, int reg, uint16_t v);
-void EA_WRITE32(int type, int reg, uint32_t v);
-void EA_UPDATE8(int type, int reg, uint8_t v);
-void EA_UPDATE16(int type, int reg, uint16_t v);
-void EA_UPDATE32(int type, int reg, uint32_t v);
 
-template<class F> void EA_Update8(int type, int reg, const F& f) {
-    uint8_t v1 = EA_READ8( type, reg, true );
-	EA_UPDATE8(type, reg, f( v1) );
-}
-
-template<class F> void EA_Update16(int type, int reg, const F& f) {
-    uint16_t v1 = EA_READ16( type, reg, true );
-	EA_UPDATE16(type, reg, f( v1) );
-}
-
-template<class F> void EA_Update32(int type, int reg, const F& f) {
-    uint32_t v1 = EA_READ32( type, reg, true );
-	EA_UPDATE32(type, reg, f( v1) );
-}
+std::function<void()> EA_Read8(int type, int reg,
+                               const std::function<void(uint8_t)> &f);
+std::function<void()> EA_Read16(int type, int reg,
+                                const std::function<void(uint16_t)> &f);
+std::function<void()> EA_Read32(int type, int reg,
+                                const std::function<void(uint32_t)> &f);
+std::function<void()> EA_Write8(int type, int reg,
+                                const std::function<uint8_t()> &f);
+std::function<void()> EA_Write16(int type, int reg,
+                                 const std::function<uint16_t()> &f);
+std::function<void()> EA_Write32(int type, int reg,
+                                 const std::function<uint32_t()> &f);
+std::function<uint32_t()> ea_addr(int type, int reg, int sz, bool w);
+std::function<void()> EA_Update8(int type, int reg,
+                                 const std::function<uint8_t(uint8_t)> &f);
+std::function<void()> EA_Update16(int type, int reg,
+                                  const std::function<uint16_t(uint16_t)> &f);
+std::function<void()> EA_Update32(int type, int reg,
+                                  const std::function<uint32_t(uint32_t)> &f);
 
 inline void WRITE_D8(int reg, uint8_t v) {
     regs.d[reg] = (regs.d[reg] & 0xffffff00) | v;
-
 }
 inline void WRITE_D16(int reg, uint16_t v) {
     regs.d[reg] = (regs.d[reg] & 0xffff0000) | v;
 }
-inline void WRITE_A16(int reg, int16_t v) {
-    regs.a[reg] = v;
-}
+inline void WRITE_A16(int reg, int16_t v) { regs.a[reg] = v; }
+
+
 
 #endif

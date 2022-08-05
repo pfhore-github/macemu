@@ -159,7 +159,7 @@ uint32_t mmu_68040::do_mmu(uint32_t vaddr, bool rw, bool s) {
             throw BUS_ERROR_EX{.addr = vaddr};
         }
 
-        return (result.addr<<12) | (vaddr & 0xfff);
+        return (result.addr << 12) | (vaddr & 0xfff);
     } catch(BUS_ERROR_EX &e) {
         // BUS ERROR during table search
         e.addr = vaddr;
@@ -234,7 +234,7 @@ using op_t = void (*)(uint16_t, int, int, int);
 extern op_t opc_map[65536 >> 6];
 
 // CINV( used only for jit)
-void op_cinv_push_dc(uint16_t  xop, int dm, int type, int  reg) {
+void op_cinv_push_dc(uint16_t xop, int dm, int type, int reg) {
     if(!regs.S) {
         PRIV_ERROR();
         return;
@@ -259,7 +259,7 @@ void op_cinv_push_dc(uint16_t  xop, int dm, int type, int  reg) {
     }
 }
 
-void op_cinv_push_ic(uint16_t  xop, int dm, int type, int  reg) {
+void op_cinv_push_ic(uint16_t xop, int dm, int type, int reg) {
     if(!regs.S) {
         PRIV_ERROR();
         return;
@@ -284,7 +284,7 @@ void op_cinv_push_ic(uint16_t  xop, int dm, int type, int  reg) {
     }
 }
 
-void op_cinv_push_bc(uint16_t  xop, int dm, int type, int  reg) {
+void op_cinv_push_bc(uint16_t xop, int dm, int type, int reg) {
     if(!regs.S) {
         PRIV_ERROR();
         return;
@@ -309,7 +309,7 @@ void op_cinv_push_bc(uint16_t  xop, int dm, int type, int  reg) {
     }
 }
 
-void op_pflush(uint16_t  xop, int dm, int type, int  reg) {
+void op_pflush(uint16_t xop, int dm, int type, int reg) {
     if(!regs.S) {
         PRIV_ERROR();
         return;
@@ -340,7 +340,7 @@ void op_pflush(uint16_t  xop, int dm, int type, int  reg) {
     }
 }
 
-void op_ptest(uint16_t  xop, int dm, int type, int  reg) {
+void op_ptest(uint16_t xop, int dm, int type, int reg) {
     if(!regs.S) {
         PRIV_ERROR();
         return;
@@ -365,6 +365,8 @@ void op_ptest(uint16_t  xop, int dm, int type, int  reg) {
     case 6:
         result = mmu_i.test_TTR(addr);
         break;
+    default:
+        ILLEGAL_INST();
     }
     if(result.T) {
         mmu.MMUSR.PA = 0;

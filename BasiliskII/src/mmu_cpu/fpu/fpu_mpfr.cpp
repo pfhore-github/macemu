@@ -7,7 +7,7 @@
 #include "intop.h"
 #include "main.h"
 #include "newcpu.h"
-#include "op.h"
+
 #include "sysdeps.h"
 #include <limits>
 #include <math.h>
@@ -221,23 +221,23 @@ void fpu_checkexception() {
     // raise excpetion
 
     if(fpu.FPCR.snan && fpu.FPSR.snan) {
-        return FP_SNAN();
+        FP_SNAN();
     }
     if(fpu.FPCR.operr && fpu.FPSR.operr) {
-        return FP_OPERR();
+        FP_OPERR();
     }
     if(fpu.FPCR.ovfl && fpu.FPSR.ovfl) {
-        return FP_OVFR();
+        FP_OVFR();
     }
     if(fpu.FPCR.unfl && fpu.FPSR.unfl) {
-        return FP_UNFL();
+        FP_UNFL();
     }
     if(fpu.FPCR.dz && fpu.FPSR.dz) {
-        return FP_DIV0();
+        FP_DIV0();
     }
     if((fpu.FPCR.inex2 && fpu.FPSR.inex2) ||
        (fpu.FPCR.inex1 && fpu.FPSR.inex1)) {
-        return FP_INEX();
+        FP_INEX();
     }
 }
 void to_sgl(fpvalue &d) {
@@ -298,7 +298,7 @@ void to_ext(fpvalue &d) {
         d.set_precision(64);
     }
 }
-void fpu_postprocess(fpvalue &d, RND_PREC round = RND_PREC::ROUND_DEF) {
+void fpu_postprocess(fpvalue &d, RND_PREC round) {
     // rounding
     if(round == RND_PREC::ROUND_DEF) {
         round = fpu.FPCR.prec;
@@ -614,85 +614,114 @@ OP_F(fdsub) { fpu_postprocess(dst -= src, RND_PREC::ROUND_DBL); }
 
 static fpu_op_t fpu_op_t_table1[0x80];
 static fpu_op_t fpu_op_t_table2[0x80];
-void fmove_to(int type, int reg, int d_type, uint8_t k, fpvalue &value) {
-    regs.i_ea = 0;
+std::function<void()> fmove_to(int dst_r, int type, int reg, int d_type,
+                               uint8_t k) {
     switch(d_type) {
     case 0:
-        if(test_nan(value)) {
-            fpu.FPSR.operr = true;
-            EA_WRITE32(type, reg, value.get_payload() >> 32);
-        } else {
-            if(!(fpu.FPSR.operr = !value.fits_int32())) {
-                int32_t v = value.to_int();
-                fpu.FPSR.inex2 = mpfr_inexflag_p();
-                EA_WRITE32(type, reg, v);
-            } else if(value.signbit()) {
-                EA_WRITE32(type, reg, std::numeric_limits<int32_t>::min());
+        return EA_Write32(type, reg, [dst_r]() -> uint32_t {
+            regs.i_ea = 0;
+            if(test_nan(fpu.fp[dst_r])) {
+                fpu.FPSR.operr = true;
+                fpu_checkexception();
+                return fpu.fp[dst_r].get_payload() >> 32;
             } else {
-                EA_WRITE32(type, reg, std::numeric_limits<int32_t>::max());
+                if(!(fpu.FPSR.operr = !fpu.fp[dst_r].fits_int32())) {
+                    int32_t v = fpu.fp[dst_r].to_int();
+                    fpu.FPSR.inex2 = mpfr_inexflag_p();
+                    fpu_checkexception();
+                    return v;
+                } else if(fpu.fp[dst_r].signbit()) {
+                    fpu_checkexception();
+                    return std::numeric_limits<int32_t>::min();
+                } else {
+                    fpu_checkexception();
+                    return std::numeric_limits<int32_t>::max();
+                }
             }
-        }
-        break;
-    case 1: {
-        uint32_t addr = EA_Addr(type, reg, 4, true);
-        store_single(addr, value);
-        break;
-    }
-    case 2: {
-        uint32_t addr = EA_Addr(type, reg, 12, true);
-        store_ext(addr, value);
-        break;
-    }
-    case 3: {
-        uint32_t addr = EA_Addr(type, reg, 12, true);
-        store_packed(addr, value, static_cast<int8_t>(k << 1) >> 1);
-        break;
-    }
+        });
+    case 1:
+        return [dst_r, ea_f = ea_addr(type, reg, 4, true)]() {
+            regs.i_ea = 0;
+            uint32_t addr = ea_f();
+            store_single(addr, fpu.fp[dst_r]);
+            fpu_checkexception();
+        };
+    case 2:
+        return [dst_r, ea_f = ea_addr(type, reg, 12, true)]() {
+            regs.i_ea = 0;
+            uint32_t addr = ea_f();
+            store_ext(addr, fpu.fp[dst_r]);
+            fpu_checkexception();
+        };
+    case 3:
+        return [dst_r, ea_f = ea_addr(type, reg, 12, true),
+                k = static_cast<int8_t>(k << 1) >> 1]() {
+            regs.i_ea = 0;
+            uint32_t addr = ea_f();
+            store_packed(addr, fpu.fp[dst_r], k);
+            fpu_checkexception();
+        };
     case 4:
-        if(test_nan(value)) {
-            fpu.FPSR.operr = true;
-            EA_WRITE16(type, reg, value.get_payload() >> 48);
-        } else {
-            if(!(fpu.FPSR.operr = !value.fits_int16())) {
-                int16_t v = value.to_int();
-                fpu.FPSR.inex2 = mpfr_inexflag_p();
-                EA_WRITE16(type, reg, v);
-            } else if(value.signbit()) {
-                EA_WRITE16(type, reg, std::numeric_limits<int16_t>::min());
+        return EA_Write16(type, reg, [dst_r]() -> uint16_t {
+            regs.i_ea = 0;
+            if(test_nan(fpu.fp[dst_r])) {
+                fpu.FPSR.operr = true;
+                fpu_checkexception();
+                return fpu.fp[dst_r].get_payload() >> 48;
             } else {
-                EA_WRITE16(type, reg, std::numeric_limits<int16_t>::max());
+                if(!(fpu.FPSR.operr = !fpu.fp[dst_r].fits_int16())) {
+                    int16_t v = fpu.fp[dst_r].to_int();
+                    fpu.FPSR.inex2 = mpfr_inexflag_p();
+                    fpu_checkexception();
+                    return v;
+                } else if(fpu.fp[dst_r].signbit()) {
+                    fpu_checkexception();
+                    return std::numeric_limits<int16_t>::min();
+                } else {
+                    fpu_checkexception();
+                    return std::numeric_limits<int16_t>::max();
+                }
             }
-        }
-        break;
-    case 5: {
-        uint32_t addr = EA_Addr(type, reg, 8, true);
-        store_double(addr, value);
-        break;
-    }
+        });
+    case 5:
+        return [dst_r, ea_f = ea_addr(type, reg, 8, true)]() {
+            regs.i_ea = 0;
+            uint32_t addr = ea_f();
+            store_double(addr, fpu.fp[dst_r]);
+            fpu_checkexception();
+        };
     case 6:
-        if(test_nan(value)) {
-            uint8_t v = value.get_payload() >> 56;
-            EA_WRITE8(type, reg, v);
-        } else {
-
-            if(!(fpu.FPSR.operr = !value.fits_int8())) {
-                int8_t v = value.to_int();
-                fpu.FPSR.inex2 = mpfr_inexflag_p();
-                EA_WRITE8(type, reg, v);
-            } else if(value.signbit()) {
-                EA_WRITE8(type, reg, std::numeric_limits<int8_t>::min());
+        return EA_Write8(type, reg, [dst_r]() -> uint8_t {
+            regs.i_ea = 0;
+            if(test_nan(fpu.fp[dst_r])) {
+                fpu.FPSR.operr = true;
+                fpu_checkexception();
+                return fpu.fp[dst_r].get_payload() >> 56;
             } else {
-                EA_WRITE8(type, reg, std::numeric_limits<int8_t>::max());
+                if(!(fpu.FPSR.operr = !fpu.fp[dst_r].fits_int8())) {
+                    int8_t v = fpu.fp[dst_r].to_int();
+                    fpu.FPSR.inex2 = mpfr_inexflag_p();
+                    fpu_checkexception();
+                    return v;
+                } else if(fpu.fp[dst_r].signbit()) {
+                    fpu_checkexception();
+                    return std::numeric_limits<int8_t>::min();
+                } else {
+                    fpu_checkexception();
+                    return std::numeric_limits<int8_t>::max();
+                }
             }
-        }
-        break;
+        });
 
-    case 7: {
-        uint32_t addr = EA_Addr(type, reg, 12, true);
-        store_packed(addr, value, regs.d[k >> 4]);
-        break;
+    case 7:
+        return [dst_r, ea_f = ea_addr(type, reg, 12, true), k = k >> 4]() {
+            regs.i_ea = 0;
+            uint32_t addr = ea_f();
+            store_packed(addr, fpu.fp[dst_r], regs.d[k]);
+            fpu_checkexception();
+        };
     }
-    }
+    ILLEGAL_INST();
 }
 
 uint32_t get_fpcr() {
@@ -802,175 +831,54 @@ void fmovem_to_mem_decr(uint32_t *addr, int mask) {
     }
 }
 
-void fmove_to_cr(int type, int reg, uint16_t op2) {
+std::function<void()> fmove_to_cr(int type, int reg, uint16_t op2) {
     // FMOVE(M) to CR
-    uint32_t ea;
-
     switch(op2 >> 10 & 7) {
     case 0:
-        FP_UNDEF();
-        break;
+        return FP_UNDEF;
     case 1:
-        fpu.fpiar = EA_READ32(type, reg);
-        break;
+        return EA_Read32(type, reg, [](uint32_t v) { fpu.fpiar = v; });
     case 2:
         if(type == 1) {
-            FP_UNDEF();
+            return FP_UNDEF;
         }
-        set_fpsr(EA_READ32(type, reg));
-        break;
+        return EA_Read32(type, reg, set_fpsr);
     case 3:
-        ea = EA_Addr(type, reg, 8, false);
-        set_fpsr(read32(ea));
-        fpu.fpiar = read32(ea + 4);
-        break;
+        return [ea_f = ea_addr(type, reg, 8, false)]() {
+            uint32_t addr = ea_f();
+            set_fpsr(read32(addr));
+            fpu.fpiar = read32(addr + 4);
+        };
     case 4:
         if(type == 1) {
-            FP_UNDEF();
+            return FP_UNDEF;
         }
-        set_fpcr(EA_READ16(type, reg));
-        break;
+        return EA_Read32(type, reg, set_fpcr);
     case 5:
-        ea = EA_Addr(type, reg, 8, false);
-        set_fpcr(read32(ea));
-        fpu.fpiar = read32(ea + 4);
-        break;
+        return [ea_f = ea_addr(type, reg, 8, false)]() {
+            uint32_t addr = ea_f();
+            set_fpcr(read32(addr));
+            fpu.fpiar = read32(addr + 4);
+        };
     case 6:
-        ea = EA_Addr(type, reg, 8, false);
-        set_fpcr(read32(ea));
-        set_fpsr(read32(ea + 4));
-        break;
+        return [ea_f = ea_addr(type, reg, 8, false)]() {
+            uint32_t addr = ea_f();
+            set_fpcr(read32(addr));
+            set_fpsr(read32(addr + 4));
+        };
     case 7:
-        ea = EA_Addr(type, reg, 12, false);
-        set_fpcr(read32(ea));
-        set_fpsr(read32(ea + 4));
-        fpu.fpiar = read32(ea + 8);
-        break;
+        return [ea_f = ea_addr(type, reg, 12, false)]() {
+            uint32_t addr = ea_f();
+            set_fpcr(read32(addr));
+            set_fpsr(read32(addr + 4));
+            fpu.fpiar = read32(addr + 8);
+        };
     }
-    return;
+    ILLEGAL_INST();
 }
-
-void fmove_from_cr(int type, int reg, uint16_t op2) {
-    regs.i_ea = 0;
-    uint32_t ea;
-    switch(op2 >> 10 & 7) {
-    case 0:
-        FP_UNDEF();
-        break;
-    case 1:
-        EA_WRITE32(type, reg, fpu.fpiar);
-        break;
-    case 2:
-        if(type == 1) {
-            FP_UNDEF();
-        }
-        EA_WRITE32(type, reg, get_fpsr());
-        break;
-    case 3:
-        ea = EA_Addr(type, reg, 8, true);
-        write32(ea, get_fpsr());
-        write32(ea + 4, fpu.fpiar);
-        break;
-    case 4:
-        if(type == 1) {
-            FP_UNDEF();
-        }
-        EA_WRITE32(type, reg, get_fpcr());
-        break;
-    case 5:
-        ea = EA_Addr(type, reg, 8, true);
-        write32(ea, get_fpcr());
-        write32(ea + 4, fpu.fpiar);
-        break;
-    case 6:
-        ea = EA_Addr(type, reg, 8, true);
-        write32(ea, get_fpcr());
-        write32(ea + 4, get_fpsr());
-        break;
-    case 7:
-        ea = EA_Addr(type, reg, 12, true);
-        write32(ea, get_fpcr());
-        write32(ea + 4, get_fpsr());
-        write32(ea + 8, fpu.fpiar);
-        break;
-    }
-}
-void op_fpu_op(uint16_t  xop, int dm, int type, int  reg) {
+void init_fpuop() {
     mpfr_clear_flags();
-    uint16_t op2 = FETCH();
-    if(op2 >> 15 & 1) {
-        switch(op2 >> 13 & 3) {
-        case 0:
-            fmove_to_cr(type, reg, op2);
-            return;
-        case 1:
-            // FMOVE(M) from CR
-            fmove_from_cr(type, reg, op2);
-            return;
-        case 2: {
-            // FMOVEM FROM MEM
-            int mode = op2 >> 11 & 3;
-            regs.traced = true;
-            uint8_t reglist;
-            switch(mode) {
-            case 0:
-            case 1:
-                FP_UNDEF();
-                return;
-            case 2:
-                reglist = op2 & 0xff;
-                break;
-            case 3:
-                reglist = regs.d[op2 >> 4 & 7];
-                break;
-            }
-            if(type == 3) {
-                fmovem_from_mem(&regs.a[reg], reglist);
-            } else {
-                uint32_t v = EA_Addr(type, reg, 0, false);
-                fmovem_from_mem(&v, reglist);
-            }
-            return;
-        }
-        case 3: {
-            // FMOVEM TO MEM
-            int mode = op2 >> 11 & 3;
-            regs.traced = true;
-            switch(mode) {
-            case 0:
-                if(type != 4) {
-                    ILLEGAL_INST();
-                    return;
-                }
-                fmovem_to_mem_decr(&regs.a[reg], op2 & 0xff);
-                return;
-            case 1:
-                if(type != 4) {
-                    ILLEGAL_INST();
-                    return;
-                }
-                fmovem_to_mem_decr(&regs.a[reg], regs.d[op2 >> 4 & 7]);
-                return;
-            case 2: {
-                uint32_t addr = EA_Addr(type, reg, 0, true);
-                fmovem_to_mem(addr, op2 & 0xff);
-                return;
-            }
-            case 3: {
-                uint32_t addr = EA_Addr(type, reg, 0, true);
-                fmovem_to_mem(addr, regs.d[op2 >> 4 & 7]);
-                return;
-            }
-            }
-        }
-            return;
-        }
-    }
     fpu.fpiar = regs.opc;
-    bool rm = op2 >> 14 & 1;
-    int src_s = op2 >> 10 & 7;
-    int dst_r = op2 >> 7 & 7;
-    int opc2 = op2 & 0x7f;
     fpu.FPSR.bsun = false;
     fpu.FPSR.operr = false;
     fpu.FPSR.ovfl = false;
@@ -978,95 +886,253 @@ void op_fpu_op(uint16_t  xop, int dm, int type, int  reg) {
     fpu.FPSR.dz = false;
     fpu.FPSR.inex1 = false;
     fpu.FPSR.inex2 = false;
-    if(!(op2 >> 13 & 1)) {
-        if(rm) {
-            switch(src_s) {
+}
+
+std::function<void()> fpu_load(int type, int reg, int src_s) {
+    switch(src_s) {
+    case 0:
+        return EA_Read32(type, reg, [](uint32_t v) {
+            fpu.src_v = static_cast<int64_t>(static_cast<int32_t>(v));
+        });
+    case 1:
+        return [ea_f = ea_addr(type, reg, 4, false)] {
+            uint32_t addr = ea_f();
+            load_single(addr, fpu.src_v);
+        };
+    case 2:
+        return [ea_f = ea_addr(type, reg, 12, false)] {
+            uint32_t addr = ea_f();
+            load_ext(addr, fpu.src_v);
+        };
+    case 3:
+        return [ea_f = ea_addr(type, reg, 12, false)] {
+            uint32_t addr = ea_f();
+            load_packed(addr, fpu.src_v);
+        };
+    case 4:
+        return EA_Read16(type, reg, [](uint16_t v) {
+            fpu.src_v = static_cast<int64_t>(static_cast<int16_t>(v));
+        });
+    case 5:
+        return [ea_f = ea_addr(type, reg, 8, false)] {
+            uint32_t addr = ea_f();
+            load_double(addr, fpu.src_v);
+        };
+    case 6:
+        return EA_Read16(type, reg, [](uint8_t v) {
+            fpu.src_v = static_cast<int64_t>(static_cast<int8_t>(v));
+        });
+    }
+    ILLEGAL_INST();
+}
+
+std::function<void()> fmove_from_cr(int type, int reg, uint16_t op2) {
+    regs.i_ea = 0;
+    switch(op2 >> 10 & 7) {
+    case 0:
+        return FP_UNDEF;
+    case 1:
+        return EA_Write32(type, reg, []() { return fpu.fpiar; });
+    case 2:
+        if(type == 1) {
+            return FP_UNDEF;
+        }
+        return EA_Write32(type, reg, get_fpsr);
+    case 3:
+        return [ea_f = ea_addr(type, reg, 8, true)]() {
+            uint32_t addr = ea_f();
+            write32(addr, get_fpsr());
+            write32(addr + 4, fpu.fpiar);
+        };
+    case 4:
+        if(type == 1) {
+            return FP_UNDEF;
+        }
+        return EA_Write32(type, reg, get_fpcr);
+    case 5:
+        return [ea_f = ea_addr(type, reg, 8, true)]() {
+            uint32_t addr = ea_f();
+            write32(addr, get_fpcr());
+            write32(addr + 4, fpu.fpiar);
+        };
+    case 6:
+        return [ea_f = ea_addr(type, reg, 8, true)]() {
+            uint32_t addr = ea_f();
+            write32(addr, get_fpcr());
+            write32(addr + 4, get_fpsr());
+        };
+    case 7:
+        return [ea_f = ea_addr(type, reg, 12, true)]() {
+            uint32_t addr = ea_f();
+            write32(addr, get_fpcr());
+            write32(addr + 4, get_fpsr());
+            write32(addr + 8, fpu.fpiar);
+        };
+    }
+    ILLEGAL_INST();
+}
+std::function<void()> compile_fpu_op(uint16_t xop, int dm, int type, int reg) {
+    uint16_t op2 = FETCH();
+    if(op2 >> 15 & 1) {
+        switch(op2 >> 13 & 3) {
+        case 0:
+            return fmove_to_cr(type, reg, op2);
+            ;
+        case 1:
+            // FMOVE(M) from CR
+            return fmove_from_cr(type, reg, op2);
+        case 2: {
+            // FMOVEM FROM MEM
+            int mode = op2 >> 11 & 3;
+            if(mode < 2) {
+                return FP_UNDEF;
+            }
+            if(type == 3) {
+                if(mode == 2) {
+                    return [reg, reglist = op2 & 0xff]() {
+                        regs.traced = true;
+                        fmovem_from_mem(&regs.a[reg], reglist);
+                    };
+                } else {
+                    return [reg, reglist = op2 >> 4 & 7]() {
+                        regs.traced = true;
+                        fmovem_from_mem(&regs.a[reg], regs.d[reglist]);
+                    };
+                }
+            } else {
+                auto ea_f = ea_addr(type, reg, 0, false);
+                if(mode == 2) {
+                    return [reglist = op2 & 0xff, ea_f = std::move(ea_f)]() {
+                        regs.traced = true;
+                        uint32_t v = ea_f();
+                        fmovem_from_mem(&v, reglist);
+                    };
+                } else {
+                    return [reglist = op2 >> 4 & 7, ea_f = std::move(ea_f)]() {
+                        regs.traced = true;
+                        uint32_t v = ea_f();
+                        fmovem_from_mem(&v, regs.d[reglist]);
+                    };
+                }
+            }
+            ILLEGAL_INST();
+        }
+        case 3: {
+            // FMOVEM TO MEM
+            int mode = op2 >> 11 & 3;
+            switch(mode) {
             case 0:
-                fpu.src_v = static_cast<int64_t>(
-                    static_cast<int32_t>(EA_READ32(type, reg)));
-                break;
-            case 1: {
-                uint32_t addr = EA_Addr(type, reg, 4, false);
-                load_single(addr, fpu.src_v);
-                break;
+                if(type != 4) {
+                    return ILLEGAL_INST;
+                }
+                return [reg, reg_list = op2 & 0xff]() {
+                    regs.traced = true;
+                    fmovem_to_mem_decr(&regs.a[reg], reg_list);
+                };
+            case 1:
+                if(type != 4) {
+                    return ILLEGAL_INST;
+                }
+                return [reg, reglist = op2 >> 4 & 7]() {
+                    regs.traced = true;
+                    fmovem_to_mem_decr(&regs.a[reg], regs.d[reglist]);
+                };
+            case 2:
+                return [reglist = op2 & 0xff,
+                        ea_f = ea_addr(type, reg, 0, true)]() {
+                    uint32_t addr = ea_f();
+                    fmovem_to_mem(addr, reglist);
+                };
+            case 3:
+                return [reglist = op2 >> 4 & 7,
+                        ea_f = ea_addr(type, reg, 0, true)]() {
+                    uint32_t addr = ea_f();
+                    fmovem_to_mem(addr, regs.d[reglist]);
+                };
             }
-            case 2: {
-                uint32_t addr = EA_Addr(type, reg, 12, false);
-                load_ext(addr, fpu.src_v);
-                break;
-            }
-            case 3: {
-                uint32_t addr = EA_Addr(type, reg, 12, false);
-                load_packed(addr, fpu.src_v);
-                break;
-            }
-            case 4:
-                fpu.src_v = static_cast<int64_t>(
-                    static_cast<int16_t>(EA_READ16(type, reg)));
-                break;
-            case 5: {
-                uint32_t addr = EA_Addr(type, reg, 8, false);
-                load_double(addr, fpu.src_v);
-                break;
-            }
-            case 6:
-                fpu.src_v = static_cast<int64_t>(
-                    static_cast<int8_t>(EA_READ8(type, reg)));
-                break;
-            case 7:
+        }
+        }
+        ILLEGAL_INST();
+    }
+    bool rm = op2 >> 14 & 1;
+    int src_s = op2 >> 10 & 7;
+    int dst_r = op2 >> 7 & 7;
+    int opc2 = op2 & 0x7f;
+
+    if(!(op2 >> 13 & 1)) {
+        std::function<void()> get_src;
+        if(rm) {
+            if(src_s == 7) {
                 fmove_cr(opc2, fpu.fp[dst_r]);
                 fpu_postprocess(fpu.fp[dst_r]);
-                return;
+            } else {
+                get_src = fpu_load(type, reg, src_s);
             }
+
         } else {
-            fpu.src_v = fpu.fp[src_s];
+            get_src = [src_s]() { fpu.src_v = fpu.fp[src_s]; };
         }
         switch(opc2) {
         case 0x38: // FCMP
-            op_fcmp(fpu.src_v, fpu.fp[dst_r]);
-            break;
+            return [dst_r, get_src = std::move(get_src)] {
+                init_fpuop();
+                get_src();
+                op_fcmp(fpu.src_v, fpu.fp[dst_r]);
+            };
         case 0x3A: // FTST
-            op_ftst(fpu.src_v, fpu.fp[dst_r]);
-            break;
+            return [dst_r, get_src = std::move(get_src)] {
+                init_fpuop();
+                get_src();
+                op_ftst(fpu.src_v, fpu.fp[dst_r]);
+            };
         default:
             if(fpu_op_t_table1[opc2]) {
-                if(test_nan(fpu.src_v)) {
-                    fpu.fp[dst_r] = std::move(fpu.src_v);
-                    fpu.FPSR.nan = true;
-                } else {
-                    fpu_op_t_table1[opc2](fpu.src_v, fpu.dst_v);
-                    if((!fpu.FPSR.operr || !fpu.FPCR.operr) &&
-                       (!fpu.FPSR.dz || !fpu.FPCR.dz)) {
-                        fpu.fp[dst_r] = std::move(fpu.dst_v);
+                return [dst_r, c = fpu_op_t_table1[opc2],
+                        get_src = std::move(get_src)] {
+                    init_fpuop();
+                    get_src();
+                    if(test_nan(fpu.src_v)) {
+                        fpu.fp[dst_r] = std::move(fpu.src_v);
+                        fpu.FPSR.nan = true;
+                    } else {
+                        c(fpu.src_v, fpu.dst_v);
+                        if((!fpu.FPSR.operr || !fpu.FPCR.operr) &&
+                           (!fpu.FPSR.dz || !fpu.FPCR.dz)) {
+                            fpu.fp[dst_r] = std::move(fpu.dst_v);
+                        }
                     }
-                }
-                fpu_checkexception();
+                    fpu_checkexception();
+                };
             } else if(fpu_op_t_table2[opc2]) {
-                if(test_nan(fpu.fp[dst_r])) {
-                    fpu.FPSR.nan = true;
-                } else if(test_nan(fpu.src_v)) {
-                    fpu.fp[dst_r] = std::move(fpu.src_v);
-                    fpu.FPSR.nan = true;
-                } else {
-                    fpu.dst_v = fpu.fp[dst_r];
-                    fpu_op_t_table2[opc2](fpu.src_v, fpu.dst_v);
-                    if((!fpu.FPSR.operr || !fpu.FPCR.operr) &&
-                       (!fpu.FPSR.dz || !fpu.FPCR.dz)) {
-                        fpu.fp[dst_r] = std::move(fpu.dst_v);
+                return [dst_r, c = fpu_op_t_table2[opc2],
+                        get_src = std::move(get_src)] {
+                    init_fpuop();
+                    get_src();
+                    if(test_nan(fpu.fp[dst_r])) {
+                        fpu.FPSR.nan = true;
+                    } else if(test_nan(fpu.src_v)) {
+                        fpu.fp[dst_r] = std::move(fpu.src_v);
+                        fpu.FPSR.nan = true;
+                    } else {
+                        fpu.dst_v = fpu.fp[dst_r];
+                        c(fpu.src_v, fpu.dst_v);
+                        if((!fpu.FPSR.operr || !fpu.FPCR.operr) &&
+                           (!fpu.FPSR.dz || !fpu.FPCR.dz)) {
+                            fpu.fp[dst_r] = std::move(fpu.dst_v);
+                        }
                     }
-                }
-                fpu_checkexception();
+                    fpu_checkexception();
+                };
             } else {
-                FP_UNDEF();
+                return FP_UNDEF;
             }
         }
     } else {
         // FMOVE TO
-        fpu.dst_v = fpu.fp[dst_r];
-        fmove_to(type, reg, src_s, opc2, fpu.dst_v);
-        fpu_checkexception();
+        return fmove_to(dst_r, type, reg, src_s, opc2);
     }
 }
+#if 0
 bool fpcc(int c) {
     if(c & 0x20) {
         return false;
@@ -1114,7 +1180,7 @@ bool fpcc(int c) {
     }
     return false;
 }
-void op_fpu_fscc(uint16_t  xop, int dm, int type, int  reg) {
+void op_fpu_fscc(uint16_t xop, int dm, int type, int reg) {
     uint16_t op2 = FETCH();
     bool ret = fpcc(op2 & 0x3f);
     if(type == 1) {
@@ -1155,7 +1221,7 @@ void op_fpu_fscc(uint16_t  xop, int dm, int type, int  reg) {
     }
 }
 
-void op_fbcc_w(uint16_t  xop, int dm, int type, int  reg) {
+void op_fbcc_w(uint16_t xop, int dm, int type, int reg) {
     int opc = xop & 0x3f;
     uint32_t pc = regs.pc;
     int32_t offset = static_cast<int16_t>(FETCH());
@@ -1166,7 +1232,7 @@ void op_fbcc_w(uint16_t  xop, int dm, int type, int  reg) {
     fpu_checkexception();
 }
 
-void op_fbcc_l(uint16_t  xop, int dm, int type, int  reg) {
+void op_fbcc_l(uint16_t xop, int dm, int type, int reg) {
     int opc = xop & 0x3f;
     uint32_t pc = regs.pc;
     int32_t offset = FETCH32();
@@ -1174,7 +1240,7 @@ void op_fbcc_l(uint16_t  xop, int dm, int type, int  reg) {
         JUMP(pc + offset);
     }
 }
-void op_fsave(uint16_t  xop, int dm, int type, int  reg) {
+void op_fsave(uint16_t xop, int dm, int type, int reg) {
     // only idle frame
     if(!regs.S) {
         PRIV_ERROR();
@@ -1182,7 +1248,7 @@ void op_fsave(uint16_t  xop, int dm, int type, int  reg) {
     regs.traced = true;
     EA_WRITE32(type, reg, 0x41000000);
 }
-void op_frestore(uint16_t  xop, int dm, int type, int  reg) {
+void op_frestore(uint16_t xop, int dm, int type, int reg) {
     if(!regs.S) {
         PRIV_ERROR();
     }
@@ -1210,14 +1276,18 @@ void op_frestore(uint16_t  xop, int dm, int type, int  reg) {
         FORMAT_ERROR();
     }
 }
-
+#endif
+using compile_t = std::function<void()>(uint16_t, int, int, int);
+extern compile_t *compile_map[65536 >> 6];
 void init_fpu_opc() {
-    opc_map[01710] = op_fpu_op;
+    compile_map[01710] = compile_fpu_op;
+#if 0
     opc_map[01711] = op_fpu_fscc;
     opc_map[01712] = op_fbcc_w;
     opc_map[01713] = op_fbcc_l;
     opc_map[01714] = op_fsave;
     opc_map[01715] = op_frestore;
+#endif
 
     fpu_op_t_table1[0x00] = op_fmove;
     fpu_op_t_table1[0x01] = op_fint;
