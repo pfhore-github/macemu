@@ -1,0 +1,26 @@
+- name: GDBcc/True
+  init: 
+    PC: 0
+    D1: 1
+  opcodes: [ 0171111, 0x000f, 0x1000 ]
+  expected:
+    PC: 6
+    D1: 1
+
+- name: GDBcc/False/BACK
+  init: 
+    PC: 0
+    D1: 2
+  opcodes: [ 0171111, 0, 0x1000 ]
+  expected:
+    PC: 0x1004
+    D1: 1
+
+- name: GDBcc/False/DONE
+  init: 
+    PC: 0
+    D1: 0
+  opcodes: [ 0171111, 0, 0x1000 ]
+  expected:
+    PC: 6
+    D1: 0xFFFF

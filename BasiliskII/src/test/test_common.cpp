@@ -190,6 +190,18 @@ uint32_t test_init(const YAML::Node &test) {
             set_fpsr(value.as<uint32_t>());
         } else if(key == "FPCR") {
             set_fpcr(value.as<uint32_t>());
+        } else if(key == "FPCR.SNAN") {
+            fpu.FPCR.snan = value.as<bool>();
+        } else if(key == "FPU.BSUN") {
+            fpu.FPSR.bsun = value.as<bool>();
+        } else if(key == "FPU.N") {
+            fpu.FPSR.n = value.as<bool>();
+        } else if(key == "FPU.Z") {
+            fpu.FPSR.z = value.as<bool>();
+        } else if(key == "FPU.NAN") {
+            fpu.FPSR.nan = value.as<bool>();
+        } else if(key == "FPU.I") {
+            fpu.FPSR.i = value.as<bool>();
         } else if(key == "FPU.ROUNDING") {
             std::string v = value.as<std::string>();
             if(v == "RNDN") {
@@ -208,7 +220,7 @@ uint32_t test_init(const YAML::Node &test) {
     return start_address;
 }
 struct mpfr_v {
-    const __mpfr_struct* v;
+    const __mpfr_struct *v;
 };
 std::ostream &operator<<(std::ostream &os, const mpfr_v &v) {
     char *c;
@@ -415,10 +427,16 @@ bool cpu_test(const YAML::Node &test) {
                 BOOST_TEST(fpu.FPSR.i == value.as<bool>());
             } else if(key == "FPU.Z") {
                 BOOST_TEST(fpu.FPSR.z == value.as<bool>());
+            } else if(key == "FPU.NAN") {
+                BOOST_TEST(fpu.FPSR.nan == value.as<bool>());
             } else if(key == "FPU.INEX1") {
                 BOOST_TEST(fpu.FPSR.inex1 == value.as<bool>());
             } else if(key == "FPU.INEX2") {
                 BOOST_TEST(fpu.FPSR.inex2 == value.as<bool>());
+            } else if(key == "FPU.BSUN") {
+                BOOST_TEST(fpu.FPSR.bsun == value.as<bool>());
+            } else if(key == "FPU.SNAN") {
+                BOOST_TEST(fpu.FPSR.snan == value.as<bool>());
             } else if(key == "FPU.quotient") {
                 BOOST_TEST(fpu.FPSR.quotient == value.as<int>());
             } else if(key == "FPIAR") {

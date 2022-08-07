@@ -1,0 +1,371 @@
+- name: FSCC/F
+  opcodes: [ 0171102, 0x0000]
+  expected:
+    D2: 0
+
+- name: FSCC/EQ/T
+  init:
+    FPU.Z: true
+  opcodes: [ 0171102, 0x0001]
+  expected:
+    D2: 0xff
+
+- name: FSCC/EQ/F
+  init:
+    FPU.Z: false
+  opcodes: [ 0171102, 0x0001]
+  expected:
+    D2: 0
+
+- name: FSCC/OGT/T
+  init:
+    FPU.NAN: false
+    FPU.Z: false
+    FPU.N: false
+  opcodes: [ 0171102, 0x0002]
+  expected:
+    D2: 0xff
+
+- name: FSCC/OGT/F/1
+  init:
+    FPU.NAN: true
+  opcodes: [ 0171102, 0x0002]
+  expected:
+    D2: 0
+
+- name: FSCC/OGT/F/2
+  init:
+    FPU.Z: true
+  opcodes: [ 0171102, 0x0002]
+  expected:
+    D2: 0
+
+- name: FSCC/OGT/F/3
+  init:
+    FPU.N: true
+  opcodes: [ 0171102, 0x0002]
+  expected:
+    D2: 0
+
+- name: FSCC/OGE/T/1
+  init:
+    FPU.Z: true
+  opcodes: [ 0171102, 0x0003]
+  expected:
+    D2: 0xff
+
+- name: FSCC/OGE/T/2
+  init:
+    FPU.Z: false
+    FPU.NAN: false
+    FPU.N: false
+  opcodes: [ 0171102, 0x0003]
+  expected:
+    D2: 0xff
+
+- name: FSCC/OGE/F/1
+  init:
+    FPU.Z: false
+    FPU.NAN: true
+  opcodes: [ 0171102, 0x0003]
+  expected:
+    D2: 0
+
+- name: FSCC/OGE/F/2
+  init:
+    FPU.Z: false
+    FPU.N: true
+  opcodes: [ 0171102, 0x0003]
+  expected:
+    D2: 0
+    
+- name: FSCC/OLT/T
+  init:
+    FPU.N: true
+    FPU.NAN: false
+    FPU.Z: false
+  opcodes: [ 0171102, 0x0004]
+  expected:
+    D2: 0xff
+
+- name: FSCC/OLT/F/1
+  init:
+    FPU.N: false
+  opcodes: [ 0171102, 0x0004]
+  expected:
+    D2: 0
+
+- name: FSCC/OLT/F/2
+  init:
+    FPU.N: true
+    FPU.NAN: true
+    FPU.Z: false
+  opcodes: [ 0171102, 0x0004]
+  expected:
+    D2: 0
+
+- name: FSCC/OLT/F/3
+  init:
+    FPU.N: true
+    FPU.NAN: false
+    FPU.Z: true
+  opcodes: [ 0171102, 0x0004]
+  expected:
+    D2: 0
+
+- name: FSCC/OLE/T/1
+  init:
+    FPU.Z: true
+  opcodes: [ 0171102, 0x0005]
+  expected:
+    D2: 0xff
+
+- name: FSCC/OLE/T/2
+  init:
+    FPU.N: true
+    FPU.NAN: false
+  opcodes: [ 0171102, 0x0005]
+  expected:
+    D2: 0xff
+
+- name: FSCC/OLE/F/1
+  init:
+    FPU.Z: false
+    FPU.N: false
+  opcodes: [ 0171102, 0x0005]
+  expected:
+    D2: 0
+
+- name: FSCC/OLE/F/2
+  init:
+    FPU.Z: false
+    FPU.NAN: true
+  opcodes: [ 0171102, 0x0005]
+  expected:
+    D2: 0
+
+- name: FSCC/OGL/T/1
+  init:
+    FPU.NAN: false
+    FPU.Z: false
+  opcodes: [ 0171102, 0x0006]
+  expected:
+    D2: 0xff
+
+- name: FSCC/OGL/F/1
+  init:
+    FPU.NAN: true
+  opcodes: [ 0171102, 0x0006]
+  expected:
+    D2: 0
+
+- name: FSCC/OGL/F/2
+  init:
+    FPU.Z: true
+  opcodes: [ 0171102, 0x0006]
+  expected:
+    D2: 0
+
+- name: FSCC/OR/T
+  init:
+    FPU.NAN: false
+  opcodes: [ 0171102, 0x0007]
+  expected:
+    D2: 0xff
+
+- name: FSCC/OR/F
+  init:
+    FPU.NAN: true
+  opcodes: [ 0171102, 0x0007]
+  expected:
+    D2: 0
+
+- name: FSCC/UN/T
+  init:
+    FPU.NAN: true
+  opcodes: [ 0171102, 0x0008]
+  expected:
+    D2: 0xff
+
+- name: FSCC/UN/F
+  init:
+    FPU.NAN: false
+  opcodes: [ 0171102, 0x0008]
+  expected:
+    D2: 0
+
+- name: FSCC/UEQ/T/1
+  init:
+    FPU.NAN: true
+  opcodes: [ 0171102, 0x0009]
+  expected:
+    D2: 0xff
+
+- name: FSCC/UEQ/T/2
+  init:
+    FPU.Z: true
+  opcodes: [ 0171102, 0x0009]
+  expected:
+    D2: 0xff
+
+- name: FSCC/UGT/T/1
+  init:
+    FPU.NAN: true
+  opcodes: [ 0171102, 0x000A]
+  expected:
+    D2: 0xFF
+
+- name: FSCC/UGT/T/2
+  init:
+    FPU.N: false
+    FPU.Z: false
+  opcodes: [ 0171102, 0x000A]
+  expected:
+    D2: 0xFF
+
+- name: FSCC/UGT/F/1
+  init:
+    FPU.NAN: false
+    FPU.N: true
+    FPU.Z: false
+  opcodes: [ 0171102, 0x000A]
+  expected:
+    D2: 0
+
+- name: FSCC/UGT/F/2
+  init:
+    FPU.NAN: false
+    FPU.N: false
+    FPU.Z: true
+  opcodes: [ 0171102, 0x000A]
+  expected:
+    D2: 0
+
+- name: FSCC/UGE/T/1
+  init:
+    FPU.NAN: true
+  opcodes: [ 0171102, 0x000B]
+  expected:
+    D2: 0xFF
+
+- name: FSCC/UGE/T/2
+  init:
+    FPU.Z: true
+  opcodes: [ 0171102, 0x000B]
+  expected:
+    D2: 0xFF
+
+- name: FSCC/UGE/T/3
+  init:
+    FPU.N: false
+  opcodes: [ 0171102, 0x000B]
+  expected:
+    D2: 0xFF
+
+- name: FSCC/UGE/F
+  init:
+    FPU.NAN: false
+    FPU.Z: false
+    FPU.N: true
+  opcodes: [ 0171102, 0x000B]
+  expected:
+    D2: 0
+
+
+- name: FSCC/ULT/T/1
+  init:
+    FPU.NAN: true
+  opcodes: [ 0171102, 0x000C]
+  expected:
+    D2: 0xFF
+
+- name: FSCC/ULT/T/2
+  init:
+    FPU.N: true
+    FPU.Z: false
+  opcodes: [ 0171102, 0x000C]
+  expected:
+    D2: 0xFF
+
+- name: FSCC/ULT/F/1
+  init:
+    FPU.NAN: false
+    FPU.N: false
+  opcodes: [ 0171102, 0x000C]
+  expected:
+    D2: 0
+
+- name: FSCC/ULT/F/2
+  init:
+    FPU.NAN: false
+    FPU.Z: true
+  opcodes: [ 0171102, 0x000C]
+  expected:
+    D2: 0
+
+- name: FSCC/ULE/T/1
+  init:
+    FPU.NAN: true
+  opcodes: [ 0171102, 0x000D]
+  expected:
+    D2: 0xFF
+
+- name: FSCC/ULE/T/2
+  init:
+    FPU.Z: true
+  opcodes: [ 0171102, 0x000D]
+  expected:
+    D2: 0xFF
+
+- name: FSCC/ULE/T/3
+  init:
+    FPU.N: true
+  opcodes: [ 0171102, 0x000D]
+  expected:
+    D2: 0xFF
+
+- name: FSCC/ULE/F
+  init:
+    FPU.NAN: false
+    FPU.Z: false
+    FPU.N: false
+  opcodes: [ 0171102, 0x000D]
+  expected:
+    D2: 0
+
+- name: FSCC/NE/T
+  init:
+    FPU.Z: false
+  opcodes: [ 0171102, 0x000E]
+  expected:
+    D2: 0xFF
+
+- name: FSCC/NE/F
+  init:
+    FPU.Z: true
+  opcodes: [ 0171102, 0x000E]
+  expected:
+    D2: 0
+
+- name: FSCC/T
+  opcodes: [ 0171102, 0x000F]
+  expected:
+    D2: 0xff
+
+
+- name: FSCC/BSUN/T
+  init:
+    FPU.NAN: true
+    FPU.BSUN: false
+  opcodes: [ 0171102, 0x0010]
+  expected:
+    FPU.BSUN: true
+
+- name: FSCC/BSUN/F
+  init:
+    FPU.NAN: false
+    FPU.BSUN: false
+  opcodes: [ 0171102, 0x0010]
+  expected:
+    FPU.BSUN: false
+

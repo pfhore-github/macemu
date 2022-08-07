@@ -1,0 +1,25 @@
+- name: FTRAPcc/OK
+  opcodes: [ 0171174, 0x0000 ]
+  expected:
+    exception: 0
+
+- name: FTRAPcc/OK/W
+  init:
+    PC: 0
+  opcodes: [ 0171172, 0x0000, 0x1234 ]
+  expected:
+    exception: 0
+    PC: 6
+
+- name: FTRAPcc/OK/L
+  init:
+    PC: 0
+  opcodes: [ 0171173, 0x0000, 0x12345678L ]
+  expected:
+    exception: 0
+    PC: 8
+
+- name: FTRAPcc/NG
+  opcodes: [ 0171174, 0x000F ]
+  expected:
+    exception: 7

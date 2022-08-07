@@ -870,7 +870,7 @@ std::function<void()> fmove_to_cr(int type, int reg, uint16_t op2) {
             fpu.fpiar = read32(addr + 8);
         };
     }
-   return FP_UNDEF;
+    return FP_UNDEF;
 }
 void init_fpuop() {
     mpfr_clear_flags();
@@ -1129,7 +1129,6 @@ std::function<void()> compile_fpu_op(uint16_t xop, int type, int reg, int dm) {
         return fmove_to(dst_r, type, reg, src_s, opc2);
     }
 }
-#if 0
 bool fpcc(int c) {
     if(c & 0x20) {
         return false;
@@ -1177,21 +1176,24 @@ bool fpcc(int c) {
     }
     return false;
 }
-void op_fpu_fscc(uint16_t xop, int dm, int type, int reg) {
+std::function<void()> compile_fpu_fscc(uint16_t xop, int type, int reg,
+                                       int dm) {
     uint16_t op2 = FETCH();
-    bool ret = fpcc(op2 & 0x3f);
     if(type == 1) {
         // FDBcc
         uint32_t pc = regs.pc;
         int16_t disp = FETCH();
-        regs.traced = true;
-        if(!ret) {
-            int16_t v = regs.d[reg] - 1;
-            WRITE_D16(reg, v);
-            if(v != -1) {
-                JUMP(pc + disp);
+        return [p = pc + disp, o = op2 & 0x3f, reg]() {
+            bool ret = fpcc(o);
+            regs.traced = true;
+            if(!ret) {
+                int16_t v = regs.d[reg] - 1;
+                WRITE_D16(reg, v);
+                if(v != -1) {
+                    JUMP(p);
+                }
             }
-        }
+        };
     } else if(type == 7) {
         // FTRAPcc
         switch(reg) {
@@ -1204,40 +1206,54 @@ void op_fpu_fscc(uint16_t xop, int dm, int type, int reg) {
         case 4:
             break;
         default:
-            FP_UNDEF();
-            return;
+            return FP_UNDEF;
         }
-        if(ret) {
-            TRPPcc();
-        }
+        return [o = op2 & 0x3f]() {
+            bool ret = fpcc(o);
+            if(ret) {
+                TRPPcc();
+            }
+        };
     } else {
         // FScc
-        regs.i_ea = 0;
-        EA_WRITE8(type, reg, ret ? 0xff : 0);
-        fpu_checkexception();
+        return EA_Write8(type, reg, [o = op2 & 0x3f]() -> uint8_t {
+            bool ret = fpcc(o);
+            fpu_checkexception();
+            return ret ? 0xff : 0;
+        });
     }
 }
 
-void op_fbcc_w(uint16_t xop, int dm, int type, int reg) {
+std::function<void()> compile_fbcc_w(uint16_t xop, int type, int reg, int dm) {
     int opc = xop & 0x3f;
     uint32_t pc = regs.pc;
     int32_t offset = static_cast<int16_t>(FETCH());
-    if(fpcc(opc)) {
-        regs.traced = true;
-        JUMP(pc + offset);
-    }
-    fpu_checkexception();
+    return [opc, p = pc + offset]() {
+        if(fpcc(opc)) {
+            regs.traced = true;
+            JUMP(p);
+        }
+        fpu_checkexception();
+    };
 }
 
-void op_fbcc_l(uint16_t xop, int dm, int type, int reg) {
+std::function<void()> compile_fbcc_l(uint16_t xop, int type, int reg, int dm) {
     int opc = xop & 0x3f;
     uint32_t pc = regs.pc;
     int32_t offset = FETCH32();
-    if(fpcc(opc)) {
-        JUMP(pc + offset);
-    }
+    return [opc, p = pc + offset]() {
+        if(fpcc(opc)) {
+            regs.traced = true;
+            JUMP(p);
+        }
+        fpu_checkexception();
+    };
 }
-void op_fsave(uint16_t xop, int dm, int type, int reg) {
+
+#if 0
+
+
+void op_fsave(uint16_t xop, int type, int reg, int dm) {
     // only idle frame
     if(!regs.S) {
         PRIV_ERROR();
@@ -1245,7 +1261,7 @@ void op_fsave(uint16_t xop, int dm, int type, int reg) {
     regs.traced = true;
     EA_WRITE32(type, reg, 0x41000000);
 }
-void op_frestore(uint16_t xop, int dm, int type, int reg) {
+void op_frestore(uint16_t xop, int type, int reg, int dm) {
     if(!regs.S) {
         PRIV_ERROR();
     }
@@ -1278,10 +1294,10 @@ using compile_t = std::function<void()>(uint16_t, int, int, int);
 extern compile_t *compile_map[65536 >> 6];
 void init_fpu_opc() {
     compile_map[01710] = compile_fpu_op;
+    compile_map[01711] = compile_fpu_fscc;
+    compile_map[01712] = compile_fbcc_w;
+    compile_map[01713] = compile_fbcc_l;
 #if 0
-    opc_map[01711] = op_fpu_fscc;
-    opc_map[01712] = op_fbcc_w;
-    opc_map[01713] = op_fbcc_l;
     opc_map[01714] = op_fsave;
     opc_map[01715] = op_frestore;
 #endif

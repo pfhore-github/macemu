@@ -1,0 +1,27 @@
+- name: FBcc/W/T
+  init: 
+    PC: 0
+  opcodes: [ 0171200 | 0xF, 0x1000]
+  expected:
+    PC: 0x1002
+
+- name: FBcc/W/F
+  init: 
+    PC: 0
+  opcodes: [ 0171200 | 0x0, 0x1000]
+  expected:
+    PC: 4
+
+- name: FBcc/L/T
+  init: 
+    PC: 0
+  opcodes: [ 0171300 | 0xF, 0x1000L]
+  expected:
+    PC: 0x1002
+
+- name: FBcc/L/F
+  init: 
+    PC: 0
+  opcodes: [ 0171300 | 0x0, 0x1000L]
+  expected:
+    PC: 6

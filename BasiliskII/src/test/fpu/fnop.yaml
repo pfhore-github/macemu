@@ -1,0 +1,4 @@
+- name: FNOP
+  opcodes: [0171200, 0]
+  expected:
+    exception: 0

@@ -1,0 +1,70 @@
+- name: FTST/N/false
+  init:
+    FP1: 1.0
+  opcodes: [0171000, 0x3A | 1_10]
+  expected:
+    FPU.N: false
+
+- name: FTST/N/true
+  init:
+    FP1: -1.0
+  opcodes: [0171000, 0x3A | 1_10]
+  expected:
+    FPU.N: true
+
+- name: FTST/Z/false
+  init:
+    FP1: 1.0
+  opcodes: [0171000, 0x3A | 1_10]
+  expected:
+    FPU.Z: false
+
+- name: FTST/Z/true
+  init:
+    FP1: 0.0
+  opcodes: [0171000, 0x3A | 1_10]
+  expected:
+    FPU.Z: true
+
+- name: FTST/I/false
+  init:
+    FP1: 1.0
+  opcodes: [0171000, 0x3A | 1_10]
+  expected:
+    FPU.I: false
+
+- name: FTST/I/true
+  init:
+    FP1: INFINITY
+  opcodes: [0171000, 0x3A | 1_10]
+  expected:
+    FPU.I: true
+
+- name: FTST/I/false
+  init:
+    FP1: 1.0
+  opcodes: [0171000, 0x3A | 1_10]
+  expected:
+    FPU.I: false
+
+- name: FTST/I/true
+  init:
+    FP1: INFINITY
+  opcodes: [0171000, 0x3A | 1_10]
+  expected:
+    FPU.I: true
+
+- name: FTST/NAN/false
+  init:
+    FP1: 1.0
+  opcodes: [0171000, 0x3A | 1_10]
+  expected:
+    FPU.NAN: false
+
+- name: FTST/NAN/true
+  init:
+    FP1: NAN
+  opcodes: [0171000, 0x3A | 1_10]
+  expected:
+    FPU.NAN: true
+

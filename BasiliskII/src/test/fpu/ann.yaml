@@ -1,0 +1,48 @@
+- name: FPU/NAN/op1/qNAN
+  init:
+    FP1: NAN(0x7F00000000000000)
+  opcodes: [ 0171000, 1_10 | 2_7 | 0x18 ]
+  expected:
+    FP2.PAYLOAD: 0x7F00000000000000
+
+- name: FPU/NAN/op1/sNAN
+  init:
+    FP1: NAN(0x3F00000000000000)
+  opcodes: [ 0171000, 1_10 | 2_7 | 0x18 ]
+  expected:
+    FP2.PAYLOAD: 0x7F00000000000000
+    FPU.SNAN: true
+
+- name: FPU/NAN/op1/sNAN/sig
+  init:
+    FPCR.SNAN: true
+    FP1: NAN(0x3F00000000000000)
+  opcodes: [ 0171000, 1_10 | 2_7 | 0x18 ]
+  expected:
+    exception: 54
+    FP2.PAYLOAD : 0x3F00000000000000
+    FPU.SNAN: true
+
+- name: FPU/NAN/op2/src
+  init:
+    FP1: NAN(0x7F00000000000000)
+    FP2: 2.0
+  opcodes: [ 0171000, 1_10 | 2_7 | 0x22 ]
+  expected:
+    FP2.PAYLOAD: 0x7F00000000000000
+
+- name: FPU/NAN/op2/dst
+  init:
+    FP2: NAN(0x7F00000000000000)
+    FP1: 2.0
+  opcodes: [ 0171000, 1_10 | 2_7 | 0x22 ]
+  expected:
+    FP2.PAYLOAD: 0x7F00000000000000
+
+- name: FPU/NAN/op2/both
+  init:
+    FP2: NAN(0x7FF0000000000000)
+    FP1: NAN(0x7F00000000000000)
+  opcodes: [ 0171000, 1_10 | 2_7 | 0x22 ]
+  expected:
+    FP2.PAYLOAD: 0x7FF0000000000000
