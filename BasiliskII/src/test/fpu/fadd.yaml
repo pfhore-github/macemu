@@ -1,0 +1,268 @@
+- name: FADD/operand
+  init:
+    FP1: 1.0
+    FP2: 2.0
+  opcodes: [0171000, 0x22 | 2_7 | 1_10]
+  expected:
+    FP2: 3.0
+
+
+- name: FADD/+0+X
+  init:
+    FP1: 0
+    FP2: 2.0
+  opcodes: [0171000, 0x22 | 2_7 | 1_10]
+  expected:
+    FP2: 2.0
+    
+- name: FADD/-0+X
+  init:
+    FP1: -0
+    FP2: 2.0
+  opcodes: [0171000, 0x22 | 2_7 | 1_10]
+  expected:
+    FP2: 2.0
+    
+- name: FADD/+0+∞
+  init:
+    FP1: 0
+    FP2: INFINITY
+  opcodes: [0171000, 0x22 | 2_7 | 1_10]
+  expected:
+    FP2: INFINITY
+
+- name: FADD/+0-∞
+  init:
+    FP1: 0
+    FP2: -INFINITY
+  opcodes: [0171000, 0x22 | 2_7 | 1_10]
+  expected:
+    FP2: -INFINITY
+
+- name: FADD/-0+∞
+  init:
+    FP1: -0
+    FP2: INFINITY
+  opcodes: [0171000, 0x22 | 2_7 | 1_10]
+  expected:
+    FP2: INFINITY
+
+- name: FADD/-0-∞
+  init:
+    FP1: -0
+    FP2: -INFINITY
+  opcodes: [0171000, 0x22 | 2_7 | 1_10]
+  expected:
+    FP2: -INFINITY
+
+- name: FADD/0+0
+  init:
+    FP1: 0
+    FP2: 0
+  opcodes: [0171000, 0x22 | 2_7 | 1_10]
+  expected:
+    FP2: 0
+
+- name: FADD/0+(-0)/RNDN
+  init:
+    FP1: 0
+    FP2: -0
+    FPU.ROUNDING: RNDN
+  opcodes: [0171000, 0x22 | 2_7 | 1_10]
+  expected:
+    FP2: 0
+
+- name: FADD/0+(-0)/RNDZ
+  init:
+    FP1: 0
+    FP2: -0
+    FPU.ROUNDING: RNDZ
+  opcodes: [0171000, 0x22 | 2_7 | 1_10]
+  expected:
+    FP2: 0
+
+- name: FADD/0+(-0)/RNDU
+  init:
+    FP1: 0
+    FP2: -0
+    FPU.ROUNDING: RNDU
+  opcodes: [0171000, 0x22 | 2_7 | 1_10]
+  expected:
+    FP2: 0
+
+- name: FADD/0+(-0)/RNDD
+  init:
+    FP1: 0
+    FP2: -0
+    FPU.ROUNDING: RNDD
+  opcodes: [0171000, 0x22 | 2_7 | 1_10]
+  expected:
+    FP2: -0
+
+- name: FADD/(-0)+0/RNDN
+  init:
+    FP1: -0
+    FP2: 0
+    FPU.ROUNDING: RNDN
+  opcodes: [0171000, 0x22 | 2_7 | 1_10]
+  expected:
+    FP2: 0
+
+- name: FADD/(-0)+0/RNDZ
+  init:
+    FP1: -0
+    FP2: 0
+    FPU.ROUNDING: RNDZ
+  opcodes: [0171000, 0x22 | 2_7 | 1_10]
+  expected:
+    FP2: 0
+
+- name: FADD/(-0)+0/RNDU
+  init:
+    FP1: -0
+    FP2: 0
+    FPU.ROUNDING: RNDU
+  opcodes: [0171000, 0x22 | 2_7 | 1_10]
+  expected:
+    FP2: 0
+
+- name: FADD/(-0)+0/RNDD
+  init:
+    FP1: -0
+    FP2: 0
+    FPU.ROUNDING: RNDD
+  opcodes: [0171000, 0x22 | 2_7 | 1_10]
+  expected:
+    FP2: -0
+
+- name: FADD/(-0)+(-0)
+  init:
+    FP1: -0
+    FP2: -0
+  opcodes: [0171000, 0x22 | 2_7 | 1_10]
+  expected:
+    FP2: -0
+
+- name: FADD/+∞+X
+  init:
+    FP1: INFINITY
+    FP2: 1.0
+  opcodes: [0171000, 0x22 | 2_7 | 1_10]
+  expected:
+    FP2: INFINITY
+
+- name: FADD/-∞+X
+  init:
+    FP1: -INFINITY
+    FP2: 1.0
+  opcodes: [0171000, 0x22 | 2_7 | 1_10]
+  expected:
+    FP2: -INFINITY
+
+- name: FADD/+∞+0
+  init:
+    FP1: INFINITY
+    FP2: 0.0
+  opcodes: [0171000, 0x22 | 2_7 | 1_10]
+  expected:
+    FP2: INFINITY
+
+- name: FADD/+∞-0
+  init:
+    FP1: INFINITY
+    FP2: -0
+  opcodes: [0171000, 0x22 | 2_7 | 1_10]
+  expected:
+    FP2: INFINITY
+
+- name: FADD/-∞+0
+  init:
+    FP1: -INFINITY
+    FP2: 0
+  opcodes: [0171000, 0x22 | 2_7 | 1_10]
+  expected:
+    FP2: -INFINITY
+
+- name: FADD/-∞-0
+  init:
+    FP1: -INFINITY
+    FP2: -0
+  opcodes: [0171000, 0x22 | 2_7 | 1_10]
+  expected:
+    FP2: -INFINITY
+
+- name: FADD/+∞+∞
+  init:
+    FP1: INFINITY
+    FP2: INFINITY
+  opcodes: [0171000, 0x22 | 2_7 | 1_10]
+  expected:
+    FP2: INFINITY
+
+- name: FADD/+∞+(-∞)
+  init:
+    FP1: INFINITY
+    FP2: -INFINITY
+  opcodes: [0171000, 0x22 | 2_7 | 1_10]
+  expected:
+    FP2: NAN
+    FPU.OPERR: true
+
+- name: FADD/-∞+∞
+  init:
+    FP1: -INFINITY
+    FP2: INFINITY
+  opcodes: [0171000, 0x22 | 2_7 | 1_10]
+  expected:
+    FP2: NAN
+    FPU.OPERR: true
+
+- name: FADD/-∞-∞
+  init:
+    FP1: -INFINITY
+    FP2: -INFINITY
+  opcodes: [0171000, 0x22 | 2_7 | 1_10]
+  expected:
+    FP2: -INFINITY
+
+- name: FADD/X+0
+  init:
+    FP1: 2.0
+    FP2: 0
+  opcodes: [0171000, 0x22 | 2_7 | 1_10]
+  expected:
+    FP2: 2.0
+    
+- name: FADD/X+(-0)
+  init:
+    FP1: 2.0
+    FP2: -0
+  opcodes: [0171000, 0x22 | 2_7 | 1_10]
+  expected:
+    FP2: 2.0
+  
+
+- name: FADD/X+∞
+  init:
+    FP1: 2.0
+    FP2: INFINITY
+  opcodes: [0171000, 0x22 | 2_7 | 1_10]
+  expected:
+    FP2: INFINITY
+    
+- name: FADD/X+(-∞)
+  init:
+    FP1: 2.0
+    FP2: -INFINITY
+  opcodes: [0171000, 0x22 | 2_7 | 1_10]
+  expected:
+    FP2: -INFINITY
+
+- name: FADD/OVFL
+  init:
+    FP1: 0x1p+16383
+    FP2: 0x1p+16383
+  opcodes: [0171000, 0x22 | 2_7 | 1_10]
+  expected:
+    FP2: INFINITY
+    FPU.OVFL: true

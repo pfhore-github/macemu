@@ -1,0 +1,376 @@
+- name: FINT/2op
+  init: 
+    FP1: 1.2
+    FPU.ROUNDING: RNDN
+  opcodes: [0171000, 0x01 | 2_7 | 1_10]
+  expected:
+    FP2: 1.0
+
+- name: FINT/1op
+  init: 
+    FP1: 1.2
+    FPU.ROUNDING: RNDN
+  opcodes: [0171000, 0x01 | 1_7 | 1_10]
+  expected:
+    FP1: 1.0
+
+- name: FINT/+0
+  init: 
+    FP1: 0.0
+  opcodes: [0171000, 0x01 | 1_7 | 1_10]
+  expected:
+    FP1: 0
+
+- name: FINT/-0
+  init: 
+    FP1: -0.0
+  opcodes: [0171000, 0x01 | 1_7 | 1_10]
+  expected:
+    FP1: -0
+
+- name: FINT/+∞
+  init: 
+    FP1: INFINITY
+  opcodes: [0171000, 0x01 | 1_7 | 1_10]
+  expected:
+    FP1: INFINITY
+
+- name: FINT/-∞
+  init: 
+    FP1: -INFINITY
+  opcodes: [0171000, 0x01 | 1_7 | 1_10]
+  expected:
+    FP1: -INFINITY
+
+- name: FINT/RNDN/positive_integer
+  init: 
+    FP1: 3.0
+    FPU.ROUNDING: RNDN
+  opcodes: [0171000, 0x01 | 1_7 | 1_10]
+  expected:
+    FP1: 3.0
+
+- name: FINT/RNDN/positive_upward
+  init: 
+    FP1: 2.8
+    FPU.ROUNDING: RNDN
+  opcodes: [0171000, 0x01 | 1_7 | 1_10]
+  expected:
+    FP1: 3.0
+
+- name: FINT/RNDN/positive_half(even)
+  init: 
+    FP1: 2.5
+    FPU.ROUNDING: RNDN
+  opcodes: [0171000, 0x01 | 1_7 | 1_10]
+  expected:
+    FP1: 2.0
+    
+- name: FINT/RNDN/positive_half(odd)
+  init: 
+    FP1: 1.5
+    FPU.ROUNDING: RNDN
+  opcodes: [0171000, 0x01 | 1_7 | 1_10]
+  expected:
+    FP1: 2.0
+    
+- name: FINT/RNDN/positive_downward
+  init: 
+    FP1: 2.2
+    FPU.ROUNDING: RNDN
+  opcodes: [0171000, 0x01 | 1_7 | 1_10]
+  expected:
+    FP1: 2.0
+    
+
+- name: FINT/RNDN/negative_integer
+  init: 
+    FP1: -3.0
+    FPU.ROUNDING: RNDN
+  opcodes: [0171000, 0x01 | 1_7 | 1_10]
+  expected:
+    FP1: -3.0
+
+- name: FINT/RNDN/negative_upward
+  init: 
+    FP1: -2.8
+    FPU.ROUNDING: RNDN
+  opcodes: [0171000, 0x01 | 1_7 | 1_10]
+  expected:
+    FP1: -3.0
+
+- name: FINT/RNDN/negative_half(even)
+  init: 
+    FP1: -2.5
+    FPU.ROUNDING: RNDN
+  opcodes: [0171000, 0x01 | 1_7 | 1_10]
+  expected:
+    FP1: -2.0
+    
+- name: FINT/RNDN/negative_half(odd)
+  init: 
+    FP1: -1.5
+    FPU.ROUNDING: RNDN
+  opcodes: [0171000, 0x01 | 1_7 | 1_10]
+  expected:
+    FP1: -2.0
+    
+- name: FINT/RNDN/negative_downward
+  init: 
+    FP1: -2.2
+    FPU.ROUNDING: RNDN
+  opcodes: [0171000, 0x01 | 1_7 | 1_10]
+  expected:
+    FP1: -2.0
+    
+
+
+- name: FINT/RNDZ/positive_integer
+  init: 
+    FP1: 3.0
+    FPU.ROUNDING: RNDZ
+  opcodes: [0171000, 0x01 | 1_7 | 1_10]
+  expected:
+    FP1: 3.0
+
+- name: FINT/RNDZ/positive_upward
+  init: 
+    FP1: 2.8
+    FPU.ROUNDING: RNDZ
+  opcodes: [0171000, 0x01 | 1_7 | 1_10]
+  expected:
+    FP1: 2.0
+
+- name: FINT/RNDZ/positive_half(even)
+  init: 
+    FP1: 2.5
+    FPU.ROUNDING: RNDZ
+  opcodes: [0171000, 0x01 | 1_7 | 1_10]
+  expected:
+    FP1: 2.0
+    
+- name: FINT/RNDZ/positive_half(odd)
+  init: 
+    FP1: 1.5
+    FPU.ROUNDING: RNDZ
+  opcodes: [0171000, 0x01 | 1_7 | 1_10]
+  expected:
+    FP1: 1.0
+    
+- name: FINT/RNDZ/positive_downward
+  init: 
+    FP1: 2.2
+    FPU.ROUNDING: RNDZ
+  opcodes: [0171000, 0x01 | 1_7 | 1_10]
+  expected:
+    FP1: 2.0
+    
+
+- name: FINT/RNDZ/negative_integer
+  init: 
+    FP1: -3.0
+    FPU.ROUNDING: RNDZ
+  opcodes: [0171000, 0x01 | 1_7 | 1_10]
+  expected:
+    FP1: -3.0
+
+- name: FINT/RNDZ/negative_upward
+  init: 
+    FP1: -2.8
+    FPU.ROUNDING: RNDZ
+  opcodes: [0171000, 0x01 | 1_7 | 1_10]
+  expected:
+    FP1: -2.0
+
+- name: FINT/RNDZ/negative_half(even)
+  init: 
+    FP1: -2.5
+    FPU.ROUNDING: RNDZ
+  opcodes: [0171000, 0x01 | 1_7 | 1_10]
+  expected:
+    FP1: -2.0
+    
+- name: FINT/RNDZ/negative_half(odd)
+  init: 
+    FP1: -1.5
+    FPU.ROUNDING: RNDZ
+  opcodes: [0171000, 0x01 | 1_7 | 1_10]
+  expected:
+    FP1: -1.0
+    
+- name: FINT/RNDZ/negative_downward
+  init: 
+    FP1: -2.2
+    FPU.ROUNDING: RNDZ
+  opcodes: [0171000, 0x01 | 1_7 | 1_10]
+  expected:
+    FP1: -2.0
+    
+
+
+
+- name: FINT/RNDD/positive_integer
+  init: 
+    FP1: 3.0
+    FPU.ROUNDING: RNDD
+  opcodes: [0171000, 0x01 | 1_7 | 1_10]
+  expected:
+    FP1: 3.0
+
+- name: FINT/RNDD/positive_upward
+  init: 
+    FP1: 2.8
+    FPU.ROUNDING: RNDD
+  opcodes: [0171000, 0x01 | 1_7 | 1_10]
+  expected:
+    FP1: 2.0
+
+- name: FINT/RNDD/positive_half(even)
+  init: 
+    FP1: 2.5
+    FPU.ROUNDING: RNDD
+  opcodes: [0171000, 0x01 | 1_7 | 1_10]
+  expected:
+    FP1: 2.0
+    
+- name: FINT/RNDD/positive_half(odd)
+  init: 
+    FP1: 1.5
+    FPU.ROUNDING: RNDD
+  opcodes: [0171000, 0x01 | 1_7 | 1_10]
+  expected:
+    FP1: 1.0
+    
+- name: FINT/RNDD/positive_downward
+  init: 
+    FP1: 2.2
+    FPU.ROUNDING: RNDD
+  opcodes: [0171000, 0x01 | 1_7 | 1_10]
+  expected:
+    FP1: 2.0
+    
+
+- name: FINT/RNDD/negative_integer
+  init: 
+    FP1: -3.0
+    FPU.ROUNDING: RNDD
+  opcodes: [0171000, 0x01 | 1_7 | 1_10]
+  expected:
+    FP1: -3.0
+
+- name: FINT/RNDD/negative_upward
+  init: 
+    FP1: -2.8
+    FPU.ROUNDING: RNDD
+  opcodes: [0171000, 0x01 | 1_7 | 1_10]
+  expected:
+    FP1: -3.0
+
+- name: FINT/RNDD/negative_half(even)
+  init: 
+    FP1: -2.5
+    FPU.ROUNDING: RNDD
+  opcodes: [0171000, 0x01 | 1_7 | 1_10]
+  expected:
+    FP1: -3.0
+    
+- name: FINT/RNDD/negative_half(odd)
+  init: 
+    FP1: -1.5
+    FPU.ROUNDING: RNDD
+  opcodes: [0171000, 0x01 | 1_7 | 1_10]
+  expected:
+    FP1: -2.0
+    
+- name: FINT/RNDD/negative_downward
+  init: 
+    FP1: -2.2
+    FPU.ROUNDING: RNDD
+  opcodes: [0171000, 0x01 | 1_7 | 1_10]
+  expected:
+    FP1: -3.0
+ 
+
+
+
+- name: FINT/RNDU/positive_integer
+  init: 
+    FP1: 3.0
+    FPU.ROUNDING: RNDU
+  opcodes: [0171000, 0x01 | 1_7 | 1_10]
+  expected:
+    FP1: 3.0
+
+- name: FINT/RNDU/positive_upward
+  init: 
+    FP1: 2.8
+    FPU.ROUNDING: RNDU
+  opcodes: [0171000, 0x01 | 1_7 | 1_10]
+  expected:
+    FP1: 3.0
+
+- name: FINT/RNDU/positive_half(even)
+  init: 
+    FP1: 2.5
+    FPU.ROUNDING: RNDU
+  opcodes: [0171000, 0x01 | 1_7 | 1_10]
+  expected:
+    FP1: 3.0
+    
+- name: FINT/RNDU/positive_half(odd)
+  init: 
+    FP1: 1.5
+    FPU.ROUNDING: RNDU
+  opcodes: [0171000, 0x01 | 1_7 | 1_10]
+  expected:
+    FP1: 2.0
+    
+- name: FINT/RNDU/positive_downward
+  init: 
+    FP1: 2.2
+    FPU.ROUNDING: RNDU
+  opcodes: [0171000, 0x01 | 1_7 | 1_10]
+  expected:
+    FP1: 3.0
+    
+
+- name: FINT/RNDU/negative_integer
+  init: 
+    FP1: -3.0
+    FPU.ROUNDING: RNDU
+  opcodes: [0171000, 0x01 | 1_7 | 1_10]
+  expected:
+    FP1: -3.0
+
+- name: FINT/RNDU/negative_upward
+  init: 
+    FP1: -2.8
+    FPU.ROUNDING: RNDU
+  opcodes: [0171000, 0x01 | 1_7 | 1_10]
+  expected:
+    FP1: -2.0
+
+- name: FINT/RNDU/negative_half(even)
+  init: 
+    FP1: -2.5
+    FPU.ROUNDING: RNDU
+  opcodes: [0171000, 0x01 | 1_7 | 1_10]
+  expected:
+    FP1: -2.0
+    
+- name: FINT/RNDU/negative_half(odd)
+  init: 
+    FP1: -1.5
+    FPU.ROUNDING: RNDU
+  opcodes: [0171000, 0x01 | 1_7 | 1_10]
+  expected:
+    FP1: -1.0
+    
+- name: FINT/RNDU/negative_downward
+  init: 
+    FP1: -2.2
+    FPU.ROUNDING: RNDU
+  opcodes: [0171000, 0x01 | 1_7 | 1_10]
+  expected:
+    FP1: -2.0
+ 

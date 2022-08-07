@@ -1,0 +1,209 @@
+- name: FCMP/N/true
+  init:
+    FP1: 0.5
+    FP2: 0.2
+  opcodes: [0171000, 0x38 | 2_7 | 1_10]
+  expected:
+    FPU.N: true
+
+- name: FCMP/N/false
+  init:
+    FP1: 0.2
+    FP2: 0.5
+  opcodes: [0171000, 0x38 | 2_7 | 1_10]
+  expected:
+    FPU.N: false
+
+- name: FCMP/Z/true
+  init:
+    FP1: 0.5
+    FP2: 0.5
+  opcodes: [0171000, 0x38 | 2_7 | 1_10]
+  expected:
+    FPU.Z: true
+
+- name: FCMP/Z/false
+  init:
+    FP1: 0.2
+    FP2: 0.5
+  opcodes: [0171000, 0x38 | 2_7 | 1_10]
+  expected:
+    FPU.Z: false
+
+- name: FCMP/+0-X
+  init:
+    FP1: 3
+    FP2: 0
+  opcodes: [0171000, 0x38 | 2_7 | 1_10]
+  expected:
+    FPU.Z: false
+    FPU.N: true
+
+- name: FCMP/-0-X
+  init:
+    FP1: 3
+    FP2: -0
+  opcodes: [0171000, 0x38 | 2_7 | 1_10]
+  expected:
+    FPU.Z: false
+    FPU.N: true
+
+- name: FCMP/+0-∞
+  init:
+    FP1: INFINITY
+    FP2: 0
+  opcodes: [0171000, 0x38 | 2_7 | 1_10]
+  expected:
+    FPU.N: true
+
+- name: FCMP/+0-(-∞)
+  init:
+    FP1: -INFINITY
+    FP2: 0
+  opcodes: [0171000, 0x38 | 2_7 | 1_10]
+  expected:
+    FPU.N: false
+
+- name: FCMP/-0-∞
+  init:
+    FP1: INFINITY
+    FP2: -0
+  opcodes: [0171000, 0x38 | 2_7 | 1_10]
+  expected:
+    FPU.N: true
+
+- name: FCMP/-0-(-∞)
+  init:
+    FP1: -INFINITY
+    FP2: -0
+  opcodes: [0171000, 0x38 | 2_7 | 1_10]
+  expected:
+    FPU.N: false
+
+- name: FCMP/0-0
+  init:
+    FP1: 0
+    FP2: 0
+  opcodes: [0171000, 0x38 | 2_7 | 1_10]
+  expected:
+    FPU.N: false
+    FPU.Z: true
+
+- name: FCMP/0-(-0)
+  init:
+    FP1: -0
+    FP2: 0
+  opcodes: [0171000, 0x38 | 2_7 | 1_10]
+  expected:
+    FPU.N: false
+    FPU.Z: true
+
+- name: FCMP/-0-0
+  init:
+    FP1: 0
+    FP2: -0
+  opcodes: [0171000, 0x38 | 2_7 | 1_10]
+  expected:
+    FPU.N: true
+    FPU.Z: true
+
+- name: FCMP/-0-(-0)
+  init:
+    FP1: -0
+    FP2: -0
+  opcodes: [0171000, 0x38 | 2_7 | 1_10]
+  expected:
+    FPU.N: true
+    FPU.Z: true
+
+- name: FCMP/+∞-X
+  init:
+    FP1: 3
+    FP2: INFINITY
+  opcodes: [0171000, 0x38 | 2_7 | 1_10]
+  expected:
+    FPU.Z: false
+    FPU.N: false
+
+- name: FCMP/-∞-X
+  init:
+    FP1: 3
+    FP2: -INFINITY
+  opcodes: [0171000, 0x38 | 2_7 | 1_10]
+  expected:
+    FPU.Z: false
+    FPU.N: true
+
+
+- name: FCMP/∞-0
+  init:
+    FP1: 0
+    FP2: INFINITY
+  opcodes: [0171000, 0x38 | 2_7 | 1_10]
+  expected:
+    FPU.N: false
+    FPU.Z: false
+
+- name: FCMP/∞-(-0)
+  init:
+    FP1: -0
+    FP2: INFINITY
+  opcodes: [0171000, 0x38 | 2_7 | 1_10]
+  expected:
+    FPU.N: false
+    FPU.Z: false
+
+- name: FCMP/-∞-0
+  init:
+    FP1: 0
+    FP2: -INFINITY
+  opcodes: [0171000, 0x38 | 2_7 | 1_10]
+  expected:
+    FPU.N: true
+    FPU.Z: false
+
+- name: FCMP/-∞-(-0)
+  init:
+    FP1: -0
+    FP2: -INFINITY
+  opcodes: [0171000, 0x38 | 2_7 | 1_10]
+  expected:
+    FPU.N: true
+    FPU.Z: false
+
+
+- name: FCMP/∞-∞
+  init:
+    FP1: INFINITY
+    FP2: INFINITY
+  opcodes: [0171000, 0x38 | 2_7 | 1_10]
+  expected:
+    FPU.N: false
+    FPU.Z: true
+
+- name: FCMP/∞-(-∞)
+  init:
+    FP1: -INFINITY
+    FP2: INFINITY
+  opcodes: [0171000, 0x38 | 2_7 | 1_10]
+  expected:
+    FPU.N: false
+    FPU.Z: false
+
+- name: FCMP/-∞-∞
+  init:
+    FP1: INFINITY
+    FP2: -INFINITY
+  opcodes: [0171000, 0x38 | 2_7 | 1_10]
+  expected:
+    FPU.N: true
+    FPU.Z: false
+
+- name: FCMP/-∞-(-∞)
+  init:
+    FP1: -INFINITY
+    FP2: -INFINITY
+  opcodes: [0171000, 0x38 | 2_7 | 1_10]
+  expected:
+    FPU.N: true
+    FPU.Z: true

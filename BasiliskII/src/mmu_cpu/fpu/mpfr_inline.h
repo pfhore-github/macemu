@@ -25,7 +25,7 @@ fpvalue::fpvalue(bool sg, uint64_t mantissa, int exp) : fpvalue() {
     mpfr_setsign(mp, mp, sg, mpfr_get_default_rounding_mode());
 }
 fpvalue::fpvalue(const char *s) {
-    mpfr_init_set_str(mp, s, 10, mpfr_get_default_rounding_mode());
+    mpfr_init_set_str(mp, s, 0, mpfr_get_default_rounding_mode());
 }
 
 fpvalue &fpvalue::operator=(fpvalue &&old) {
@@ -64,7 +64,7 @@ fpvalue &fpvalue::set_exp(bool sg, uint64_t mantissa, int exp) {
 fpvalue &fpvalue::operator=(const char *s) {
     mpfr_prec_round(mp, 64, mpfr_get_default_rounding_mode());
     mpfr_ret =
-        mpfr_strtofr(mp, s, nullptr, 10, mpfr_get_default_rounding_mode());
+        mpfr_strtofr(mp, s, nullptr, 0, mpfr_get_default_rounding_mode());
     
     return *this;
 }

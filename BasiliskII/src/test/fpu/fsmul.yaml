@@ -1,0 +1,227 @@
+- name: FSMUL/operand
+  init:
+    FP1: 3.0
+    FP2: 2.0
+  opcodes: [0171000, 0x63 | 2_7 | 1_10]
+  expected:
+    FP2: 6.0f
+
+
+- name: FSMUL/+0*X
+  init:
+    FP1: 0
+    FP2: 2.0
+  opcodes: [0171000, 0x63 | 2_7 | 1_10]
+  expected:
+    FP2: 0.0
+    
+- name: FSMUL/-0*X
+  init:
+    FP1: -0
+    FP2: 2.0
+  opcodes: [0171000, 0x63 | 2_7 | 1_10]
+  expected:
+    FP2: -0.0
+    
+- name: FSMUL/+0*∞
+  init:
+    FP1: 0
+    FP2: INFINITY
+  opcodes: [0171000, 0x63 | 2_7 | 1_10]
+  expected:
+    FP2: NAN
+    FPU.OPERR: true
+
+- name: FSMUL/+0*(-∞)
+  init:
+    FP1: 0
+    FP2: -INFINITY
+  opcodes: [0171000, 0x63 | 2_7 | 1_10]
+  expected:
+    FP2: NAN
+    FPU.OPERR: true
+
+- name: FSMUL/-0*∞
+  init:
+    FP1: -0
+    FP2: INFINITY
+  opcodes: [0171000, 0x63 | 2_7 | 1_10]
+  expected:
+    FP2: NAN
+    FPU.OPERR: true
+
+- name: FSMUL/-0*∞
+  init:
+    FP1: -0
+    FP2: -INFINITY
+  opcodes: [0171000, 0x63 | 2_7 | 1_10]
+  expected:
+    FP2: NAN
+    FPU.OPERR: true
+
+- name: FSMUL/(+0)*(+0)
+  init:
+    FP1: 0
+    FP2: 0
+  opcodes: [0171000, 0x63 | 2_7 | 1_10]
+  expected:
+    FP2: 0
+
+- name: FSMUL/0*(-0)
+  init:
+    FP1: 0
+    FP2: -0
+  opcodes: [0171000, 0x63 | 2_7 | 1_10]
+  expected:
+    FP2: -0
+
+- name: FSMUL/(-0)*0
+  init:
+    FP1: -0
+    FP2: 0
+  opcodes: [0171000, 0x63 | 2_7 | 1_10]
+  expected:
+    FP2: -0
+
+- name: FSMUL/(-0)*(-0)
+  init:
+    FP1: -0
+    FP2: -0
+  opcodes: [0171000, 0x63 | 2_7 | 1_10]
+  expected:
+    FP2: 0
+
+- name: FSMUL/+∞*X
+  init:
+    FP1: INFINITY
+    FP2: 1.0
+  opcodes: [0171000, 0x63 | 2_7 | 1_10]
+  expected:
+    FP2: INFINITY
+
+- name: FSMUL/-∞*X
+  init:
+    FP1: -INFINITY
+    FP2: 1.0
+  opcodes: [0171000, 0x63 | 2_7 | 1_10]
+  expected:
+    FP2: -INFINITY
+
+- name: FSMUL/+∞*0
+  init:
+    FP1: INFINITY
+    FP2: 0.0
+  opcodes: [0171000, 0x63 | 2_7 | 1_10]
+  expected:
+    FP2: NAN
+    FPU.OPERR: true
+
+- name: FSMUL/+∞*0
+  init:
+    FP1: INFINITY
+    FP2: -0
+  opcodes: [0171000, 0x63 | 2_7 | 1_10]
+  expected:
+    FP2: NAN
+    FPU.OPERR: true
+
+- name: FSMUL/-∞*0
+  init:
+    FP1: -INFINITY
+    FP2: 0
+  opcodes: [0171000, 0x63 | 2_7 | 1_10]
+  expected:
+    FP2: NAN
+    FPU.OPERR: true
+
+- name: FSMUL/-∞*0
+  init:
+    FP1: -INFINITY
+    FP2: -0
+  opcodes: [0171000, 0x63 | 2_7 | 1_10]
+  expected:
+    FP2: NAN
+    FPU.OPERR: true
+
+- name: FSMUL/+∞*∞
+  init:
+    FP1: INFINITY
+    FP2: INFINITY
+  opcodes: [0171000, 0x63 | 2_7 | 1_10]
+  expected:
+    FP2: INFINITY
+
+- name: FSMUL/+∞*(-∞)
+  init:
+    FP1: INFINITY
+    FP2: -INFINITY
+  opcodes: [0171000, 0x63 | 2_7 | 1_10]
+  expected:
+    FP2: -INFINITY
+
+- name: FSMUL/-∞*∞
+  init:
+    FP1: -INFINITY
+    FP2: INFINITY
+  opcodes: [0171000, 0x63 | 2_7 | 1_10]
+  expected:
+    FP2: -INFINITY
+
+- name: FSMUL/-∞*∞
+  init:
+    FP1: -INFINITY
+    FP2: -INFINITY
+  opcodes: [0171000, 0x63 | 2_7 | 1_10]
+  expected:
+    FP2: INFINITY
+
+- name: FSMUL/X*0
+  init:
+    FP1: 2.0
+    FP2: 0
+  opcodes: [0171000, 0x63 | 2_7 | 1_10]
+  expected:
+    FP2: 0.0
+    
+- name: FSMUL/X*(-0)
+  init:
+    FP1: 2.0
+    FP2: -0
+  opcodes: [0171000, 0x63 | 2_7 | 1_10]
+  expected:
+    FP2: -0.0
+  
+
+- name: FSMUL/X*∞
+  init:
+    FP1: 2.0
+    FP2: INFINITY
+  opcodes: [0171000, 0x63 | 2_7 | 1_10]
+  expected:
+    FP2: INFINITY
+    
+- name: FSMUL/X*(-∞)
+  init:
+    FP1: 2.0
+    FP2: -INFINITY
+  opcodes: [0171000, 0x63 | 2_7 | 1_10]
+  expected:
+    FP2: -INFINITY
+
+- name: FSMUL/OVFL
+  init:
+    FP1: 0x1p+127
+    FP2: 0x1p+127
+  opcodes: [0171000, 0x63 | 2_7 | 1_10]
+  expected:
+    FP2: INFINITY
+    FPU.OVFL: true
+
+- name: FSMUL/UNFL
+  init:
+    FP1: 0x1p-127
+    FP2: 0x1p-127
+  opcodes: [0171000, 0x63 | 2_7 | 1_10]
+  expected:
+    FP2: 0
+    FPU.UNFL: true

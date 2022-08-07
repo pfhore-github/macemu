@@ -1,0 +1,215 @@
+- name: FMOVEM/FROM/CR/FPAIR+FPSR
+  init:
+    A2: 0x1000
+    FPSR: 0x8000000
+    FPIAR: 0x2000
+  opcodes: [ 0171032, 0xA000 | 1_10 | 1_11 ]
+  expected:
+    A2: 0x1008
+    MEM:
+      0x1000/L: 0x8000000
+      0x1004/L: 0x2000
+
+- name: FMOVEM/FROM/CR/FPAIR+FPCR
+  init:
+    A2: 0x1000
+    FPCR: 0x8000
+    FPIAR: 0x3000
+  opcodes: [ 0171032, 0xA000 | 1_10 | 1_12 ]
+  expected:
+    A2: 0x1008
+    MEM:
+      0x1000/L: 0x8000
+      0x1004/L: 0x3000
+
+- name: FMOVEM/FROM/CR/FPCR+FPSR
+  init:
+    A2: 0x1000
+    FPCR: 0x8000
+    FPSR: 0x8000000
+  opcodes: [ 0171032, 0xA000 | 1_11 | 1_12 ]
+  expected:
+    A2: 0x1008
+    MEM:
+      0x1000/L: 0x8000
+      0x1004/L: 0x8000000
+
+- name: FMOVEM/FROM/CR/ALL
+  init:
+    A2: 0x1000
+    FPCR: 0x8000
+    FPSR: 0x8000000
+    FPIAR: 0x3000
+  opcodes: [ 0171032, 0xA000 | 1_10| 1_11 | 1_12 ]
+  expected:
+    A2: 0x100C
+    MEM:
+      0x1000/L: 0x8000
+      0x1004/L: 0x8000000
+      0x1008/L: 0x3000
+
+
+- name: FMOVEM/TO/CR/FPAIR+FPSR
+  init:
+    A2: 0x1008
+    MEM:
+      0x1000/L: 0x8000000
+      0x1004/L: 0x2000
+  opcodes: [ 0171042, 0x8000 | 1_10 | 1_11 ]
+  expected:
+    A2: 0x1000
+    FPSR: 0x8000000
+    FPIAR: 0x2000
+
+- name: FMOVEM/TO/CR/FPAIR+FPCR
+  init:
+    A2: 0x1008
+    MEM:
+      0x1000/L: 0x8000
+      0x1004/L: 0x3000
+  opcodes: [ 0171042, 0x8000 | 1_10 | 1_12 ]
+  expected:
+    A2: 0x1000
+    FPCR: 0x8000
+    FPIAR: 0x3000
+
+- name: FMOVEM/TO/CR/FPCR+FPSR
+  init:
+    A2: 0x1008
+    MEM:
+      0x1000/L: 0x8000
+      0x1004/L: 0x8000000
+  opcodes: [ 0171042, 0x8000 | 1_11 | 1_12 ]
+  expected:
+    A2: 0x1000
+    FPCR: 0x8000
+    FPU.N: true
+
+- name: FMOVEM/TO/CR/ALL
+  init:
+    A2: 0x100C
+    MEM:
+      0x1000/L: 0x8000
+      0x1004/L: 0x8000000
+      0x1008/L: 0x3000
+  opcodes: [ 0171042, 0x8000 | 1_10| 1_11 | 1_12 ]
+  expected:
+    A2: 0x1000
+    FPCR: 0x8000
+    FPU.N: true
+    FPIAR: 0x3000
+
+- name: FMOVEM/FROM/FPR/ADDR
+  init:
+    A2: 0x1000
+    MEM:
+      0x1000/X: 1.0
+      0x100C/X: 2.0
+      0x1018/X: 3.0
+  opcodes: [ 0171022, 0xD070 ]
+  expected:
+    FP1: 1.0
+    FP2: 2.0
+    FP3: 3.0
+
+- name: FMOVEM/FROM/FPR/ADDR/DynReg
+  init:
+    A2: 0x1000
+    D3: 0x70
+    MEM:
+      0x1000/X: 4.0
+      0x100C/X: 5.0
+      0x1018/X: 6.0
+  opcodes: [ 0171022, 0xD800 | 3_4 ]
+  expected:
+    FP1: 4.0
+    FP2: 5.0
+    FP3: 6.0
+
+- name: FMOVEM/FROM/FPR/INCR
+  init:
+    A2: 0x1000
+    MEM:
+      0x1000/X: 11.0
+      0x100C/X: 12.0
+      0x1018/X: 13.0
+  opcodes: [ 0171032, 0xD070 ]
+  expected:
+    A2: 0x1024
+    FP1: 11.0
+    FP2: 12.0
+    FP3: 13.0
+
+
+- name: FMOVEM/FROM/FPR/INCR/DynReg
+  init:
+    A2: 0x1000
+    D3: 0x70
+    MEM:
+      0x1000/X: 21.0
+      0x100C/X: 22.0
+      0x1018/X: 23.0
+  opcodes: [ 0171032, 0xD800 | 3_4 ]
+  expected:
+    A2: 0x1024
+    FP1: 21.0
+    FP2: 22.0
+    FP3: 23.0
+
+
+- name: FMOVEM/TO/FPR/ADDR
+  init:
+    A2: 0x1000
+    FP1: 1.0
+    FP2: 2.0
+    FP3: 3.0
+  opcodes: [ 0171022, 0xF070 ]
+  expected:
+    MEM:
+      0x1000/X: 1.0
+      0x100C/X: 2.0
+      0x1018/X: 3.0
+
+- name: FMOVEM/TO/FPR/ADDR/DynReg
+  init:
+    A2: 0x1000
+    D3: 0x70
+    FP1: 4.0
+    FP2: 5.0
+    FP3: 6.0
+  opcodes: [ 0171022, 0xF800 | 3_4 ]
+  expected:
+    MEM:
+      0x1000/X: 4.0
+      0x100C/X: 5.0
+      0x1018/X: 6.0
+
+- name: FMOVEM/TO/FPR/DECR
+  init:
+    A2: 0x1024
+    FP1: 11.0
+    FP2: 12.0
+    FP3: 13.0
+  opcodes: [ 0171042, 0xE00E ]
+  expected:
+    A2: 0x1000
+    MEM:
+      0x1000/X: 11.0
+      0x100C/X: 12.0
+      0x1018/X: 13.0
+
+
+- name: FMOVEM/FROM/FPR/INCR/DynReg
+  init:
+    A2: 0x1024
+    D3: 0xE
+    FP1: 21.0
+    FP2: 22.0
+    FP3: 23.0
+  opcodes: [ 0171042, 0xE800 | 3_4 ]
+  expected:
+    A2: 0x1000
+    MEM:
+      0x1000/X: 21.0
+      0x100C/X: 22.0
+      0x1018/X: 23.0

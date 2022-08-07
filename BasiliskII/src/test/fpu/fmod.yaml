@@ -1,0 +1,218 @@
+- name: FMOD/operand
+  init:
+    FP2: 7.0
+    FP1: 2.0
+  opcodes: [0171000, 0x21 | 2_7 | 1_10]
+  expected:
+    FP2: 1.0
+    FPU.quotient: 3
+
+- name: FMOD/+0÷X
+  init:
+    FP2: 0.0
+    FP1: 2.0
+  opcodes: [0171000, 0x21 | 2_7 | 1_10]
+  expected:
+    FP2: 0.0
+
+- name: FMOD/-0÷X
+  init:
+    FP2: -0.0
+    FP1: 2.0
+  opcodes: [0171000, 0x21 | 2_7 | 1_10]
+  expected:
+    FP2: -0.0
+
+- name: FMOD/0÷∞
+  init:
+    FP2: 0.0
+    FP1: INFINITY
+  opcodes: [0171000, 0x21 | 2_7 | 1_10]
+  expected:
+    FP2: 0.0
+
+- name: FMOD/0÷(-∞)
+  init:
+    FP2: 0.0
+    FP1: -INFINITY
+  opcodes: [0171000, 0x21 | 2_7 | 1_10]
+  expected:
+    FP2: 0
+
+- name: FMOD/-0÷∞
+  init:
+    FP2: -0.0
+    FP1: INFINITY
+  opcodes: [0171000, 0x21 | 2_7 | 1_10]
+  expected:
+    FP2: -0
+
+- name: FMOD/-0÷(-∞)
+  init:
+    FP2: -0.0
+    FP1: -INFINITY
+  opcodes: [0171000, 0x21 | 2_7 | 1_10]
+  expected:
+    FP2: -0
+
+- name: FMOD/0÷0
+  init:
+    FP2: 0.0
+    FP1: 0.0
+  opcodes: [0171000, 0x21 | 2_7 | 1_10]
+  expected:
+    FP2: NAN
+    FPU.OPERR: true
+
+- name: FMOD/0÷(-0)
+  init:
+    FP2: 0.0
+    FP1: -0.0
+  opcodes: [0171000, 0x21 | 2_7 | 1_10]
+  expected:
+    FP2: NAN
+    FPU.OPERR: true
+
+- name: FMOD/-0÷0
+  init:
+    FP2: -0.0
+    FP1: 0.0
+  opcodes: [0171000, 0x21 | 2_7 | 1_10]
+  expected:
+    FP2: NAN
+    FPU.OPERR: true
+
+- name: FMOD/-0÷(-0)
+  init:
+    FP2: -0.0
+    FP1: -0.0
+  opcodes: [0171000, 0x21 | 2_7 | 1_10]
+  expected:
+    FP2: NAN
+    FPU.OPERR: true
+
+
+- name: FMOD/+∞÷X
+  init:
+    FP2: INFINITY
+    FP1: 2.0
+  opcodes: [0171000, 0x21 | 2_7 | 1_10]
+  expected:
+    FP2: NAN
+    FPU.OPERR: true
+
+- name: FMOD/-∞÷X
+  init:
+    FP2: -INFINITY
+    FP1: 2.0
+  opcodes: [0171000, 0x21 | 2_7 | 1_10]
+  expected:
+    FP2: NAN
+    FPU.OPERR: true
+
+- name: FMOD/∞÷0
+  init:
+    FP2: INFINITY
+    FP1: 0.0
+  opcodes: [0171000, 0x21 | 2_7 | 1_10]
+  expected:
+    FP2: NAN
+    FPU.OPERR: true
+
+- name: FMOD/∞÷(-0)
+  init:
+    FP2: INFINITY
+    FP1: -0.0
+  opcodes: [0171000, 0x21 | 2_7 | 1_10]
+  expected:
+    FP2: NAN
+    FPU.OPERR: true
+
+- name: FMOD/-∞÷0
+  init:
+    FP2: -INFINITY
+    FP1: 0
+  opcodes: [0171000, 0x21 | 2_7 | 1_10]
+  expected:
+    FP2: NAN
+    FPU.OPERR: true
+
+- name: FMOD/-∞÷(-0)
+  init:
+    FP2: -INFINITY
+    FP1: -0.0
+  opcodes: [0171000, 0x21 | 2_7 | 1_10]
+  expected:
+    FP2: NAN
+    FPU.OPERR: true
+
+- name: FMOD/∞÷∞
+  init:
+    FP2: INFINITY
+    FP1: INFINITY
+  opcodes: [0171000, 0x21 | 2_7 | 1_10]
+  expected:
+    FP2: NAN
+    FPU.OPERR: true
+
+- name: FMOD/∞÷(-∞)
+  init:
+    FP2: INFINITY
+    FP1: -INFINITY
+  opcodes: [0171000, 0x21 | 2_7 | 1_10]
+  expected:
+    FP2: NAN
+    FPU.OPERR: true
+
+- name: FMOD/-∞÷∞
+  init:
+    FP2: -INFINITY
+    FP1: INFINITY
+  opcodes: [0171000, 0x21 | 2_7 | 1_10]
+  expected:
+    FP2: NAN
+    FPU.OPERR: true
+
+- name: FMOD/-∞÷(-∞)
+  init:
+    FP2: -INFINITY
+    FP1: -INFINITY
+  opcodes: [0171000, 0x21 | 2_7 | 1_10]
+  expected:
+    FP2: NAN
+    FPU.OPERR: true
+
+- name: FMOD/X÷0
+  init:
+    FP2: 1.0
+    FP1: 0.0
+  opcodes: [0171000, 0x21 | 2_7 | 1_10]
+  expected:
+    FP2: NAN
+    FPU.OPERR: true
+
+- name: FMOD/X÷(-0)
+  init:
+    FP2: 1.0
+    FP1: -0.0
+  opcodes: [0171000, 0x21 | 2_7 | 1_10]
+  expected:
+    FP2: NAN
+    FPU.OPERR: true
+
+- name: FMOD/X÷∞
+  init:
+    FP2: 1.0
+    FP1: INFINITY
+  opcodes: [0171000, 0x21 | 2_7 | 1_10]
+  expected:
+    FP2: 1.0
+
+- name: FMOD/X÷(-∞)
+  init:
+    FP2: 1.0
+    FP1: -INFINITY
+  opcodes: [0171000, 0x21 | 2_7 | 1_10]
+  expected:
+    FP2: 1.0
+

@@ -90,20 +90,6 @@ test/cpu.cpp
 test/exception.cpp 
 #[[
 
-test/fpu/fabs.cpp
-test/fpu/facos.cpp
-test/fpu/fadd.cpp
-test/fpu/fasin.cpp
-test/fpu/fatan.cpp
-test/fpu/fatanh.cpp
-test/fpu/fcmp.cpp
-test/fpu/fcos.cpp
-test/fpu/fcosh.cpp
-test/fpu/fdiv.cpp
-test/fpu/fetox.cpp
-test/fpu/fetoxm1.cpp
-test/fpu/fgetexp.cpp
-test/fpu/fgetman.cpp
 test/fpu/fint.cpp 
 test/fpu/fintrz.cpp
 test/fpu/flog10.cpp

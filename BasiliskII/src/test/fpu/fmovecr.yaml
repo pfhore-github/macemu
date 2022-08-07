@@ -1,0 +1,138 @@
+- name: FMOVECR/PI
+  init: 
+  opcodes: [0171000, 0x5C00 | 2_7 | 0]
+  expected:
+    FP2: 3.1415926535897932384626433832795
+
+- name: FMOVECR/LOG10(2)
+  init: 
+  opcodes: [0171000, 0x5C00 | 2_7 | 0x0B ]
+  expected:
+    FP2: 0.30102999566398119
+
+- name: FMOVECR/e
+  init: 
+  opcodes: [0171000, 0x5C00 | 2_7 | 0x0C ]
+  expected:
+    FP2: 2.71828182845904523
+
+- name: FMOVECR/log2(e)
+  init: 
+  opcodes: [0171000, 0x5C00 | 2_7 | 0x0D ]
+  expected:
+    FP2: 1.44269504088896342
+
+- name: FMOVECR/log10(e)
+  init: 
+  opcodes: [0171000, 0x5C00 | 2_7 | 0x0E ]
+  expected:
+    FP2: 0.43429448190325182
+
+- name: FMOVECR/0
+  init: 
+  opcodes: [0171000, 0x5C00 | 2_7 | 0x0F ]
+  expected:
+    FP2: 0
+
+- name: FMOVECR/0
+  init: 
+  opcodes: [0171000, 0x5C00 | 2_7 | 0x0F ]
+  expected:
+    FP2: 0
+
+- name: FMOVECR/Ln(2)
+  init: 
+  opcodes: [0171000, 0x5C00 | 2_7 | 0x30 ]
+  expected:
+    FP2: 0.69314718055994530941
+
+- name: FMOVECR/Ln(10)
+  init: 
+  opcodes: [0171000, 0x5C00 | 2_7 | 0x31 ]
+  expected:
+    FP2: 2.30258509299404568401
+
+- name: FMOVECR/10^0
+  init: 
+  opcodes: [0171000, 0x5C00 | 2_7 | 0x32 ]
+  expected:
+    FP2: 1
+
+
+- name: FMOVECR/10^1
+  init: 
+  opcodes: [0171000, 0x5C00 | 2_7 | 0x33 ]
+  expected:
+    FP2: 10
+
+- name: FMOVECR/10^2
+  init: 
+  opcodes: [0171000, 0x5C00 | 2_7 | 0x34 ]
+  expected:
+    FP2: 100
+
+- name: FMOVECR/10^4
+  init: 
+  opcodes: [0171000, 0x5C00 | 2_7 | 0x35 ]
+  expected:
+    FP2: 1e4
+
+- name: FMOVECR/10^8
+  init: 
+  opcodes: [0171000, 0x5C00 | 2_7 | 0x36 ]
+  expected:
+    FP2: 1e8
+
+- name: FMOVECR/10^16
+  init: 
+  opcodes: [0171000, 0x5C00 | 2_7 | 0x37 ]
+  expected:
+    FP2: 1e16
+
+- name: FMOVECR/10^32
+  init: 
+  opcodes: [0171000, 0x5C00 | 2_7 | 0x38 ]
+  expected:
+    FP2: 1e32
+
+- name: FMOVECR/10^64
+  init: 
+  opcodes: [0171000, 0x5C00 | 2_7 | 0x39 ]
+  expected:
+    FP2: 1e64
+
+- name: FMOVECR/10^128
+  init: 
+  opcodes: [0171000, 0x5C00 | 2_7 | 0x3A ]
+  expected:
+    FP2: 1e128
+
+- name: FMOVECR/10^256
+  init: 
+  opcodes: [0171000, 0x5C00 | 2_7 | 0x3B ]
+  expected:
+    FP2: 1e256
+
+- name: FMOVECR/10^512
+  init: 
+  opcodes: [0171000, 0x5C00 | 2_7 | 0x3C ]
+  expected:
+    FP2: 1e512
+
+- name: FMOVECR/10^1024
+  init: 
+  opcodes: [0171000, 0x5C00 | 2_7 | 0x3D ]
+  expected:
+    FP2: 1e1024
+
+- name: FMOVECR/10^2048
+  init: 
+  opcodes: [0171000, 0x5C00 | 2_7 | 0x3E ]
+  expected:
+    FP2: 1e2048
+
+- name: FMOVECR/10^4096
+  init: 
+  opcodes: [0171000, 0x5C00 | 2_7 | 0x3F ]
+  expected:
+    FP2: 1e4096

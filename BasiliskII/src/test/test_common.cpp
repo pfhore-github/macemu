@@ -20,11 +20,11 @@
 #include <dirent.h>
 #include <fmt/core.h>
 #include <random>
+#include <sstream>
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
-#include <sstream>
 std::vector<std::byte> RAM;
 uint8_t *ROMBaseHost;
 std::unique_ptr<std::mt19937> rnd;
@@ -85,46 +85,49 @@ int32_t parse_opcodes(const std::string &s) {
         const char *p = buf.c_str();
         char *np;
         int32_t base = strtol(p, &np, 0);
-        if( *np == '_') {
-            int d = atoi(np+1);
+        if(*np == '_') {
+            int d = atoi(np + 1);
             base <<= d;
         }
         v |= base;
     }
     return v;
 }
+void set_fpsr(uint32_t v);
+void set_fpcr(uint32_t v);
+uint32_t get_fpsr();
+uint32_t get_fpcr();
+void load_ext(uint32_t addr, fpvalue &dst);
+void store_ext(uint32_t addr, const fpvalue &v);
+uint32_t test_init(const YAML::Node &test) {
+    uint32_t start_address = (rand() & 0xff) * 2;
+    for(const auto &i : test) {
 
-bool cpu_test(const YAML::Node &test) {
-    InitFix f;
-    std::string name = test["name"].as<std::string>();
-    BOOST_TEST_CONTEXT(name) {
-        // initialize
-        uint32_t start_address = (rand() & 0xff) * 2;
-        if(test["expected"]["exception"]) {
-            regs.M = false;
-            regs.vbr = 0x3000;
-            regs.a[7] = regs.isp = regs.msp = 0x2000;
-            raw_write32(0x3000 + test["expected"]["exception"].as<int>() * 4,
-                        0x5000);
-        }
-
-        for(const auto &i : test["init"]) {
-            const std::string &key = i.first.as<std::string>();
-            const auto &value = i.second;
-            regs.msp = regs.isp = 0x1000;
-            if(key.starts_with("D") && isdigit(key[1])) {
-                regs.d[(key[1] - '0')] = value.as<long>();
-            } else if(key.starts_with("A") && isdigit(key[1])) {
-                regs.a[(key[1] - '0')] = value.as<long>();
-            } else if(key.starts_with("FP") && isdigit(key[2])) {
-                auto v_s = value.as<std::string>();
+        const std::string &key = i.first.as<std::string>();
+        const auto &value = i.second;
+        regs.msp = regs.isp = 0x1000;
+        if(key.starts_with("D") && isdigit(key[1])) {
+            regs.d[(key[1] - '0')] = value.as<long>();
+        } else if(key.starts_with("A") && isdigit(key[1])) {
+            regs.a[(key[1] - '0')] = value.as<long>();
+        } else if(key.starts_with("FP") && isdigit(key[2])) {
+            auto v_s = value.as<std::string>();
+            if(v_s.starts_with("NAN(")) {
+                fpu.fp[(key[2] - '0')].set_nan(
+                    strtoull(v_s.substr(4).c_str(), nullptr, 0));
+            } else {
                 fpu.fp[(key[2] - '0')] = v_s.c_str();
-            } else if(key == "MEM") {
-                for(const auto &j : value) {
-                    const std::string &addr = j.first.as<std::string>();
-                    const auto &mem_v = j.second;
-                    char *suffix;
-                    uint32_t addr_v = strtoul(addr.c_str(), &suffix, 0);
+            }
+        } else if(key == "MEM") {
+            for(const auto &j : value) {
+                const std::string &addr = j.first.as<std::string>();
+                const auto &mem_v = j.second;
+                char *suffix;
+                uint32_t addr_v = strtoul(addr.c_str(), &suffix, 0);
+                if(strncmp(suffix, "/X", 2) == 0) {
+                    fpvalue tmp = mem_v.as<double>();
+                    store_ext(addr_v, tmp);
+                } else {
                     uint32_t value_v = mem_v.as<long>();
                     if(strncmp(suffix, "/B", 2) == 0) {
                         raw_write8(addr_v, value_v);
@@ -134,59 +137,139 @@ bool cpu_test(const YAML::Node &test) {
                         raw_write32(addr_v, value_v);
                     }
                 }
-            } else if(key == "X") {
-                regs.x = value.as<bool>();
-            } else if(key == "V") {
-                regs.v = value.as<bool>();
-            } else if(key == "C") {
-                regs.c = value.as<bool>();
-            } else if(key == "N") {
-                regs.n = value.as<bool>();
-            } else if(key == "Z") {
-                regs.z = value.as<bool>();
-            } else if(key == "S") {
-                regs.S = value.as<bool>();
-            } else if(key == "IM") {
-                regs.IM = value.as<int>();
-            } else if(key == "PC") {
-                start_address = value.as<int>();
-            } else if(key == "USP") {
-                regs.usp = value.as<int>();
-            } else if(key == "MSP") {
-                regs.msp = value.as<int>();
-            } else if(key == "ISP") {
-                regs.isp = value.as<int>();
-            } else if(key == "SFC") {
-                regs.sfc = value.as<int>();
-            } else if(key == "DFC") {
-                regs.dfc = value.as<int>();
-            } else if(key == "VBR") {
-                regs.vbr = value.as<uint32_t>();
-            } else if(key == "CACR") {
-                do_op_movec_to(2, value.as<uint32_t>());
-            } else if(key == "TCR") {
-                do_op_movec_to(3, value.as<uint32_t>());
-            } else if(key == "ITTR0") {
-                do_op_movec_to(4, value.as<uint32_t>());
-            } else if(key == "ITTR1") {
-                do_op_movec_to(5, value.as<uint32_t>());
-            } else if(key == "DTTR0") {
-                do_op_movec_to(6, value.as<uint32_t>());
-            } else if(key == "DTTR1") {
-                do_op_movec_to(7, value.as<uint32_t>());
-            } else if(key == "MMUSR") {
-                do_op_movec_to(0x805, value.as<uint32_t>());
-            } else if(key == "URP") {
-                do_op_movec_to(0x806, value.as<uint32_t>());
-            } else if(key == "SRP") {
-                do_op_movec_to(0x807, value.as<uint32_t>());
+            }
+        } else if(key == "X") {
+            regs.x = value.as<bool>();
+        } else if(key == "V") {
+            regs.v = value.as<bool>();
+        } else if(key == "C") {
+            regs.c = value.as<bool>();
+        } else if(key == "N") {
+            regs.n = value.as<bool>();
+        } else if(key == "Z") {
+            regs.z = value.as<bool>();
+        } else if(key == "S") {
+            regs.S = value.as<bool>();
+        } else if(key == "IM") {
+            regs.IM = value.as<int>();
+        } else if(key == "PC") {
+            start_address = value.as<int>();
+        } else if(key == "USP") {
+            regs.usp = value.as<int>();
+        } else if(key == "MSP") {
+            regs.msp = value.as<int>();
+        } else if(key == "ISP") {
+            regs.isp = value.as<int>();
+        } else if(key == "SFC") {
+            regs.sfc = value.as<int>();
+        } else if(key == "DFC") {
+            regs.dfc = value.as<int>();
+        } else if(key == "VBR") {
+            regs.vbr = value.as<uint32_t>();
+        } else if(key == "CACR") {
+            do_op_movec_to(2, value.as<uint32_t>());
+        } else if(key == "TCR") {
+            do_op_movec_to(3, value.as<uint32_t>());
+        } else if(key == "ITTR0") {
+            do_op_movec_to(4, value.as<uint32_t>());
+        } else if(key == "ITTR1") {
+            do_op_movec_to(5, value.as<uint32_t>());
+        } else if(key == "DTTR0") {
+            do_op_movec_to(6, value.as<uint32_t>());
+        } else if(key == "DTTR1") {
+            do_op_movec_to(7, value.as<uint32_t>());
+        } else if(key == "MMUSR") {
+            do_op_movec_to(0x805, value.as<uint32_t>());
+        } else if(key == "URP") {
+            do_op_movec_to(0x806, value.as<uint32_t>());
+        } else if(key == "SRP") {
+            do_op_movec_to(0x807, value.as<uint32_t>());
+        } else if(key == "FPIAR") {
+            fpu.fpiar = value.as<uint32_t>();
+        } else if(key == "FPSR") {
+            set_fpsr(value.as<uint32_t>());
+        } else if(key == "FPCR") {
+            set_fpcr(value.as<uint32_t>());
+        } else if(key == "FPU.ROUNDING") {
+            std::string v = value.as<std::string>();
+            if(v == "RNDN") {
+                mpfr_set_default_rounding_mode(MPFR_RNDN);
+            } else if(v == "RNDZ") {
+                mpfr_set_default_rounding_mode(MPFR_RNDZ);
+            } else if(v == "RNDU") {
+                mpfr_set_default_rounding_mode(MPFR_RNDU);
+            } else if(v == "RNDD") {
+                mpfr_set_default_rounding_mode(MPFR_RNDD);
+            } else {
+                BOOST_ERROR("unknown rounding mode:" << v);
             }
         }
+    }
+    return start_address;
+}
+struct mpfr_v {
+    const __mpfr_struct* v;
+};
+std::ostream &operator<<(std::ostream &os, const mpfr_v &v) {
+    char *c;
+    mpfr_asprintf(&c, "%.16Rg", v.v);
+    os << c;
+    free(c);
+    return os;
+}
+
+void test_fp(const YAML::Node &value, const fpvalue &v) {
+    std::string expected = value.as<std::string>();
+    MPFR_DECL_INIT(ex_v, 64);
+    char *last;
+    mpfr_strtofr(ex_v, expected.c_str(), &last, 0, MPFR_RNDN);
+    if(mpfr_nan_p(ex_v)) {
+        BOOST_TEST(v.is_nan());
+    } else if(mpfr_inf_p(ex_v)) {
+        BOOST_TEST(v.is_inf());
+        BOOST_TEST(mpfr_signbit(ex_v) == v.signbit());
+    } else if(mpfr_zero_p(ex_v)) {
+        BOOST_TEST(v.is_zero());
+        BOOST_TEST(mpfr_signbit(ex_v) == v.signbit());
+    } else {
+        double diff = 1e-13;
+        if(*last == 'f') {
+            // Float
+            diff = 1e-6;
+        } else if(*last == 'd') {
+            diff = 1e-11;
+        }
+        MPFR_DECL_INIT(ex_v2, 64);
+        MPFR_DECL_INIT(ex_v3, 64);
+        mpfr_sub(ex_v2, ex_v, v.mp, MPFR_RNDN);
+        mpfr_div(ex_v2, ex_v2, ex_v, MPFR_RNDN);
+        mpfr_abs(ex_v2, ex_v2, MPFR_RNDN);
+        mpfr_mul_d(ex_v3, ex_v2, 100, MPFR_RNDN);
+        BOOST_TEST(mpfr_cmp_d(ex_v2, diff) < 0,
+                   "difference {" << mpfr_v{ex_v3} << "}% between expected["
+                                  << mpfr_v{ex_v} << "] and actual["
+                                  << mpfr_v{v.mp} << "] exceeds " << diff);
+    }
+}
+bool cpu_test(const YAML::Node &test) {
+    InitFix f;
+    std::string name = test["name"].as<std::string>();
+    BOOST_TEST_CONTEXT(name) {
+        // initialize
+        if(test["expected"]["exception"]) {
+            regs.M = false;
+            regs.vbr = 0x3000;
+            regs.a[7] = regs.isp = regs.msp = 0x2000;
+            raw_write32(0x3000 + test["expected"]["exception"].as<int>() * 4,
+                        0x5000);
+        }
+
+        uint32_t start_address = test_init(test["init"]);
         uint32_t pc = start_address;
         for(const auto &value : test["opcodes"]) {
             std::string x = value.as<std::string>();
             int32_t v = parse_opcodes(x);
-            if(x[x.size()-1] == 'L' ) {
+            if(x.back() == 'L') {
                 raw_write32(pc, v);
                 pc += 4;
             } else {
@@ -211,46 +294,49 @@ bool cpu_test(const YAML::Node &test) {
                 uint32_t expected = value.as<long>();
                 BOOST_TEST(regs.a[(key[1] - '0')] == expected);
             } else if(key.starts_with("FP") && isdigit(key[2])) {
-                std::string expected = value.as<std::string>();
                 int rn = key[2] - '0';
-                if(expected == "NAN") {
+                if(key.ends_with(".PAYLOAD")) {
                     BOOST_TEST(fpu.fp[rn].is_nan());
-                } else if(expected == "INFINITY") {
-                    BOOST_TEST(fpu.fp[rn].is_inf());
-                    BOOST_TEST(!fpu.fp[rn].signbit());
-                } else if(expected == "-INFINITY") {
-                    BOOST_TEST(fpu.fp[rn].is_inf());
-                    BOOST_TEST(fpu.fp[rn].signbit());
-                } else if(expected == "0") {
-                    BOOST_TEST(fpu.fp[rn].is_zero());
-                    BOOST_TEST(!fpu.fp[rn].signbit());
-                } else if(expected == "-0") {
-                    BOOST_TEST(fpu.fp[rn].is_zero());
-                    BOOST_TEST(fpu.fp[rn].signbit());
-                } else if(expected.ends_with("f")) {
-                    // Float
-                    float f = static_cast<float>(atof(expected.c_str()));
-                    BOOST_CHECK_CLOSE(static_cast<float>(fpu.fp[rn]), f, 1e-04);
+                    BOOST_TEST(fpu.fp[rn].get_payload() ==
+                               value.as<uint64_t>());
+                } else if(key.ends_with("X")) {
+                    std::string expected = value.as<std::string>();
+                    int sg = 0;
+                    if(expected[0] == '-') {
+                        expected = expected.substr(1);
+                        sg = 1;
+                    }
+                    char *c;
+                    uint64_t expected_mt = strtoull(expected.c_str(), &c, 0);
+                    int expected_exp = strtol(c + 1, nullptr, 10);
+                    auto [sgv, ue, exp] = fpu.fp[2].get_zexp();
+                    BOOST_TEST(sgv == sg);
+                    BOOST_TEST(ue == expected_mt);
+                    BOOST_TEST(exp == expected_exp);
                 } else {
-                    // double
-                    double d = value.as<double>();
-                    BOOST_CHECK_CLOSE(static_cast<double>(fpu.fp[rn]), d,
-                                      1e-10);
+                    test_fp(value, fpu.fp[rn]);
                 }
-                // TODO
             } else if(key == "MEM") {
                 for(const auto &j : value) {
                     const std::string &addr = j.first.as<std::string>();
                     const auto &mem_v = j.second;
                     char *suffix;
                     uint32_t addr_v = strtoul(addr.c_str(), &suffix, 0);
-                    uint32_t value_v = mem_v.as<long>();
-                    if(strncmp(suffix, "/B", 2) == 0) {
-                        BOOST_TEST(raw_read8(addr_v) == value_v);
-                    } else if(strncmp(suffix, "/W", 2) == 0) {
-                        BOOST_TEST(raw_read16(addr_v) == value_v);
-                    } else if(strncmp(suffix, "/L", 2) == 0) {
-                        BOOST_TEST(raw_read32(addr_v) == value_v);
+                    if(strncmp(suffix, "/X", 2) == 0) {
+                        fpvalue tmp;
+                        load_ext(addr_v, tmp);
+                        test_fp(mem_v, tmp);
+                    } else {
+                        uint32_t value_v = mem_v.as<long>();
+                        if(strncmp(suffix, "/B", 2) == 0) {
+                            BOOST_TEST(raw_read8(addr_v) ==
+                                       static_cast<uint8_t>(value_v));
+                        } else if(strncmp(suffix, "/W", 2) == 0) {
+                            BOOST_TEST(raw_read16(addr_v) ==
+                                       static_cast<uint16_t>(value_v));
+                        } else if(strncmp(suffix, "/L", 2) == 0) {
+                            BOOST_TEST(raw_read32(addr_v) == value_v);
+                        }
                     }
                 }
             } else if(key == "X") {
@@ -315,6 +401,34 @@ bool cpu_test(const YAML::Node &test) {
                 } else {
                     BOOST_TEST(regs.pc != 0x5000, "unexpected exception");
                 }
+            } else if(key == "FPU.OPERR") {
+                BOOST_TEST(fpu.FPSR.operr == value.as<bool>());
+            } else if(key == "FPU.OVFL") {
+                BOOST_TEST(fpu.FPSR.ovfl == value.as<bool>());
+            } else if(key == "FPU.UNFL") {
+                BOOST_TEST(fpu.FPSR.unfl == value.as<bool>());
+            } else if(key == "FPU.DZ") {
+                BOOST_TEST(fpu.FPSR.dz == value.as<bool>());
+            } else if(key == "FPU.N") {
+                BOOST_TEST(fpu.FPSR.n == value.as<bool>());
+            } else if(key == "FPU.I") {
+                BOOST_TEST(fpu.FPSR.i == value.as<bool>());
+            } else if(key == "FPU.Z") {
+                BOOST_TEST(fpu.FPSR.z == value.as<bool>());
+            } else if(key == "FPU.INEX1") {
+                BOOST_TEST(fpu.FPSR.inex1 == value.as<bool>());
+            } else if(key == "FPU.INEX2") {
+                BOOST_TEST(fpu.FPSR.inex2 == value.as<bool>());
+            } else if(key == "FPU.quotient") {
+                BOOST_TEST(fpu.FPSR.quotient == value.as<int>());
+            } else if(key == "FPIAR") {
+                BOOST_TEST(fpu.fpiar, value.as<uint32_t>());
+            } else if(key == "FPSR") {
+                BOOST_TEST(get_fpsr() == value.as<uint32_t>(),
+                           boost::test_tools::bitwise());
+            } else if(key == "FPCR") {
+                BOOST_TEST(get_fpcr() == value.as<uint32_t>(),
+                           boost::test_tools::bitwise());
             }
         }
     }

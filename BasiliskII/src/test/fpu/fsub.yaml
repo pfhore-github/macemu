@@ -1,0 +1,269 @@
+- name: FSUB/operand
+  init:
+    FP1: 7.0
+    FP2: 2.0
+  opcodes: [0171000, 0x28 | 1_7 | 2_10]
+  expected:
+    FP1: 5.0
+
+
+- name: FSUB/+0-X
+  init:
+    FP1: 0
+    FP2: 2.0
+  opcodes: [0171000, 0x28 | 1_7 | 2_10]
+  expected:
+    FP1: -2.0
+    
+- name: FSUB/-0-X
+  init:
+    FP1: -0
+    FP2: 2.0
+  opcodes: [0171000, 0x28 | 1_7 | 2_10]
+  expected:
+    FP1: -2.0
+    
+- name: FSUB/+0-∞
+  init:
+    FP1: 0
+    FP2: INFINITY
+  opcodes: [0171000, 0x28 | 1_7 | 2_10]
+  expected:
+    FP1: -INFINITY
+
+- name: FSUB/+0-(-∞)
+  init:
+    FP1: 0
+    FP2: -INFINITY
+  opcodes: [0171000, 0x28 | 1_7 | 2_10]
+  expected:
+    FP1: INFINITY
+
+- name: FSUB/-0-∞
+  init:
+    FP1: -0
+    FP2: INFINITY
+  opcodes: [0171000, 0x28 | 1_7 | 2_10]
+  expected:
+    FP1: -INFINITY
+
+- name: FSUB/-0-(-∞)
+  init:
+    FP1: -0
+    FP2: -INFINITY
+  opcodes: [0171000, 0x28 | 1_7 | 2_10]
+  expected:
+    FP1: INFINITY
+
+
+- name: FSUB/0-0/RNDN
+  init:
+    FP1: 0
+    FP2: 0
+    FPU.ROUNDING: RNDN
+  opcodes: [0171000, 0x28 | 1_7 | 2_10]
+  expected:
+    FP1: 0
+
+- name: FSUB/0-0/RNDZ
+  init:
+    FP1: 0
+    FP2: 0
+    FPU.ROUNDING: RNDZ
+  opcodes: [0171000, 0x28 | 1_7 | 2_10]
+  expected:
+    FP1: 0
+
+- name: FSUB/0-0/RNDU
+  init:
+    FP1: 0
+    FP2: 0
+    FPU.ROUNDING: RNDU
+  opcodes: [0171000, 0x28 | 1_7 | 2_10]
+  expected:
+    FP1: 0
+
+- name: FSUB/0-0/RNDD
+  init:
+    FP1: 0
+    FP2: 0
+    FPU.ROUNDING: RNDD
+  opcodes: [0171000, 0x28 | 1_7 | 2_10]
+  expected:
+    FP1: -0
+
+- name: FSUB/0-(-0)
+  init:
+    FP1: 0
+    FP2: -0
+  opcodes: [0171000, 0x28 | 1_7 | 2_10]
+  expected:
+    FP1: 0
+
+- name: FSUB/(-0)-0
+  init:
+    FP1: -0
+    FP2: 0
+  opcodes: [0171000, 0x28 | 1_7 | 2_10]
+  expected:
+    FP1: -0
+
+- name: FSUB/(-0)-(-0)/RNDN
+  init:
+    FP1: -0
+    FP2: -0
+    FPU.ROUNDING: RNDN
+  opcodes: [0171000, 0x28 | 1_7 | 2_10]
+  expected:
+    FP1: 0
+
+- name: FSUB/(-0)-(-0)/RNDZ
+  init:
+    FP1: -0
+    FP2: -0
+    FPU.ROUNDING: RNDZ
+  opcodes: [0171000, 0x28 | 1_7 | 2_10]
+  expected:
+    FP1: 0
+
+- name: FSUB/(-0)-(-0)/RNDU
+  init:
+    FP1: -0
+    FP2: -0
+    FPU.ROUNDING: RNDU
+  opcodes: [0171000, 0x28 | 1_7 | 2_10]
+  expected:
+    FP1: 0
+
+- name: FSUB/(-0)-(-0)/RNDD
+  init:
+    FP1: -0
+    FP2: -0
+    FPU.ROUNDING: RNDD
+  opcodes: [0171000, 0x28 | 1_7 | 2_10]
+  expected:
+    FP1: -0
+
+- name: FSUB/+∞-X
+  init:
+    FP1: INFINITY
+    FP2: 1.0
+  opcodes: [0171000, 0x28 | 1_7 | 2_10]
+  expected:
+    FP1: INFINITY
+
+- name: FSUB/-∞-X
+  init:
+    FP1: -INFINITY
+    FP2: 1.0
+  opcodes: [0171000, 0x28 | 1_7 | 2_10]
+  expected:
+    FP1: -INFINITY
+
+- name: FSUB/+∞-0
+  init:
+    FP1: INFINITY
+    FP2: 0.0
+  opcodes: [0171000, 0x28 | 1_7 | 2_10]
+  expected:
+    FP1: INFINITY
+
+- name: FSUB/+∞-(-0)
+  init:
+    FP1: INFINITY
+    FP2: -0
+  opcodes: [0171000, 0x28 | 1_7 | 2_10]
+  expected:
+    FP1: INFINITY
+
+- name: FSUB/-∞-0
+  init:
+    FP1: -INFINITY
+    FP2: 0
+  opcodes: [0171000, 0x28 | 1_7 | 2_10]
+  expected:
+    FP1: -INFINITY
+
+- name: FSUB/-∞-(-0)
+  init:
+    FP1: -INFINITY
+    FP2: -0
+  opcodes: [0171000, 0x28 | 1_7 | 2_10]
+  expected:
+    FP1: -INFINITY
+
+- name: FSUB/+∞-∞
+  init:
+    FP1: INFINITY
+    FP2: INFINITY
+  opcodes: [0171000, 0x28 | 1_7 | 2_10]
+  expected:
+    FP1: NAN
+    FPU.OPERR: true
+
+- name: FSUB/+∞-(-∞)
+  init:
+    FP1: INFINITY
+    FP2: -INFINITY
+  opcodes: [0171000, 0x28 | 1_7 | 2_10]
+  expected:
+    FP1: INFINITY
+
+- name: FSUB/-∞-∞
+  init:
+    FP1: -INFINITY
+    FP2: INFINITY
+  opcodes: [0171000, 0x28 | 1_7 | 2_10]
+  expected:
+    FP1: -INFINITY
+
+- name: FSUB/-∞-(-∞)
+  init:
+    FP1: -INFINITY
+    FP2: -INFINITY
+  opcodes: [0171000, 0x28 | 1_7 | 2_10]
+  expected:
+    FP1: NAN
+    FPU.OPERR: true
+
+- name: FSUB/X+0
+  init:
+    FP1: 2.0
+    FP2: 0
+  opcodes: [0171000, 0x28 | 1_7 | 2_10]
+  expected:
+    FP1: 2.0
+    
+- name: FSUB/X-(-0)
+  init:
+    FP1: 2.0
+    FP2: -0
+  opcodes: [0171000, 0x28 | 1_7 | 2_10]
+  expected:
+    FP1: 2.0
+  
+
+- name: FSUB/X-∞
+  init:
+    FP1: 2.0
+    FP2: INFINITY
+  opcodes: [0171000, 0x28 | 1_7 | 2_10]
+  expected:
+    FP1: -INFINITY
+    
+- name: FSUB/X-(-∞)
+  init:
+    FP1: 2.0
+    FP2: -INFINITY
+  opcodes: [0171000, 0x28 | 1_7 | 2_10]
+  expected:
+    FP1: INFINITY
+
+- name: FSUB/OVFL
+  init:
+    FP1: 0x1p+16383
+    FP2: -0x1p+16383
+  opcodes: [0171000, 0x28 | 1_7 | 2_10]
+  expected:
+    FP1: INFINITY
+    FPU.OVFL: true

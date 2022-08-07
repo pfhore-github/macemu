@@ -1,0 +1,46 @@
+- name: FSINCOS/operand
+  init:
+    FP1: 1.0
+  opcodes: [ 0171000, 0x30 | 1_10 | 2_7 | 3]
+  expected:
+    FP2: 0.841470984807897
+    FP3: 0.54030230586814
+
+- name: FSINCOS/operand2
+  init:
+    FP1: 1.0
+  opcodes: [ 0171000, 0x30 | 1_10 | 2_7 | 2]
+  expected:
+    FP2: 0.841470984807897
+
+- name: FSINCOS/+0
+  init:
+    FP1: 0
+  opcodes: [ 0171000, 0x30 | 1_10 | 2_7 | 3]
+  expected:
+    FP2: 0
+    FP3: 1.0
+
+- name: FSINCOS/-0
+  init:
+    FP1: -0
+  opcodes: [ 0171000, 0x30 | 1_10 | 2_7 | 3]
+  expected:
+    FP2: -0
+    FP3: 1.0
+
+- name: FSINCOS/+∞
+  init:
+    FP1: INFINITY
+  opcodes: [ 0171000, 0x30 | 1_10 | 2_7 | 3]
+  expected:
+    FP2: NAN
+    FP3: NAN
+
+- name: FSINCOS/-∞
+  init:
+    FP1: -INFINITY
+  opcodes: [ 0171000, 0x30 | 1_10 | 2_7 | 3]
+  expected:
+    FP2: NAN
+    FP3: NAN

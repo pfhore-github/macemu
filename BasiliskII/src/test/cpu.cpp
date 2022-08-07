@@ -10,8 +10,8 @@ BOOST_AUTO_TEST_CASE(run) {
         regs.exception = false;
         cpu_test(v);
     }
- //   */
-//    cpu_test(tests["CHK2/WithDn/Long/under"]);
+  // */
+  //  cpu_test(tests["FMOVE/From/CR/FPIAR"]);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

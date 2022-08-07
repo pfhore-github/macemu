@@ -6,7 +6,7 @@
       0x1004/L: 0x24252627
       0x1008/L: 0x28292A2B
       0x100C/L: 0x2C2D2E2F
-  opcodes: [ 0173002, 0x0000, 0x2000]
+  opcodes: [ 0173002, 0x2000L]
   expected:
     A2: 0x1016
     MEM:
@@ -23,7 +23,7 @@
       0x2004/L: 0x24252627
       0x2008/L: 0x28292A2B
       0x200C/L: 0x2C2D2E2F
-  opcodes: [ 0173013, 0x0000, 0x2000]
+  opcodes: [ 0173013, 0x2000L]
   expected:
     A3: 0x1016
     MEM:
@@ -40,7 +40,7 @@
       0x1004/L: 0x24252627
       0x1008/L: 0x28292A2B
       0x100C/L: 0x2C2D2E2F
-  opcodes: [ 0173024, 0x0000, 0x2000]
+  opcodes: [ 0173024, 0x2000L]
   expected:
     A4: 0x1006
     MEM:
@@ -57,7 +57,7 @@
       0x2004/L: 0x24252627
       0x2008/L: 0x28292A2B
       0x200C/L: 0x2C2D2E2F
-  opcodes: [ 0173031, 0x0000, 0x2000]
+  opcodes: [ 0173031, 0x2000L]
   expected:
     A1: 0x1006
     MEM:

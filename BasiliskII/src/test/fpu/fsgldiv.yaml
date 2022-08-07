@@ -1,0 +1,228 @@
+- name: FSGLDIV/operand
+  init:
+    FP1: 6.0
+    FP2: 2.0
+  opcodes: [0171000, 0x60 | 2_7 | 1_10]
+  expected:
+    FP2: 3.0f
+
+- name: FSGLDIV/+0÷X
+  init:
+    FP1: 0.0
+    FP2: 2.0
+  opcodes: [0171000, 0x60 | 2_7 | 1_10]
+  expected:
+    FP2: 0
+
+- name: FSGLDIV/-0÷X
+  init:
+    FP1: -0.0
+    FP2: 2.0
+  opcodes: [0171000, 0x60 | 2_7 | 1_10]
+  expected:
+    FP2: -0
+
+- name: FSGLDIV/0÷∞
+  init:
+    FP1: 0.0
+    FP2: INFINITY
+  opcodes: [0171000, 0x60 | 2_7 | 1_10]
+  expected:
+    FP2: 0
+
+- name: FSGLDIV/0÷(-∞)
+  init:
+    FP1: 0.0
+    FP2: -INFINITY
+  opcodes: [0171000, 0x60 | 2_7 | 1_10]
+  expected:
+    FP2: -0
+
+- name: FSGLDIV/-0÷∞
+  init:
+    FP1: -0.0
+    FP2: INFINITY
+  opcodes: [0171000, 0x60 | 2_7 | 1_10]
+  expected:
+    FP2: -0
+
+- name: FSGLDIV/-0÷(-∞)
+  init:
+    FP1: -0.0
+    FP2: -INFINITY
+  opcodes: [0171000, 0x60 | 2_7 | 1_10]
+  expected:
+    FP2: 0
+
+- name: FSGLDIV/0÷0
+  init:
+    FP1: 0.0
+    FP2: 0.0
+  opcodes: [0171000, 0x60 | 2_7 | 1_10]
+  expected:
+    FP2: NAN
+    FPU.OPERR: true
+
+- name: FSGLDIV/0÷(-0)
+  init:
+    FP1: 0.0
+    FP2: -0.0
+  opcodes: [0171000, 0x60 | 2_7 | 1_10]
+  expected:
+    FP2: NAN
+    FPU.OPERR: true
+
+- name: FSGLDIV/-0÷0
+  init:
+    FP1: -0.0
+    FP2: 0.0
+  opcodes: [0171000, 0x60 | 2_7 | 1_10]
+  expected:
+    FP2: NAN
+    FPU.OPERR: true
+
+- name: FSGLDIV/-0÷(-0)
+  init:
+    FP1: -0.0
+    FP2: -0.0
+  opcodes: [0171000, 0x60 | 2_7 | 1_10]
+  expected:
+    FP2: NAN
+    FPU.OPERR: true
+
+
+- name: FSGLDIV/+∞÷X
+  init:
+    FP1: INFINITY
+    FP2: 2.0
+  opcodes: [0171000, 0x60 | 2_7 | 1_10]
+  expected:
+    FP2: INFINITY
+
+- name: FSGLDIV/-∞÷X
+  init:
+    FP1: -INFINITY
+    FP2: 2.0
+  opcodes: [0171000, 0x60 | 2_7 | 1_10]
+  expected:
+    FP2: -INFINITY
+
+- name: FSGLDIV/∞÷0
+  init:
+    FP1: INFINITY
+    FP2: 0.0
+  opcodes: [0171000, 0x60 | 2_7 | 1_10]
+  expected:
+    FP2: INFINITY
+
+- name: FSGLDIV/∞÷(-0)
+  init:
+    FP1: INFINITY
+    FP2: -0.0
+  opcodes: [0171000, 0x60 | 2_7 | 1_10]
+  expected:
+    FP2: -INFINITY
+
+- name: FSGLDIV/-∞÷0
+  init:
+    FP1: -INFINITY
+    FP2: 0
+  opcodes: [0171000, 0x60 | 2_7 | 1_10]
+  expected:
+    FP2: -INFINITY
+
+- name: FSGLDIV/-∞÷(-0)
+  init:
+    FP1: -INFINITY
+    FP2: -0.0
+  opcodes: [0171000, 0x60 | 2_7 | 1_10]
+  expected:
+    FP2: INFINITY
+
+- name: FSGLDIV/∞÷∞
+  init:
+    FP1: INFINITY
+    FP2: INFINITY
+  opcodes: [0171000, 0x60 | 2_7 | 1_10]
+  expected:
+    FP2: NAN
+    FPU.OPERR: true
+
+- name: FSGLDIV/∞÷(-∞)
+  init:
+    FP1: INFINITY
+    FP2: -INFINITY
+  opcodes: [0171000, 0x60 | 2_7 | 1_10]
+  expected:
+    FP2: NAN
+    FPU.OPERR: true
+
+- name: FSGLDIV/-∞÷∞
+  init:
+    FP1: -INFINITY
+    FP2: INFINITY
+  opcodes: [0171000, 0x60 | 2_7 | 1_10]
+  expected:
+    FP2: NAN
+    FPU.OPERR: true
+
+- name: FSGLDIV/-∞÷(-∞)
+  init:
+    FP1: -INFINITY
+    FP2: -INFINITY
+  opcodes: [0171000, 0x60 | 2_7 | 1_10]
+  expected:
+    FP2: NAN
+    FPU.OPERR: true
+
+- name: FSGLDIV/X÷0
+  init:
+    FP1: 1.0
+    FP2: 0.0
+  opcodes: [0171000, 0x60 | 2_7 | 1_10]
+  expected:
+    FP2: INFINITY
+    FPU.DZ: true
+
+- name: FSGLDIV/X÷(-0)
+  init:
+    FP1: 1.0
+    FP2: -0.0
+  opcodes: [0171000, 0x60 | 2_7 | 1_10]
+  expected:
+    FP2: -INFINITY
+    FPU.DZ: true
+
+- name: FSGLDIV/X÷∞
+  init:
+    FP1: 1.0
+    FP2: INFINITY
+  opcodes: [0171000, 0x60 | 2_7 | 1_10]
+  expected:
+    FP2: 0
+
+- name: FSGLDIV/X÷(-∞)
+  init:
+    FP1: 1.0
+    FP2: -INFINITY
+  opcodes: [0171000, 0x60 | 2_7 | 1_10]
+  expected:
+    FP2: -0
+
+- name: FSGLDIV/OVFL
+  init:
+    FP1: 0x1p+126
+    FP2: 0x1p-126
+  opcodes: [0171000, 0x60 | 2_7 | 1_10]
+  expected:
+    FP2: INFINITY
+    FPU.OVFL: true
+
+- name: FSGLDIV/UNFL
+  init:
+    FP1: 0x1p-126
+    FP2: 0x1p+126
+  opcodes: [0171000, 0x60 | 2_7 | 1_10]
+  expected:
+    FP2: 0.0
+    FPU.UNFL: true
