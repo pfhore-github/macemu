@@ -128,9 +128,9 @@ static bool use_vosf = false;						// Flag: VOSF enabled
 static const bool use_vosf = false;					// VOSF not possible
 #endif
 
-static bool ctrl_down = false;						// Flag: Ctrl key pressed
-static bool opt_down = false;						// Flag: Opt key pressed
-static bool cmd_down = false;						// Flag: Cmd key pressed
+static bool ctrl_down = false;						// Flag: Ctrl key pressed (for use with hotkeys)
+static bool opt_down = false;						// Flag: Opt/Alt key pressed (for use with hotkeys)
+static bool cmd_down = false;						// Flag: Cmd/Super/Win key pressed (for use with hotkeys)
 static bool quit_full_screen = false;				// Flag: DGA close requested from redraw thread
 static bool emerg_quit = false;						// Flag: Ctrl-Esc pressed, emergency quit requested from MacOS thread
 static bool emul_suspended = false;					// Flag: Emulator suspended
@@ -233,7 +233,7 @@ extern void SysMountFirstFloppy(void);
 
 static void *vm_acquire_framebuffer(uint32 size)
 {
-#ifdef HAVE_MACH_VM
+#if defined(HAVE_MACH_VM) || defined(HAVE_MMAP_VM) && defined(__aarch64__)
 	return vm_acquire_reserved(size);
 #else
 	// always try to reallocate framebuffer at the same address
@@ -254,7 +254,7 @@ static void *vm_acquire_framebuffer(uint32 size)
 
 static inline void vm_release_framebuffer(void *fb, uint32 size)
 {
-#ifndef HAVE_MACH_VM
+#if !(defined(HAVE_MACH_VM) || defined(HAVE_MMAP_VM) && defined(__aarch64__))
 	vm_release(fb, size);
 #endif
 }
@@ -555,14 +555,15 @@ static void set_window_name() {
 	if (!sdl_window) return;
 	const char *title = PrefsFindString("title");
 	std::string s = title ? title : GetString(STR_WINDOW_TITLE);
-	if (mouse_grabbed) {
-		s += GetString(STR_WINDOW_TITLE_GRABBED0);
+    if (mouse_grabbed)
+    {
+        s += GetString(STR_WINDOW_TITLE_GRABBED_PRE);
 		int hotkey = PrefsFindInt32("hotkey");
-		if (!hotkey) hotkey = 1;
+		hotkey = hotkey ? hotkey : 1;
 		if (hotkey & 1) s += GetString(STR_WINDOW_TITLE_GRABBED1);
-		if (hotkey & 2) s += GetString(STR_WINDOW_TITLE_GRABBED2);
-		if (hotkey & 4) s += GetString(STR_WINDOW_TITLE_GRABBED3);
-		s += GetString(STR_WINDOW_TITLE_GRABBED4);
+        if (hotkey & 2) s += GetString(STR_WINDOW_TITLE_GRABBED2);
+        if (hotkey & 4) s += GetString(STR_WINDOW_TITLE_GRABBED4);
+        s += GetString(STR_WINDOW_TITLE_GRABBED_POST);
 	}
 	SDL_SetWindowTitle(sdl_window, s.c_str());
 }
@@ -1673,11 +1674,7 @@ static void do_toggle_fullscreen(void)
 			SDL_SetWindowGrab(sdl_window, SDL_FALSE);
 		} else {
 			display_type = DISPLAY_SCREEN;
-#ifdef __MACOSX__
 			SDL_SetWindowFullscreen(sdl_window, SDL_WINDOW_FULLSCREEN_DESKTOP);
-#else
-			SDL_SetWindowFullscreen(sdl_window, SDL_WINDOW_FULLSCREEN);
-#endif
 			SDL_SetWindowGrab(sdl_window, SDL_TRUE);
 		}
 	}

@@ -55,7 +55,6 @@ static bool audio_mute = false;
 
 // Prototypes
 static void stream_func(void *arg, uint8 *stream, int stream_len);
-static int play_startup(void *arg);
 
 
 /*
@@ -168,8 +167,6 @@ void AudioInit(void)
 
 	// Open and initialize audio device
 	open_audio();
-	
-	SDL_CreateThread(play_startup, "", NULL);
 }
 
 
@@ -364,6 +361,7 @@ void audio_set_speaker_volume(uint32 vol)
 {
 }
 
+#if SDL_VERSION_ATLEAST(2,0,0)
 static int play_startup(void *arg) {
 	SDL_AudioSpec wav_spec;
 	Uint8 *wav_buffer;
@@ -383,3 +381,12 @@ static int play_startup(void *arg) {
 	}
 	return 0;
 }
+
+void PlayStartupSound() {
+	SDL_CreateThread(play_startup, "", NULL);
+}
+#else
+void PlayStartupSound() {
+    // Not implemented
+}
+#endif

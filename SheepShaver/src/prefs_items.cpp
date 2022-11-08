@@ -96,7 +96,7 @@ void AddPrefsDefaults(void)
 	PrefsAddBool("nogui", false);
 	PrefsAddBool("noclipconversion", false);
 	PrefsAddBool("ignoresegv", true);
-	PrefsAddBool("ignoreillegal", false);
+	PrefsAddBool("ignoreillegal", true);
 
 #if USE_JIT
 	// JIT compiler specific options
