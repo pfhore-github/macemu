@@ -28,7 +28,7 @@ dnl Video options.
 AC_ARG_ENABLE(xf86-dga,      [  --enable-xf86-dga       use the XFree86 DGA extension [default=yes]], [WANT_XF86_DGA=$enableval], [WANT_XF86_DGA=yes])
 AC_ARG_ENABLE(xf86-vidmode,  [  --enable-xf86-vidmode   use the XFree86 VidMode extension [default=yes]], [WANT_XF86_VIDMODE=$enableval], [WANT_XF86_VIDMODE=yes])
 AC_ARG_ENABLE(fbdev-dga,     [  --enable-fbdev-dga      use direct frame buffer access via /dev/fb [default=yes]], [WANT_FBDEV_DGA=$enableval], [WANT_FBDEV_DGA=yes])
-AC_ARG_ENABLE(vosf,          [  --enable-vosf           enable video on SEGV signals [default=yes]], [WANT_VOSF=$enableval], [WANT_VOSF=yes])
+AC_ARG_ENABLE(vosf,          [  --enable-vosf           enable video on SEGV signals [default=no]], [WANT_VOSF=$enableval], [WANT_VOSF=no])
 
 dnl SDL options.
 AC_ARG_ENABLE(sdl-static,    [  --enable-sdl-static     use SDL static libraries for linking [default=no]], [WANT_SDL_STATIC=$enableval], [WANT_SDL_STATIC=no])
@@ -37,6 +37,7 @@ AC_ARG_ENABLE(sdl-audio,     [  --enable-sdl-audio      use SDL for audio [defau
 AC_ARG_ENABLE(sdl-framework,    [  --enable-sdl-framework  use SDL framework [default=no]], [WANT_SDL_FRAMEWORK=$enableval], [WANT_SDL_FRAMEWORK=no])
 AC_ARG_ENABLE(sdl-framework-prefix,    [  --enable-sdl-framework-prefix=PFX    default=/Library/Frameworks], [SDL_FRAMEWORK="$enableval"], [SDL_FRAMEWORK=/Library/Frameworks])
 AC_ARG_WITH(sdl1,            [  --with-sdl1             use SDL 1.x, rather than SDL 2.x [default=no]], [WANT_SDL_VERSION_MAJOR=1], [])
+AC_ARG_WITH(sdl3,            [  --with-sdl3             use SDL 3.x, rather than SDL 2.x [default=no]], [WANT_SDL_VERSION_MAJOR=3], [])
 
 dnl JIT compiler options.
 AC_ARG_ENABLE(jit-compiler,  [  --enable-jit-compiler   enable JIT compiler [default=yes]], [WANT_JIT=$enableval], [WANT_JIT=yes])
@@ -329,9 +330,18 @@ if [[ "x$WANT_SDL" = "xyes" ]]; then
     dnl never got defined (bizarrely-enough).  -- dludwig@pobox.com
     PKG_PROG_PKG_CONFIG
 
+    if [[ "x$TEMP_WANT_SDL_VERSION_MAJOR" = "x3" ]]; then
+      PKG_CHECK_MODULES([sdl3], [sdl3 >= 3.0], [
+        CXXFLAGS="$CXXFLAGS $sdl3_CFLAGS"
+        CXXFLAGS+=`echo " $sdl3_CFLAGS" | sed -e 's/\(-I.*include\)/\1\/SDL3/'`
+        LIBS="$LIBS $sdl3_LIBS"
+        WANT_SDL_VERSION_MAJOR=3
+      ], [
+        TEMP_WANT_SDL_VERSION_MAJOR=1
+      ])
+    fi
     if [[ "x$TEMP_WANT_SDL_VERSION_MAJOR" = "x2" ]]; then
       PKG_CHECK_MODULES([sdl2], [sdl2 >= 2.0], [
-        CFLAGS="$CFLAGS $sdl2_CFLAGS"
         CXXFLAGS="$CXXFLAGS $sdl2_CFLAGS"
         LIBS="$LIBS $sdl2_LIBS"
         WANT_SDL_VERSION_MAJOR=2
@@ -845,7 +855,7 @@ if [[ "x$WANT_SDL" = "xyes" ]]; then
 fi
 if [[ "x$WANT_SDL_VIDEO" = "xyes" ]]; then
   AC_DEFINE(USE_SDL_VIDEO, 1, [Define to enable SDL video graphics support])
-  VIDEOSRCS="../SDL/video_sdl.cpp ../SDL/video_sdl2.cpp"
+  VIDEOSRCS="../SDL/video_sdl.cpp ../SDL/video_sdl2.cpp ../SDL/video_sdl3.cpp "
   KEYCODES="../SDL/keycodes"
   if [[ "x$ac_cv_framework_Carbon" = "xyes" ]]; then
     AC_MSG_CHECKING([whether __LP64__ is defined])
@@ -882,7 +892,7 @@ elif [[ "x$WANT_MACOSX_GUI" != "xyes" ]]; then
 fi
 if [[ "x$WANT_SDL_AUDIO" = "xyes" ]]; then
   AC_DEFINE(USE_SDL_AUDIO, 1, [Define to enable SDL audio support])
-  AUDIOSRC="../SDL/audio_sdl.cpp"
+  AUDIOSRC="../SDL/audio_sdl.cpp ../SDL/audio_sdl3.cpp"
 fi
 
 dnl BINCUE overrides
@@ -939,6 +949,9 @@ AC_CACHE_CHECK([whether TUN/TAP is supported],
     #if defined(HAVE_NET_IF_H) && defined(HAVE_NET_IF_TUN_H)
     #include <net/if.h>
     #include <net/if_tun.h>
+    #endif
+    #ifdef HAVE_STRING_H
+    #include <string.h>
     #endif
   ], [
     struct ifreq ifr;
@@ -1417,7 +1430,6 @@ else
       fi
       dnl Real addressing will probably work.
       ADDRESSING_MODE="real"
-      WANT_VOSF=yes dnl we can use VOSF and we need it actually
       DEFINES="$DEFINES -DREAL_ADDRESSING"
       if [[ "x$ac_cv_pagezero_hack" = "xyes" ]]; then
         BLESS=Darwin/lowmem
@@ -1429,7 +1441,6 @@ else
       dnl Requires VOSF screen updates
       if [[ "x$CAN_VOSF" = "xyes" ]]; then
         ADDRESSING_MODE="direct"
-        WANT_VOSF=yes dnl we can use VOSF and we need it actually
         DEFINES="$DEFINES -DDIRECT_ADDRESSING"
         break
       fi
@@ -1692,7 +1703,19 @@ cat > conftest.$ac_ext <<EOF
 #include "confdefs.h"
 $1
 ]EOF
+ac_save_CFLAGS=$CFLAGS
+CFLAGS="$CFLAGS -fno-lto"
+gcc_ac_compile_ok=0
 if AC_TRY_EVAL(ac_compile); then
+	gcc_ac_compile_ok=1
+else
+	CFLAGS=$ac_save_CFLAGS
+	if AC_TRY_EVAL(ac_compile); then
+		gcc_ac_compile_ok=1
+	fi
+fi
+CFLAGS=$ac_save_CFLAGS
+if test "$gcc_ac_compile_ok" = 1; then
   od -c conftest.o |
     sed ['s/^[0-7]*[ 	]*/ /
 	  s/\*/./g
@@ -1818,7 +1841,7 @@ for fpe in $FPE_CORE_TEST_ORDER; do
         FPE_CORE="IEEE fpu core (MPFR)"
         DEFINES="$DEFINES -DFPU_MPFR"
         FPUSRCS="$UAE_PATH/fpu/fpu_mpfr.cpp"
-	    LIBS="$LIBS -lgmp -lmpfr"
+	    LIBS="$LIBS -lmpfr -lgmp"
 	  else
         FPE_CORE="IEEE fpu core"
         DEFINES="$DEFINES -DFPU_IEEE"
@@ -1881,6 +1904,9 @@ if [[ "x$HAVE_IPA" = "xyes" ]]; then
   CXXFLAGS="-LANG:std $CXXFLAGS"
   LDFLAGS="$LDFLAGS -O3 -OPT:Olimit=0 -IPA"
 fi
+
+CFLAGS="$CFLAGS -fwrapv"
+CXXFLAGS="$CXXFLAGS -fwrapv"
 
 dnl Generate Makefile.
 AC_SUBST(DEFINES)

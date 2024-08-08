@@ -49,6 +49,8 @@
 #define DEBUG 0
 #include "debug.h"
 
+extern bool tick_inhibit;
+
 void PlayStartupSound();
 
 /*
@@ -57,7 +59,6 @@ void PlayStartupSound();
 
 void EmulOp(uint16 opcode, M68kRegisters *r)
 {
-	static bool bootflag;
 	D(bug("EmulOp %04x\n", opcode));
 	switch (opcode) {
 		case M68K_EMUL_BREAK: {				// Breakpoint
@@ -84,12 +85,9 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 			break;
 
 		case M68K_EMUL_OP_RESET: {			// MacOS reset
-			if (bootflag) {
-				CDROMExit();
-				CDROMInit();
-			}
-			bootflag = true;
 			D(bug("*** RESET ***\n"));
+			tick_inhibit = true;
+			CDROMRemount(); // for System 7.x
 			TimerReset();
 			EtherReset();
 			AudioReset();
@@ -116,6 +114,7 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 			r->a[1] = ROMBaseMac + UniversalInfo;						// UniversalInfo
 			r->a[6] = boot_globs;										// BootGlobs
 			r->a[7] = RAMBaseMac + 0x10000;								// Boot stack
+			tick_inhibit = false;
 			break;
 		}
 
@@ -462,7 +461,9 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 				if (HasMacStarted()) {
 
 					// Mac has started, execute all 60Hz interrupt functions
+#if !PRECISE_TIMING
 					TimerInterrupt();
+#endif
 					VideoInterrupt();
 
 					// Call DoVBLTask(0)
@@ -494,7 +495,12 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 				ClearInterruptFlag(INTFLAG_ETHER);
 				EtherInterrupt();
 			}
-
+#if PRECISE_TIMING
+			if (InterruptFlags & INTFLAG_TIMER) {
+				ClearInterruptFlag(INTFLAG_TIMER);
+				TimerInterrupt();
+			}
+#endif
 			if (InterruptFlags & INTFLAG_AUDIO) {
 				ClearInterruptFlag(INTFLAG_AUDIO);
 				AudioInterrupt();

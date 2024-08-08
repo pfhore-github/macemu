@@ -53,6 +53,10 @@
 #include "mon.h"
 #endif
 
+#if !SDL_VERSION_ATLEAST(3, 0, 0)
+#define SDL_EVENT_KEY_UP	SDL_KEYUP
+#define SDL_EVENT_KEY_DOWN	SDL_KEYDOWN
+#endif
 
 // Constants
 const char ROM_FILE_NAME[] = "ROM";
@@ -199,6 +203,50 @@ int main(int argc, char **argv)
 	// Read preferences
 	PrefsInit(NULL, argc, argv);
 
+	// #chenchijung 2024/2/21: move vm_init(), memory allocation for Mac RAM and Mac ROM here to avoid "cannot map RAM: no Error" bug.
+	//   caused by MSI afterburner (RIVA Tuner statistic tuner Server?). It is a workaround since I don't know why. But it works in my test env.
+	//
+	// ------------ Start of workaround --------------
+	int sdl_flags = 0;
+	// Initialize VM system
+	vm_init();
+
+	// Create area for Mac RAM
+	RAMSize = PrefsFindInt32("ramsize");
+	if (RAMSize <= 1000) {
+		RAMSize *= 1024 * 1024;
+	}
+	if (RAMSize < 16 * 1024 * 1024) {
+		WarningAlert(GetString(STR_SMALL_RAM_WARN));
+		RAMSize = 16 * 1024 * 1024;
+	}
+	RAMBase = 0;
+	if (vm_mac_acquire(RAMBase, RAMSize) < 0) {
+		sprintf(str, GetString(STR_RAM_MMAP_ERR), strerror(errno));
+		ErrorAlert(str);
+		goto quit;
+	}
+	RAMBaseHost = Mac2HostAddr(RAMBase);
+	ram_area_mapped = true;
+	D(bug("RAM area at %p (%08x)\n", RAMBaseHost, RAMBase));
+
+	// Create area for Mac ROM
+	if (vm_mac_acquire(ROM_BASE, ROM_AREA_SIZE) < 0) {
+		sprintf(str, GetString(STR_ROM_MMAP_ERR), strerror(errno));
+		ErrorAlert(str);
+		goto quit;
+	}
+	ROMBase = ROM_BASE;
+	ROMBaseHost = Mac2HostAddr(ROMBase);
+	rom_area_mapped = true;
+	D(bug("ROM area at %p (%08x)\n", ROMBaseHost, ROMBase));
+
+	if (RAMBase > ROMBase) {
+		ErrorAlert(GetString(STR_RAM_HIGHER_THAN_ROM_ERR));
+		goto quit;
+	}
+	//#chenchijung ----------------- end of workaround --------------
+
 	// Check we are using a Windows NT kernel >= 4.0
 	OSVERSIONINFO osvi;
 	ZeroMemory(&osvi, sizeof(OSVERSIONINFO));
@@ -228,7 +276,7 @@ int main(int argc, char **argv)
 	}
 
 	// Initialize SDL system
-	int sdl_flags = 0;
+	sdl_flags = 0; // #chenchijungtw move variable definition forward to avoid complication error
 #ifdef USE_SDL_VIDEO
 	sdl_flags |= SDL_INIT_VIDEO;
 #endif
@@ -255,9 +303,6 @@ int main(int argc, char **argv)
 		ErrorAlert(str);
 		goto quit;
 	}
-
-	// Initialize VM system
-	vm_init();
 
 	// Get system info
 	PVR = 0x00040000;			// Default: 604
@@ -308,41 +353,6 @@ int main(int argc, char **argv)
 	if (!SheepMem::Init()) {
 		sprintf(str, GetString(STR_SHEEP_MEM_MMAP_ERR), strerror(errno));
 		ErrorAlert(str);
-		goto quit;
-	}
-
-	// Create area for Mac ROM
-	if (vm_mac_acquire(ROM_BASE, ROM_AREA_SIZE) < 0) {
-		sprintf(str, GetString(STR_ROM_MMAP_ERR), strerror(errno));
-		ErrorAlert(str);
-		goto quit;
-	}
-	ROMBase = ROM_BASE;
-	ROMBaseHost = Mac2HostAddr(ROMBase);
-	rom_area_mapped = true;
-	D(bug("ROM area at %p (%08x)\n", ROMBaseHost, ROMBase));
-
-	// Create area for Mac RAM
-	RAMSize = PrefsFindInt32("ramsize");
-	if (RAMSize <= 1000) {
-		RAMSize *= 1024 * 1024;
-	}
-	if (RAMSize < 16 * 1024 * 1024) {
-		WarningAlert(GetString(STR_SMALL_RAM_WARN));
-		RAMSize = 16 * 1024 * 1024;
-	}
-	RAMBase = 0;
-	if (vm_mac_acquire(RAMBase, RAMSize) < 0) {
-		sprintf(str, GetString(STR_RAM_MMAP_ERR), strerror(errno));
-		ErrorAlert(str);
-		goto quit;
-	}
-	RAMBaseHost = Mac2HostAddr(RAMBase);
-	ram_area_mapped = true;
-	D(bug("RAM area at %p (%08x)\n", RAMBaseHost, RAMBase));
-
-	if (RAMBase > ROMBase) {
-		ErrorAlert(GetString(STR_RAM_HIGHER_THAN_ROM_ERR));
 		goto quit;
 	}
 
@@ -634,6 +644,7 @@ static DWORD nvram_func(void *arg)
  *  60Hz thread (really 60.15Hz)
  */
 
+bool tick_inhibit;
 static DWORD tick_func(void *arg)
 {
 	int tick_counter = 0;
@@ -650,6 +661,7 @@ static DWORD tick_func(void *arg)
 			Delay_usec(delay);
 		else if (delay < -16625)
 			next = GetTicks_usec();
+		if (tick_inhibit) continue;
 		ticks++;
 
 		// Pseudo Mac 1Hz interrupt, update local time
@@ -789,22 +801,25 @@ void SheepMem::Exit(void)
  */
 
 #ifdef USE_SDL_VIDEO
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+#include <SDL_video.h>
+#else
 #include <SDL_syswm.h>
+#endif
 extern SDL_Window *sdl_window;
 HWND GetMainWindowHandle(void)
 {
-	SDL_SysWMinfo wmInfo;
-	SDL_VERSION(&wmInfo.version);
 	if (!sdl_window) {
 		return NULL;
 	}
-	if (!SDL_GetWindowWMInfo(sdl_window, &wmInfo)) {
-		return NULL;
-	}
-	if (wmInfo.subsystem != SDL_SYSWM_WINDOWS) {
-		return NULL;
-	}
-	return wmInfo.info.win.window;
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+	SDL_PropertiesID props = SDL_GetWindowProperties(sdl_window);
+	return (HWND)SDL_GetProperty(props, "SDL.window.cocoa.window", NULL);
+#else
+	SDL_SysWMinfo wmInfo;
+	SDL_VERSION(&wmInfo.version);
+	return SDL_GetWindowWMInfo(sdl_window, &wmInfo) ? wmInfo.info.win.window : NULL;
+#endif
 }
 #endif
 
@@ -883,7 +898,7 @@ static LRESULT CALLBACK low_level_keyboard_hook(int nCode, WPARAM wParam, LPARAM
 				if (intercept_event) {
 					SDL_Event e;
 					memset(&e, 0, sizeof(e));
-					e.type = (wParam == WM_KEYDOWN) ? SDL_KEYDOWN : SDL_KEYUP;
+					e.type = (wParam == WM_KEYDOWN) ? SDL_EVENT_KEY_DOWN : SDL_EVENT_KEY_UP;
 					e.key.keysym.sym = (p->vkCode == VK_LWIN) ? SDLK_LGUI : SDLK_RGUI;
 					e.key.keysym.scancode = (p->vkCode == VK_LWIN) ? SDL_SCANCODE_LGUI : SDL_SCANCODE_RGUI;
 					SDL_PushEvent(&e);

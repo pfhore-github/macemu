@@ -522,8 +522,11 @@ void close_bincue(void *fh)
 	if (cs && player) {
 		free(cs);
 #ifdef USE_SDL_AUDIO
+#if !SDL_VERSION_ATLEAST(3, 0, 0)
+#define SDL_DestroyAudioStream	SDL_FreeAudioStream
+#endif
 		if (player->stream) // if audiostream has been opened, free it as well
-			free(player->stream);
+			SDL_DestroyAudioStream(player->stream);
 #endif
 		free(player);
 	}
@@ -769,7 +772,7 @@ bool CDPlay_bincue(void *fh, uint8 start_m, uint8 start_s, uint8 start_f,
 		int track;
 		MSF msf;
 
-#ifdef USE_SDL_AUDIO
+#if defined(USE_SDL_AUDIO) && !SDL_VERSION_ATLEAST(3, 0, 0)
 		SDL_LockAudio();
 #endif
 
@@ -814,7 +817,7 @@ bool CDPlay_bincue(void *fh, uint8 start_m, uint8 start_s, uint8 start_f,
 		else
 			D(bug("CDPlay_bincue: play beyond last track !\n"));
 
-#ifdef USE_SDL_AUDIO
+#if defined(USE_SDL_AUDIO) && !SDL_VERSION_ATLEAST(3, 0, 0)
 		SDL_UnlockAudio();
 #endif
 
@@ -963,6 +966,17 @@ void MixAudio_bincue(uint8 *stream, int stream_len, int volume)
 		
 		if (player->audiostatus == CDROM_AUDIO_PLAY) {
 			uint8 *buf = fill_buffer(stream_len, player);
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+			if (buf)
+				SDL_PutAudioStreamData(player->stream, buf, stream_len);
+			int avail = SDL_GetAudioStreamAvailable(player->stream);
+			if (avail >= stream_len) {
+				extern SDL_AudioSpec audio_spec;
+				uint8 converted[stream_len];
+				SDL_GetAudioStreamData(player->stream, converted, stream_len);
+				SDL_MixAudio(stream, converted, audio_spec.format, stream_len, player->volume_mono);
+			}
+#else
 			if (buf)
 				SDL_AudioStreamPut(player->stream, buf, stream_len);
 			int avail = SDL_AudioStreamAvailable(player->stream);
@@ -971,6 +985,7 @@ void MixAudio_bincue(uint8 *stream, int stream_len, int volume)
 				SDL_AudioStreamGet(player->stream, converted, stream_len);
 				SDL_MixAudio(stream, converted, stream_len, player->volume_mono);
 			}
+#endif
 		}
 		
 	}
@@ -989,7 +1004,12 @@ void OpenAudio_bincue(int freq, int format, int channels, uint8 silence, int vol
 		// set player volume based on SDL volume
 		player->volume_left = player->volume_right = player->volume_mono = volume;
 		// audio stream handles converting cd audio to destination output
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+		SDL_AudioSpec src = { SDL_AUDIO_S16LE, 2, 44100 }, dst = { (SDL_AudioFormat)format, channels, freq };
+		player->stream = SDL_CreateAudioStream(&src, &dst);
+#else
 		player->stream = SDL_NewAudioStream(AUDIO_S16LSB, 2, 44100, format, channels, freq);
+#endif
 		if (player->stream == NULL) {
 			D(bug("Failed to open CD player audio stream using SDL!"));
 		}

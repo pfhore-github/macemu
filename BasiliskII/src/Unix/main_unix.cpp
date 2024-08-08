@@ -29,6 +29,9 @@
 #ifdef USE_SDL
 # include <SDL.h>
 # include <SDL_main.h>
+#if !SDL_VERSION_ATLEAST(3, 0, 0)
+#define SDL_PLATFORM_MACOS	__MACOSX__
+#endif
 #endif
 
 #ifndef USE_SDL_VIDEO
@@ -43,8 +46,8 @@
 # include <sys/mman.h>
 #endif
 
-#if __MACOSX__
-# include "utils_macosx.h"
+#if SDL_PLATFORM_MACOS
+#include "utils_macosx.h"
 #endif
 
 #if !EMULATED_68K && defined(__NetBSD__)
@@ -568,7 +571,7 @@ int main(int argc, char **argv)
 	}
 	atexit(SDL_Quit);
 
-#if __MACOSX__ && SDL_VERSION_ATLEAST(2,0,0)
+#if SDL_PLATFORM_MACOS && SDL_VERSION_ATLEAST(2,0,0)
 	// On Mac OS X hosts, SDL2 will create its own menu bar.  This is mostly OK,
 	// except that it will also install keyboard shortcuts, such as Command + Q,
 	// which can interfere with keyboard shortcuts in the guest OS.
@@ -692,7 +695,7 @@ int main(int argc, char **argv)
 	ROMBaseMac = Host2MacAddr(ROMBaseHost);
 #endif
 
-#if __MACOSX__
+#if SDL_PLATFORM_MACOS
 	extern void set_current_directory();
 	set_current_directory();
 #endif
@@ -1265,13 +1268,15 @@ static void one_tick(...)
 }
 
 #ifdef USE_PTHREADS_SERVICES
+bool tick_inhibit;
 static void *tick_func(void *arg)
 {
 	uint64 start = GetTicks_usec();
 	int64 ticks = 0;
 	uint64 next = start;
 	while (!tick_thread_cancel) {
-		one_tick();
+		if (!tick_inhibit)
+			one_tick();
 		next += 16625;
 		int64 delay = next - GetTicks_usec();
 		if (delay > 0)

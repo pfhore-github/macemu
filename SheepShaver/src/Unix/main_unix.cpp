@@ -125,10 +125,17 @@
 
 #ifdef USE_SDL
 #include <SDL.h>
+#if !SDL_VERSION_ATLEAST(3, 0, 0)
+#define SDL_PLATFORM_MACOS      __MACOSX__
+#endif
 #endif
 
 #ifndef USE_SDL_VIDEO
 #include <X11/Xlib.h>
+#endif
+
+#if SDL_PLATFORM_MACOS
+#include "utils_macosx.h"
 #endif
 
 #ifdef ENABLE_GTK
@@ -697,7 +704,7 @@ static bool init_sdl()
 	assert(sdl_flags != 0);
 
 #ifdef USE_SDL_VIDEO
-#if REAL_ADDRESSING && !defined(__MACOSX__)
+#if REAL_ADDRESSING && defined(GDK_WINDOWING_WAYLAND)
 	// Needed to fix a crash when using Wayland
 	// Forces use of XWayland instead
 	setenv("SDL_VIDEODRIVER", "x11", true);
@@ -718,15 +725,22 @@ static bool init_sdl()
 	}
 	atexit(SDL_Quit);
 
-#if SDL_VERSION_ATLEAST(2,0,0)
+#if SDL_VERSION_ATLEAST(2, 0, 0)
 	const int SDL_EVENT_TIMEOUT = 100;
 	for (int i = 0; i < SDL_EVENT_TIMEOUT; i++) {
 		SDL_Event event;
 		SDL_PollEvent(&event);
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+		if (event.type == SDL_EVENT_DROP_FILE) {
+			sdl_vmdir = event.drop.data;
+			break;
+		}
+#else
 		if (event.type == SDL_DROPFILE) {
 			sdl_vmdir = event.drop.file;
 			break;
 		}
+#endif
 		SDL_Delay(1);
 	}
 #endif
@@ -766,8 +780,7 @@ int main(int argc, char **argv)
 #endif
 #endif
 
-#if __MACOSX__
-	extern void set_current_directory();
+#if SDL_PLATFORM_MACOS
 	set_current_directory();
 #endif
 	
@@ -857,17 +870,14 @@ int main(int argc, char **argv)
 	// Read preferences
 	PrefsInit(vmdir, argc, argv);
 
-#ifdef __MACOSX__
-#if SDL_VERSION_ATLEAST(2,0,0)
+#if SDL_PLATFORM_MACOS && SDL_VERSION_ATLEAST(2,0,0)
 	// On Mac OS X hosts, SDL2 will create its own menu bar.  This is mostly OK,
 	// except that it will also install keyboard shortcuts, such as Command + Q,
 	// which can interfere with keyboard shortcuts in the guest OS.
 	//
 	// HACK: disable these shortcuts, while leaving all other pieces of SDL2's
 	// menu bar in-place.
-	extern void disable_SDL2_macosx_menu_bar_keyboard_shortcuts();
 	disable_SDL2_macosx_menu_bar_keyboard_shortcuts();
-#endif
 #endif
 	
 	// Any command line arguments left?
@@ -1431,6 +1441,7 @@ static void *nvram_func(void *arg)
  *  60Hz thread (really 60.15Hz)
  */
 
+bool tick_inhibit;
 static void *tick_func(void *arg)
 {
 	int tick_counter = 0;
@@ -1447,6 +1458,7 @@ static void *tick_func(void *arg)
 			Delay_usec(delay);
 		else if (delay < -16625)
 			next = GetTicks_usec();
+		if (tick_inhibit) continue;
 		ticks++;
 
 #if !EMULATED_PPC
