@@ -41,7 +41,7 @@
 
 #include "sysdeps.h"
 
-#include <SDL.h>
+#include "my_sdl.h"
 #if SDL_VERSION_ATLEAST(2, 0, 0) && !SDL_VERSION_ATLEAST(3, 0, 0)
 
 #include <SDL_mutex.h>
@@ -712,9 +712,11 @@ static void shutdown_sdl_video()
 	delete_sdl_video_window();
 }
 
-static int get_mag_rate()
+static float get_mag_rate()
 {
-	int m = PrefsFindInt32("mag_rate");
+	float m;
+	const char *s = PrefsFindString("mag_rate");
+	if (s == NULL || sscanf(s, "%f", &m) != 1) return 1;
 	return m < 1 ? 1 : m > 4 ? 4 : m;
 }
 
@@ -744,8 +746,9 @@ static SDL_Surface *init_sdl_video(int width, int height, int depth, Uint32 flag
 		int old_window_width, old_window_height, old_window_flags;
 		SDL_GetWindowSize(sdl_window, &old_window_width, &old_window_height);
 		old_window_flags = SDL_GetWindowFlags(sdl_window);
-		if (old_window_width != window_width ||
-			old_window_height != window_height ||
+		float m = get_mag_rate();
+		if (old_window_width != m * window_width ||
+			old_window_height != m * window_height ||
 			(old_window_flags & window_flags_to_monitor) != (window_flags & window_flags_to_monitor))
 		{
 			delete_sdl_video_window();
@@ -759,7 +762,7 @@ static SDL_Surface *init_sdl_video(int width, int height, int depth, Uint32 flag
 #endif
 	
 	if (!sdl_window) {
-		int m = get_mag_rate();
+		float m = get_mag_rate();
 		sdl_window = SDL_CreateWindow(
 			"",
 			SDL_WINDOWPOS_UNDEFINED,
@@ -1105,6 +1108,7 @@ void driver_base::adapt_to_video_mode() {
 	ADBSetRelMouseMode(mouse_grabbed);
 
 	// Init blitting routines
+	if (!s) return;
 	SDL_PixelFormat *f = s->format;
 	VisualFormat visualFormat;
 	visualFormat.depth = sdl_depth_of_video_depth(VIDEO_MODE_DEPTH);
@@ -1646,6 +1650,9 @@ void VideoExit(void)
 	for (i = VideoMonitors.begin(); i != end; ++i)
 		dynamic_cast<SDL_monitor_desc *>(*i)->video_close();
 
+	// Destroy SDL video window
+	delete_sdl_video_window();
+
 	// Destroy locks
 	if (frame_buffer_lock)
 		SDL_DestroyMutex(frame_buffer_lock);
@@ -1701,7 +1708,7 @@ static void do_toggle_fullscreen(void)
 			display_type = DISPLAY_WINDOW;
 			SDL_SetWindowFullscreen(sdl_window, 0);
 			const VIDEO_MODE &mode = drv->mode;
-			int m = get_mag_rate();
+			float m = get_mag_rate();
 			SDL_SetWindowSize(sdl_window, m * VIDEO_MODE_X, m * VIDEO_MODE_Y);
 			SDL_SetWindowGrab(sdl_window, SDL_FALSE);
 #ifndef __MACOSX__
@@ -1997,7 +2004,7 @@ static bool is_cursor_in_mac_screen()
 		deltaY = cursorY - windowY;
 		D(bug("cursor relative {%d,%d}\n", deltaX, deltaY));
 		const VIDEO_MODE &mode = drv->mode;
-		const int m = get_mag_rate();
+		float m = get_mag_rate();
 		out = deltaX >= 0 && deltaX < VIDEO_MODE_X * m &&
 				deltaY >= 0 && deltaY < VIDEO_MODE_Y * m;
 		D(bug("cursor in window? %s\n", out? "yes" : "no"));
@@ -2287,6 +2294,12 @@ static int SDLCALL on_sdl_event_generated(void *userdata, SDL_Event * event)
 			}
 		} break;
 			
+		case SDL_DROPFILE:
+			CDROMDrop(event->drop.file);
+			SDL_free(event->drop.file);
+			return EVENT_DROP_FROM_QUEUE;
+			break;
+
 		case SDL_WINDOWEVENT: {
 			switch (event->window.event) {
 				case SDL_WINDOWEVENT_RESIZED: {
@@ -2442,15 +2455,9 @@ static void handle_events(void)
 					case SDL_WINDOWEVENT_RESTORED:
 						force_complete_window_refresh();
 						break;
-					
 				}
 				break;
 			}
-
-			case SDL_DROPFILE:
-				CDROMDrop(event.drop.file);
-				SDL_free(event.drop.file);
-				break;
 
 			// Window "close" widget clicked
 			case SDL_QUIT:

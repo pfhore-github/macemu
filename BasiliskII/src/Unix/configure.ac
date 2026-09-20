@@ -74,12 +74,14 @@ AC_ARG_ENABLE(addressing,
 
 dnl External packages.
 AC_ARG_WITH(esd,             [  --with-esd              support ESD for sound under Linux/FreeBSD [default=yes]], [WANT_ESD=$withval], [WANT_ESD=yes])
-AC_ARG_WITH(gtk,             [  --with-gtk              use GTK user interface [default=yes]],
+AC_ARG_WITH(gtk,            [  --with-gtk              use GTK 2 or 3 for user interface [default=any]],
   [case "$withval" in
-   yes|gtk2)  WANT_GTK="gtk2";;
-   *)         WANT_GTK="no";;
+   yes|true|any) WANT_GTK="any";;
+   *3)	   	 WANT_GTK="GTK3";;
+   *2)	   	 WANT_GTK="GTK2";;
+   *)      	 WANT_GTK="no";;
    esac],
-  [WANT_GTK="gtk2"])
+  [WANT_GTK="any"])
 AC_ARG_WITH(mon,             [  --with-mon              use mon as debugger [default=no]], [WANT_MON=$withval], [WANT_MON=no])
 
 AC_ARG_WITH(bincue,   
@@ -332,9 +334,10 @@ if [[ "x$WANT_SDL" = "xyes" ]]; then
 
     if [[ "x$TEMP_WANT_SDL_VERSION_MAJOR" = "x3" ]]; then
       PKG_CHECK_MODULES([sdl3], [sdl3 >= 3.0], [
+        CFLAGS="$CFLAGS $sdl3_CFLAGS"
         CXXFLAGS="$CXXFLAGS $sdl3_CFLAGS"
-        CXXFLAGS+=`echo " $sdl3_CFLAGS" | sed -e 's/\(-I.*include\)/\1\/SDL3/'`
         LIBS="$LIBS $sdl3_LIBS"
+	AC_DEFINE([USE_SDL3], [1], [Use SDL3])
         WANT_SDL_VERSION_MAJOR=3
       ], [
         TEMP_WANT_SDL_VERSION_MAJOR=1
@@ -342,8 +345,10 @@ if [[ "x$WANT_SDL" = "xyes" ]]; then
     fi
     if [[ "x$TEMP_WANT_SDL_VERSION_MAJOR" = "x2" ]]; then
       PKG_CHECK_MODULES([sdl2], [sdl2 >= 2.0], [
+        CFLAGS="$CFLAGS $sdl2_CFLAGS"
         CXXFLAGS="$CXXFLAGS $sdl2_CFLAGS"
         LIBS="$LIBS $sdl2_LIBS"
+	AC_DEFINE([USE_SDL2], [1], [Use SDL2])
         WANT_SDL_VERSION_MAJOR=2
       ], [
         TEMP_WANT_SDL_VERSION_MAJOR=1
@@ -458,24 +463,61 @@ if [[ "x$WANT_XF86_VIDMODE" = "xyes" ]]; then
   ])
 fi
 
+# Check for pkg-config macro, thanks to rdiez
+m4_ifndef([PKG_PROG_PKG_CONFIG], [m4_fatal(
+    [The PKG_PROG_PKG_CONFIG macro is not available. You need to install pkg-config.]
+)])
+PKG_PROG_PKG_CONFIG
+
 dnl We use GTK+ if possible.
 UISRCS=../dummy/prefs_editor_dummy.cpp
-if [[ "x$WANT_GTK" = "xgtk2" ]]; then
-  AM_PATH_GTK_2_0(2.6.4, [
-    GUI_CFLAGS="$GTK_CFLAGS"
-    GUI_LIBS="$GTK_LIBS"
-    WANT_GTK=gtk2
+if [[ "$WANT_GTK" = "any" -o "$WANT_GTK" = "GTK3" ]]; then
+  PKG_CHECK_MODULES([GTK3], [gtk+-3.0 >= 3.14.5], [
+    WANT_GTK=GTK3
+    GUI_CFLAGS="$GTK3_CFLAGS"
+    GUI_LIBS="$GTK3_LIBS"
+    # Only add --export-dynamic if not on macOS/Darwin
+    case $host_os in
+      darwin*) ;;  # Skip on macOS
+      *) LDFLAGS="$LDFLAGS -Wl,--export-dynamic" ;;
+    esac
+    AC_CHECK_PROG([ac_cv_gcr], [glib-compile-resources], [yes])
+    if [[ "$ac_cv_gcr" = "yes" ]]; then
+      GCR="glib-compile-resources"
+    else
+      AC_MSG_ERROR([glib-compile-resources not found.])
+    fi
   ], [
-    AC_MSG_WARN([Could not find GTK+ 2.0, disabling user interface.])
+    if [[ "$WANT_GTK" = "any" ]]; then
+      AC_MSG_WARN([Could not find GTK3 (version >= 3.14.5), falling back to GTK2.])
+      WANT_GTK=GTK2
+    else
+      AC_MSG_WARN([Could not find GTK3 (version >= 3.14.5), disabling user interface.])
+      WANT_GTK=no
+    fi
+  ])
+fi
+if [[ "$WANT_GTK" = "GTK2" ]]; then
+  PKG_CHECK_MODULES([GTK2], [gtk+-2.0 >= 2.6.4], [
+    WANT_GTK=GTK2
+    GUI_CFLAGS="$GTK2_CFLAGS"
+    GUI_LIBS="$GTK2_LIBS"
+  ], [
+    AC_MSG_WARN([Could not find GTK2 (version >= 2.6.4), disabling user interface.])
     WANT_GTK=no
   ])
 fi
 if [[ "x$WANT_GTK" != "xno" -a "x$WANT_STANDALONE_GUI" = "xno" ]]; then
   AC_DEFINE(ENABLE_GTK, 1, [Define if using GTK.])
-  UISRCS=prefs_editor_gtk.cpp
+  if [[ "$WANT_GTK" = "GTK3" ]]; then
+    UISRCS="prefs_editor_gtk3.cpp g_resource.cpp color_scheme.cpp"
+  else
+    UISRCS="prefs_editor_gtk.cpp"
+  fi
 fi
 AC_SUBST(GUI_CFLAGS)
 AC_SUBST(GUI_LIBS)
+AC_SUBST(GCR)
 
 dnl Build external GUI if requested.
 if [[ "$WANT_STANDALONE_GUI" != "yes" ]]; then
@@ -561,7 +603,7 @@ fi
 
 dnl Checks for library functions.
 AC_CHECK_FUNCS(strdup strerror cfmakeraw)
-AC_CHECK_FUNCS(clock_gettime timer_create)
+AC_CHECK_FUNCS(clock_gettime clock_nanosleep timer_create)
 AC_CHECK_FUNCS(sigaction signal)
 AC_CHECK_FUNCS(mmap mprotect munmap)
 AC_CHECK_FUNCS(vm_allocate vm_deallocate vm_protect)
@@ -848,7 +890,7 @@ fi
 
 dnl SDL overrides
 if [[ "x$WANT_SDL" = "xyes" ]]; then
-  AC_DEFINE(USE_SDL, 1, [Define to enble SDL support])
+  AC_DEFINE(USE_SDL, 1, [Define to enable SDL support])
   if [[ "x$WANT_SDL_FRAMEWORK" = "xyes" ]]; then
     EXTRASYSSRCS="$EXTRASYSSRCS ../SDL/SDLMain.m"
   fi
@@ -881,9 +923,6 @@ if [[ "x$WANT_SDL_VIDEO" = "xyes" ]]; then
       EXTRASYSSRCS="$EXTRASYSSRCS ../dummy/clip_dummy.cpp"
       ;;
     esac
-    if [[ "$WANT_GTK" != "no" ]]; then
-      LIBS="$LIBS -lX11"
-    fi
   fi
 elif [[ "x$WANT_MACOSX_GUI" != "xyes" ]]; then
   VIDEOSRCS="video_x.cpp"
@@ -1399,7 +1438,7 @@ if [[ -n "$LINKER_SCRIPT_FLAGS" ]]; then
     saved_LDFLAGS="$LDFLAGS"
     LDFLAGS="$LDFLAGS $LINKER_SCRIPT_FLAGS"
     AC_TRY_RUN(
-      [int main() {if ((char *)&main < (char *)0x70000000) return 1;}],
+      [int main() {if ((char *)(&main) < (char *)0x70000000) return 1;}],
       [ac_cv_linker_script_works=yes],
       [ac_cv_linker_script_works=no],
       dnl When cross-compiling, assume it works
@@ -1469,8 +1508,10 @@ fi
 
 if [[ "x$OS_TYPE" = "xdarwin" ]]; then
   WANT_VOSF=no
-  if [[ "$target_cpu" != "arm" ]]; then
+  if [[ "$target_cpu" = "x86_64" ]]; then
     LDFLAGS="$LDFLAGS -Wl,-no_pie -pagezero_size 0x1000"
+  elif [[ "$target_cpu" = "powerpc" ]]; then
+    LDFLAGS="$LDFLAGS -pagezero_size 0x1000"
   fi
 fi
 

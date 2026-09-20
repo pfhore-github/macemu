@@ -63,7 +63,11 @@ HAVE_X86_64=no
 case "$target_cpu" in
   i386* | i486* | i586* | i686* | i786* ) HAVE_I386=yes;;
   powerpc* ) HAVE_POWERPC=yes;;
-  x86_64* ) HAVE_X86_64=yes;;
+  x86_64* )
+  HAVE_X86_64=yes
+  CXXFLAGS="$CXXFLAGS -fpermissive"
+  WANT_JIT=no
+  ;;
 esac
 
 dnl Checks for programs.
@@ -561,15 +565,17 @@ CPUSRCS="../uae_cpu/basilisk_glue.cpp ../uae_cpu/memory.cpp ../uae_cpu/newcpu.cp
 dnl We really want SDL for now
 if [[ "x$WANT_SDL_VERSION_MAJOR" = "x3" ]]; then
   SDL_CFLAGS=`pkg-config sdl3 --cflags`
-  SDL_CFLAGS+=`echo " $SDL_CFLAGS" | sed -e 's/\(-I.*include\)/\1\/SDL3/'`
+  SDL_CFLAGS="$SDL_CFLAGS `echo " $SDL_CFLAGS" | sed -e 's/\(-I.*include\)/\1\/SDL3/'`"
   SDL_LIBS=`pkg-config sdl3 --libs | sed -e 's/-lSDL3/-lSDL3.dll/'`
+  AC_DEFINE([USE_SDL3], [1], [Use SDL3])
 else
   SDL_CFLAGS=`sdl2-config --cflags`
   SDL_LIBS=`sdl2-config --static-libs`
+  AC_DEFINE([USE_SDL2], [1], [Use SDL2])
 fi
 AC_SUBST(SDL_CFLAGS)
 AC_SUBST(SDL_LIBS)
-AC_DEFINE(USE_SDL, 1, [Define to enble SDL support])
+AC_DEFINE(USE_SDL, 1, [Define to enable SDL support])
 AC_DEFINE(USE_SDL_VIDEO, 1, [Define to enable SDL video graphics support])
 AC_DEFINE(USE_SDL_AUDIO, 1, [Define to enable SDL audio support])
 

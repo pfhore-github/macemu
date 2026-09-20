@@ -28,9 +28,21 @@
 #endif
 
 #include <sys/sysctl.h>
-#include <Metal/Metal.h>
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
+#include <Metal/Metal.h>
+
+bool MetalIsAvailable() {
+	const int EL_CAPITAN = 15; // Darwin major version of El Capitan
+	char s[16];
+	size_t size = sizeof(s);
+	int v;
+	if (sysctlbyname("kern.osrelease", s, &size, NULL, 0) || sscanf(s, "%d", &v) != 1 || v < EL_CAPITAN) return false;
+	id<MTLDevice> dev = MTLCreateSystemDefaultDevice();
+	bool r = dev != nil;
+	[dev release];
+	return r;
+}
 
 void disable_SDL2_macosx_menu_bar_keyboard_shortcuts() {
 	for (NSMenuItem * menu_item in [NSApp mainMenu].itemArray) {
@@ -50,7 +62,7 @@ void disable_SDL2_macosx_menu_bar_keyboard_shortcuts() {
 static NSWindow *get_nswindow(SDL_Window *window) {
 #if SDL_VERSION_ATLEAST(3, 0, 0)
 	SDL_PropertiesID props = SDL_GetWindowProperties(window);
-	return (NSWindow *)SDL_GetProperty(props, "SDL.window.cocoa.window", NULL);
+	return (NSWindow *)SDL_GetPointerProperty(props, "SDL.window.cocoa.window", NULL);
 #else
 	SDL_SysWMinfo wmInfo;
 	SDL_VERSION(&wmInfo.version);
@@ -80,11 +92,9 @@ void make_window_transparent(SDL_Window *window)
 		return;
 	}
 	NSWindow *cocoaWindow = get_nswindow(window);
-    NSView *sdlView = cocoaWindow.contentView;
-	sdlView.wantsLayer = YES;
-    sdlView.layer.backgroundColor = [NSColor clearColor].CGColor;
 	static bool observing;
     if (!observing) {
+		cocoaWindow.level = NSMainMenuWindowLevel + 1;
         NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
         [nc addObserverForName:NSWindowDidBecomeKeyNotification object:cocoaWindow queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification * _Nonnull note) {
             NSWindow *window = (NSWindow *)note.object;
@@ -122,16 +132,4 @@ void set_current_directory()
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 	chdir([[[[NSBundle mainBundle] bundlePath] stringByDeletingLastPathComponent] UTF8String]);
 	[pool release];
-}
-
-bool MetalIsAvailable() {
-	const int EL_CAPITAN = 15; // Darwin major version of El Capitan
-	char s[16];
-	size_t size = sizeof(s);
-	int v;
-	if (sysctlbyname("kern.osrelease", s, &size, NULL, 0) || sscanf(s, "%d", &v) != 1 || v < EL_CAPITAN) return false;
-	id<MTLDevice> dev = MTLCreateSystemDefaultDevice();
-	bool r = dev != nil;
-	[dev release];
-	return r;
 }

@@ -53,7 +53,6 @@ build:
 $ cd macemu/BasiliskII/src/MacOSX
 $ xcodebuild build -project BasiliskII.xcodeproj -configuration Release
 ```
-or same as Linux
 
 ##### Linux
 preparation (arm64 only): Install GMP and MPFR.
@@ -65,8 +64,11 @@ $ make
 ##### MinGW32/MSYS2
 preparation:
 ```
-$ pacman -S base-devel mingw-w64-i686-toolchain autoconf automake mingw-w64-i686-SDL2 mingw-w64-i686-gtk2
+$ pacman -S base-devel mingw-w64-i686-toolchain autoconf automake mingw-w64-i686-SDL2
 ```
+note: MinGW32 dropped GTK2 package.
+See msys2/MINGW-packages#24490
+
 build (from a mingw32.exe prompt):
 ```
 $ cd macemu/BasiliskII/src/Windows
@@ -80,7 +82,6 @@ about changing Deployment Target: see BasiliskII
 $ cd macemu/SheepShaver/src/MacOSX
 $ xcodebuild build -project SheepShaver_Xcode8.xcodeproj -configuration Release
 ```
-or same as Linux
 
 ##### Linux
 ```
@@ -88,6 +89,9 @@ $ cd macemu/SheepShaver/src/Unix
 $ ./autogen.sh
 $ make
 ```
+For Raspberry Pi:
+https://github.com/vaccinemedia/macemu
+
 ##### MinGW32/MSYS2
 preparation: same as BasiliskII  
   

@@ -220,8 +220,7 @@ static struct proto sheep_proto = {
 /*
  *  Initialize module
  */
-
-int init_module(void)
+static int __init sheep_net_init(void)
 {
 	int ret;
 
@@ -231,18 +230,19 @@ int init_module(void)
 	return ret;
 }
 
+module_init(sheep_net_init);
 
 /*
  *  Deinitialize module
  */
 
-void cleanup_module(void)
+static void __exit sheep_net_exit(void)
 {
-	/* Unregister driver */
-	misc_deregister(&sheep_net_device);
-	printk("sheep net: driver removed\n");
+    misc_deregister(&sheep_net_device);
+    printk(KERN_INFO "sheep net: driver removed\n");
 }
 
+module_exit(sheep_net_exit);
 
 /*
  *  Driver open() function
@@ -474,8 +474,8 @@ static ssize_t sheep_net_write(struct file *f, const char *buf, size_t count, lo
 	/* Transmit packet */
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,31)
 	atomic_add(skb->truesize, &v->skt->wmem_alloc);
-#endif
 	skb->sk = v->skt;
+#endif
 	skb->dev = v->ether;
 	skb->priority = 0;
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,9)

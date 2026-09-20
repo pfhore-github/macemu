@@ -25,7 +25,7 @@
 #include <signal.h>
 #include <errno.h>
 
-#include <SDL.h>
+#include "my_sdl.h"
 #include <SDL_mutex.h>
 #include <SDL_thread.h>
 
@@ -475,11 +475,8 @@ void QuitEmulator(void)
 
 	// Free ROM/RAM areas
 	if (RAMBaseHost != VM_MAP_FAILED) {
-		vm_release(RAMBaseHost, RAMSize);
+		vm_release(RAMBaseHost, RAMSize + 0x100000);
 		RAMBaseHost = NULL;
-	}
-	if (ROMBaseHost != VM_MAP_FAILED) {
-		vm_release(ROMBaseHost, 0x100000);
 		ROMBaseHost = NULL;
 	}
 
@@ -505,7 +502,7 @@ void QuitEmulator(void)
 
 
 /*
- *  Code was patched, flush caches if neccessary (i.e. when using a real 680x0
+ *  Code was patched, flush caches if necessary (i.e. when using a real 680x0
  *  or a dynamically recompiling emulator)
  */
 
@@ -664,7 +661,7 @@ HWND GetMainWindowHandle(void)
 	}
 #if SDL_VERSION_ATLEAST(3, 0, 0)
 	SDL_PropertiesID props = SDL_GetWindowProperties(sdl_window);
-	return (HWND)SDL_GetProperty(props, "SDL.window.cocoa.window", NULL);
+	return (HWND)SDL_GetPointerProperty(props, "SDL.window.cocoa.window", NULL);
 #else
 	SDL_SysWMinfo wmInfo;
 	SDL_VERSION(&wmInfo.version);
@@ -769,8 +766,13 @@ static LRESULT CALLBACK low_level_keyboard_hook(int nCode, WPARAM wParam, LPARAM
 					SDL_Event e;
 					memset(&e, 0, sizeof(e));
 					e.type = (wParam == WM_KEYDOWN) ? SDL_EVENT_KEY_DOWN : SDL_EVENT_KEY_UP;
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+					e.key.key = (p->vkCode == VK_LWIN) ? SDLK_LGUI : SDLK_RGUI;
+					e.key.scancode = (p->vkCode == VK_LWIN) ? SDL_SCANCODE_LGUI : SDL_SCANCODE_RGUI;
+#else
 					e.key.keysym.sym = (p->vkCode == VK_LWIN) ? SDLK_LGUI : SDLK_RGUI;
 					e.key.keysym.scancode = (p->vkCode == VK_LWIN) ? SDL_SCANCODE_LGUI : SDL_SCANCODE_RGUI;
+#endif
 					SDL_PushEvent(&e);
 					return 1;
 				}

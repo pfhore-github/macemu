@@ -313,6 +313,11 @@ bool ether_init(void)
 		net_if_type = NET_IF_VDE;
 		printf("selected Ethernet device type VDE\n");
 	}
+	else if (strncmp(name, "vde:", 4) == 0) {
+		net_if_type = NET_IF_VDE;
+		vde_sock = strdup(name+4);
+		printf("selected Ethernet device type VDE\n");
+	}
 #endif
 #ifdef ENABLE_MACOSX_ETHERHELPER
 	else if (strncmp(name, "etherhelper", 10) == 0)
@@ -326,11 +331,14 @@ bool ether_init(void)
 	// Don't raise SIGPIPE, let errno be set to EPIPE
 	struct sigaction sigpipe_sa;
 	if (sigaction(SIGPIPE, NULL, &sigpipe_sa) == 0) {
-		assert(sigpipe_sa.sa_handler == SIG_DFL || sigpipe_sa.sa_handler == SIG_IGN);
-		sigfillset(&sigpipe_sa.sa_mask);
-		sigpipe_sa.sa_flags = 0;
-		sigpipe_sa.sa_handler = SIG_IGN;
-		sigaction(SIGPIPE, &sigpipe_sa, NULL);
+		if (sigpipe_sa.sa_handler == SIG_DFL || sigpipe_sa.sa_handler == SIG_IGN) {
+			sigfillset(&sigpipe_sa.sa_mask);
+			sigpipe_sa.sa_flags = 0;
+			sigpipe_sa.sa_handler = SIG_IGN;
+			sigaction(SIGPIPE, &sigpipe_sa, NULL);
+		}
+		// If something else in the process has installed a SIGPIPE handler (SDL kmsdrm?),
+		// and wants to eat our unwanted signals instead, that's fine too.
 	}
 
 #ifdef HAVE_SLIRP
@@ -894,9 +902,9 @@ static int16 ether_do_write(uint32 arg)
 			return -1;
 		}
 
-		do {
-			len = vde_send(vde_conn, packet, sizeof(packet), 0);
-		} while (len < 0);
+		if (vde_send(vde_conn, packet, len, 0) < 0) {
+			return excessCollsns;
+		}
 
 		return noErr;
 	} else

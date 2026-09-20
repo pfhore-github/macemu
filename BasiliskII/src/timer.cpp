@@ -24,12 +24,13 @@
 #include "main.h"
 #include "cpu_emulation.h"
 
-#ifdef PRECISE_TIMING_POSIX
+#if PRECISE_TIMING_POSIX
 #include <pthread.h>
 #include <semaphore.h>
+#include <signal.h>
 #endif
 
-#ifdef PRECISE_TIMING_MACH
+#if PRECISE_TIMING_MACH
 #include <mach/mach.h>
 #endif
 
@@ -59,7 +60,7 @@ struct TMDesc {
 static TMDesc *tmDescList;
 
 #if PRECISE_TIMING
-#ifdef PRECISE_TIMING_BEOS
+#if PRECISE_TIMING_BEOS
 static thread_id timer_thread = -1;
 static bool thread_active = true;
 static const tm_time_t wakeup_time_max = 0x7fffffffffffffff; 
@@ -67,7 +68,7 @@ static volatile tm_time_t wakeup_time = wakeup_time_max;
 static sem_id wakeup_time_sem = -1;
 static int32 timer_func(void *arg);
 #endif
-#ifdef PRECISE_TIMING_POSIX
+#if PRECISE_TIMING_POSIX
 static pthread_t timer_thread;
 static bool timer_thread_active = false;
 static volatile bool timer_thread_cancel = false;
@@ -76,7 +77,7 @@ static tm_time_t wakeup_time = wakeup_time_max;
 static pthread_mutex_t wakeup_time_lock = PTHREAD_MUTEX_INITIALIZER;
 static void *timer_func(void *arg);
 #endif
-#ifdef PRECISE_TIMING_MACH
+#if PRECISE_TIMING_MACH
 static clock_serv_t system_clock;
 static thread_act_t timer_thread;
 static bool timer_thread_active = false;
@@ -84,6 +85,15 @@ static tm_time_t wakeup_time_max = { 0x7fffffff, 999999999 };
 static tm_time_t wakeup_time = wakeup_time_max;
 static semaphore_t wakeup_time_sem;
 static void *timer_func(void *arg);
+#endif
+#if PRECISE_TIMING_WINDOWS
+static const tm_time_t wakeup_time_max = 0x7fffffffffffffff;
+static bool thread_active = false;
+static HANDLE wakeup_event = NULL;
+static tm_time_t wakeup_time = wakeup_time_max;
+static CRITICAL_SECTION wakeup_time_lock;
+static HANDLE timer_thread = NULL;
+static DWORD WINAPI timer_func(void *arg);
 #endif
 #endif
 
@@ -157,7 +167,7 @@ static void dequeue_tm(uint32 tm)
  *  Timer thread operations
  */
 
-#ifdef PRECISE_TIMING_POSIX
+#if PRECISE_TIMING_POSIX
 const int SIGSUSPEND = SIGRTMIN + 6;
 const int SIGRESUME  = SIGRTMIN + 7;
 static struct sigaction sigsuspend_action;
@@ -266,20 +276,27 @@ void TimerInit(void)
 
 #if PRECISE_TIMING
 	// Start timer thread
-#ifdef PRECISE_TIMING_BEOS
+#if PRECISE_TIMING_BEOS
 	wakeup_time_sem = create_sem(1, "Wakeup Time");
 	timer_thread = spawn_thread(timer_func, "Time Manager", B_REAL_TIME_PRIORITY, NULL);
 	resume_thread(timer_thread);
 #elif PRECISE_TIMING_MACH
 	pthread_t pthread;
-	
+
 	host_get_clock_service(mach_host_self(), REALTIME_CLOCK, &system_clock);
 	semaphore_create(mach_task_self(), &wakeup_time_sem, SYNC_POLICY_FIFO, 1);
 
 	pthread_create(&pthread, NULL, &timer_func, NULL);
 #endif
-#ifdef PRECISE_TIMING_POSIX
+#if PRECISE_TIMING_POSIX
 	timer_thread_active = timer_thread_init();
+#endif
+#if PRECISE_TIMING_WINDOWS
+	InitializeCriticalSection(&wakeup_time_lock);
+	thread_active = true;
+	wakeup_time = wakeup_time_max;
+	wakeup_event = CreateEvent(NULL, TRUE, FALSE, NULL);
+	timer_thread = CreateThread(NULL, 0, timer_func, NULL, 0, NULL);
 #endif
 #endif
 }
@@ -293,23 +310,41 @@ void TimerExit(void)
 {
 #if PRECISE_TIMING
 	// Quit timer thread
+#if PRECISE_TIMING_BEOS
 	if (timer_thread > 0) {
-#ifdef PRECISE_TIMING_BEOS
 		status_t l;
 		thread_active = false;
 		suspend_thread(timer_thread);
 		resume_thread(timer_thread);
 		wait_for_thread(timer_thread, &l);
 		delete_sem(wakeup_time_sem);
+	}
 #endif
-#ifdef PRECISE_TIMING_MACH
+#if PRECISE_TIMING_MACH
+	if (timer_thread > 0) {
 		timer_thread_active = false;
 		semaphore_destroy(mach_task_self(), wakeup_time_sem);
-#endif
-#ifdef PRECISE_TIMING_POSIX
-		timer_thread_kill();
-#endif
 	}
+#endif
+#if PRECISE_TIMING_POSIX
+	if (timer_thread_active) {
+		timer_thread_kill();
+	}
+#endif
+#if PRECISE_TIMING_WINDOWS
+	if (timer_thread != NULL) {
+		EnterCriticalSection(&wakeup_time_lock);
+		thread_active = false;
+		LeaveCriticalSection(&wakeup_time_lock);
+		SetEvent(wakeup_event);
+		WaitForSingleObject(timer_thread, INFINITE);
+		CloseHandle(timer_thread);
+		CloseHandle(wakeup_event);
+		timer_thread = NULL;
+		wakeup_event = NULL;
+		DeleteCriticalSection(&wakeup_time_lock);
+	}
+#endif
 #endif
 }
 
@@ -370,13 +405,16 @@ int16 RmvTime(uint32 tm)
 	while (acquire_sem(wakeup_time_sem) == B_INTERRUPTED) ;
 	suspend_thread(timer_thread);
 #endif
-#ifdef PRECISE_TIMING_MACH
+#if PRECISE_TIMING_MACH
 	semaphore_wait(wakeup_time_sem);
 	thread_suspend(timer_thread);
 #endif
 #if PRECISE_TIMING_POSIX
 	pthread_mutex_lock(&wakeup_time_lock);
 	timer_thread_suspend();
+#endif
+#if PRECISE_TIMING_WINDOWS
+	EnterCriticalSection(&wakeup_time_lock);
 #endif
 	if (ReadMacInt16(tm + qType) & 0x8000) {
 
@@ -408,7 +446,7 @@ int16 RmvTime(uint32 tm)
 		get_thread_info(timer_thread, &info);
 	} while (info.state == B_THREAD_SUSPENDED);	// Sometimes, resume_thread() doesn't work (BeOS bug?)
 #endif
-#ifdef PRECISE_TIMING_MACH
+#if PRECISE_TIMING_MACH
 	semaphore_signal(wakeup_time_sem);
 	thread_abort(timer_thread);
 	thread_resume(timer_thread);
@@ -417,6 +455,10 @@ int16 RmvTime(uint32 tm)
 	pthread_mutex_unlock(&wakeup_time_lock);
 	timer_thread_resume();
 	assert(suspend_count == 0);
+#endif
+#if PRECISE_TIMING_WINDOWS
+	LeaveCriticalSection(&wakeup_time_lock);
+	SetEvent(wakeup_event);
 #endif
 
 	// Free descriptor
@@ -487,13 +529,16 @@ int16 PrimeTime(uint32 tm, int32 time)
 	while (acquire_sem(wakeup_time_sem) == B_INTERRUPTED) ;
 	suspend_thread(timer_thread);
 #endif
-#ifdef PRECISE_TIMING_MACH
+#if PRECISE_TIMING_MACH
 	semaphore_wait(wakeup_time_sem);
 	thread_suspend(timer_thread);
 #endif
 #if PRECISE_TIMING_POSIX
 	pthread_mutex_lock(&wakeup_time_lock);
 	timer_thread_suspend();
+#endif
+#if PRECISE_TIMING_WINDOWS
+	EnterCriticalSection(&wakeup_time_lock);
 #endif
 	WriteMacInt16(tm + qType, ReadMacInt16(tm + qType) | 0x8000);
 	enqueue_tm(tm);
@@ -504,7 +549,7 @@ int16 PrimeTime(uint32 tm, int32 time)
 		if ((ReadMacInt16(d->task + qType) & 0x8000))
 			if (timer_cmp_time(d->wakeup, wakeup_time) < 0)
 				wakeup_time = d->wakeup;
-#ifdef PRECISE_TIMING_BEOS
+#if PRECISE_TIMING_BEOS
 	release_sem(wakeup_time_sem);
 	thread_info info;
 	do {
@@ -512,15 +557,19 @@ int16 PrimeTime(uint32 tm, int32 time)
 		get_thread_info(timer_thread, &info);
 	} while (info.state == B_THREAD_SUSPENDED);	// Sometimes, resume_thread() doesn't work (BeOS bug?)
 #endif
-#ifdef PRECISE_TIMING_MACH
+#if PRECISE_TIMING_MACH
 	semaphore_signal(wakeup_time_sem);
 	thread_abort(timer_thread);
 	thread_resume(timer_thread);
 #endif
-#ifdef PRECISE_TIMING_POSIX
+#if PRECISE_TIMING_POSIX
 	pthread_mutex_unlock(&wakeup_time_lock);
 	timer_thread_resume();
 	assert(suspend_count == 0);
+#endif
+#if PRECISE_TIMING_WINDOWS
+	LeaveCriticalSection(&wakeup_time_lock);
+	SetEvent(wakeup_event);
 #endif
 #endif
 	return 0;
@@ -531,7 +580,7 @@ int16 PrimeTime(uint32 tm, int32 time)
  *  Time Manager thread
  */
 
-#ifdef PRECISE_TIMING_BEOS
+#if PRECISE_TIMING_BEOS
 static int32 timer_func(void *arg)
 {
 	while (thread_active) {
@@ -543,7 +592,7 @@ static int32 timer_func(void *arg)
 		if (wakeup_time < system_time()) {
 
 			// Timer expired, trigger interrupt
-			wakeup_time = 0x7fffffffffffffff;
+			wakeup_time = wakeup_time_max;
 			SetInterruptFlag(INTFLAG_TIMER);
 			TriggerInterrupt();
 		}
@@ -553,18 +602,18 @@ static int32 timer_func(void *arg)
 }
 #endif
 
-#ifdef PRECISE_TIMING_MACH
+#if PRECISE_TIMING_MACH
 static void *timer_func(void *arg)
 {
 	timer_thread = mach_thread_self();
 	timer_thread_active = true;
-	
+
 	while (timer_thread_active) {
 		clock_sleep(system_clock, TIME_ABSOLUTE, wakeup_time, NULL);
 		semaphore_wait(wakeup_time_sem);
-	   
+
 		tm_time_t system_time;
-		
+
 		timer_current_time(system_time);
 		if (timer_cmp_time(wakeup_time, system_time) < 0) {
 			wakeup_time = wakeup_time_max;
@@ -577,7 +626,7 @@ static void *timer_func(void *arg)
 }
 #endif
 
-#ifdef PRECISE_TIMING_POSIX
+#if PRECISE_TIMING_POSIX
 static void *timer_func(void *arg)
 {
 	while (!timer_thread_cancel) {
@@ -597,6 +646,80 @@ static void *timer_func(void *arg)
 		}
 	}
 	return NULL;
+}
+#endif
+
+#if PRECISE_TIMING_WINDOWS
+static HANDLE create_waitable_timer(void)
+{
+	// The manual-reset and high-resolution flags are 0x1 and 0x2 respectively.
+	// High resolution is supported from Windows 10 version 1803. Windows XP
+	// does not export CreateWaitableTimerExW, so resolve it at runtime and use
+	// the normal timer when the API or high-resolution flag is unavailable.
+	typedef HANDLE (WINAPI *create_waitable_timer_ex_w_proc)(
+		LPSECURITY_ATTRIBUTES, LPCWSTR, DWORD, DWORD);
+	const DWORD manual_reset = 0x1;
+	const DWORD high_resolution = 0x2;
+	HMODULE kernel32 = GetModuleHandleW(L"kernel32.dll");
+	if (kernel32 != NULL) {
+		create_waitable_timer_ex_w_proc create_ex =
+			(create_waitable_timer_ex_w_proc)GetProcAddress(kernel32, "CreateWaitableTimerExW");
+		if (create_ex != NULL) {
+			HANDLE timer = create_ex(NULL, NULL,
+				manual_reset | high_resolution, TIMER_ALL_ACCESS);
+			if (timer != NULL)
+				return timer;
+		}
+	}
+	return CreateWaitableTimer(NULL, TRUE, NULL);
+}
+
+static DWORD WINAPI timer_func(void *arg)
+{
+	HANDLE timer = create_waitable_timer();
+	HANDLE wakeups[2] = {timer, wakeup_event};
+
+	if (timer == NULL)
+		return 0;
+
+	for (;;) {
+		EnterCriticalSection(&wakeup_time_lock);
+		if (!thread_active) {
+			LeaveCriticalSection(&wakeup_time_lock);
+			break;
+		}
+
+		ResetEvent(wakeup_event);
+		tm_time_t next_wakeup = wakeup_time;
+		LeaveCriticalSection(&wakeup_time_lock);
+
+		tm_time_t now;
+		timer_current_time(now);
+		if (timer_cmp_time(next_wakeup, now) <= 0) {
+			bool trigger = false;
+			EnterCriticalSection(&wakeup_time_lock);
+			if (thread_active && timer_cmp_time(wakeup_time, now) <= 0) {
+				wakeup_time = wakeup_time_max;
+				trigger = true;
+			}
+			LeaveCriticalSection(&wakeup_time_lock);
+			if (trigger) {
+				SetInterruptFlag(INTFLAG_TIMER);
+				TriggerInterrupt();
+			}
+			continue;
+		}
+
+		LARGE_INTEGER due_time;
+		due_time.QuadPart = -(next_wakeup - now);
+		if (!SetWaitableTimer(timer, &due_time, 0, NULL, NULL, FALSE))
+			break;
+		if (WaitForMultipleObjects(2, wakeups, FALSE, INFINITE) == WAIT_FAILED)
+			break;
+	}
+
+	CloseHandle(timer);
+	return 0;
 }
 #endif
 
@@ -648,6 +771,9 @@ void TimerInterrupt(void)
 	pthread_mutex_lock(&wakeup_time_lock);
 	timer_thread_suspend();
 #endif
+#if PRECISE_TIMING_WINDOWS
+	EnterCriticalSection(&wakeup_time_lock);
+#endif
 	wakeup_time = wakeup_time_max;
 	for (TMDesc *d = tmDescList; d; d = d->next)
 		if ((ReadMacInt16(d->task + qType) & 0x8000))
@@ -670,6 +796,10 @@ void TimerInterrupt(void)
 	pthread_mutex_unlock(&wakeup_time_lock);
 	timer_thread_resume();
 	assert(suspend_count == 0);
+#endif
+#if PRECISE_TIMING_WINDOWS
+	LeaveCriticalSection(&wakeup_time_lock);
+	SetEvent(wakeup_event);
 #endif
 #endif
 }

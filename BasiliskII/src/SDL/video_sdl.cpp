@@ -42,8 +42,8 @@
 
 #include "sysdeps.h"
 
-#include <SDL.h>
-#if (SDL_COMPILEDVERSION < SDL_VERSIONNUM(2, 0, 0))
+#include "my_sdl.h"
+#if SDL_COMPILEDVERSION >= SDL_VERSIONNUM(1, 0, 0) && SDL_COMPILEDVERSION < SDL_VERSIONNUM(2, 0, 0)
 
 #include <SDL_mutex.h>
 #include <SDL_thread.h>
@@ -723,6 +723,7 @@ void driver_base::adapt_to_video_mode() {
 	ADBSetRelMouseMode(false);
 
 	// Init blitting routines
+	if (!s) return;
 	SDL_PixelFormat *f = s->format;
 	VisualFormat visualFormat;
 	visualFormat.depth = sdl_depth_of_video_depth(VIDEO_MODE_DEPTH);

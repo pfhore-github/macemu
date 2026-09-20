@@ -19,19 +19,16 @@
  */
 
 #include "sysdeps.h"
+
+#include "my_sdl.h"
+#if !SDL_VERSION_ATLEAST(3, 0, 0)
+
 #include "cpu_emulation.h"
 #include "main.h"
 #include "prefs.h"
 #include "user_strings.h"
 #include "audio.h"
 #include "audio_defs.h"
-
-#include <SDL_mutex.h>
-#include <SDL_audio.h>
-#include <SDL_version.h>
-#include <SDL_timer.h>
-
-#if !SDL_VERSION_ATLEAST(3, 0, 0)
 
 #define DEBUG 0
 #include "debug.h"
@@ -169,7 +166,9 @@ void AudioInit(void)
 
 	// Init semaphore
 	audio_irq_done_sem = SDL_CreateSemaphore(0);
-
+#ifdef BINCUE
+	InitBinCue();
+#endif
 	// Open and initialize audio device
 	open_audio();
 }
@@ -182,6 +181,9 @@ void AudioInit(void)
 static void close_audio(void)
 {
 	// Close audio device
+#if defined(BINCUE)
+	CloseAudio_bincue();
+#endif
 	SDL_CloseAudio();
 	free(audio_mix_buf);
 	audio_mix_buf = NULL;
@@ -192,7 +194,9 @@ void AudioExit(void)
 {
 	// Close audio device
 	close_audio();
-
+#ifdef BINCUE
+	ExitBinCue();
+#endif
 	// Delete semaphore
 	if (audio_irq_done_sem)
 		SDL_DestroySemaphore(audio_irq_done_sem);
@@ -243,7 +247,14 @@ static void stream_func(void *arg, uint8 *stream, int stream_len)
 				goto silence;
 
 			// Send data to audio device
-			Mac2Host_memcpy(audio_mix_buf, ReadMacInt32(apple_stream_info + scd_buffer), work_size);
+			bool dbl = AudioStatus.channels == 2 &&
+				ReadMacInt16(apple_stream_info + scd_numChannels) == 1 &&
+				ReadMacInt16(apple_stream_info + scd_sampleSize) == 8;
+			uint8 *src = Mac2HostAddr(ReadMacInt32(apple_stream_info + scd_buffer));
+			if (dbl)
+				for (int i = 0; i < work_size; i += 2)
+					audio_mix_buf[i] = audio_mix_buf[i + 1] = src[i >> 1];
+			else memcpy(audio_mix_buf, src, work_size);
 			memset((uint8 *)stream, silence_byte, stream_len);
 			SDL_MixAudio(stream, audio_mix_buf, work_size, get_audio_volume());
 
@@ -259,7 +270,7 @@ static void stream_func(void *arg, uint8 *stream, int stream_len)
 	}
 	
 #if defined(BINCUE)
-	MixAudio_bincue(stream, stream_len, get_audio_volume());
+	MixAudio_bincue(stream, stream_len);
 #endif
 	
 }

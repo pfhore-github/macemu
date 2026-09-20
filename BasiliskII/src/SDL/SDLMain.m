@@ -17,13 +17,13 @@
 #endif
 #endif
 
-#if (SDL_COMPILEDVERSION < SDL_VERSIONNUM(2, 0, 0)) // SDLMain.m is not needed in SDL 2.x
+#if SDL_COMPILEDVERSION >= SDL_VERSIONNUM(1, 0, 0) && SDL_COMPILEDVERSION < SDL_VERSIONNUM(2, 0, 0) // SDLMain.m is not needed in SDL 2.x
 
 #include "SDLMain.h"
 #include <sys/param.h> /* for MAXPATHLEN */
 #include <unistd.h>
 
-/* For some reaon, Apple removed setAppleMenu from the headers in 10.4,
+/* For some reason, Apple removed setAppleMenu from the headers in 10.4,
  but the method still is there and works. To avoid warnings, we declare
  it ourselves here. */
 @interface NSApplication(SDL_Missing_Methods)
